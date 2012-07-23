@@ -1,0 +1,219 @@
+#!/usr/bin/env python
+
+__author__ = "Kura"
+__copyright__ = "None"
+__credits__ = ["Kura",]
+__license__ = "BSD 3-Clause"
+__version__ = "1.2.0"
+__maintainer__ = "Kura"
+__email__ = "kura@kura.io"
+__status__ = "Development"
+__pname__ = "blackhole"
+__desc__ = "blackhole.io MTA"
+
+
+# std
+import os
+import errno
+import functools
+import socket
+import random
+import re
+import logging
+import sys
+import socket
+import grp
+import pwd
+
+# install checks
+try:
+    import tornado
+except ImportError:
+    print "Tornado is not installed but is required. Please run 'pip install tornado==2.2.1'"
+    sys.exit(1)
+    
+try:
+    import setproctitle
+except ImportError:
+    print "setproctitle is not installed but is required. Please run 'pip install setproctitle'"
+    sys.exit(1)
+
+# Just in case some tit tries to run the file in /bin
+try:
+    from blackhole.daemon import Daemon
+except ImportError:
+    print "blackhole is not installed, please install it using the instructions in the README file"
+    sys.exit(1)
+
+# pip stuff
+import setproctitle
+import tornado
+from tornado import ioloop, iostream
+from tornado.options import options
+
+# blackhole
+from blackhole.daemon import Daemon
+from blackhole.data import response
+from blackhole.opts import *
+from blackhole.state import *
+
+
+setproctitle.setproctitle(__pname__)
+tornado.options.parse_command_line()
+if options.conf and os.path.exists(options.conf):
+    tornado.options.parse_config_file(options.conf)
+
+
+def print_help(file=sys.stdout):
+    """Prints all the command line options to stdout."""
+    print "Usage: %s [OPTIONS] (start|stop|status)" % (__pname__)
+    print >> file, "\nOptions:"
+    by_group = {}
+    opts = {}
+    for option, value in options.iteritems():
+        # hack to bypass Tornado options
+        if option.startswith(("host", "port", "pid", "conf",    
+                              "user", "group")):
+            opts[option] = value
+    for option in opts.itervalues():
+        by_group.setdefault(option.group_name, []).append(option)
+
+    for filename, o in sorted(by_group.items()):
+        if filename:
+            print >> file, filename
+        o.sort(key=lambda option: option.name)
+        for option in o:
+            prefix = option.name
+            if option.metavar:
+                prefix += "=" + option.metavar
+            print >> file, "  --%-30s %s" % (prefix, option.help or "")
+    print >> file
+
+
+def connection_ready(sock, fd, events):
+    """
+    Accepts the socket connections and passes them off
+    to be handled.
+    """
+    while True:
+        try:
+            connection, address = sock.accept()
+        except socket.error, e:
+            if e[0] not in (errno.EWOULDBLOCK, errno.EAGAIN):
+                raise
+            return
+
+        connection.setblocking(0)
+        stream = iostream.IOStream(connection)
+        mail_state = MailState()
+
+        def handle(line):
+            """
+            Handle a line of socket data, figure out if
+            it's a valid SMTP keyword and handle it
+            accordingly.
+            """
+            print "got to handle"
+            if mail_state.get_reading():
+                resp = None
+                if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
+                    mail_state.set_reading(False)
+                    resp = response(250)
+            elif any(line.lower().startswith(e) for e in ['helo', 'ehlo',
+                                                          'mail from',
+                                                          'rcpt to', 'rset']):
+                resp = response(250)
+            elif line.lower().startswith("quit"):
+                resp = response(221)
+                stream.write(resp)
+                stream.close()
+                return
+            elif line.lower().startswith("data"):
+                resp = response(354)
+                mail_state.set_reading(True)
+            else:
+                resp = response(500)
+            if resp:
+                stream.write(resp)
+            loop()
+            
+        def loop():
+            """
+            Loop over the socket data until we receive
+            a newline character
+            """
+            stream.read_until("\n", handle)
+            
+        stream.write(response(220))
+        loop()
+
+if __name__ == "__main__":
+    action = None
+    for arg in sys.argv[1:]:
+        if not arg.startswith("--"):
+            action = arg
+    if action not in ('start', 'stop', 'status') or action is None:
+        print_help()
+        sys.exit(2)
+    
+    if len(sys.argv) == 1:
+        print_help()
+        sys.exit(2)
+    
+    io_loop = ioloop.IOLoop.instance()
+    d = Daemon(options.pid)
+    
+    try:
+        if action == "start":
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.bind((options.host, options.port))
+            sock.listen(5000)
+    except socket.error, e:
+        if e.errno == 13:
+            print "Permission denied, could not bind to %s:%s" % (options.host, options.port)
+        else:
+            print e
+        sys.exit(1)
+    
+    # if action == "start":
+    #     log.info("Starting %s on %s:%s mode=%s" % (__pname__, options.host, options.port))
+    # #     d.start()
+    # elif action == "stop":
+    #     log.info("Stopping %s..." % (__pname__))
+    # #     d.stop()
+    # #     sys.exit(0)
+    # elif action == "status":
+    #     d.status()
+    #     sys.exit(0)
+    
+    callback = functools.partial(connection_ready, sock)
+    io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
+    
+    try:
+        # Attempt to switch group we run as
+        try:
+            os.setgid(grp.getgrnam(options.group).gr_gid)
+        except KeyError:
+            print "Group '%s' does not exist" % options.group
+            sys.exit(1)
+        except OSError:
+            print "You do not have permission to switch to group '%s'" % options.group
+            sys.exit(1)
+
+        # Attempt to switch user we run as
+        try:
+            os.setuid(pwd.getpwnam(options.user).pw_uid)
+        except KeyError:
+            print "User '%s' does not exist" % options.user
+            sys.exit(1)
+        except OSError:
+            print "You do not have permission to switch to user '%s'" % options.user
+            sys.exit(1)
+
+        io_loop.start()
+    except KeyboardInterrupt, SystemExit:
+        # log.info("Stopping %s..." % (__pname__))
+        io_loop.stop()
+        # d.stop()
+        sys.exit(0)
