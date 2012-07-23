@@ -1,5 +1,5 @@
 =========
-SimpleMTA
+Blackhole
 =========
 
 Tornado powered MTA for accepting all incoming emails 
@@ -31,13 +31,18 @@ as below
 
   --host=IP			IP address to bind go [default: 0.0.0.0]
 
+
   --port=PORT		Port to listen for connections on [default: 25]
+
 
   --pid=FILE		File to write process information to [default: /tmp/blackhole.pid]
 
+
   --log=FILE 		File to write logs to (not very verbose) [default: /tmp/blackhole.log]
 
+
   --user=USER		User to drop privs to during run time. [default: blackhole]
+
 
   --group=GROUP		Group to drop privs to during run time. [default: blackhole]
 
