@@ -1,35 +1,87 @@
+import random
+from tornado.options import options
+
 RESPONSES = {
-    '220': "220 2.2.0 Blackhole is ready!\n",
-    '221': "221 2.2.1 fuck off!\n",
-    '250': "250 2.5.0 OK, yo!\n",
-    '354': "354 3.5.4 send me data bitch!\n",
-    '421': "421 4.2.1 uh shit... I don't work\n",
-    '422': "422 4.2.2 full, argh\n",
-    '431': "431 4.3.1 out of diskies\n",
-    "432": "432 4.3.2 frozen\n",
-    '450': "450 4.5.0 I couldn't do it =(\n",
-    '451': "451 4.5.1 abort abort abort\n",
-    '452': "452 4.5.2 no space dude\n",
-    '500': "500 5.0.0 wtf?\n",
-    '501': "501 5.0.1 wrong syntax noob\n",
-    '502': "502 5.0.2 I'm too stupid to know that command\n",
-    '503': "503 5.0.3 incorrect order, does not compute\n",
-    '515': "515 5.1.5 invalid mailbox\n",
-    '521': "521 5.2.1 message too fucking big\n",
-    '522': "522 5.2.2 this bitch has used all her capacity\n",
-    '523': "523 5.2.3 this is too big for this recipient\n",
-    '531': "531 5.3.1 mail system is full, apparently\n",
-    '533': "533 5.3.3 out of disk\n",
-    '534': "534 5.3.4 message too big\n",
-    '547': "547 5.4.7 delivery time-out\n",
-    '550': "550 5.5.0 I just can't do it captain, I don't have the power\n",
-    '551': "551 5.5.1 user isn't from around here, you need <>\n",
-    '552': "552 5.5.2 out of space\n",
-    '553': "553 5.5.3 invalid shit\n",
-    '554': "554 5.5.4 transaction failed\n",
-    '571': "571 5.7.1 you're blocked by this user. ha\n",
+    '220': "OK, ready",
+    '221': "Thank you for speaking to me",
+    '250': "OK, done",
+    '251': "OK, user not local, will forward",
+    '252': "OK, cannot VRFY user but will attempt delivery",
+    '253': "OK, messages pending",
+    '354': "Start mail input; end with <CRLF>.<CRLF>",
+    '355': "Octet-offset is the transaction offset",
+    '421': "Service not available, closing transmission channel",
+    '450': "Requested mail action not taken: mailbox unavailable",
+    '451': "Requested action aborted: local error in processing",
+    '452': "Requested action not taken: insufficient system storage",
+    '454': "TLS not available due to temporary reason",
+    '458': "Unable to queue message",
+    '459': "Not allowed: unknown reason",
+    '500': "Command not recognized",
+    '501': "Syntax error, no parameters allowed",
+    '502': "Command not implemented",
+    '503': "Bad sequence of commands",
+    '504': "Command parameter not implemented",
+    '521': "Machine does not accept mail",
+    '530': "Must issue a STARTTLS command first",
+    '534': "Authentication mechanism is too weak",
+    '538': "Encryption required for requested authentication mechanism",
+    '550': "Requested action not taken: mailbox unavailable",
+    '551': "User not local",
+    '552': "Requested mail action aborted: exceeded storage allocation",
+    '553': "Requested action not taken: mailbox name not allowed",
+    '554': "Transaction failed",
+    '571': "Blocked",
 }
 
+ACCEPT_REPONSES = ('250', '251', '252', '253')
 
-def response(response):
-    return RESPONSES[str(response)]
+# Bounce responses
+BOUNCE_RESPONSES = ('421', '431', '450', '451', '452',
+                    '454', '458', '459', '521',
+                    '534', '550', '551', '552',
+                    '553', '554', '571')
+
+# Machine does not accept mail
+OFFLINE_RESPONSES = ('521',)
+
+# Server unavailable
+UNAVAILABLE_RESPONSES = ('421',)
+
+# Random responses
+RANDOM_RESPONSES = ACCEPT_REPONSES + BOUNCE_RESPONSES
+
+
+def response(response=None):
+    if response is not None:
+        return response_message(response)
+    else:
+        return response_message(get_response())
+
+
+def get_response():
+    if options.mode == "random":
+        return random_choice(RANDOM_RESPONSES)
+    elif options.mode == "bounce":
+        return random_choice(BOUNCE_RESPONSES)
+    elif options.mode == "offline":
+        return random_choice(OFFLINE_RESPONSES)
+    elif options.mode == "unavailable":
+        return random_choice(UNAVAILABLE_RESPONSES)
+    else:
+        return random_choice(ACCEPT_REPONSES)
+
+
+def random_choice(response_list):
+    choices = []
+    choices.extend(k for k, v in enumerate(response_list))
+    rand = random.choice(choices)
+    return response_list[rand]
+
+
+def response_message(response):
+    response = str(response)
+    message = RESPONSES[response]
+    smtp_code = response
+    esmtp_code = ".".join(list(response))
+    return "%s %s %s\n" % (smtp_code, esmtp_code, message)

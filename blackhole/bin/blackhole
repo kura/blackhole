@@ -1,18 +1,5 @@
 #!/usr/bin/env python
 
-__author__ = "Kura"
-__copyright__ = "None"
-__credits__ = ["Kura",]
-__license__ = "BSD 3-Clause"
-__version__ = "1.2.0"
-__maintainer__ = "Kura"
-__email__ = "kura@kura.io"
-__status__ = "Development"
-__pname__ = "blackhole"
-__desc__ = "blackhole.io MTA"
-
-
-
 # std
 import os
 import pwd
@@ -52,6 +39,7 @@ from tornado import ioloop
 from tornado.options import options
 
 # blackhole
+from blackhole import __pname__, __desc__
 from blackhole.daemon import Daemon
 from blackhole.opts import *
 from blackhole.connection import connection_ready
@@ -69,32 +57,6 @@ file_handler.setLevel(logging.INFO)
 file_formatter = logging.Formatter("%(asctime)s - %(message)s")
 file_handler.setFormatter(file_formatter)
 log.addHandler(file_handler)
-
-
-def print_help(file=sys.stdout):
-    """Prints all the command line options to stdout."""
-    print "Usage: %s [OPTIONS] (start|stop|status)" % (__pname__)
-    print >> file, "\nOptions:"
-    by_group = {}
-    opts = {}
-    for option, value in options.iteritems():
-        # hack to bypass Tornado options
-        if option.startswith(("host", "port", "pid", "conf",    
-                              "user", "group")):
-            opts[option] = value
-    for option in opts.itervalues():
-        by_group.setdefault(option.group_name, []).append(option)
-
-    for filename, o in sorted(by_group.items()):
-        if filename:
-            print >> file, filename
-        o.sort(key=lambda option: option.name)
-        for option in o:
-            prefix = option.name
-            if option.metavar:
-                prefix += "=" + option.metavar
-            print >> file, "  --%-30s %s" % (prefix, option.help or "")
-    print >> file
 
 
 if __name__ == "__main__":
@@ -122,17 +84,17 @@ if __name__ == "__main__":
             sock.listen(5000)
     except socket.error, e:
         if e.errno == 13:
-            print "Permission denied, could not bind to %s:%s" % (options.host, options.port)
+            log.error("Permission denied, could not bind to %s:%s" % (options.host, options.port))
         else:
-            print e
+            log.error(e)
         sys.exit(1)
     
     if action == "start":
         log.info("Starting %s on %s:%s" % (__pname__, options.host, options.port))
-        d.start()
+        # d.start()
     elif action == "stop":
         log.info("Stopping %s..." % (__pname__))
-        d.stop()
+        # d.stop()
         sys.exit(0)
     elif action == "status":
         d.status()
@@ -146,20 +108,20 @@ if __name__ == "__main__":
         try:
             os.setgid(grp.getgrnam(options.group).gr_gid)
         except KeyError:
-            print "Group '%s' does not exist" % options.group
+            log.error("Group '%s' does not exist" % options.group)
             sys.exit(1)
         except OSError:
-            print "You do not have permission to switch to group '%s'" % options.group
+            log.error("You do not have permission to switch to group '%s'" % options.group)
             sys.exit(1)
 
         # Attempt to switch user we run as
         try:
             os.setuid(pwd.getpwnam(options.user).pw_uid)
         except KeyError:
-            print "User '%s' does not exist" % options.user
+            log.error("User '%s' does not exist" % options.user)
             sys.exit(1)
         except OSError:
-            print "You do not have permission to switch to user '%s'" % options.user
+            log.error("You do not have permission to switch to user '%s'" % options.user)
             sys.exit(1)
 
         io_loop.start()
