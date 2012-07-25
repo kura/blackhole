@@ -23,3 +23,12 @@ user = "blackhole"
 # Group to run blackhole as, drops privs during run
 # default: blackhole
 group = "blackhole"
+
+# Mode to run blackhole in (accept, bounce, random, unavailable, offline)
+# [default: accept]
+# accept - accept all email with code 250, 251, 252 or 253
+# bounce - bounce all email with a random code, excluding 250, 251, 252, 253
+# random - randomly accept or bounce all email with a random code
+# unavailable - server always respondes with code 421 - service is unavailable
+# offline - server always responds with code 521 - server does not accept mail
+mode = "unavailable"
