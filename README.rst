@@ -86,7 +86,7 @@ Randomly accept or bounce all email with a random code
 unavailable
 ~~~~~~~~~~~
 
-Server always respondes with code 421 - server is unavailable
+Server always respondes with code 421 - service is unavailable
 
 offline
 ~~~~~~~

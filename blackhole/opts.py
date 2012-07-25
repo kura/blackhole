@@ -56,6 +56,6 @@ def print_help(file=sys.stdout):
                 print >> file, "%-34s accept - accept all email with code 250, 251, 252 or 253" % ""
                 print >> file, "%-34s bounce - bounce all email with a random code, excluding 250, 251, 252, 253" % ""
                 print >> file, "%-34s random - randomly accept or bounce all email with a random code" % ""
-                print >> file, "%-34s unavailable - server always respondes with code 421 - server is unavailable" % ""
+                print >> file, "%-34s unavailable - server always respondes with code 421 - service is unavailable" % ""
                 print >> file, "%-34s offline - server always responds with code 521 - server does not accept mail" % ""
     print >> file

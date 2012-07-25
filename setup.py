@@ -4,7 +4,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 setup(name='blackhole',
-      version="1.2.0",
+      version="1.2.4",
       url='http://blackhole.io/',
       author="Kura",
       author_email="kura@kura.io",
