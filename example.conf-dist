@@ -2,27 +2,27 @@
 
 # Host IP to listen on
 # default: 0.0.0.0
-host = "0.0.0.0"
+host="0.0.0.0"
 
 # Port to listen for connections on
 # default: 25
-port = 25
+port=25
 
 # File to write PID information to
 # default: /tmp/blackhole.pid
-pid = "/var/run/blackhole.pid"
+pid="/var/run/blackhole.pid"
 
 # File to write log messages to
 # default: /tmp/blackhole.log
-log = "/var/log/blackhole.log"
+log="/var/log/blackhole.log"
 
 # User to run blackhole as, drops privs during run
 # default: blackhole
-user = "blackhole"
+user="blackhole"
 
 # Group to run blackhole as, drops privs during run
 # default: blackhole
-group = "blackhole"
+group="blackhole"
 
 # Mode to run blackhole in (accept, bounce, random, unavailable, offline)
 # [default: accept]
@@ -31,4 +31,4 @@ group = "blackhole"
 # random - randomly accept or bounce all email with a random code
 # unavailable - server always respondes with code 421 - service is unavailable
 # offline - server always responds with code 521 - server does not accept mail
-mode = "unavailable"
+mode="unavailable"

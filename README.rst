@@ -45,10 +45,10 @@ from a file
 
 The configuration file has the following format::
 
-  host = "0.0.0.0"
-  port = 25
-  pid = "/tmp/blackhole.io"
-  mode = "offline"
+  host="0.0.0.0"
+  port=25
+  pid="/tmp/blackhole.io"
+  mode="offline"
 
 You can find an example configuration file `example.conf-dist` in the root folder of this project.
 
