@@ -91,10 +91,10 @@ if __name__ == "__main__":
     
     if action == "start":
         log.info("Starting %s on %s:%s" % (__pname__, options.host, options.port))
-        # d.start()
+        d.start()
     elif action == "stop":
         log.info("Stopping %s..." % (__pname__))
-        # d.stop()
+        d.stop()
         sys.exit(0)
     elif action == "status":
         d.status()
