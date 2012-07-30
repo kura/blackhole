@@ -93,3 +93,20 @@ offline
 
 
 Server always responds with code 521 - server does not accept mail
+
+rc.d
+----
+
+The init script depends on */etc/blackhole.conf* being in place and configured, see README
+section on configuration.
+
+Blackhole comes with a script that works with init.d/rc.d, to install it copy it
+from the *init.d* folder in the root directory of this project to /etc/init.d
+
+Then make sure it's executable::
+
+  chmod +x /etc/init.d/blackhole
+
+To make blackhole start on a reboot use the following::
+
+  update-rc.d blackhole defaults
