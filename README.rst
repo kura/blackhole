@@ -56,17 +56,35 @@ You can find an example configuration file `example.conf-dist` in the root folde
 Usage
 -----
 
-  blackhole start		Starts the server
+Using the blackhole binary
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  blackhole stop		Stops the server
+  blackhole start		  Starts the server
+
+  blackhole stop		  Stops the server
 
   blackhole Restarts	Restarts the server
 
   blackhole status		Shows the status of the server, running, not running etc
 
+Using init.d
+~~~~~~~~~~~~
+
+Please see the section below on installing the init.d/rc.d script
+
+  /etc/init.d/blackhole start     Starts the server
+
+  /etc/init.d/blackhole stop      Stops the server
+
+  /etc/init.d/blackhole restart   Restarts the server
+
+  /etc/init.d/blackhole status    Shows the status of the server, running, not running et
 
 Modes
 -----
+
+See the `Response codes` section for more information on responses
+and which mode responds with which codes.
 
 accept
 ~~~~~~
@@ -110,3 +128,146 @@ Then make sure it's executable::
 To make blackhole start on a reboot use the following::
 
   update-rc.d blackhole defaults
+
+
+Response codes
+--------------
+
+All
+~~~
+
++-------------------------------------------------------------------+
+| Code | message                                                    |
++======+============================================================+
+| 220  | OK, ready                                                  |
++------+------------------------------------------------------------+
+| 221  | Thank you for speaking to me                               |
++------+------------------------------------------------------------+
+| 250  | OK, done                                                   |
++------+------------------------------------------------------------+
+| 251  | OK, user not local, will forward                           |
++------+------------------------------------------------------------+
+| 252  | OK, cannot VRFY user but will attempt delivery             |
++------+------------------------------------------------------------+
+| 253  | OK, messages pending                                       |
++------+------------------------------------------------------------+
+| 354  | Start mail input; end with <CRLF>.<CRLF>                   |
++------+------------------------------------------------------------+
+| 355  | Octet-offset is the transaction offset                     |
++------+------------------------------------------------------------+
+| 421  | Service not available, closing transmission channel        |
++------+------------------------------------------------------------+
+| 450  | Requested mail action not taken: mailbox unavailable       |
++------+------------------------------------------------------------+
+| 451  | Requested action aborted: local error in processing        |
++------+------------------------------------------------------------+
+| 452  | Requested action not taken: insufficient system storage    |
++------+------------------------------------------------------------+
+| 454  | TLS not available due to temporary reason                  |
++------+------------------------------------------------------------+
+| 458  | Unable to queue message                                    |
++------+------------------------------------------------------------+
+| 459  | Not allowed: unknown reason                                |
++------+------------------------------------------------------------+
+| 500  | Command not recognized                                     |
++------+------------------------------------------------------------+
+| 501  | Syntax error, no parameters allowed                        |
++------+------------------------------------------------------------+
+| 502  | Command not implemented                                    |
++------+------------------------------------------------------------+
+| 503  | Bad sequence of commands                                   |
++------+------------------------------------------------------------+
+| 504  | Command parameter not implemented                          |
++------+------------------------------------------------------------+
+| 521  | Machine does not accept mail                               |
++------+------------------------------------------------------------+
+| 530  | Must issue a STARTTLS command first                        |
++------+------------------------------------------------------------+
+| 534  | Authentication mechanism is too weak                       |
++------+------------------------------------------------------------+
+| 538  | Encryption required for requested authentication mechanism |
++------+------------------------------------------------------------+
+| 550  | Requested action not taken: mailbox unavailable            |
++------+------------------------------------------------------------+
+| 551  | User not local                                             |
++------+------------------------------------------------------------+
+| 552  | Requested mail action aborted: exceeded storage allocation |
++------+------------------------------------------------------------+
+| 553  | Requested action not taken: mailbox name not allowed       |
++------+------------------------------------------------------------+
+| 554  | Transaction failed                                         |
++------+------------------------------------------------------------+
+| 571  | Blocked                                                    |
++------+------------------------------------------------------------+
+
+Accept
+~~~~~~
+
++------+
+| Code |
++======+
+| 250  |
++------+
+| 251  |
++------+
+| 252  |
++------+
+| 253  |
++------+
+
+Bounce
+~~~~~~
+
++------+
+| Code |
++======+
+| 421  |
++------+
+| 431  |
++------+
+| 450  |
++------+
+| 451  |
++------+
+| 452  |
++------+
+| 454  |
++------+
+| 458  |
++------+
+| 459  |
++------+
+| 521  |
++------+
+| 534  |
++------+
+| 550  |
++------+
+| 551  |
++------+
+| 552  |
++------+
+| 553  |
++------+
+| 554  |
++------+
+| 571  |
++------+
+
+Offline
+~~~~~~~
+
++------+
+| Code |
++======+
+| 521  |
++------+
+
+Unavailable
+~~~~~~~~~~~
+
++------+
+| Code |
++======+
+| 421  |
++------+
