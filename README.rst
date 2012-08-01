@@ -209,6 +209,8 @@ All
 Accept
 ~~~~~~
 
+This mode will respond with the following codes:
+
 +------+
 | Code |
 +======+
@@ -223,6 +225,8 @@ Accept
 
 Bounce
 ~~~~~~
+
+This mode will respond with the following codes:
 
 +------+
 | Code |
@@ -263,6 +267,8 @@ Bounce
 Offline
 ~~~~~~~
 
+This mode will respond with the following codes:
+
 +------+
 | Code |
 +======+
@@ -271,6 +277,8 @@ Offline
 
 Unavailable
 ~~~~~~~~~~~
+
+This mode will respond with the following codes:
 
 +------+
 | Code |
