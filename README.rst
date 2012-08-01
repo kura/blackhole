@@ -7,7 +7,7 @@ without any disk I/O, although no messages actually ever
 get delivered. 
 Mainly for testing huge send rates, for making sure developers
 don't accidentally send emails to real users, email
-integration testing and things like that
+integration testing and things like that.
 
 
 Requirements
@@ -27,7 +27,7 @@ Configuration
 -------------
 
 Configuration options can be passed via the command line
-as below
+as below:
 
   --host=IP			IP address to bind go [default: 0.0.0.0]
   --port=PORT		Port to listen for connections on [default: 25]
@@ -39,7 +39,7 @@ as below
 
 
 You can also specify the `--conf` option to load configuration
-from a file
+from a file:
 
   --conf=FILE		Config file to parse and use. Overrides command line args
 
@@ -59,6 +59,8 @@ Usage
 Using the blackhole binary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The following commands are for use when using blackhole without an init script.
+
 +-------------------+----------------------------------------------------------+
 | blackhole start   | Starts the server                                        |
 +-------------------+----------------------------------------------------------+
@@ -72,7 +74,7 @@ Using the blackhole binary
 Using init.d
 ~~~~~~~~~~~~
 
-Please see the section below on installing the init.d/rc.d script
+Please see the section below on installing the init.d/rc.d script.
 
 +-------------------------------+----------------------------------------------------------+
 | /etc/init.d/blackhole start   | Starts the server                                        |
@@ -93,28 +95,28 @@ and which mode responds with which codes.
 accept
 ~~~~~~
 
-Accept all email with code 250, 251, 252 or 253
+Accept all email with code 250, 251, 252 or 253.
 
 boounce
 ~~~~~~~
 
-Bounce all email with a random code, excluding 250, 251, 252, 253
+Bounce all email with a random code, excluding 250, 251, 252, 253.
 
 random
 ~~~~~~
 
-Randomly accept or bounce all email with a random code
+Randomly accept or bounce all email with a random code.
 
 unavailable
 ~~~~~~~~~~~
 
-Server always respondes with code 421 - service is unavailable
+Server always respondes with code 421 - service is unavailable.
 
 offline
 ~~~~~~~
 
 
-Server always responds with code 521 - server does not accept mail
+Server always responds with code 521 - server does not accept mail.
 
 rc.d
 ----
@@ -123,7 +125,7 @@ The init script depends on */etc/blackhole.conf* being in place and configured, 
 section on configuration.
 
 Blackhole comes with a script that works with init.d/rc.d, to install it copy it
-from the *init.d* folder in the root directory of this project to /etc/init.d
+from the *init.d* folder in the root directory of this project to */etc/init.d/*.
 
 Then make sure it's executable::
 
