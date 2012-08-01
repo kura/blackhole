@@ -90,10 +90,8 @@ if __name__ == "__main__":
         sys.exit(1)
     
     if action == "start":
-        log.info("Starting %s on %s:%s" % (__pname__, options.host, options.port))
         d.start()
     elif action == "stop":
-        log.info("Stopping %s..." % (__pname__))
         d.stop()
         sys.exit(0)
     elif action == "status":
@@ -126,7 +124,6 @@ if __name__ == "__main__":
 
         io_loop.start()
     except KeyboardInterrupt, SystemExit:
-        log.info("Stopping %s..." % (__pname__))
         io_loop.stop()
         d.stop()
         sys.exit(0)

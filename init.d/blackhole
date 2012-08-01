@@ -77,8 +77,9 @@ case "$1" in
     stop
     ;;
   restart)
-    log_daemon_msg "Restarting" $DESC
+    log_daemon_msg "Stopping" $DESC
     stop
+    log_daemon_msg "Starting" $DESC
     start
     ;;
   status)
