@@ -29,13 +29,13 @@ Configuration
 Configuration options can be passed via the command line
 as below:
 
-  --host=IP			IP address to bind go [default: 0.0.0.0]
-  --port=PORT		Port to listen for connections on [default: 25]
-  --pid=FILE		File to write process information to [default: /tmp/blackhole.pid]
-  --log=FILE 		File to write logs to (not very verbose) [default: /tmp/blackhole.log]
-  --user=USER		User to drop privs to during run time. [default: blackhole]
+  --host=IP				IP address to bind go [default: 0.0.0.0]
+  --port=PORT			Port to listen for connections on [default: 25]
+  --pid=FILE			File to write process information to [default: /tmp/blackhole.pid]
+  --log=FILE			File to write logs to (not very verbose) [default: /tmp/blackhole.log]
+  --user=USER			User to drop privs to during run time. [default: blackhole]
   --group=GROUP		Group to drop privs to during run time. [default: blackhole]
-  --mode=MODE   Mode to run blackhole in (accept, bounce, random, unavailable, offline) [default: accept] - see MODES section
+  --mode=MODE			Mode to run blackhole in (accept, bounce, random, unavailable, offline) [default: accept] - see MODES section
 
 
 You can also specify the `--conf` option to load configuration
