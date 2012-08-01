@@ -125,7 +125,9 @@ The init script depends on */etc/blackhole.conf* being in place and configured, 
 section on configuration.
 
 Blackhole comes with a script that works with init.d/rc.d, to install it copy it
-from the *init.d* folder in the root directory of this project to */etc/init.d/*.
+from the *init.d/YOUR_DISTRO* folder in the root directory of this project to */etc/init.d/*.
+
+i.e. for Debian/Ubuntu users, mv the file from *init.d/debian-ubuntu/* to */etc/init.d/*.
 
 Then make sure it's executable::
 
