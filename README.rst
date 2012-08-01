@@ -59,26 +59,30 @@ Usage
 Using the blackhole binary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  blackhole start		  Starts the server
-
-  blackhole stop		  Stops the server
-
-  blackhole Restarts	Restarts the server
-
-  blackhole status		Shows the status of the server, running, not running etc
++-------------------+----------------------------------------------------------+
+| blackhole start   | Starts the server                                        |
++-------------------+----------------------------------------------------------+
+| blackhole stop		| Stops the server                                         |
++-------------------+----------------------------------------------------------+
+| blackhole restart |	Restarts the server                                      |
++-------------------+----------------------------------------------------------+
+| blackhole status  |	Shows the status of the server, running, not running etc |
++-------------------+----------------------------------------------------------+
 
 Using init.d
 ~~~~~~~~~~~~
 
 Please see the section below on installing the init.d/rc.d script
 
-  /etc/init.d/blackhole start     Starts the server
-
-  /etc/init.d/blackhole stop      Stops the server
-
-  /etc/init.d/blackhole restart   Restarts the server
-
-  /etc/init.d/blackhole status    Shows the status of the server, running, not running et
++-------------------------------+----------------------------------------------------------+
+| /etc/init.d/blackhole start   | Starts the server                                        |
++-------------------------------+----------------------------------------------------------+
+| /etc/init.d/blackhole stop    | Stops the server                                         |
++-------------------------------+----------------------------------------------------------+
+| /etc/init.d/blackhole restart | Restarts the server                                      |
++-------------------------------+----------------------------------------------------------+
+| /etc/init.d/blackhole status  | Shows the status of the server, running, not running etc |
++-------------------------------+----------------------------------------------------------+
 
 Modes
 -----
@@ -136,7 +140,7 @@ Response codes
 All
 ~~~
 
-+-------------------------------------------------------------------+
++------+------------------------------------------------------------+
 | Code | message                                                    |
 +======+============================================================+
 | 220  | OK, ready                                                  |
