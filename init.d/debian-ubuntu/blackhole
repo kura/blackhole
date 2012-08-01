@@ -64,7 +64,7 @@ stop() {
 status() {
   if [ -e $pid ]
   then
-    status_of_proc -p $pid $DAEMON blackhole && exit 0 || exit $?
+    status_of_proc -p $pid $DAEMON $DESC && exit 0 || exit $?
   fi
   echo
 }
