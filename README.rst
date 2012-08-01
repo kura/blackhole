@@ -235,19 +235,19 @@ Offline
 
 This mode will respond with the following codes:
 
-+------+
-| Code |
-+======+
-| 521  |
-+------+
++-------+
+| Codes |
++=======+
+| 521   |
++-------+
 
 Unavailable
 ~~~~~~~~~~~
 
 This mode will respond with the following codes:
 
-+------+
-| Code |
-+======+
-| 421  |
-+------+
++-------+
+| Codes |
++=======+
+| 421   |
++-------+
