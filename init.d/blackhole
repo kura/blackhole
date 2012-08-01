@@ -36,7 +36,8 @@ set -e
 
 start() {
   cmd="start-stop-daemon -S --quiet --pidfile $pid --exec $DAEMON -- $SDAEMON_OPTS start"
-  if $cmd; then
+  if $cmd
+  then
     log_end_msg 0
   else
     log_end_msg 1
@@ -51,7 +52,9 @@ stop() {
   else
     log_end_msg 1
   fi
-  if $cmd; then
+  if $cmd
+  then
+    rm -f $pid
     log_end_msg 0
   else
     log_end_msg 1
