@@ -20,6 +20,22 @@ Requirements
 Installation
 ------------
 
+Packaged
+~~~~~~~~
+
+From PyPI
+
+  pip install blackhole
+
+Or
+
+  easy_install blackhole
+
+From source
+~~~~~~~~~~~
+
+Download the latest tarball from PyPI or GitHub. Unpack and run:
+
   python setup.py install
 
 
