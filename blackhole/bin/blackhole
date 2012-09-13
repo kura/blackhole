@@ -27,7 +27,7 @@ except ImportError:
 
 # Just in case some tit tries to run the file in /bin
 try:
-    from blackhole.daemon import Daemon
+    from blackhole import __pname__
 except ImportError:
     print "blackhole is not installed, please install it using the instructions in the README file"
     sys.exit(1)
@@ -37,10 +37,10 @@ import setproctitle
 import tornado
 from tornado import ioloop
 from tornado.options import options
+from deiman.deiman import Deiman
 
 # blackhole
 from blackhole import __pname__, __desc__
-from blackhole.daemon import Daemon
 from blackhole.opts import *
 from blackhole.connection import connection_ready
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         sys.exit(2)
     
     io_loop = ioloop.IOLoop.instance()
-    d = Daemon(options.pid)
+    d = Deiman(options.pid)
 
     try:
         if action == "start":
