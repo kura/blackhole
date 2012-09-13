@@ -17,6 +17,7 @@ setup(name='blackhole',
           'tornado==2.3',
           'setproctitle==1.1.6',
           'deiman==0.1',
+      ],
       scripts=[
           'blackhole/bin/blackhole',
       ],
