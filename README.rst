@@ -31,6 +31,11 @@ Or
 
   easy_install blackhole
 
+From GitHub
+~~~~~~~~~~~
+
+  pip install -e git+git://github.com/kura/blackhole.git#egg=blackhole
+
 From source
 ~~~~~~~~~~~
 
