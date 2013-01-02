@@ -47,6 +47,7 @@ def connection_ready(sock, fd, events):
         connection.setblocking(0)
         if connection.getsockname()[1] == options.ssl_port and options.ssl:
             try:
+                print sslkwargs
                 ssl_connection = ssl.wrap_socket(connection, **sslkwargs)
             except (ssl.SSLError, socket.error), err:
                 if err.args[0] == ssl.SSL_ERROR_EOF or err.args[0] == errno.ECONNABORTED:

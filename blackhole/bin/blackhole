@@ -49,7 +49,7 @@ from deiman.deiman import Deiman
 from blackhole import __pname__, __desc__
 from blackhole.opts import *
 from blackhole.connection import connection_ready, sockets
-from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException
+from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException, sslkwargs
 
 
 setproctitle.setproctitle(__pname__)
@@ -90,19 +90,21 @@ if __name__ == "__main__":
         except BlackholeSSLException, e:
             log.error(e)
             sys.exit(1)
+        sslkwargs['keyfile'] = options.ssl_key
+        sslkwargs['certfile'] = options.ssl_cert
     
     io_loop = ioloop.IOLoop.instance()
     d = Deiman(options.pid)
     
     if action == "start":
         socks = sockets()
-        d.start()
-    elif action == "stop":
-        d.stop()
-        sys.exit(0)
-    elif action == "status":
-        d.status()
-        sys.exit(0)
+       d.start()
+   elif action == "stop":
+       d.stop()
+       sys.exit(0)
+   elif action == "status":
+       d.status()
+       sys.exit(0)
 
     for _, sock in socks.iteritems():
         callback = functools.partial(connection_ready, sock)
