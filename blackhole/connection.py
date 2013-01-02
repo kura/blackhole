@@ -54,7 +54,7 @@ def connection_ready(sock, fd, events):
                     return
                 else:
                     raise
-            # Do a nasty blankey Exception until SSL exceptions are fully known
+            # Do a nasty blanket Exception until SSL exceptions are fully known
             try:
                 stream = iostream.SSLIOStream(ssl_connection)
             except Exception, e:
