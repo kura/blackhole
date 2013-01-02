@@ -94,14 +94,14 @@ if __name__ == "__main__":
     if action == 'start':
         socks = sockets()
     
-    # if action == "start":
-    #     d.start()
-    # elif action == "stop":
-    #     d.stop()
-    #     sys.exit(0)
-    # elif action == "status":
-    #     d.status()
-    #     sys.exit(0)
+    if action == "start":
+        d.start()
+    elif action == "stop":
+        d.stop()
+        sys.exit(0)
+    elif action == "status":
+        d.status()
+        sys.exit(0)
 
     for _, sock in socks.iteritems():
         callback = functools.partial(connection_ready, sock)
