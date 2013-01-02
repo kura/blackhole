@@ -29,7 +29,7 @@ def connection_ready(sock, fd, events):
             it's a valid SMTP keyword and handle it
             accordingly.
             """
-            if mail_state.get_reading():
+            if mail_state.reading:
                 resp = None
                 # Not exactly nice but it's only way I could safely figure
                 # out if it was the \n.\n
