@@ -93,11 +93,9 @@ if __name__ == "__main__":
     
     io_loop = ioloop.IOLoop.instance()
     d = Deiman(options.pid)
-
-    if action == 'start':
-        socks = sockets()
     
     if action == "start":
+        socks = sockets()
         d.start()
     elif action == "stop":
         d.stop()
