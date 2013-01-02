@@ -1,5 +1,7 @@
 import random
+
 from tornado.options import options
+
 
 RESPONSES = {
     '220': "OK, ready",

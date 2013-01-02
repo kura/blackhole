@@ -1,5 +1,7 @@
 import sys
+
 from tornado.options import define, options
+
 from blackhole import __pname__
 
 
@@ -24,28 +26,57 @@ define("group", default="blackhole",
 define("log", default="/tmp/blackhole.log",
        metavar="FILE", help="File to write logs to (not very verbose) [default: /tmp/blackhole.log]",
        group="Blackhole")
+
 define("mode", default="accept",
-       metavar="MODE", help="Mode to run blackhole in (accept, bounce, random, unavailable, offline) [default: accept]",
+       metavar="MODE", help="Mode to run blackhole in (accept, bounce, random,\n%-37sunavailable, offline) [default: accept]" % "",
        group="Mode")
 
+define('ssl', default=True, type=bool,
+       help="Enable/disable SSL [default: True]",
+       group="Blackhole SSL")
+define('ssl_port', default=465, metavar="PORT", type=int,
+       help="Port to listen for SSL connections on [default: 465]",
+       group="Blackhole SSL")
+define('ssl_cert', default=None, metavar="PATH", type=str,
+       help="SSL Certificate",
+       group="Blackhole SSL")
+define('ssl_key', default=None, metavar="PATH", type=str,
+       help="SSL Private Key",
+       group="Blackhole SSL")
+define('ssl_ca_certs_dir', default="/etc/ssl/certs/", metavar="PATH", type=str,
+       help="SSL CA Certificates directory [default: /etc/ssl/certs/]",
+       group="Blackhole SSL")
+
+def ports():
+    socks_list = ['std']
+    if options.ssl:
+        socks_list.append('ssl')
+    return socks_list
 
 def print_help(file=sys.stdout):
     """Prints all the command line options to stdout."""
-    print "Usage: %s [OPTIONS] (start|stop|status)" % (__pname__)
-    print >> file, "\nOptions:"
+    print  >> file, "Usage: %s [OPTIONS] (start|stop|status)" % (__pname__)
+    print >> file
     by_group = {}
     opts = {}
     for option, value in options.iteritems():
         # hack to bypass Tornado options
         if option.startswith(("host", "port", "pid", "conf",
-                              "user", "group", "mode")):
+                              "user", "group", "mode", "ssl_port",
+                              "ssl", "ssl_cert", "ssl_key", 
+                              "ssl_ca_certs_dir")):
             opts[option] = value
     for option in opts.itervalues():
         by_group.setdefault(option.group_name, []).append(option)
 
     for filename, o in sorted(by_group.items()):
-        # if filename:
-        #     print >> file, filename
+        if filename:
+            print >> file, filename
+            l = ""
+            for _ in xrange(0, len(filename)):
+                l += "-"
+            print >> file, l
+            print >> file
         o.sort(key=lambda option: option.name)
         for option in o:
             prefix = option.name
@@ -53,9 +84,11 @@ def print_help(file=sys.stdout):
                 prefix += "=" + option.metavar
             print >> file, "  --%-30s %s" % (prefix, option.help or "")
             if option.name == "mode":
+                print >> file
                 print >> file, "%-34s accept - accept all email with code 250, 251, 252 or 253" % ""
-                print >> file, "%-34s bounce - bounce all email with a random code, excluding 250, 251, 252, 253" % ""
+                print >> file, "%-34s bounce - bounce all email with a random code,\n%-37sexcluding 250, 251, 252, 253" % ("", "")
                 print >> file, "%-34s random - randomly accept or bounce all email with a random code" % ""
-                print >> file, "%-34s unavailable - server always respondes with code 421 - service is unavailable" % ""
-                print >> file, "%-34s offline - server always responds with code 521 - server does not accept mail" % ""
+                print >> file, "%-34s unavailable - server always respondes with code 421\n%-37s- service is unavailable" % ("", "")
+                print >> file, "%-34s offline - server always responds with code 521 - server\n%-37sdoes not accept mail" % ("", "")
+        print >> file
     print >> file
