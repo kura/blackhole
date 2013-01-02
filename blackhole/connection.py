@@ -59,6 +59,8 @@ def connection_ready(sock, fd, events):
                 stream = iostream.SSLIOStream(ssl_connection)
             except Exception, e:
                 log.error(e)
+                ssl_connection.close()
+                return
         else:
             stream = iostream.IOStream(connection)
         mail_state = MailState()
