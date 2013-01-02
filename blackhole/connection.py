@@ -31,6 +31,8 @@ def connection_ready(sock, fd, events):
             """
             if mail_state.get_reading():
                 resp = None
+                # Not exactly nice but it's only way I could safely figure
+                # out if it was the \n.\n
                 if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
                     mail_state.set_reading(False)
                     resp = response()
