@@ -53,6 +53,7 @@ define('version', default=True,
 define('v', default=True,
        help="Return program version")
 
+
 def ports():
     """
     Create and return a list of sockets we need to create.
@@ -64,6 +65,7 @@ def ports():
     if options.ssl:
         socks_list.append('ssl')
     return socks_list
+
 
 def print_help(file=sys.stdout):
     """Prints all the command line options to stdout."""
@@ -78,7 +80,7 @@ def print_help(file=sys.stdout):
         # hack to bypass Tornado options
         if option.startswith(("host", "port", "pid", "conf",
                               "user", "group", "mode", "ssl_port",
-                              "ssl", "ssl_cert", "ssl_key", 
+                              "ssl", "ssl_cert", "ssl_key",
                               "ssl_ca_certs_dir")):
             opts[option] = value
     for option in opts.itervalues():

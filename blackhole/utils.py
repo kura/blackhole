@@ -7,6 +7,7 @@ from tornado.options import options
 
 from blackhole.log import log
 
+
 def chgrp():
     """
     Change our existing group.
@@ -24,6 +25,7 @@ def chgrp():
     except OSError:
         log.error("You do not have permission to switch to group '%s'" % options.group)
         sys.exit(1)
+
 
 def chown():
     """

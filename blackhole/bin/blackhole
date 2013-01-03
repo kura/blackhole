@@ -23,7 +23,7 @@ try:
 except ImportError:
     print "Tornado is not installed but is required. Please run 'pip install tornado==2.2.1'"
     sys.exit(1)
-    
+
 try:
     import setproctitle
 except ImportError:
@@ -49,7 +49,8 @@ from blackhole import __pname__, __fullname__
 from blackhole.opts import *
 from blackhole.log import log
 from blackhole.connection import connection_ready, sockets
-from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException, sslkwargs
+from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException,\
+    sslkwargs
 from blackhole.utils import chgrp, chown
 
 
@@ -74,7 +75,7 @@ if __name__ == "__main__":
     if action not in ('start', 'stop', 'status') or action is None:
         print_help()
         sys.exit(2)
-    
+
     if len(sys.argv) == 1:
         print_help()
         sys.exit(2)
@@ -87,10 +88,10 @@ if __name__ == "__main__":
             sys.exit(1)
         sslkwargs['keyfile'] = options.ssl_key
         sslkwargs['certfile'] = options.ssl_cert
-    
+
     io_loop = ioloop.IOLoop.instance()
     d = Deiman(options.pid)
-    
+
     # Change group and owner and start the ioloop
     chgrp()
     chown()
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     for _, sock in sockets().iteritems():
         callback = functools.partial(connection_ready, sock)
         io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
-    
+
     try:
         io_loop.start()
     except KeyboardInterrupt, SystemExit:
