@@ -57,7 +57,7 @@ as below:
   --user=USER								User to drop privs to during run time. [default: blackhole]
   --group=GROUP							Group to drop privs to during run time. [default: blackhole]
   --mode=MODE								Mode to run blackhole in (accept, bounce, random, unavailable, offline) [default: accept] - see MODES section
-  --ssl=True/False					Enabled/Disable SSL. Requires SSL compiled in to Python and OpenSSL
+  --ssl					Enabled/Disable SSL. Requires SSL compiled in to Python and OpenSSL
   --ssl_port=PORT						Port to listen for SSL enabled connections [default: 465]
   --ssl_key=PATH						X509 SSL keyfile
   --ssl_cert=PATH						X509 SSL certificate file

@@ -32,3 +32,25 @@ group="blackhole"
 # unavailable - server always respondes with code 421 - service is unavailable
 # offline - server always responds with code 521 - server does not accept mail
 mode="unavailable"
+
+# You can use a self-signed certificate here if you wish, or you can
+# pay for one.
+# Making your own:
+#
+# openssl genrsa -out blackhole.key
+# openssl req -new -key blackhole.key -out blackhole.csr
+# 
+# Fill in the CSR information and then
+#
+# openssl x509 -req -in blackhole.csr -signkey blackhole.key -out blackhole.crt
+#
+# If you purchase a certificate, make sure you add the intermediate certificates
+# to the main CRT file in the following order:
+#
+# 1. Client certificate
+# 2. Intermediate certificates
+# 3. root certificate (if required)
+
+ssl_key=/etc/ssl/private/blackhole.key
+
+ssl_cert=/etc/ssl/certs/blackhole.crt
