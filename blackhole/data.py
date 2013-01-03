@@ -55,6 +55,7 @@ RANDOM_RESPONSES = ACCEPT_REPONSES + BOUNCE_RESPONSES
 
 
 def response(response=None):
+    """Return our SMTP response message"""
     if response is not None:
         return response_message(response)
     else:
@@ -62,6 +63,10 @@ def response(response=None):
 
 
 def get_response():
+    """
+    Get our response from available responses
+    based on configuration settings.
+    """
     if options.mode == "random":
         return random_choice(RANDOM_RESPONSES)
     elif options.mode == "bounce":
@@ -75,6 +80,10 @@ def get_response():
 
 
 def random_choice(response_list):
+    """
+    Pick a random choice for the configured choices
+    dictionary.
+    """
     choices = []
     choices.extend(k for k, v in enumerate(response_list))
     rand = random.choice(choices)
@@ -82,6 +91,7 @@ def random_choice(response_list):
 
 
 def response_message(response):
+    """Format our response in ESMTP format"""
     response = str(response)
     message = RESPONSES[response]
     smtp_code = response

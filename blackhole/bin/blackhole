@@ -8,7 +8,6 @@ import functools
 import socket
 import random
 import re
-import logging
 import sys
 import socket
 
@@ -46,34 +45,30 @@ from tornado.options import options
 from deiman.deiman import Deiman
 
 # blackhole
-from blackhole import __pname__, __desc__
+from blackhole import __pname__, __fullname__
 from blackhole.opts import *
+from blackhole.log import log
 from blackhole.connection import connection_ready, sockets
 from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException, sslkwargs
+from blackhole.utils import chgrp, chown
 
 
 setproctitle.setproctitle(__pname__)
+
 tornado.options.parse_command_line()
 if options.conf and os.path.exists(options.conf):
     tornado.options.parse_config_file(options.conf)
+
 if options.ssl and not ssl:
-    msg = "Unable to use SSL as ssl library is not compiled in"
-    log.error(msg)
-    print msg
+    log.error("Unable to use SSL as ssl library is not compiled in")
     sys.exit(1)
-
-logging.basicConfig(format="%(message)s")
-log = logging.getLogger(__name__)
-file_handler = logging.FileHandler(options.log)
-file_handler.setLevel(logging.INFO)
-file_formatter = logging.Formatter("%(asctime)s - %(message)s")
-file_handler.setFormatter(file_formatter)
-log.addHandler(file_handler)
-
 
 if __name__ == "__main__":
     action = None
     for arg in sys.argv[1:]:
+        if arg in ("--version", "-v"):
+            print "Version:", __fullname__
+            sys.exit(0)
         if not arg.startswith("--"):
             action = arg
     if action not in ('start', 'stop', 'status') or action is None:
@@ -96,8 +91,12 @@ if __name__ == "__main__":
     io_loop = ioloop.IOLoop.instance()
     d = Deiman(options.pid)
     
+    # Change group and owner and start the ioloop
+    chgrp()
+    chown()
+
+    # Do the daemon actions
     if action == "start":
-        socks = sockets()
         d.start()
     elif action == "stop":
         d.stop()
@@ -106,31 +105,13 @@ if __name__ == "__main__":
         d.status()
         sys.exit(0)
 
-    for _, sock in socks.iteritems():
+    # Iterate over the dictionary of socket connections
+    # and add them to the IOLoop
+    for _, sock in sockets().iteritems():
         callback = functools.partial(connection_ready, sock)
         io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
     
     try:
-        # Attempt to switch group we run as
-        try:
-            os.setgid(grp.getgrnam(options.group).gr_gid)
-        except KeyError:
-            log.error("Group '%s' does not exist" % options.group)
-            sys.exit(1)
-        except OSError:
-            log.error("You do not have permission to switch to group '%s'" % options.group)
-            sys.exit(1)
-
-        # Attempt to switch user we run as
-        try:
-            os.setuid(pwd.getpwnam(options.user).pw_uid)
-        except KeyError:
-            log.error("User '%s' does not exist" % options.user)
-            sys.exit(1)
-        except OSError:
-            log.error("You do not have permission to switch to user '%s'" % options.user)
-            sys.exit(1)
-
         io_loop.start()
     except KeyboardInterrupt, SystemExit:
         io_loop.stop()

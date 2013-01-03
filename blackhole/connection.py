@@ -1,6 +1,7 @@
 import errno
 import socket
 import ssl
+import sys
 
 from tornado import iostream
 from tornado.options import options
@@ -9,9 +10,23 @@ from blackhole.state import MailState
 from blackhole.data import response
 from blackhole.opts import ports
 from blackhole.ssl_utils import sslkwargs
+from blackhole.log import log
 
 
 def sockets():
+    """
+    Spawn a looper which loops over socket data and creates
+    the sockets.
+
+    It should only ever loop over a maximum of two - standard (std)
+    and SSL (ssl).
+
+    This way we're able to detect incoming connection vectors and
+    handle them accordingly.
+
+    A dictionary of sockets is then returned to later be added to
+    the IOLoop.
+    """
     socks = {}
     for s in ports():
         try:

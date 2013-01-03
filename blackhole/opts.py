@@ -2,7 +2,7 @@ import sys
 
 from tornado.options import define, options
 
-from blackhole import __pname__
+from blackhole import __pname__, __fullname__
 
 
 define('host', default="0.0.0.0", metavar="IP", type=str,
@@ -31,7 +31,7 @@ define("mode", default="accept",
        metavar="MODE", help="Mode to run blackhole in (accept, bounce, random,\n%-37sunavailable, offline) [default: accept]" % "",
        group="Mode")
 
-define('ssl', default=True, type=bool,
+define('ssl', default=True, metavar="BOOL", type=bool,
        help="Enable/disable SSL [default: True]",
        group="Blackhole SSL")
 define('ssl_port', default=465, metavar="PORT", type=int,
@@ -47,7 +47,19 @@ define('ssl_ca_certs_dir', default="/etc/ssl/certs/", metavar="PATH", type=str,
        help="SSL CA Certificates directory [default: /etc/ssl/certs/]",
        group="Blackhole SSL")
 
+# Eugh, had to replicate to shut up Tornado..
+define('version', default=True,
+       help="Return program version")
+define('v', default=True,
+       help="Return program version")
+
 def ports():
+    """
+    Create and return a list of sockets we need to create.
+
+    A maximum of two will be returned, default is standard
+    (std) and SSL (ssl) it is enabled.
+    """
     socks_list = ['std']
     if options.ssl:
         socks_list.append('ssl')
@@ -55,7 +67,10 @@ def ports():
 
 def print_help(file=sys.stdout):
     """Prints all the command line options to stdout."""
+    print >> file, __fullname__
     print  >> file, "Usage: %s [OPTIONS] (start|stop|status)" % (__pname__)
+    print >> file
+    print >> file, "  -v, --%-26s %s" % ("version", "Print out program version")
     print >> file
     by_group = {}
     opts = {}
