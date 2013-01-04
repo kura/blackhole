@@ -60,7 +60,7 @@ as below:
 
 SSL options
 
-  --ssl													Enabled or disable SSL, requires SSL compiled in to Python and OpenSSL
+  --ssl=BOOL										Enabled or disable SSL, requires SSL compiled in to Python and OpenSSL. True or False [default: True]
   --ssl_port=PORT								Port to listen for SSL enabled connections [default: 465]
   --ssl_key=PATH								X509 SSL keyfile
   --ssl_cert=PATH								X509 SSL certificate file
