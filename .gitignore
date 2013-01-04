@@ -2,3 +2,10 @@
 *.pyc
 *.wpr
 docs/build
+*.egg-info
+build/*
+*.crt
+*.key
+*.pem
+dist/*
+*.html
