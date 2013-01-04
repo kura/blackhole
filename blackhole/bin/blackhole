@@ -51,7 +51,7 @@ from blackhole.log import log
 from blackhole.connection import connection_ready, sockets
 from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException,\
     sslkwargs
-from blackhole.utils import chgrp, chown
+from blackhole.utils import setgid, setuid
 
 
 setproctitle.setproctitle(__pname__)
@@ -61,7 +61,7 @@ if options.conf and os.path.exists(options.conf):
     tornado.options.parse_config_file(options.conf)
 
 if options.ssl and not ssl:
-    log.error("Unable to use SSL as ssl library is not compiled in")
+    log.error("Unable to use SSL as SSL library is not compiled in")
     sys.exit(1)
 
 if __name__ == "__main__":
@@ -93,8 +93,8 @@ if __name__ == "__main__":
     d = Deiman(options.pid)
 
     # Change group and owner and start the ioloop
-    chgrp()
-    chown()
+    setgid()
+    setuid()
 
     # Do the daemon actions
     if action == "start":
