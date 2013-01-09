@@ -2,14 +2,8 @@
 
 # std
 import os
-import pwd
-import grp
 import functools
-import socket
-import random
-import re
 import sys
-import socket
 
 # ssl check
 try:
@@ -30,22 +24,24 @@ except ImportError:
     print "setproctitle is not installed but is required. Please run 'pip install setproctitle'"
     sys.exit(1)
 
+try:
+    from deiman.deiman import Deiman
+except ImportError:
+    print "deiman is not installed but is required. Please run 'pip install deiman'"
+    sys.exit(1)
+
 # Just in case some tit tries to run the file in /bin
 try:
-    from blackhole import __pname__
+    from blackhole import __pname__, __fullname__
 except ImportError:
     print "blackhole is not installed, please install it using the instructions in the README file"
     sys.exit(1)
 
 # pip stuff
-import setproctitle
-import tornado
 from tornado import ioloop
 from tornado.options import options
-from deiman.deiman import Deiman
 
 # blackhole
-from blackhole import __pname__, __fullname__
 from blackhole.opts import *
 from blackhole.log import log
 from blackhole.connection import connection_ready, sockets
