@@ -88,10 +88,6 @@ if __name__ == "__main__":
     io_loop = ioloop.IOLoop.instance()
     d = Deiman(options.pid)
 
-    # Change group and owner and start the ioloop
-    setgid()
-    setuid()
-
     # Do the daemon actions
     if action == "start":
         d.start()
@@ -107,6 +103,10 @@ if __name__ == "__main__":
     for _, sock in sockets().iteritems():
         callback = functools.partial(connection_ready, sock)
         io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
+
+    # Change group and owner and start the ioloop
+    setgid()
+    setuid()
 
     try:
         io_loop.start()
