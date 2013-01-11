@@ -86,6 +86,10 @@ def handle_command(line, stream, mail_state):
                                                   'mail from',
                                                   'rcpt to', 'rset']):
         resp = response(250)
+    elif line.lower().startswith("starttls"):
+        resp = response(220)
+    elif line.lower().startswith("vrfy"):
+        resp = response(252)
     elif line.lower().startswith("quit"):
         resp = response(221)
         stream.write(resp)
