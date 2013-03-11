@@ -1,8 +1,8 @@
 __author__ = "Kura"
 __copyright__ = "None"
 __credits__ = ["Kura", ]
-__license__ = "BSD 3-Clause"
-__version__ = "1.3.9"
+__license__ = "MIT"
+__version__ = "1.4.0"
 __maintainer__ = "Kura"
 __email__ = "kura@kura.io"
 __status__ = "Stable"
