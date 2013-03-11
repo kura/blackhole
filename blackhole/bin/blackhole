@@ -105,6 +105,8 @@ if __name__ == "__main__":
         io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
 
     # Change group and owner and start the ioloop
+    # has to be called after the sockets have been
+    # opened.
     setgid()
     setuid()
 
