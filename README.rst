@@ -82,7 +82,7 @@ The configuration file has the following format::
   ssl_key=/etc/ssl/private/blackhole.io.key
   ssl_cert=/etc/ssl/certs/blackhole.io.crt
 
-You can find an example configuration file `example.conf-dist` in the root folder of this project.
+You can find an example configuration file `blackhole.conf-dist` in the root folder of this project.
 
 
 Usage

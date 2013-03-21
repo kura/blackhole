@@ -1,4 +1,6 @@
 import os
+import glob
+
 from setuptools import setup
 from setuptools import find_packages
 
@@ -17,6 +19,7 @@ setup(name='blackhole',
       license=open("LICENSE").read(),
       platforms=['linux'],
       packages=find_packages(exclude=["*.tests"]),
+      data_files=[('/etc/blackhole.conf', glob.glob('blackhole.conf-dist'))],
       install_requires=[
           'tornado==2.3',
           'setproctitle==1.1.6',

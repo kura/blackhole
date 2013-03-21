@@ -18,11 +18,11 @@ log="/var/log/blackhole.log"
 
 # User to run blackhole as, drops privs during run
 # default: blackhole
-user="blackhole"
+user="root"
 
 # Group to run blackhole as, drops privs during run
 # default: blackhole
-group="blackhole"
+group="root"
 
 # Mode to run blackhole in (accept, bounce, random, unavailable, offline)
 # [default: accept]
@@ -31,7 +31,7 @@ group="blackhole"
 # random - randomly accept or bounce all email with a random code
 # unavailable - server always respondes with code 421 - service is unavailable
 # offline - server always responds with code 521 - server does not accept mail
-mode="unavailable"
+mode="accept"
 
 # You can use a self-signed certificate here if you wish, or you can
 # pay for one.
@@ -51,6 +51,7 @@ mode="unavailable"
 # 2. Intermediate certificates
 # 3. root certificate (if required)
 
-ssl_key=/etc/ssl/private/blackhole.key
+ssl=False
+#ssl_key=/etc/ssl/private/blackhole.key
 
-ssl_cert=/etc/ssl/certs/blackhole.crt
+#ssl_cert=/etc/ssl/certs/blackhole.crt
