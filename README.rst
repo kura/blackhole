@@ -15,6 +15,7 @@ Requirements
 
 * tornado 2.3
 * setproctitle 1.1.6
+* deiman 0.1.3
 
 
 Installation
