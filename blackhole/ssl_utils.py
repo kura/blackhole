@@ -13,7 +13,6 @@ sslkwargs = {
     'keyfile': options.ssl_key,
     'certfile': options.ssl_cert,
     'ca_certs': options.ssl_ca_certs_dir,
-    'ciphers': None,
 }
 
 
