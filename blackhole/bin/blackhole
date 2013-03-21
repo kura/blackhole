@@ -25,7 +25,7 @@ except ImportError:
     sys.exit(1)
 
 try:
-    from deiman.deiman import Deiman
+    from deiman import Deiman
 except ImportError:
     print "deiman is not installed but is required. Please run 'pip install deiman'"
     sys.exit(1)
