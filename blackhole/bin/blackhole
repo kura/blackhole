@@ -86,17 +86,6 @@ if __name__ == "__main__":
         sslkwargs['certfile'] = options.ssl_cert
 
     io_loop = ioloop.IOLoop.instance()
-    d = Deiman(options.pid)
-
-    # Do the daemon actions
-    if action == "start":
-        d.start()
-    elif action == "stop":
-        d.stop()
-        sys.exit(0)
-    elif action == "status":
-        d.status()
-        sys.exit(0)
 
     # Iterate over the dictionary of socket connections
     # and add them to the IOLoop
@@ -109,6 +98,17 @@ if __name__ == "__main__":
     # opened.
     setgid()
     setuid()
+
+    # Do the daemon actions
+    d = Deiman(options.pid)
+    if action == "start":
+        d.start()
+    elif action == "stop":
+        d.stop()
+        sys.exit(0)
+    elif action == "status":
+        d.status()
+        sys.exit(0)
 
     try:
         io_loop.start()
