@@ -35,7 +35,7 @@ def sockets():
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.setblocking(0)
             sock.bind((options.host, port))
-            sock.listen(5000)
+            sock.listen(5)
             socks[s] = sock
         except socket.error, e:
             if e.errno == 13:
