@@ -50,6 +50,10 @@ from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException,\
 from blackhole.utils import setgid, setuid
 
 
+if sys.version_info < (2, 5):
+    print "blackhole requires Python 2.5 or greater"
+    sys.exit(1)
+
 setproctitle.setproctitle(__pname__)
 
 tornado.options.parse_command_line()
@@ -82,6 +86,7 @@ if __name__ == "__main__":
         except BlackholeSSLException, e:
             log.error(e)
             sys.exit(1)
+        # Override SSL options based on options passed in
         sslkwargs['keyfile'] = options.ssl_key
         sslkwargs['certfile'] = options.ssl_cert
 
@@ -93,9 +98,7 @@ if __name__ == "__main__":
         callback = functools.partial(connection_ready, sock)
         io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
 
-    # Change group and owner and start the ioloop
-    # has to be called after the sockets have been
-    # opened.
+    # Change group and user
     setgid()
     setuid()
 

@@ -1,8 +1,14 @@
+import sys
 import os
 import glob
 
 from setuptools import setup
 from setuptools import find_packages
+
+
+if sys.version_info < (2, 5):
+    print "blackhole requires Python 2.5 or greater"
+    sys.exit(1)
 
 
 version = __import__('blackhole').__version__
@@ -34,11 +40,18 @@ setup(name='blackhole',
           'Operating System :: POSIX :: Linux',
           'Operating System :: Unix',
           'Programming Language :: Python',
+          'Programming Language :: Python :: 2.5',
+          'Programming Language :: Python :: 2.6',
+          'Programming Language :: Python :: 2.7',
           'Topic :: Internet',
           'Topic :: Utilities',
           'Topic :: Communications :: Email',
           'Topic :: Communications :: Email :: Mail Transport Agents',
           'Topic :: Communications :: Email :: Post-Office',
+          'Topic :: Software Development :: Testing',
+          'Topic :: Software Development :: Testing :: Traffic Generation',
+          'Intended Audience :: Developers',
+          'License :: OSI Approved :: MIT License',
       ],
       zip_safe=True,
       )
