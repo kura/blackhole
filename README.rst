@@ -14,9 +14,18 @@ Requirements
 ------------
 
 * tornado 2.3
-* setproctitle 1.1.6
+* setproctitle 1.1.7
 * deiman 0.1.3
 
+PyPy
+----
+
+Blackhole works well under PyPy 1.9 and 2.0, I have seen performance improvements
+of up to 30% in certain situations. 
+
+However, blackhole does have issues with both PyPy 1.9 and 2.0 when SSL is enabled (default).
+It appears the issue comes from an OpenSSL version conflict with CPython and may be fixable
+if you build PyPy from source. 
 
 Installation
 ------------
