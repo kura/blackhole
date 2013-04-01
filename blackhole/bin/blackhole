@@ -21,7 +21,7 @@ except ImportError:
 try:
     import setproctitle
 except ImportError:
-    print "setproctitle is not installed but is required. Please run 'pip install setproctitle'"
+    print "setproctitle is not installed but is required. Please run 'pip install setproctitle==1.1.7'"
     sys.exit(1)
 
 try:
