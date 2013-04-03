@@ -28,7 +28,7 @@ setup(name='blackhole',
       data_files=[('/etc/blackhole.conf', glob.glob('blackhole.conf-dist'))],
       install_requires=[
           'tornado==2.3',
-          'setproctitle==1.1.6',
+          'setproctitle==1.1.7',
           'deiman==0.1.3',
       ],
       scripts=[
