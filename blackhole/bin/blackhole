@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env pypy
 
 # std
 import os
@@ -21,7 +21,7 @@ except ImportError:
 try:
     import setproctitle
 except ImportError:
-    print "setproctitle is not installed but is required. Please run 'pip install setproctitle'"
+    print "setproctitle is not installed but is required. Please run 'pip install setproctitle==1.1.7'"
     sys.exit(1)
 
 try:
@@ -91,6 +91,13 @@ if __name__ == "__main__":
         sslkwargs['certfile'] = options.ssl_cert
 
     io_loop = ioloop.IOLoop.instance()
+    d = Deiman(options.pid)
+    if action == "stop":
+        d.stop()
+        sys.exit(0)
+    elif action == "status":
+        d.status()
+        sys.exit(0)
 
     # Iterate over the dictionary of socket connections
     # and add them to the IOLoop
@@ -103,14 +110,9 @@ if __name__ == "__main__":
     setuid()
 
     # Do the daemon actions
-    d = Deiman(options.pid)
     if action == "start":
         d.start()
-    elif action == "stop":
-        d.stop()
-        sys.exit(0)
-    elif action == "status":
-        d.status()
+    else:
         sys.exit(0)
 
     try:
