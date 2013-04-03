@@ -1,3 +1,10 @@
+"""blackhole.opts - command line options for the blackhole
+server.
+
+Also creates a list of available ports for the server to be
+run on, based on configuration and responds with the help
+menu when requested or invalid options are given."""
+
 import sys
 
 from tornado.options import define, options
