@@ -1,3 +1,6 @@
+"""blackhole.log - Logging configuration for the blackhole
+server."""
+
 import logging
 
 from tornado.options import options

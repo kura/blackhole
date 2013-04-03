@@ -1,3 +1,10 @@
+"""blackhole.ssl_utils - Utility functions for SSL
+wrapped sockets.
+
+This module provides a simple default SSL configuration
+for the blackhole server and also exposes a custom
+'BlackholeSSLException' for SSL-based exceptions."""
+
 import os
 import ssl
 

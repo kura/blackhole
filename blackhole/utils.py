@@ -1,3 +1,7 @@
+"""blackhole.utils - A utility module used for
+methods and features that do not belong in
+their own module."""
+
 import os
 import sys
 import grp

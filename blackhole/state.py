@@ -1,4 +1,14 @@
+"""blackhole.state - State object for the current connection."""
+
+
 class MailState():
+    """A state object used for remembering
+    the current connections place in our runtime.
+
+    This is mostly used for figuring out if we're
+    receiving SMTP commands or have trigger the
+    DATA command.
+    """
     _reading_data = False
 
     @property
@@ -11,7 +21,9 @@ class MailState():
 
     @reading.setter
     def reading(self, val):
-        """Property for setting self.reading"""
+        """Property for setting self.reading
+
+        'val' is a bool."""
         self._reading_data = val
 
     @reading.deleter

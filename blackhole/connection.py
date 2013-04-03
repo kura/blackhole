@@ -1,3 +1,9 @@
+"""blackhole.connection - Provide mechanisms for processing socket data.
+
+This module provides methods for Blackhole to use internally
+for binding and listening on sockets as well as process all
+incoming socket data and responding appropriately."""
+
 import errno
 import socket
 import ssl
@@ -52,6 +58,9 @@ def connection_stream(connection):
     Detect which socket the connection is being made on,
     create and iostream for the connection, wrapping it
     in SSL if connected over the SSL socket.
+
+    The parameter 'connection' is an instance of 'socket'
+    from stdlib.
     """
     if connection.getsockname()[1] == options.ssl_port and options.ssl:
         try:
@@ -74,7 +83,17 @@ def connection_stream(connection):
 
 
 def handle_command(line, stream, mail_state):
-    """Handle each SMTP command as it's sent to the server"""
+    """Handle each SMTP command as it's sent to the server
+
+    The paramater 'line' is the currently stream of data
+    ending in '\\n'.
+    'stream' is an instance of 'tornado.iostream.IOStream'
+    for non-SSL encrypted connections or
+    'tornado.iostream.SSLIOStream' for SSL encrypted
+    connections.
+    'mail_state' is an instance of
+    'blackhole.state.MailState'.
+    """
     if mail_state.reading:
         resp = None
         # Not exactly nice but it's only way I could safely figure
@@ -94,6 +113,7 @@ def handle_command(line, stream, mail_state):
         resp = response(221)
         stream.write(resp)
         stream.close()
+        log.info("Closed connection [QUIT]")
         return
     elif line.lower().startswith("data"):
         resp = response(354)
@@ -108,6 +128,10 @@ def connection_ready(sock, fd, events):
     """
     Accepts the socket connections and passes them off
     to be handled.
+
+    'sock' is an instance of 'socket'.
+    'fd' is an open file descriptor for the current connection.
+    'events' is an integer of the number of events on the socket.
     """
     while True:
         try:
@@ -116,6 +140,8 @@ def connection_ready(sock, fd, events):
             if e.errno not in (errno.EWOULDBLOCK, errno.EAGAIN):
                 raise
             return
+
+        log.info("Connection from '%s'" % address[0])
 
         connection.setblocking(0)
         stream = connection_stream(connection)

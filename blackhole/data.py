@@ -1,3 +1,13 @@
+"""blackhole.data - Provides SMTP response codes and methods
+for returning the correct response code.
+
+This module contains all usable SMTP response codes for
+returning through the socket.
+It also provides mechanisms for picking response codes
+that mean a mail message has been accepted, rejected or
+that the server is offline.
+"""
+
 import random
 
 from tornado.options import options
@@ -36,7 +46,7 @@ RESPONSES = {
     '571': "Blocked",
 }
 
-ACCEPT_REPONSES = ('250', '251', '252', '253')
+ACCEPT_RESPONSES = ('250', '251', '252', '253')
 
 # Bounce responses
 BOUNCE_RESPONSES = ('421', '431', '450', '451', '452',
@@ -51,11 +61,13 @@ OFFLINE_RESPONSES = ('521',)
 UNAVAILABLE_RESPONSES = ('421',)
 
 # Random responses
-RANDOM_RESPONSES = ACCEPT_REPONSES + BOUNCE_RESPONSES
+RANDOM_RESPONSES = ACCEPT_RESPONSES + BOUNCE_RESPONSES
 
 
 def response(response=None):
-    """Return our SMTP response message"""
+    """Return an SMTP response code and message.
+    'response' an string refering to the code
+    you wish to return."""
     if response is not None:
         return response_message(response)
     else:
@@ -76,13 +88,21 @@ def get_response():
     elif options.mode == "unavailable":
         return random_choice(UNAVAILABLE_RESPONSES)
     else:
-        return random_choice(ACCEPT_REPONSES)
+        return random_choice(ACCEPT_RESPONSES)
 
 
 def random_choice(response_list):
     """
     Pick a random choice for the configured choices
     dictionary.
+
+    'response_list' is a list of available response
+    types from 'blackhole.data', this can be:
+    - ACCEPT_RESPONSES
+    - BOUCNE_RESPONSES
+    - OFFLINE_RESPONSES
+    - UNAVAILABLE_RESPONSES
+    - RANDOM_RESPONSES
     """
     choices = []
     choices.extend(k for k, v in enumerate(response_list))
@@ -91,7 +111,10 @@ def random_choice(response_list):
 
 
 def response_message(response):
-    """Format our response in ESMTP format"""
+    """Format our response in ESMTP format.
+
+    'response' is a string containing the
+    reponse code you wish to return."""
     response = str(response)
     message = RESPONSES[response]
     smtp_code = response
