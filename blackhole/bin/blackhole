@@ -76,6 +76,15 @@ if __name__ == "__main__":
         print_help()
         sys.exit(2)
 
+    io_loop = ioloop.IOLoop.instance()
+    d = Deiman(options.pid)
+    if action == "stop":
+        d.stop()
+        sys.exit(0)
+    elif action == "status":
+        d.status()
+        sys.exit(0)
+
     if len(sys.argv) == 1:
         print_help()
         sys.exit(2)
@@ -89,15 +98,6 @@ if __name__ == "__main__":
         # Override SSL options based on options passed in
         sslkwargs['keyfile'] = options.ssl_key
         sslkwargs['certfile'] = options.ssl_cert
-
-    io_loop = ioloop.IOLoop.instance()
-    d = Deiman(options.pid)
-    if action == "stop":
-        d.stop()
-        sys.exit(0)
-    elif action == "status":
-        d.status()
-        sys.exit(0)
 
     # Iterate over the dictionary of socket connections
     # and add them to the IOLoop
