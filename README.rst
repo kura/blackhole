@@ -13,7 +13,7 @@ integration testing and things like that.
 Requirements
 ------------
 
-* tornado 2.3
+* tornado 3.0
 * setproctitle 1.1.7
 * deiman 0.1.3
 
@@ -60,6 +60,7 @@ Configuration
 Configuration options can be passed via the command line
 as below:
 
+  --workers=NUM					Number of child workers to spawn [default: # of CPUs/cores + 1 master]
   --host=IP					IP address to bind go [default: 0.0.0.0]
   --port=PORT				Port to listen for connections on [default: 25]
   --pid=FILE				File to write process information to [default: /tmp/blackhole.pid]

@@ -38,7 +38,7 @@ except ImportError:
     sys.exit(1)
 
 # pip stuff
-from tornado import ioloop
+from tornado import ioloop, process
 from tornado.options import options
 
 # blackhole
@@ -50,8 +50,8 @@ from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException,\
 from blackhole.utils import setgid, setuid
 
 
-if sys.version_info < (2, 5):
-    print "blackhole requires Python 2.5 or greater"
+if sys.version_info < (2, 6):
+    print "blackhole requires Python 2.6 or greater"
     sys.exit(1)
 
 setproctitle.setproctitle(__pname__)
@@ -99,9 +99,15 @@ if __name__ == "__main__":
         sslkwargs['keyfile'] = options.ssl_key
         sslkwargs['certfile'] = options.ssl_cert
 
+    # Grab the sockets early for multiprocessing
+    sockets = sockets()
+    # Fork and create the ioloop
+    tornado.process.fork_processes(options.workers)
+    io_loop = ioloop.IOLoop.instance()
+
     # Iterate over the dictionary of socket connections
     # and add them to the IOLoop
-    for _, sock in sockets().iteritems():
+    for _, sock in sockets.iteritems():
         callback = functools.partial(connection_ready, sock)
         io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
 

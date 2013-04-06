@@ -114,7 +114,7 @@ def handle_command(line, stream, mail_state):
         stream.write(resp)
         stream.close()
         log.info("Closed connection [QUIT]")
-        return
+        return True
     elif line.lower().startswith("data"):
         resp = response(354)
         mail_state.reading = True
@@ -157,7 +157,9 @@ def connection_ready(sock, fd, events):
             it's a valid SMTP keyword and handle it
             accordingly.
             """
-            handle_command(line, stream, mail_state)
+            h = handle_command(line, stream, mail_state)
+            if h is True:
+                return
             loop()
 
         def loop():

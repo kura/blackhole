@@ -12,6 +12,9 @@ from tornado.options import define, options
 from blackhole import __pname__, __fullname__
 
 
+define('workers', default=None, metavar="NUM", type=int,
+       help="Number of worker processes to spawn. [default: # of CPUs/Cores + 1 master#",
+       group="Blackhole")
 define('host', default="0.0.0.0", metavar="IP", type=str,
        help="IP address to bind go [default: 0.0.0.0]",
        group="Blackhole")
