@@ -10,9 +10,10 @@ doing no disk bound I/O.
 
 Blackhole is designed mostly for testing purposes and can be used to test
 numerous things suchs as;
-* Email send rates, if you need to test how much mail you can send per minute, hour etc
-* Email integration testing and finally
-* if you work in the real world, chances are you'll need work on a copy of production data from time to time. You can try to anonymous all the data but there is always a chance you'll miss something. Configuring blackhole as your applications default SMTP gateway will remove any chance of a real person receiving an email they shouldn't have received.
+
+- Email send rates, if you need to test how much mail you can send per minute, hour etc
+- Email integration testing and finally
+- if you work in the real world, chances are you'll need work on a copy of production data from time to time. You can try to anonymous all the data but there is always a chance you'll miss something. Configuring blackhole as your applications default SMTP gateway will remove any chance of a real person receiving an email they shouldn't have received.
 
 Using the blackhole.io service
 ==============================
