@@ -6,6 +6,7 @@ import os
 import sys
 import grp
 import pwd
+import signal
 
 from tornado.options import options
 
@@ -50,3 +51,23 @@ def setuid():
         log.error("You do not have permission to switch to user '%s'"
                   % options.user)
         sys.exit(1)
+
+
+def terminate(signum, frame):
+    """
+    Terminate the parent process and send signals
+    to shut down it's children
+
+    Iterates over the child pids in the frame
+    and sends the SIGTERM signal to shut them
+    down.
+    """
+    try:
+        for pid in frame.f_locals['children'].iterkeys():
+            os.kill(pid, signal.SIGTERM)
+    except KeyError:
+        # not the parent
+        pass
+    if os.path.exists(options.pid):
+        os.remove(options.pid)
+    sys.exit(0)

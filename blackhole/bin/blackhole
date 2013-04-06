@@ -4,6 +4,7 @@
 import os
 import functools
 import sys
+import signal
 
 # ssl check
 try:
@@ -47,7 +48,7 @@ from blackhole.log import log
 from blackhole.connection import connection_ready, sockets
 from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException,\
     sslkwargs
-from blackhole.utils import setgid, setuid
+from blackhole.utils import setgid, setuid, terminate
 
 
 if sys.version_info < (2, 6):
@@ -64,7 +65,9 @@ if options.ssl and not ssl:
     log.error("Unable to use SSL as SSL library is not compiled in")
     sys.exit(1)
 
+
 if __name__ == "__main__":
+    signal.signal(signal.SIGTERM, terminate)
     action = None
     for arg in sys.argv[1:]:
         if arg in ("--version", "-v"):
