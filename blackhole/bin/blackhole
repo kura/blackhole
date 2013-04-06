@@ -101,6 +101,16 @@ if __name__ == "__main__":
     # Grab the sockets early for multiprocessing
     sockets = sockets()
     # Fork and create the ioloop
+    if action == "start":
+        d.start()
+    else:
+        sys.exit(0)
+
+    # Change group and user
+    setgid()
+    setuid()
+
+     # Fork and create the ioloop
     tornado.process.fork_processes(options.workers)
     io_loop = ioloop.IOLoop.instance()
 
@@ -109,16 +119,6 @@ if __name__ == "__main__":
     for _, sock in sockets.iteritems():
         callback = functools.partial(connection_ready, sock)
         io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
-
-    # Change group and user
-    setgid()
-    setuid()
-
-    # Do the daemon actions
-    if action == "start":
-        d.start()
-    else:
-        sys.exit(0)
 
     try:
         io_loop.start()
