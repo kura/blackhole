@@ -1,6 +1,6 @@
 =====================
 :mod:`blackhole.data`
-====================
+=====================
 
 .. module:: blackhole.data
     :platform: Unix
