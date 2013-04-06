@@ -1,4 +1,4 @@
-#!/usr/bin/env pypy
+#!/usr/bin/env python
 
 # std
 import os
@@ -76,7 +76,6 @@ if __name__ == "__main__":
         print_help()
         sys.exit(2)
 
-    io_loop = ioloop.IOLoop.instance()
     d = Deiman(options.pid)
     if action == "stop":
         d.stop()
