@@ -2,6 +2,16 @@
 Blackhole
 =========
 
+::
+
+     .o8       oooo                      oooo        oooo                  oooo                 o8o            
+    "888       `888                      `888        `888                  `888                 `"'            
+     888oooo.   888   .oooo.    .ooooo.   888  oooo   888 .oo.    .ooooo.   888   .ooooo.      oooo   .ooooo.  
+     d88' `88b  888  `P  )88b  d88' `"Y8  888 .8P'    888P"Y88b  d88' `88b  888  d88' `88b     `888  d88' `88b 
+     888   888  888   .oP"888  888        888888.     888   888  888   888  888  888ooo888      888  888   888 
+     888   888  888  d8(  888  888   .o8  888 `88b.   888   888  888   888  888  888    .o .o.  888  888   888 
+     `Y8bod8P' o888o `Y888""8o `Y8bod8P' o888o o888o o888o o888o `Y8bod8P' o888o `Y8bod8P' Y8P o888o `Y8bod8P' 
+
 Blackhole is a `Tornado`_ powered MTA (mail transport agent) that is designed
 for handling large volumes of email without handling any of the messages and
 doing no disk bound I/O.
@@ -26,6 +36,32 @@ All data sent to blackhole.io will be forgotten instantly, we store nothing you 
 or, send an email to blackhole.io using an @blackhole.io address, any address is fine e.g.::
 
     user1@blackhole.io
+
+Testing via telnet
+------------------
+
+::
+
+    $ telnet blackhole 25
+    Trying 198.199.126.159...
+    Connected to blackhole.io.
+    Escape character is '^]'.
+    220 2.2.0 OK, ready
+    HELO fake.mail.server
+    250 2.5.0 OK, done
+    MAIL FROM:<user@address.tld>
+    250 2.5.0 OK, done
+    RCPT TO:<someone@another.tld>
+    250 2.5.0 OK, done
+    DATA
+    354 3.5.4 Start mail input; end with <CRLF>.<CRLF>
+    To: Someone <someone@another.tld>             
+    From: User <user@address.tld>
+    Subject: Bye
+    
+    Bye bye email
+    .
+    251 2.5.1 OK, user not local, will forward
 
 Getting Started
 ===============
