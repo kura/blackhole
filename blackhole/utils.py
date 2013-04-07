@@ -81,7 +81,6 @@ def set_process_title():
     a master title, otherwise set
     worker.
     """
-    log.info("test")
     if os.path.exists(options.pid):
         pid = int(file(options.pid, 'r').read().strip())
         log.info("%s and %s" % (pid, os.getpid()))
