@@ -125,12 +125,11 @@ Blackhole + PyPy
 
 .. _PyPy: http://pypy.org/
 
-Blackhole works well under PyPy 1.9 and 2.0, you can see performance improvements
+Blackhole works well under PyPy 1.9, 2.0 beta1 and 2.0 beta2, you can see performance improvements
 of up to 30% in certain situations. 
 
-However, blackhole does have issues with both PyPy 1.9 and 2.0 when SSL is enabled (default).
-It appears the issue comes from an OpenSSL version conflict with CPython and may be fixable
-if you build PyPy from source. 
+However, blackhole does have issues with both PyPy 1.9 and 2.0 beta1 and 2.0 beta2 when using the pre-compiled binaries, this is due to a conflict in the version of OpenSSL compiled in to PyPy and the version compiled in to your CPython installation.
+If you wish to use blackhole with SSL support on PyPy I suggest you either compile PyPy yourself or try to make sure your PyPy and CPython have the same versions.
 
 Reference
 =========
