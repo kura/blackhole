@@ -5,7 +5,7 @@ Installation
 Packaged
 ========
 
-From PyPI
+From `PyPI`_
 
   pip install blackhole
 
@@ -21,6 +21,10 @@ From GitHub
 From source
 ===========
 
-Download the latest tarball from PyPI or GitHub. Unpack and run:
+Download the latest tarball from `PyPI`_ or `GitHub`_. Unpack and run:
 
   python setup.py install
+
+
+.. _PyPI: https://pypi.python.org/pypi/blackhole
+.. _GitHub: https://github.com/kura/blackhole/tags
