@@ -12,7 +12,7 @@ methods and features that do not belong in
 their own module.
 
 blackhole.utils
-===================
+===============
 
 .. function:: setgid()
 
@@ -40,3 +40,11 @@ blackhole.utils
     Iterates over the child pids in the frame
     and sends the SIGTERM signal to shut them
     down.
+
+.. function:: set_process_title()
+
+    Set the title of the process.
+
+    If the process is the master, set
+    a master title, otherwise set
+    worker.
