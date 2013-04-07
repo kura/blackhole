@@ -118,6 +118,20 @@ Running your own server
     modes
     response-codes
 
+Blackhole + PyPy
+================
+
+`PyPy`_ is a Python interpreter and just-in-time compiler. PyPy focuses on speed, efficiency and compatibility with the original CPython interpreter.
+
+.. _PyPy: http://pypy.org/
+
+Blackhole works well under PyPy 1.9 and 2.0, you can see performance improvements
+of up to 30% in certain situations. 
+
+However, blackhole does have issues with both PyPy 1.9 and 2.0 when SSL is enabled (default).
+It appears the issue comes from an OpenSSL version conflict with CPython and may be fixable
+if you build PyPy from source. 
+
 Reference
 =========
 
