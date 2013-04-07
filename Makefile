@@ -3,3 +3,5 @@ install:
 
 uninstall:
 	pip uninstall blackhole
+
+travis: install
