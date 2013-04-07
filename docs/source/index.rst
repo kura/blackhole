@@ -62,6 +62,39 @@ Testing via telnet
     Bye bye email
     .
     251 2.5.1 OK, user not local, will forward
+    QUIT
+    221 2.2.1 Thank you for speaking to me
+    Connection closed by foreign host.
+
+Testing SSL
+-----------
+
+::
+
+    $ openssl s_client -connect blackhole.io:465
+    CONNECTED(00000003)
+    depth=0 C = GB, ST = London, L = London, O = blackhole.io, OU = blackhole.io, CN = blackhole.io, emailAddress = kura@blackhole.io
+    ... snip ...
+    ---
+    220 2.2.0 OK, ready
+    HELO fake.mail.server
+    250 2.5.0 OK, done
+    MAIL FROM:<user@address.tld>
+    250 2.5.0 OK, done
+    RCPT TO:<someone@another.tld>
+    250 2.5.0 OK, done
+    DATA
+    354 3.5.4 Start mail input; end with <CRLF>.<CRLF>
+    To: Someone <someone@another.tld>             
+    From: User <user@address.tld>
+    Subject: Bye
+    
+    Bye bye email
+    .
+    251 2.5.1 OK, user not local, will forward
+    QUIT
+    221 2.2.1 Thank you for speaking to me
+    DONE
 
 Getting the source code
 =======================
@@ -71,8 +104,8 @@ The source code is available under the `MIT license`_ from `GitHub`_.
 .. _MIT License: https://github.com/kura/blackhole/blob/master/LICENSE
 .. _GitHub: https://github.com/kura/blackhole/
 
-Getting Started
-===============
+Running your own server
+=======================
 
 .. toctree::
     :maxdepth: 2
