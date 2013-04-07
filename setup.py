@@ -6,7 +6,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 
-if sys.version_info < (2, 5):
+if sys.version_info < (2, 6):
     print "blackhole requires Python 2.5 or greater"
     sys.exit(1)
 
