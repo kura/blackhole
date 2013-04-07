@@ -73,6 +73,7 @@ def terminate(signum, frame):
         os.remove(options.pid)
     sys.exit(0)
 
+
 def set_process_title():
     """
     Set the title of the process.

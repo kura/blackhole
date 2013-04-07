@@ -1,7 +1,7 @@
 """blackhole.state - State object for the current connection."""
 
 
-class MailState():
+class MailState(object):
     """A state object used for remembering
     the current connections place in our runtime.
 
