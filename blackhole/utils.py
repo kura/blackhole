@@ -9,6 +9,7 @@ import pwd
 import signal
 
 from tornado.options import options
+import setproctitle
 
 from blackhole.log import log
 
@@ -71,3 +72,20 @@ def terminate(signum, frame):
     if os.path.exists(options.pid):
         os.remove(options.pid)
     sys.exit(0)
+
+def set_process_title():
+    """
+    Set the title of the process.
+
+    If the process is the master, set
+    a master title, otherwise set
+    worker.
+    """
+    log.info("test")
+    if os.path.exists(options.pid):
+        pid = int(file(options.pid, 'r').read().strip())
+        log.info("%s and %s" % (pid, os.getpid()))
+        if pid == os.getpid():
+            setproctitle.setproctitle("blackhole: master")
+        else:
+            setproctitle.setproctitle("blackhole: worker")

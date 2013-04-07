@@ -48,14 +48,12 @@ from blackhole.log import log
 from blackhole.connection import connection_ready, sockets
 from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException,\
     sslkwargs
-from blackhole.utils import setgid, setuid, terminate
+from blackhole.utils import setgid, setuid, terminate, set_process_title
 
 
 if sys.version_info < (2, 6):
     print "blackhole requires Python 2.6 or greater"
     sys.exit(1)
-
-setproctitle.setproctitle(__pname__)
 
 tornado.options.parse_command_line()
 if options.conf and os.path.exists(options.conf):
@@ -113,9 +111,15 @@ if __name__ == "__main__":
     setgid()
     setuid()
 
+    # Set the custom process title of the master
+    set_process_title()
+
      # Fork and create the ioloop
     tornado.process.fork_processes(options.workers)
     io_loop = ioloop.IOLoop.instance()
+
+    # Set the custom process title of the workers
+    set_process_title()
 
     # Iterate over the dictionary of socket connections
     # and add them to the IOLoop
