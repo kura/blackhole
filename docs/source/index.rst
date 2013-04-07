@@ -63,6 +63,14 @@ Testing via telnet
     .
     251 2.5.1 OK, user not local, will forward
 
+Getting the source code
+=======================
+
+The source code is available under the `MIT license`_ from `GitHub`_.
+
+.. _MIT License: https://github.com/kura/blackhole/blob/master/LICENSE
+.. _GitHub: https://github.com/kura/blackhole/
+
 Getting Started
 ===============
 
