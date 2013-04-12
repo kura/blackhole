@@ -82,18 +82,14 @@ def connection_stream(connection):
         return iostream.IOStream(connection)
 
 
-def handle_command(line, stream, mail_state):
+def handle_command(line, mail_state):
     """Handle each SMTP command as it's sent to the server
 
     The paramater 'line' is the currently stream of data
     ending in '\\n'.
-    'stream' is an instance of 'tornado.iostream.IOStream'
-    for non-SSL encrypted connections or
-    'tornado.iostream.SSLIOStream' for SSL encrypted
-    connections.
-    'mail_state' is an instance of
-    'blackhole.state.MailState'.
+    'mail_state' is an instance of 'blackhole.state.MailState'.
     """
+    close = False
     if mail_state.reading:
         resp = None
         # Not exactly nice but it's only way I could safely figure
@@ -111,17 +107,13 @@ def handle_command(line, stream, mail_state):
         resp = response(252)
     elif line.lower().startswith("quit"):
         resp = response(221)
-        stream.write(resp)
-        stream.close()
-        log.info("Closed connection [QUIT]")
-        return True
+        close = True
     elif line.lower().startswith("data"):
         resp = response(354)
         mail_state.reading = True
     else:
         resp = response(500)
-    if resp:
-        stream.write(resp)
+    return resp, close
 
 
 def connection_ready(sock, fd, events):
@@ -141,8 +133,6 @@ def connection_ready(sock, fd, events):
                 raise
             return
 
-        log.info("Connection from '%s'" % address[0])
-
         connection.setblocking(0)
         stream = connection_stream(connection)
         if not stream:
@@ -157,10 +147,14 @@ def connection_ready(sock, fd, events):
             it's a valid SMTP keyword and handle it
             accordingly.
             """
-            h = handle_command(line, stream, mail_state)
-            if h is True:
+            resp, close = handle_command(line, mail_state)
+            if resp:
+                stream.write(resp)
+            if close is True:
+                stream.close()
                 return
-            loop()
+            else:
+                loop()
 
         def loop():
             """
