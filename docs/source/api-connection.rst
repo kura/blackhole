@@ -20,6 +20,6 @@ blackhole.connection
 
 .. autofunction:: connection_stream(connection)
 
-.. autofunction:: handle_command(line, stream, mail_state)
+.. autofunction:: handle_command(line, mail_state)
 
 .. autofunction:: connection_ready(sock, fd, events)
