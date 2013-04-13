@@ -4,4 +4,6 @@ install:
 uninstall:
 	pip uninstall blackhole
 
-travis: install
+travis:
+	install
+	easy_install nose
