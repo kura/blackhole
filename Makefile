@@ -8,7 +8,7 @@ uninstall:
 travis: install install_test
 
 install_test:
-	pip nose
+	pip install nose
 
 coverage:
 	nosetests --with-coverage blackhole
