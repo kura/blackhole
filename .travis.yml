@@ -4,4 +4,3 @@ python:
   - "2.7"
   - "pypy"
 install: make travis
-script: nosetests
