@@ -3,5 +3,8 @@ python:
   - "2.6"
   - "2.7"
   - "pypy"
-install: make travis
-script: nosetests
+install: make install
+script: make travis
+after_success:
+  - make coverage
+  - coveralls

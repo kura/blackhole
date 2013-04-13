@@ -1,15 +1,15 @@
-.PHONY: install uninstall travis coverage install_test
+.PHONY: install uninstall travis install_coverage coverage
 install:
 	python setup.py install
+
+install_coverage:
+	pip install coverage coveralls
 
 uninstall:
 	pip uninstall blackhole
 
-travis: install install_test
-
-install_test:
-	pip install nose
+travis:
+	nosetests --with-coverage blackhole
 
 coverage:
-	nosetests --with-coverage blackhole
 	coverage xml -i 
