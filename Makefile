@@ -1,4 +1,4 @@
-.PHONY: install uninstall travis coverage
+.PHONY: install uninstall travis coverage install_test
 install:
 	python setup.py install
 
@@ -8,7 +8,7 @@ uninstall:
 travis: install install_test
 
 install_test:
-	easy_install nose coveralls
+	pip nose
 
 coverage:
 	nosetests --with-coverage blackhole
