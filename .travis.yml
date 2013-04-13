@@ -3,7 +3,9 @@ python:
   - "2.6"
   - "2.7"
   - "pypy"
-install: make install
+install:
+  - make install
+  - make install_coverage
 script: make travis
 after_success:
   - make coverage
