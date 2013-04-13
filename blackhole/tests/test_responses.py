@@ -20,12 +20,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_helo_connection_close(self):
         m = MailState()
         r = handle_command("HELO", m)
-        self.assertIs(self.ok_done[1], r[1])
+        self.assertEqual(self.ok_done[1], r[1])
 
     def test_handle_command_helo_reading_state(self):
         m = MailState()
         r = handle_command("HELO", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_ehlo_response(self):
         m = MailState()
@@ -35,12 +35,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_ehlo_connection_close(self):
         m = MailState()
         r = handle_command("EHLO", m)
-        self.assertIs(self.ok_done[1], r[1])
+        self.assertEqual(self.ok_done[1], r[1])
 
     def test_handle_command_ehlo_reading_state(self):
         m = MailState()
         r = handle_command("EHLO", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_mail_from_response(self):
         m = MailState()
@@ -50,12 +50,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_mail_from_connection_close(self):
         m = MailState()
         r = handle_command("MAIL FROM", m)
-        self.assertIs(self.ok_done[1], r[1])
+        self.assertEqual(self.ok_done[1], r[1])
 
     def test_handle_command_mail_from_reading_state(self):
         m = MailState()
         r = handle_command("MAIL FROM", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_rcpt_to_response(self):
         m = MailState()
@@ -65,12 +65,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_rcpt_to_connection_close(self):
         m = MailState()
         r = handle_command("RCPT TO", m)
-        self.assertIs(self.ok_done[1], r[1])
+        self.assertEqual(self.ok_done[1], r[1])
 
     def test_handle_command_rcpt_to_reading_state(self):
         m = MailState()
         r = handle_command("RCPT TO", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_rset_response(self):
         m = MailState()
@@ -80,12 +80,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_rset_connection_close(self):
         m = MailState()
         r = handle_command("RSET", m)
-        self.assertIs(self.ok_done[1], r[1])
+        self.assertEqual(self.ok_done[1], r[1])
 
     def test_handle_command_rset_reading_state(self):
         m = MailState()
         r = handle_command("RSET", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_quit_response(self):
         m = MailState()
@@ -95,12 +95,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_quit_connection_close(self):
         m = MailState()
         r = handle_command("QUIT", m)
-        self.assertIs(self.quit[1], r[1])
+        self.assertEqual(self.quit[1], r[1])
 
     def test_handle_command_quit_reading_state(self):
         m = MailState()
         r = handle_command("QUIT", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_data_response(self):
         m = MailState()
@@ -110,12 +110,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_data_connection_close(self):
         m = MailState()
         r = handle_command("DATA", m)
-        self.assertIs(self.data[1], r[1])
+        self.assertEqual(self.data[1], r[1])
 
     def test_handle_command_data_reading_state(self):
         m = MailState()
         r = handle_command("DATA", m)
-        self.assertIs(m.reading, True)
+        self.assertEqual(m.reading, True)
 
     def test_handle_command_unknown_command_response(self):
         m = MailState()
@@ -125,12 +125,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_unknown_command_connection_close(self):
         m = MailState()
         r = handle_command("KURA", m)
-        self.assertIs(self.unknown[1], r[1])
+        self.assertEqual(self.unknown[1], r[1])
 
     def test_handle_command_unknown_command_reading_state(self):
         m = MailState()
         r = handle_command("KURA", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_starttls_response(self):
         m = MailState()
@@ -140,12 +140,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_starttls_connection_close(self):
         m = MailState()
         r = handle_command("STARTTLS", m)
-        self.assertIs(self.ok[1], r[1])
+        self.assertEqual(self.ok[1], r[1])
 
     def test_handle_command_starttls_reading_state(self):
         m = MailState()
         r = handle_command("STARTTLS", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_vrfy_response(self):
         m = MailState()
@@ -155,20 +155,20 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_vrfy_connection_close(self):
         m = MailState()
         r = handle_command("VRFY", m)
-        self.assertIs(self.vrfy[1], r[1])
+        self.assertEqual(self.vrfy[1], r[1])
 
     def test_handle_command_vrfy_reading_state(self):
         m = MailState()
         r = handle_command("VRFY", m)
-        self.assertIs(m.reading, False)
+        self.assertEqual(m.reading, False)
 
     def test_handle_command_data_after_data_command_response(self):
         m = MailState()
         m.reading = True
         r = handle_command("Kura Kura Kura", m)
-        self.assertIs(None, r[0])
+        self.assertEqual(None, r[0])
 
     def test_handle_command_data_after_data_command_connection_close(self):
         m = MailState()
         r = handle_command("VRFY", m)
-        self.assertIs(False, r[1])
+        self.assertEqual(False, r[1])
