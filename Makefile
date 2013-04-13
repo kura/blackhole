@@ -5,7 +5,7 @@ install:
 uninstall:
 	pip uninstall blackhole
 
-travis: install install_test coverage
+travis: install install_test
 
 install_test:
 	easy_install nose coveralls
