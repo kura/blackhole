@@ -1,3 +1,5 @@
+.. _configuration_options:
+
 =====================
 Configuration options
 =====================
@@ -13,10 +15,11 @@ as below:
   --user=USER					User to drop privs to during run time. [default: blackhole]
   --group=GROUP					Group to drop privs to during run time. [default: blackhole]
   --mode=MODE					Mode to run blackhole in (accept, bounce, random, unavailable, offline) [default: accept] - see MODES section
+  --debug=BOOL        Will set the debug flag and causes all received and sent command/email data to be logged. Will degrade performance with high throughput [default: False]
 
 SSL options
 
-  --ssl=BOOL					Enabled or disable SSL, requires SSL compiled in to Python and OpenSSL. True or False [default: True]
+  --ssl=BOOL					 Enabled or disable SSL, requires SSL compiled in to Python and OpenSSL. True or False [default: True]
   --ssl_port=PORT				Port to listen for SSL enabled connections [default: 465]
   --ssl_key=PATH				X509 SSL keyfile
   --ssl_cert=PATH				X509 SSL certificate file

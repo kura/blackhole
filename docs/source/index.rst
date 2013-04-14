@@ -116,6 +116,7 @@ Running your own server
     installation
     configuration-options
     configuration-file-example
+    debug-flag
     controlling-the-server
     controlling-the-server-init-d
     modes

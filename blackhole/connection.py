@@ -17,6 +17,7 @@ from blackhole.data import response
 from blackhole.opts import ports
 from blackhole.ssl_utils import sslkwargs
 from blackhole.log import log
+from blackhole.utils import email_id
 
 
 def sockets():
@@ -133,11 +134,14 @@ def connection_ready(sock, fd, events):
                 raise
             return
 
+        log.debug("Connection from '%s'" % address[0])
+
         connection.setblocking(0)
         stream = connection_stream(connection)
         if not stream:
             return
         mail_state = MailState()
+        mail_state.email_id = email_id()
 
         # Sadly there is nothing I can do about the handle and loop
         # fuctions. They have to exist within connection_ready
@@ -147,10 +151,13 @@ def connection_ready(sock, fd, events):
             it's a valid SMTP keyword and handle it
             accordingly.
             """
+            log.debug("[%s] RECV: %s" % (mail_state.email_id, line.rstrip()))
             resp, close = handle_command(line, mail_state)
             if resp:
+                log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.rstrip()))
                 stream.write(resp)
             if close is True:
+                log.debug("Closing")
                 stream.close()
                 return
             else:

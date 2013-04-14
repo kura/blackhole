@@ -6,6 +6,7 @@ import os
 import sys
 import grp
 import pwd
+import random
 import signal
 
 from tornado.options import options
@@ -84,8 +85,19 @@ def set_process_title():
     """
     if os.path.exists(options.pid):
         pid = int(file(options.pid, 'r').read().strip())
-        log.info("%s and %s" % (pid, os.getpid()))
         if pid == os.getpid():
             setproctitle.setproctitle("blackhole: master")
         else:
             setproctitle.setproctitle("blackhole: worker")
+
+
+def email_id():
+    """
+    Generate an HEX ID to assign to each
+    connection.
+
+    Will be reused later down the line
+    due to the limited number of characters.
+    """
+    alpha = list("1234567890ABCDEF")
+    return ''.join(random.choice(alpha) for x in range(10))
