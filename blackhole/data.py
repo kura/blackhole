@@ -63,6 +63,10 @@ UNAVAILABLE_RESPONSES = ('421',)
 # Random responses
 RANDOM_RESPONSES = ACCEPT_RESPONSES + BOUNCE_RESPONSES
 
+EHLO_RESPONSES = ("250 2.5.0 OK, done", "SIZE 512000",
+                  "VRFY", "STARTTLS",
+                  "ENHANCEDSTATUSCODES", "8BITMIME", "DSN")
+
 
 def response(response=None):
     """Return an SMTP response code and message.

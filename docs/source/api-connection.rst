@@ -23,3 +23,5 @@ blackhole.connection
 .. autofunction:: handle_command(line, mail_state)
 
 .. autofunction:: connection_ready(sock, fd, events)
+
+.. autofunction:: write_response(stream, mail_state, resp)
