@@ -11,6 +11,8 @@ class TestResponses(unittest.TestCase):
     unknown = ('500 5.0.0 Command not recognized\n', False)
     ok = ('220 2.2.0 OK, ready\n', False)
     vrfy = ('252 2.5.2 OK, cannot VRFY user but will attempt delivery\n', False)
+    ehlo = (['250-2.5.0 OK, done\n', '250-SIZE 512000\n', '250-VRFY\n', '250-STARTTLS\n', 
+             '250-ENHANCEDSTATUSCODES\n', '250-8BITMIME\n', '250 DSN\n'], False)
 
     def test_handle_command_helo_response(self):
         m = MailState()
@@ -30,12 +32,12 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_ehlo_response(self):
         m = MailState()
         r = handle_command("EHLO", m)
-        self.assertEqual(self.ok_done[0], r[0])
+        self.assertEqual(self.ehlo[0], r[0])
 
     def test_handle_command_ehlo_connection_close(self):
         m = MailState()
         r = handle_command("EHLO", m)
-        self.assertEqual(self.ok_done[1], r[1])
+        self.assertEqual(self.ehlo[1], r[1])
 
     def test_handle_command_ehlo_reading_state(self):
         m = MailState()
