@@ -100,7 +100,15 @@ def handle_command(line, mail_state):
             resp = response()
     elif any(line.lower().startswith(e) for e in ['helo', 'ehlo',
                                                   'mail from',
-                                                  'rcpt to', 'rset']):
+                                                  'rcpt to', 'noop']):
+        resp = response(250)
+    elif line.lower().startswith("rset"):
+        new_id = email_id()
+        log.debug("[%s] RSET received, changing ID to [%s]" %
+                  (mail_state.email_id, new_id))
+        # Reset mail state
+        mail_state.reading = False
+        mail_state.email_id = new_id
         resp = response(250)
     elif line.lower().startswith("starttls"):
         resp = response(220)
