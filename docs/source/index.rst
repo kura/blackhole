@@ -15,6 +15,9 @@ Blackhole
 .. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
         :target: https://travis-ci.org/kura/blackhole
 
+.. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
+        :target: https://coveralls.io/r/kura/blackhole
+
 Blackhole is a `Tornado`_ powered MTA (mail transport agent) that is designed
 for handling large volumes of email without handling any of the messages and
 doing no disk bound I/O.
@@ -127,6 +130,9 @@ Tests & Coverage
 
 .. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
         :target: https://travis-ci.org/kura/blackhole
+
+.. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
+        :target: https://coveralls.io/r/kura/blackhole
 
 You can find the latest build status on `travis`_.
 
