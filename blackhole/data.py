@@ -63,9 +63,10 @@ UNAVAILABLE_RESPONSES = ('421',)
 # Random responses
 RANDOM_RESPONSES = ACCEPT_RESPONSES + BOUNCE_RESPONSES
 
-EHLO_RESPONSES = ("250 2.5.0 OK, done", "SIZE 512000",
-                  "VRFY", "STARTTLS",
-                  "ENHANCEDSTATUSCODES", "8BITMIME", "DSN")
+EHLO_RESPONSES = ("250-2.5.0 OK, done", "250-SIZE 512000",
+                  "250-VRFY", "250-STARTTLS",
+                  "250-ENHANCEDSTATUSCODES", "250-8BITMIME",
+                  "250 DSN")
 
 
 def response(response=None):

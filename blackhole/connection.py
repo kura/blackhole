@@ -99,7 +99,7 @@ def handle_command(line, mail_state):
             mail_state.reading = False
             resp = response()
     elif line.lower().startswith("ehlo"):
-        resp = ["250 %s\n" % x for x in EHLO_RESPONSES]
+        resp = ["%s\n" % x for x in EHLO_RESPONSES]
     elif any(line.lower().startswith(e) for e in ['helo', 'mail from',
                                                   'rcpt to', 'noop']):
         resp = response(250)
