@@ -4,13 +4,13 @@ Blackhole
 
 ::
 
-     .o8       oooo                      oooo        oooo                  oooo                 o8o            
-    "888       `888                      `888        `888                  `888                 `"'            
-     888oooo.   888   .oooo.    .ooooo.   888  oooo   888 .oo.    .ooooo.   888   .ooooo.      oooo   .ooooo.  
-     d88' `88b  888  `P  )88b  d88' `"Y8  888 .8P'    888P"Y88b  d88' `88b  888  d88' `88b     `888  d88' `88b 
-     888   888  888   .oP"888  888        888888.     888   888  888   888  888  888ooo888      888  888   888 
-     888   888  888  d8(  888  888   .o8  888 `88b.   888   888  888   888  888  888    .o .o.  888  888   888 
-     `Y8bod8P' o888o `Y888""8o `Y8bod8P' o888o o888o o888o o888o `Y8bod8P' o888o `Y8bod8P' Y8P o888o `Y8bod8P' 
+     .o8       oooo                      oooo        oooo                  oooo                 o8o
+    "888       `888                      `888        `888                  `888                 `"'
+     888oooo.   888   .oooo.    .ooooo.   888  oooo   888 .oo.    .ooooo.   888   .ooooo.      oooo   .ooooo.
+     d88' `88b  888  `P  )88b  d88' `"Y8  888 .8P'    888P"Y88b  d88' `88b  888  d88' `88b     `888  d88' `88b
+     888   888  888   .oP"888  888        888888.     888   888  888   888  888  888ooo888      888  888   888
+     888   888  888  d8(  888  888   .o8  888 `88b.   888   888  888   888  888  888    .o .o.  888  888   888
+     `Y8bod8P' o888o `Y888""8o `Y8bod8P' o888o o888o o888o o888o `Y8bod8P' o888o `Y8bod8P' Y8P o888o `Y8bod8P'
 
 .. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
         :target: https://travis-ci.org/kura/blackhole
@@ -61,10 +61,10 @@ Testing via telnet
     250 2.5.0 OK, done
     DATA
     354 3.5.4 Start mail input; end with <CRLF>.<CRLF>
-    To: Someone <someone@another.tld>             
+    To: Someone <someone@another.tld>
     From: User <user@address.tld>
     Subject: Bye
-    
+
     Bye bye email
     .
     251 2.5.1 OK, user not local, will forward
@@ -91,10 +91,10 @@ Testing SSL
     250 2.5.0 OK, done
     DATA
     354 3.5.4 Start mail input; end with <CRLF>.<CRLF>
-    To: Someone <someone@another.tld>             
+    To: Someone <someone@another.tld>
     From: User <user@address.tld>
     Subject: Bye
-    
+
     Bye bye email
     .
     251 2.5.1 OK, user not local, will forward
@@ -112,6 +112,35 @@ The source code is available under the `MIT license`_ from `GitHub`_.
 
 Running your own server
 =======================
+
+Python versions
+---------------
+
+::
+
+    Python 2.5    # see notes below
+    Python 2.6
+    Python 2.7
+    PyPy 1.9      # see notes below
+    PyPy 2.0      # see notes below
+
+Blackhole works on Python 2.6 and 2.7, it also works with PyPy (see :ref:`blackhole-pypy` section below). It can work with Python 2.5
+but requires downgrading to Tornado 2.4.1 with a modification to blackhole's setup.py and blackhole/bin/blackhole to
+change or remove the Python version check.::
+
+    if sys.version_info < (2, 6):
+        print "blackhole requires Python 2.6 or greater"
+        sys.exit(1)
+
++Third party libraries
++---------------------
++
++::
++
++    tornado>=2.2.1,<=3.1  # 2.2.1 to 2.4.1 are known to work with Python 2.5 and above
++    setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
++    deiman>=0.1.3         # older version of Deiman will not work because of API changes
+
 
 .. toctree::
     :maxdepth: 2
@@ -150,7 +179,7 @@ Blackhole + PyPy
 .. _PyPy: http://pypy.org/
 
 Blackhole works well under PyPy 1.9, 2.0 beta1 and 2.0 beta2, you can see performance improvements
-of up to 30% in certain situations. 
+of up to 30% in certain situations.
 
 However, blackhole does have issues with both PyPy 1.9 and 2.0 beta1 and 2.0 beta2 when using the pre-compiled binaries, this is due to a conflict in the version of OpenSSL compiled in to PyPy and the version compiled in to your CPython installation.
 If you wish to use blackhole with SSL support on PyPy I suggest you either compile PyPy yourself or try to make sure your PyPy and CPython have the same versions.

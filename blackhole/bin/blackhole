@@ -33,7 +33,7 @@ except ImportError:
 
 # Just in case some tit tries to run the file in /bin
 try:
-    from blackhole import __pname__, __fullname__
+    from blackhole import __fullname__
 except ImportError:
     print "blackhole is not installed, please install it using the instructions in the README file"
     sys.exit(1)
@@ -54,7 +54,7 @@ for arg in sys.argv[1:]:
         sys.exit(0)
 
 # pip stuff
-from tornado import ioloop, process
+from tornado import ioloop
 from tornado.options import options
 
 tornado.options.parse_command_line()
