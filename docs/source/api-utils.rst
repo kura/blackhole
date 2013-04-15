@@ -48,3 +48,11 @@ blackhole.utils
     If the process is the master, set
     a master title, otherwise set
     worker.
+
+.. function:: email_id()
+
+    Generate an HEX ID to assign to each
+    connection.
+
+    Will be reused later down the line
+    due to the limited number of characters.

@@ -13,10 +13,11 @@ from tornado import iostream
 from tornado.options import options
 
 from blackhole.state import MailState
-from blackhole.data import response
+from blackhole.data import response, EHLO_RESPONSES
 from blackhole.opts import ports
 from blackhole.ssl_utils import sslkwargs
 from blackhole.log import log
+from blackhole.utils import email_id
 
 
 def sockets():
@@ -97,9 +98,18 @@ def handle_command(line, mail_state):
         if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
             mail_state.reading = False
             resp = response()
-    elif any(line.lower().startswith(e) for e in ['helo', 'ehlo',
-                                                  'mail from',
-                                                  'rcpt to', 'rset']):
+    elif line.lower().startswith("ehlo"):
+        resp = ["%s\n" % x for x in EHLO_RESPONSES]
+    elif any(line.lower().startswith(e) for e in ['helo', 'mail from',
+                                                  'rcpt to', 'noop']):
+        resp = response(250)
+    elif line.lower().startswith("rset"):
+        new_id = email_id()
+        log.debug("[%s] RSET received, changing ID to [%s]" %
+                  (mail_state.email_id, new_id))
+        # Reset mail state
+        mail_state.reading = False
+        mail_state.email_id = new_id
         resp = response(250)
     elif line.lower().startswith("starttls"):
         resp = response(220)
@@ -114,6 +124,12 @@ def handle_command(line, mail_state):
     else:
         resp = response(500)
     return resp, close
+
+
+def write_response(stream, mail_state, resp):
+    """Write the response back to the stream"""
+    log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.rstrip()))
+    stream.write(resp)
 
 
 def connection_ready(sock, fd, events):
@@ -133,11 +149,14 @@ def connection_ready(sock, fd, events):
                 raise
             return
 
+        log.debug("Connection from '%s'" % address[0])
+
         connection.setblocking(0)
         stream = connection_stream(connection)
         if not stream:
             return
         mail_state = MailState()
+        mail_state.email_id = email_id()
 
         # Sadly there is nothing I can do about the handle and loop
         # fuctions. They have to exist within connection_ready
@@ -147,10 +166,19 @@ def connection_ready(sock, fd, events):
             it's a valid SMTP keyword and handle it
             accordingly.
             """
+            log.debug("[%s] RECV: %s" % (mail_state.email_id, line.rstrip()))
             resp, close = handle_command(line, mail_state)
             if resp:
-                stream.write(resp)
+                if isinstance(resp, list):
+                    # This is required for returning
+                    # multiple status codes for EHLO
+                    for r in resp:
+                        write_response(stream, mail_state, r)
+                else:
+                    # Otherwise it's a single response
+                    write_response(stream, mail_state, resp)
             if close is True:
+                log.debug("Closing")
                 stream.close()
                 return
             else:

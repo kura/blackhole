@@ -12,6 +12,12 @@ Blackhole
      888   888  888  d8(  888  888   .o8  888 `88b.   888   888  888   888  888  888    .o .o.  888  888   888 
      `Y8bod8P' o888o `Y888""8o `Y8bod8P' o888o o888o o888o o888o `Y8bod8P' o888o `Y8bod8P' Y8P o888o `Y8bod8P' 
 
+.. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
+        :target: https://travis-ci.org/kura/blackhole
+
+.. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
+        :target: https://coveralls.io/r/kura/blackhole
+
 Blackhole is a `Tornado`_ powered MTA (mail transport agent) that is designed
 for handling large volumes of email without handling any of the messages and
 doing no disk bound I/O.
@@ -113,10 +119,28 @@ Running your own server
     installation
     configuration-options
     configuration-file-example
+    debug-flag
     controlling-the-server
     controlling-the-server-init-d
     modes
     response-codes
+
+Tests & Coverage
+================
+
+.. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
+        :target: https://travis-ci.org/kura/blackhole
+
+.. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
+        :target: https://coveralls.io/r/kura/blackhole
+
+You can find the latest build status on `travis`_.
+
+.. _travis: https://travis-ci.org/kura/blackhole
+
+And the test coverage report on `coveralls`_.
+
+.. _coveralls: https://coveralls.io/r/kura/blackhole
 
 Blackhole + PyPy
 ================
