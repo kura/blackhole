@@ -8,23 +8,34 @@ from blackhole.connection import sockets
 from blackhole.opts import *
 
 
-class TestSSLSocketIsSet(unittest2.TestCase):
+class BaseSocketTest(unittest2.TestCase):
 
     def setUp(self):
         options.ssl = True
         options.port = random.randint(5000, 10000)
         options.ssl_port = random.randint(5000, 10000)
 
-    def test_ssl_socket_is_set(self):
-        self.assertIsInstance(sockets()['ssl'], socket.socket)
+    def tearDown(self):
+        for s in self.sockets.itervalues():
+            s.close()
+        self.sockets = {}
 
 
-class TestSSLSocketIsNotSet(unittest2.TestCase):
+class TestSSLSocketIsSet(BaseSocketTest):
 
     def setUp(self):
-        options.port = random.randint(5000, 10000)
-        options.ssl_port = random.randint(5000, 10000)
-        options.ssl = False
+        super(TestSSLSocketIsSet, self).setUp()
+        self.sockets = sockets()
 
     def test_ssl_socket_is_set(self):
-        self.assertNotIn('ssl', sockets())
+        self.assertIsInstance(self.sockets['ssl'], socket.socket)
+
+class TestSSLSocketIsNotSet(BaseSocketTest):
+
+    def setUp(self):
+        super(TestSSLSocketIsNotSet, self).setUp()
+        options.ssl = False
+        self.sockets = sockets()
+
+    def test_ssl_socket_is_not_set(self):
+        self.assertNotIn('ssl', self.sockets)
