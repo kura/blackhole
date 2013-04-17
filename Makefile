@@ -1,4 +1,4 @@
-.PHONY: install uninstall travis install_coverage coverage
+.PHONY: install uninstall travis install_coverage install_testrig coverage pypi docs
 install:
 	python setup.py install
 
@@ -16,3 +16,9 @@ travis:
 
 coverage:
 	coverage xml -i
+
+pypi:
+	python setup.py sdist upload
+
+docs:
+	sphinx-build docs/source/ docs/build/

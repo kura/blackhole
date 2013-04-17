@@ -8,8 +8,13 @@ if sys.version_info < (2, 6):
     print "blackhole requires Python 2.6 or greater"
     sys.exit(1)
 
-
 version = __import__('blackhole').__version__
+
+desc = """Tornado powered MTA for accepting all incoming emails without any disk
+ I/O, although no messages actually ever get delivered. Mainly for testing huge
+ send rates, for making sure developers don't accidentally send emails to real
+ users, email integration testing and things like that."""
+
 
 setup(name='blackhole',
       version=version,
@@ -18,7 +23,7 @@ setup(name='blackhole',
       author_email="kura@kura.io",
       maintainer="Kura",
       maintainer_email="kura@kura.io",
-      description="Tornado powered MTA for accepting all incoming emails without any disk I/O, although no messages actually ever get delivered. Mainly for testing huge send rates, for making sure developers don't accidentally send emails to real users, email integration testing and things like that.",
+      description=desc,
       long_description=open("README.rst").read(),
       license=open("LICENSE").read(),
       platforms=['linux'],
