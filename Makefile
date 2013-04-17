@@ -14,9 +14,6 @@ install_testrig:
 travis:
 	nosetests --with-coverage --cover-erase --cover-package=blackhole blackhole/tests/
 
-coverage:
-	coverage xml -i
-
 pypi:
 	python setup.py sdist upload
 

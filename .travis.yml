@@ -9,5 +9,4 @@ install:
   - make install_testrig
 script: make travis
 after_success:
-  - make coverage
   - coveralls
