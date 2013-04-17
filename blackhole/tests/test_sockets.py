@@ -8,6 +8,23 @@ from blackhole.connection import sockets
 from blackhole.opts import *
 
 
+class TestNoSSLPorts(unittest2.TestCase):
+
+    def setUp(self):
+        options.ssl = False
+
+    def test_no_ssl_ports(self):
+        self.assertEquals(ports(), ['std', ])
+
+class TestSSLPorts(unittest2.TestCase):
+
+    def setUp(self):
+        options.ssl=True
+
+    def test_no_ssl_ports(self):
+        self.assertEquals(ports(), ['std', 'ssl'])
+
+
 class BaseSocket(unittest2.TestCase):
 
     def setUp(self):

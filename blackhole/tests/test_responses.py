@@ -1,7 +1,13 @@
 import unittest2
 
+from tornado.options import options
+
+from blackhole.opts import *
 from blackhole.connection import handle_command
 from blackhole.state import MailState
+from blackhole.data import get_response, ACCEPT_RESPONSES,\
+    BOUNCE_RESPONSES, OFFLINE_RESPONSES, UNAVAILABLE_RESPONSES,\
+    RANDOM_RESPONSES, EHLO_RESPONSES
 
 
 class TestResponses(unittest2.TestCase):
@@ -174,3 +180,48 @@ class TestResponses(unittest2.TestCase):
         m = MailState()
         r = handle_command("VRFY", m)
         self.assertEqual(False, r[1])
+
+
+class TestGetAcceptResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "accept"
+
+    def test_get_accept_response(self):
+        self.assertIn(get_response(), ACCEPT_RESPONSES)
+
+
+class TestGetBounceResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "bounce"
+
+    def test_get_bounce_response(self):
+        self.assertIn(get_response(), BOUNCE_RESPONSES)
+
+
+class TestGetOfflineResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "offline"
+
+    def test_get_offline_response(self):
+        self.assertIn(get_response(), OFFLINE_RESPONSES)
+
+
+class TestGetUnavailableResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "unavailable"
+
+    def test_get_unavailable_response(self):
+        self.assertIn(get_response(), UNAVAILABLE_RESPONSES)
+
+
+class TestGetRandomResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "random"
+
+    def test_get_random_response(self):
+        self.assertIn(get_response(), RANDOM_RESPONSES)
