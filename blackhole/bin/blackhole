@@ -142,7 +142,7 @@ if __name__ == "__main__":
 
     try:
         io_loop.start()
-    except KeyboardInterrupt, SystemExit:
+    except (KeyboardInterrupt, SystemExit):
         io_loop.stop()
         d.stop()
         sys.exit(0)
