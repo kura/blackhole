@@ -22,7 +22,13 @@ setup(name='blackhole',
       long_description=open("README.rst").read(),
       license=open("LICENSE").read(),
       platforms=['linux'],
-      packages=find_packages(exclude=["*.tests"]),
+      packages = ["blackhole", "blackhole.test"],
+      package_data = {
+          'blackhole.test': [
+              "test.crt",
+              "test.key",
+          ],
+        },
       install_requires=[
           'tornado>=3.0,<=3.1',
           'setproctitle>=1.1.7',
