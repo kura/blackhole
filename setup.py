@@ -22,7 +22,7 @@ setup(name='blackhole',
       long_description=open("README.rst").read(),
       license=open("LICENSE").read(),
       platforms=['linux'],
-      packages = ["blackhole", "blackhole.test"],
+      packages = ["blackhole", "blackhole.tests"],
       package_data = {
           'blackhole.tests': [
               "test.crt",
