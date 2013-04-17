@@ -8,7 +8,7 @@ from blackhole.connection import sockets
 from blackhole.opts import *
 
 
-class BaseSocketTest(unittest2.TestCase):
+class BaseSocket(unittest2.TestCase):
 
     def setUp(self):
         options.ssl = False
@@ -21,7 +21,7 @@ class BaseSocketTest(unittest2.TestCase):
         self.sockets = {}
 
 
-class TestSocketIsSet(BaseSocketTest):
+class TestSocketIsSet(BaseSocket):
 
     def setUp(self):
         super(TestSocketIsSet, self).setUp()
@@ -32,7 +32,7 @@ class TestSocketIsSet(BaseSocketTest):
         self.assertIsInstance(self.sockets['std'], socket.socket)
 
 
-class TestSSLSocketIsSet(BaseSocketTest):
+class TestSSLSocketIsSet(BaseSocket):
 
     def setUp(self):
         super(TestSSLSocketIsSet, self).setUp()
@@ -43,7 +43,7 @@ class TestSSLSocketIsSet(BaseSocketTest):
         self.assertIsInstance(self.sockets['ssl'], socket.socket)
 
 
-class TestSSLSocketIsNotSet(BaseSocketTest):
+class TestSSLSocketIsNotSet(BaseSocket):
 
     def setUp(self):
         super(TestSSLSocketIsNotSet, self).setUp()
