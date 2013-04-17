@@ -115,10 +115,10 @@ if __name__ == "__main__":
     # Grab the sockets early for multiprocessing
     sockets = sockets()
     # Fork and create the ioloop
-#    if action == "start":
-#        d.start()
-#    else:
-#        sys.exit(0)
+    if action == "start":
+        d.start()
+    else:
+        sys.exit(0)
 
     # Change group and user
     setgid()
