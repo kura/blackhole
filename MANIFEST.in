@@ -1,4 +1,2 @@
 include *.rst
 include LICENSE
-include blackhole/tests/test.crt
-include blackhole/tests/test.key
