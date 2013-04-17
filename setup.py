@@ -24,7 +24,7 @@ setup(name='blackhole',
       platforms=['linux'],
       packages = ["blackhole", "blackhole.test"],
       package_data = {
-          'blackhole.test': [
+          'blackhole.tests': [
               "test.crt",
               "test.key",
           ],
