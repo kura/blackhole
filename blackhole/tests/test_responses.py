@@ -1,17 +1,17 @@
-import unittest
+import unittest2
 
 from blackhole.connection import handle_command
 from blackhole.state import MailState
 
 
-class TestResponses(unittest.TestCase):
+class TestResponses(unittest2.TestCase):
     ok_done = ('250 2.5.0 OK, done\n', False)
     quit = ('221 2.2.1 Thank you for speaking to me\n', True)
     data = ('354 3.5.4 Start mail input; end with <CRLF>.<CRLF>\n', False)
     unknown = ('500 5.0.0 Command not recognized\n', False)
     ok = ('220 2.2.0 OK, ready\n', False)
     vrfy = ('252 2.5.2 OK, cannot VRFY user but will attempt delivery\n', False)
-    ehlo = (['250-2.5.0 OK, done\n', '250-SIZE 512000\n', '250-VRFY\n', '250-STARTTLS\n', 
+    ehlo = (['250-2.5.0 OK, done\n', '250-SIZE 512000\n', '250-VRFY\n', '250-STARTTLS\n',
              '250-ENHANCEDSTATUSCODES\n', '250-8BITMIME\n', '250 DSN\n'], False)
 
     def test_handle_command_helo_response(self):

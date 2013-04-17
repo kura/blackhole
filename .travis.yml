@@ -6,6 +6,7 @@ python:
 install:
   - make install
   - make install_coverage
+  - make install_testrig
 script: make travis
 after_success:
   - make coverage

@@ -1,4 +1,4 @@
-import unittest
+import unittest2
 import random
 import socket
 
@@ -8,7 +8,7 @@ from blackhole.connection import sockets
 from blackhole.opts import *
 
 
-class TestSSLSocketIsSet(unittest.TestCase):
+class TestSSLSocketIsSet(unittest2.TestCase):
 
     def setUp(self):
         options.ssl = True
@@ -19,7 +19,7 @@ class TestSSLSocketIsSet(unittest.TestCase):
         self.assertIsInstance(sockets()['ssl'], socket.socket)
 
 
-class TestSSLSocketIsNotSet(unittest.TestCase):
+class TestSSLSocketIsNotSet(unittest2.TestCase):
 
     def setUp(self):
         options.port = random.randint(5000, 10000)
