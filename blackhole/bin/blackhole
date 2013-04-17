@@ -54,7 +54,7 @@ for arg in sys.argv[1:]:
         sys.exit(0)
 
 # pip stuff
-from tornado import ioloop
+from tornado import ioloop, process
 from tornado.options import options
 
 tornado.options.parse_command_line()
@@ -115,10 +115,10 @@ if __name__ == "__main__":
     # Grab the sockets early for multiprocessing
     sockets = sockets()
     # Fork and create the ioloop
-    if action == "start":
-        d.start()
-    else:
-        sys.exit(0)
+#    if action == "start":
+#        d.start()
+#    else:
+#        sys.exit(0)
 
     # Change group and user
     setgid()
