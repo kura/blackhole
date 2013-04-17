@@ -10,8 +10,6 @@ import ssl
 
 from tornado.options import options
 
-from blackhole.log import log
-
 
 sslkwargs = {
     'do_handshake_on_connect': False,
@@ -39,3 +37,4 @@ def verify_ssl_opts():
         raise BlackholeSSLException("Certificate '%s' does not exist" % options.ssl_cert)
     if options.ssl_key and not os.path.exists(options.ssl_key):
         raise BlackholeSSLException("Keyfile '%s' does not exist" % options.ssl_key)
+    return True

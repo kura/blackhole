@@ -8,8 +8,11 @@ install_coverage:
 uninstall:
 	pip uninstall blackhole
 
+install_testrig:
+	pip install unittest2
+
 travis:
 	nosetests --with-coverage blackhole
 
 coverage:
-	coverage xml -i 
+	coverage xml -i

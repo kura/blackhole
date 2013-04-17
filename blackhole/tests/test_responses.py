@@ -1,17 +1,23 @@
-import unittest
+import unittest2
 
+from tornado.options import options
+
+from blackhole.opts import *
 from blackhole.connection import handle_command
 from blackhole.state import MailState
+from blackhole.data import get_response, ACCEPT_RESPONSES,\
+    BOUNCE_RESPONSES, OFFLINE_RESPONSES, UNAVAILABLE_RESPONSES,\
+    RANDOM_RESPONSES, EHLO_RESPONSES
 
 
-class TestResponses(unittest.TestCase):
+class TestResponses(unittest2.TestCase):
     ok_done = ('250 2.5.0 OK, done\n', False)
     quit = ('221 2.2.1 Thank you for speaking to me\n', True)
     data = ('354 3.5.4 Start mail input; end with <CRLF>.<CRLF>\n', False)
     unknown = ('500 5.0.0 Command not recognized\n', False)
     ok = ('220 2.2.0 OK, ready\n', False)
     vrfy = ('252 2.5.2 OK, cannot VRFY user but will attempt delivery\n', False)
-    ehlo = (['250-2.5.0 OK, done\n', '250-SIZE 512000\n', '250-VRFY\n', '250-STARTTLS\n', 
+    ehlo = (['250-2.5.0 OK, done\n', '250-SIZE 512000\n', '250-VRFY\n', '250-STARTTLS\n',
              '250-ENHANCEDSTATUSCODES\n', '250-8BITMIME\n', '250 DSN\n'], False)
 
     def test_handle_command_helo_response(self):
@@ -174,3 +180,48 @@ class TestResponses(unittest.TestCase):
         m = MailState()
         r = handle_command("VRFY", m)
         self.assertEqual(False, r[1])
+
+
+class TestGetAcceptResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "accept"
+
+    def test_get_accept_response(self):
+        self.assertIn(get_response(), ACCEPT_RESPONSES)
+
+
+class TestGetBounceResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "bounce"
+
+    def test_get_bounce_response(self):
+        self.assertIn(get_response(), BOUNCE_RESPONSES)
+
+
+class TestGetOfflineResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "offline"
+
+    def test_get_offline_response(self):
+        self.assertIn(get_response(), OFFLINE_RESPONSES)
+
+
+class TestGetUnavailableResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "unavailable"
+
+    def test_get_unavailable_response(self):
+        self.assertIn(get_response(), UNAVAILABLE_RESPONSES)
+
+
+class TestGetRandomResponse(unittest2.TestCase):
+
+    def setUp(self):
+        options.mode = "random"
+
+    def test_get_random_response(self):
+        self.assertIn(get_response(), RANDOM_RESPONSES)
