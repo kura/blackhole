@@ -52,13 +52,13 @@ class TestSSLCertNoKey(unittest2.TestCase):
             verify_ssl_opts()
 
 
-# class TestSSLCertAndKey(unittest2.TestCase):
+class TestSSLCertAndKey(unittest2.TestCase):
 
-#     def setUp(self):
-#         options.ssl_cert = os.path.join(os.path.dirname(__file__),
-#                                        "test.crt")
-#         options.ssl_key = os.path.join(os.path.dirname(__file__),
-#                                        "test.key")
+    def setUp(self):
+        options.ssl_cert = os.path.join(os.path.dirname(__file__),
+                                       "test.crt")
+        options.ssl_key = os.path.join(os.path.dirname(__file__),
+                                       "test.key")
 
-#     def test_ssl_cert_no_key(self):
-#         self.assertEquals(verify_ssl_opts(), True)
+    def test_ssl_cert_no_key(self):
+        self.assertEquals(verify_ssl_opts(), True)
