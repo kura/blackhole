@@ -11,7 +11,7 @@ from blackhole.opts import *
 class BaseSocketTest(unittest2.TestCase):
 
     def setUp(self):
-        options.ssl = True
+        options.ssl = False
         options.port = random.randint(5000, 10000)
         options.ssl_port = random.randint(5000, 10000)
 
@@ -21,14 +21,27 @@ class BaseSocketTest(unittest2.TestCase):
         self.sockets = {}
 
 
+class TestSocketIsSet(BaseSocketTest):
+
+    def setUp(self):
+        super(TestSocketIsSet, self).setUp()
+        self.ssl = False
+        self.sockets = sockets()
+
+    def test_ssl_socket_is_set(self):
+        self.assertIsInstance(self.sockets['std'], socket.socket)
+
+
 class TestSSLSocketIsSet(BaseSocketTest):
 
     def setUp(self):
         super(TestSSLSocketIsSet, self).setUp()
+        options.ssl = True
         self.sockets = sockets()
 
     def test_ssl_socket_is_set(self):
         self.assertIsInstance(self.sockets['ssl'], socket.socket)
+
 
 class TestSSLSocketIsNotSet(BaseSocketTest):
 
