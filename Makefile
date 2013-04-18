@@ -12,7 +12,7 @@ install_testrig:
 	pip install unittest2
 
 travis:
-	coverage run --source=blackhole runtest
+	coverage run --source=blackhole runtests.py
 
 pypi:
 	python setup.py sdist upload
