@@ -157,6 +157,24 @@ change or remove the Python version check.::
 Tests & Coverage
 ================
 
+Running tests manually
+----------------------
+
+Running tests manually is pretty simple, there is a Make target dedicated to it.
+
+The test suite relies on `unittest2` and `nose`, both if which get installed by the Make target during test running.
+
+::
+
+    make tests
+
+There is also a Make target for generating coverage::
+
+    make coverage
+
+Third party CI/Coverage
+-----------------------
+
 .. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
         :target: https://travis-ci.org/kura/blackhole
 

@@ -1,4 +1,4 @@
-.PHONY: install uninstall travis install_coverage install_testrig coverage pypi docs
+.PHONY: install uninstall travis install_coverage install_testrig coverage pypi docs test
 install:
 	python setup.py install
 
@@ -9,7 +9,12 @@ uninstall:
 	pip uninstall blackhole
 
 install_testrig:
-	pip install unittest2
+	pip install nose unittest2
+
+test: install_testrig
+	nosetests
+
+coverage: install_coverage travis
 
 travis:
 	coverage run --source=blackhole runtests.py
