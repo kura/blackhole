@@ -141,6 +141,8 @@ Third party libraries
     setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
     deiman>=0.1.3         # older version of Deiman will not work because of API changes
 
+Getting started
+---------------
 
 .. toctree::
     :maxdepth: 2
