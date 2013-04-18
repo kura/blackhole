@@ -223,7 +223,6 @@ Reference
     api-ssl-utils
     api-state
     api-utils
-    faq
 
 Indices and tables
 ==================
