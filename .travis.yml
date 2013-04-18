@@ -10,3 +10,4 @@ install:
 script: make travis
 after_success:
   - coveralls
+
