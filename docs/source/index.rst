@@ -132,14 +132,14 @@ change or remove the Python version check.::
         print "blackhole requires Python 2.6 or greater"
         sys.exit(1)
 
-+Third party libraries
-+---------------------
-+
-+::
-+
-+    tornado>=2.2.1,<=3.1  # 2.2.1 to 2.4.1 are known to work with Python 2.5 and above
-+    setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
-+    deiman>=0.1.3         # older version of Deiman will not work because of API changes
+Third party libraries
+---------------------
+
+::
+
+    tornado>=2.2.1,<=3.1  # 2.2.1 to 2.4.1 are known to work with Python 2.5 and above
+    setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
+    deiman>=0.1.3         # older version of Deiman will not work because of API changes
 
 
 .. toctree::
@@ -189,6 +189,8 @@ And the test coverage report on `coveralls`_.
 
 .. _coveralls: https://coveralls.io/r/kura/blackhole
 
+.. _blackhole-pypy:
+
 Blackhole + PyPy
 ================
 
@@ -201,6 +203,12 @@ of up to 30% in certain situations.
 
 However, blackhole does have issues with both PyPy 1.9 and 2.0 beta1 and 2.0 beta2 when using the pre-compiled binaries, this is due to a conflict in the version of OpenSSL compiled in to PyPy and the version compiled in to your CPython installation.
 If you wish to use blackhole with SSL support on PyPy I suggest you either compile PyPy yourself or try to make sure your PyPy and CPython have the same versions.
+
+FAQ
+===
+
+A few people have emailed me questions about why blackhole exists, how I use it, why Tornado and things like that
+so I have outlined some questions and responses in an :ref:`faq`.
 
 Reference
 =========
@@ -215,6 +223,7 @@ Reference
     api-ssl-utils
     api-state
     api-utils
+    faq
 
 Indices and tables
 ==================
