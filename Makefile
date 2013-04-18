@@ -12,7 +12,7 @@ install_testrig:
 	pip install unittest2
 
 travis:
-	nosetests --with-coverage --cover-erase --cover-package=blackhole blackhole/tests/
+	coverage run --source=blackhole runtest
 
 pypi:
 	python setup.py sdist upload
