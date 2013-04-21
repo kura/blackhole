@@ -81,13 +81,12 @@ def ports():
     return socks_list
 
 
-def print_help(afile=None):
+def print_help():
     """Prints all the command line options to stdout."""
-    afile = sys.stdout
-    print >> afile, "Usage: %s [OPTIONS] (start|stop|status)" % (__pname__)
-    print >> afile
-    print >> afile, "  -v, --%-26s %s" % ("version", "Print out program version")
-    print >> afile, "  -h, --%-26s %s" % ("help", "Show this help information")
+    print "Usage: %s [OPTIONS] (start|stop|status)" % (__pname__)
+    print
+    print "  -v, --%-26s %s" % ("version", "Print out program version")
+    print "  -h, --%-26s %s" % ("help", "Show this help information")
     by_group = {}
     opts = {}
     for option, value in options._options.iteritems():
@@ -104,24 +103,24 @@ def print_help(afile=None):
 
     for filename, o in sorted(by_group.items()):
         if filename and not filename.endswith("log.py"):
-            print >> afile
-            print >> afile, filename
+            print
+            print filename
             l = ""
             for _ in xrange(0, len(filename)):
                 l += "-"
-            print >> afile, l
-            print >> afile
+            print l
+            print
         o.sort(key=lambda option: option.name)
         for option in o:
             prefix = option.name
             if option.metavar:
                 prefix += "=" + option.metavar
-            print >> afile, "  --%-30s %s" % (prefix, option.help or "")
+            print "  --%-30s %s" % (prefix, option.help or "")
             if option.name == "mode":
-                print >> afile
-                print >> afile, "%-34s accept - accept all email with code 250, 251, 252 or 253" % ""
-                print >> afile, "%-34s bounce - bounce all email with a random code,\n%-37sexcluding 250, 251, 252, 253" % ("", "")
-                print >> afile, "%-34s random - randomly accept or bounce all email with a random code" % ""
-                print >> afile, "%-34s unavailable - server always respondes with code 421\n%-37s- service is unavailable" % ("", "")
-                print >> afile, "%-34s offline - server always responds with code 521 - server\n%-37sdoes not accept mail" % ("", "")
-    print >> afile
+                print
+                print "%-34s accept - accept all email with code 250, 251, 252 or 253" % ""
+                print "%-34s bounce - bounce all email with a random code,\n%-37sexcluding 250, 251, 252, 253" % ("", "")
+                print "%-34s random - randomly accept or bounce all email with a random code" % ""
+                print "%-34s unavailable - server always respondes with code 421\n%-37s- service is unavailable" % ("", "")
+                print "%-34s offline - server always responds with code 521 - server\n%-37sdoes not accept mail" % ("", "")
+    print
