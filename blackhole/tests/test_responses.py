@@ -1,4 +1,4 @@
-import unittest2
+import unittest
 
 from tornado.options import options
 
@@ -10,7 +10,7 @@ from blackhole.data import get_response, ACCEPT_RESPONSES,\
     RANDOM_RESPONSES, EHLO_RESPONSES
 
 
-class TestResponses(unittest2.TestCase):
+class TestResponses(unittest.TestCase):
     ok_done = ('250 2.5.0 OK, done\n', False)
     quit = ('221 2.2.1 Thank you for speaking to me\n', True)
     data = ('354 3.5.4 Start mail input; end with <CRLF>.<CRLF>\n', False)
@@ -182,7 +182,7 @@ class TestResponses(unittest2.TestCase):
         self.assertEqual(False, r[1])
 
 
-class TestGetAcceptResponse(unittest2.TestCase):
+class TestGetAcceptResponse(unittest.TestCase):
 
     def setUp(self):
         options.mode = "accept"
@@ -191,7 +191,7 @@ class TestGetAcceptResponse(unittest2.TestCase):
         self.assertIn(get_response(), ACCEPT_RESPONSES)
 
 
-class TestGetBounceResponse(unittest2.TestCase):
+class TestGetBounceResponse(unittest.TestCase):
 
     def setUp(self):
         options.mode = "bounce"
@@ -200,7 +200,7 @@ class TestGetBounceResponse(unittest2.TestCase):
         self.assertIn(get_response(), BOUNCE_RESPONSES)
 
 
-class TestGetOfflineResponse(unittest2.TestCase):
+class TestGetOfflineResponse(unittest.TestCase):
 
     def setUp(self):
         options.mode = "offline"
@@ -209,7 +209,7 @@ class TestGetOfflineResponse(unittest2.TestCase):
         self.assertIn(get_response(), OFFLINE_RESPONSES)
 
 
-class TestGetUnavailableResponse(unittest2.TestCase):
+class TestGetUnavailableResponse(unittest.TestCase):
 
     def setUp(self):
         options.mode = "unavailable"
@@ -218,7 +218,7 @@ class TestGetUnavailableResponse(unittest2.TestCase):
         self.assertIn(get_response(), UNAVAILABLE_RESPONSES)
 
 
-class TestGetRandomResponse(unittest2.TestCase):
+class TestGetRandomResponse(unittest.TestCase):
 
     def setUp(self):
         options.mode = "random"

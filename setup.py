@@ -5,7 +5,7 @@ from setuptools import find_packages
 
 
 if sys.version_info < (2, 6):
-    print "blackhole requires Python 2.6 or greater"
+    print("blackhole requires Python 2.6 or greater")
     sys.exit(1)
 
 version = __import__('blackhole').__version__

@@ -9,7 +9,7 @@ uninstall:
 	pip uninstall blackhole
 
 install_testrig:
-	pip install nose unittest2
+	pip install nose
 
 test: install_testrig
 	nosetests

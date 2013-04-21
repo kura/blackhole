@@ -17,7 +17,7 @@ sslkwargs = {
     'ssl_version': ssl.PROTOCOL_TLSv1,
     'keyfile': options.ssl_key,
     'certfile': options.ssl_cert,
-    'ca_certs': options.ssl_ca_certs_dir,
+    # 'ca_certs': options.ssl_ca_certs_dir,
 }
 
 
