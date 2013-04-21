@@ -31,7 +31,7 @@ setup(name='blackhole',
       install_requires=[
           'tornado>=3.0,<=3.1',
           'setproctitle>=1.1.7',
-          'deiman>=0.1.3',
+          'deiman>=0.1.4',
       ],
       scripts=[
           'blackhole/bin/blackhole',
