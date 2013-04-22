@@ -1,3 +1,4 @@
+import os
 import unittest
 import random
 import socket
@@ -7,6 +8,7 @@ from tornado import iostream
 
 from blackhole.connection import connection_stream
 from blackhole.opts import *
+from blackhole.ssl_utils import sslkwargs
 
 
 class BaseStream(unittest.TestCase):
@@ -40,6 +42,8 @@ class TestSSLSocketConnectionStream(BaseStream):
     def setUp(self):
         super(TestSSLSocketConnectionStream, self).setUp()
         options.ssl = True
+        sslkwargs['keyfile'] = os.path.join(os.path.dirname(__file__), 'test.key')
+        sslkwargs['certfile'] = os.path.join(os.path.dirname(__file__), 'test.crt')
         self.socket = socket.socket()
         self.socket.bind(('127.0.0.1', options.ssl_port))
 
