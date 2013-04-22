@@ -23,4 +23,5 @@ pypi:
 	python setup.py sdist upload
 
 docs:
+	pip install sphinx
 	sphinx-build docs/source/ docs/build/

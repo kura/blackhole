@@ -121,6 +121,8 @@ Python versions
     Python 2.5    # see notes below
     Python 2.6
     Python 2.7
+    Python 3.2
+    Python 3.3
     PyPy 1.9      # see notes below
     PyPy 2.0      # see notes below
 
