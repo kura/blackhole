@@ -141,7 +141,7 @@ Third party libraries
 
     tornado>=2.2.1,<=3.1  # 2.2.1 to 2.4.1 are known to work with Python 2.5 and above
     setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
-    deiman>=0.1.3         # older version of Deiman will not work because of API changes
+    deiman>=0.1.4         # older version of Deiman will not work because of API changes
 
 Getting started
 ---------------
