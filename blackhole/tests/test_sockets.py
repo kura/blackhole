@@ -33,7 +33,7 @@ class BaseSocket(unittest.TestCase):
         options.ssl_port = random.randint(5000, 10000)
 
     def tearDown(self):
-        for s in self.sockets.itervalues():
+        for s in self.sockets.values():
             s.close()
         self.sockets = {}
 
