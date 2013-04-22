@@ -57,7 +57,7 @@ define('ssl_cert', default=None, metavar="PATH", type=str,
 define('ssl_key', default=None, metavar="PATH", type=str,
        help="SSL Private Key",
        group="Blackhole SSL")
-define('ssl_ca_certs_dir', default="/etc/ssl/certs/", metavar="PATH", type=str,
+define('ssl_ca_certs_dir', default=None, metavar="PATH", type=str,
        help="SSL CA Certificates directory",
        group="Blackhole SSL")
 
@@ -80,11 +80,17 @@ def ports():
         socks_list.append('ssl')
     return socks_list
 
+def deprecated_opts():
+    dep = ('ssl_ca_certs_dir', )
+    for d in dep:
+        if getattr(options, d) is not None:
+           print("Deprecated option: %s" % d)
+
 
 def print_help():
     """Prints all the command line options to stdout."""
     print("Usage: %s [OPTIONS] (start|stop|status)" % (__pname__))
-    print()
+    print("")
     print("  -v, --%-26s %s" % ("version", "Print out program version"))
     print("  -h, --%-26s %s" % ("help", "Show this help information"))
     by_group = {}
@@ -94,22 +100,21 @@ def print_help():
         if option.startswith(("workers", "host", "port", "pid",
                               "conf", "user", "group", "log",
                               "debug", "mode", "ssl",
-                              "ssl_port", "ssl_cert", "ssl_key",
-                              "ssl_ca_certs_dir")):
-            if not option.startswith(("log_", "logging")):
+                              "ssl_port", "ssl_cert", "ssl_key")):
+            if not option.startswith(("log_", "logging", "ssl_ca_certs_dir")):
                 opts[option] = value
     for option in opts.values():
         by_group.setdefault(option.group_name, []).append(option)
 
     for filename, o in sorted(by_group.items()):
         if filename and not filename.endswith("log.py"):
-            print()
+            print("")
             print(filename)
             l = ""
             for _ in range(0, len(filename)):
                 l += "-"
             print(l)
-            print()
+            print("")
         o.sort(key=lambda option: option.name)
         for option in o:
             prefix = option.name
@@ -117,10 +122,10 @@ def print_help():
                 prefix += "=" + option.metavar
             print("  --%-30s %s" % (prefix, option.help or ""))
             if option.name == "mode":
-                print()
+                print("")
                 print("%-34s accept - accept all email with code 250, 251, 252 or 253" % "")
                 print("%-34s bounce - bounce all email with a random code,\n%-37sexcluding 250, 251, 252, 253" % ("", ""))
                 print("%-34s random - randomly accept or bounce all email with a random code" % "")
                 print("%-34s unavailable - server always respondes with code 421\n%-37s- service is unavailable" % ("", ""))
                 print("%-34s offline - server always responds with code 521 - server\n%-37sdoes not accept mail" % ("", ""))
-    print()
+    print("")
