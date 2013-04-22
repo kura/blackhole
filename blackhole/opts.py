@@ -83,13 +83,13 @@ def ports():
 
 def print_help():
     """Prints all the command line options to stdout."""
-    print "Usage: %s [OPTIONS] (start|stop|status)" % (__pname__)
-    print
-    print "  -v, --%-26s %s" % ("version", "Print out program version")
-    print "  -h, --%-26s %s" % ("help", "Show this help information")
+    print("Usage: %s [OPTIONS] (start|stop|status)" % (__pname__))
+    print()
+    print("  -v, --%-26s %s" % ("version", "Print out program version"))
+    print("  -h, --%-26s %s" % ("help", "Show this help information"))
     by_group = {}
     opts = {}
-    for option, value in options._options.iteritems():
+    for option, value in options._options.items():
         # hack to bypass Tornado options
         if option.startswith(("workers", "host", "port", "pid",
                               "conf", "user", "group", "log",
@@ -98,29 +98,29 @@ def print_help():
                               "ssl_ca_certs_dir")):
             if not option.startswith(("log_", "logging")):
                 opts[option] = value
-    for option in opts.itervalues():
+    for option in opts.values():
         by_group.setdefault(option.group_name, []).append(option)
 
     for filename, o in sorted(by_group.items()):
         if filename and not filename.endswith("log.py"):
-            print
-            print filename
+            print()
+            print(filename)
             l = ""
-            for _ in xrange(0, len(filename)):
+            for _ in range(0, len(filename)):
                 l += "-"
-            print l
-            print
+            print(l)
+            print()
         o.sort(key=lambda option: option.name)
         for option in o:
             prefix = option.name
             if option.metavar:
                 prefix += "=" + option.metavar
-            print "  --%-30s %s" % (prefix, option.help or "")
+            print("  --%-30s %s" % (prefix, option.help or ""))
             if option.name == "mode":
-                print
-                print "%-34s accept - accept all email with code 250, 251, 252 or 253" % ""
-                print "%-34s bounce - bounce all email with a random code,\n%-37sexcluding 250, 251, 252, 253" % ("", "")
-                print "%-34s random - randomly accept or bounce all email with a random code" % ""
-                print "%-34s unavailable - server always respondes with code 421\n%-37s- service is unavailable" % ("", "")
-                print "%-34s offline - server always responds with code 521 - server\n%-37sdoes not accept mail" % ("", "")
-    print
+                print()
+                print("%-34s accept - accept all email with code 250, 251, 252 or 253" % "")
+                print("%-34s bounce - bounce all email with a random code,\n%-37sexcluding 250, 251, 252, 253" % ("", ""))
+                print("%-34s random - randomly accept or bounce all email with a random code" % "")
+                print("%-34s unavailable - server always respondes with code 421\n%-37s- service is unavailable" % ("", ""))
+                print("%-34s offline - server always responds with code 521 - server\n%-37sdoes not accept mail" % ("", ""))
+    print()

@@ -5,7 +5,7 @@ from setuptools import find_packages
 
 
 if sys.version_info < (2, 6):
-    print "blackhole requires Python 2.6 or greater"
+    print("blackhole requires Python 2.6 or greater")
     sys.exit(1)
 
 version = __import__('blackhole').__version__
@@ -31,7 +31,7 @@ setup(name='blackhole',
       install_requires=[
           'tornado>=3.0,<=3.1',
           'setproctitle>=1.1.7',
-          'deiman>=0.1.3',
+          'deiman>=0.1.4',
       ],
       scripts=[
           'blackhole/bin/blackhole',
