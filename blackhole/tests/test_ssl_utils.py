@@ -14,8 +14,7 @@ class TestNoSSLKey(unittest.TestCase):
         options.ssl_key = None
 
     def test_no_ssl_key(self):
-        with self.assertRaises(BlackholeSSLException):
-            verify_ssl_opts()
+        self.assertRaises(BlackholeSSLException, verify_ssl_opts)
 
 
 class TestNoSSLCert(unittest.TestCase):
@@ -24,8 +23,7 @@ class TestNoSSLCert(unittest.TestCase):
         options.ssl_cert = None
 
     def test_no_ssl_cert(self):
-        with self.assertRaises(BlackholeSSLException):
-            verify_ssl_opts()
+        self.assertRaises(BlackholeSSLException, verify_ssl_opts)
 
 
 class TestSSLKeyNoCert(unittest.TestCase):
@@ -36,8 +34,7 @@ class TestSSLKeyNoCert(unittest.TestCase):
                                        "test.key")
 
     def test_ssl_key_no_cert(self):
-        with self.assertRaises(BlackholeSSLException):
-            verify_ssl_opts()
+        self.assertRaises(BlackholeSSLException, verify_ssl_opts)
 
 
 class TestSSLCertNoKey(unittest.TestCase):
@@ -48,8 +45,7 @@ class TestSSLCertNoKey(unittest.TestCase):
         options.ssl_key = None
 
     def test_ssl_cert_no_key(self):
-        with self.assertRaises(BlackholeSSLException):
-            verify_ssl_opts()
+        self.assertRaises(BlackholeSSLException, verify_ssl_opts)
 
 
 class TestSSLCertAndKey(unittest.TestCase):

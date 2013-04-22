@@ -33,7 +33,7 @@ class BaseSocket(unittest.TestCase):
         options.ssl_port = random.randint(5000, 10000)
 
     def tearDown(self):
-        for s in self.sockets.values():
+        for s in self.sockets.itervalues():
             s.close()
         self.sockets = {}
 
@@ -46,7 +46,7 @@ class TestSocketIsSet(BaseSocket):
         self.sockets = sockets()
 
     def test_ssl_socket_is_set(self):
-        self.assertIsInstance(self.sockets['std'], socket.socket)
+        self.assertTrue(isinstance(self.sockets['std'], socket.socket))
 
 
 class TestSSLSocketIsSet(BaseSocket):
@@ -57,7 +57,7 @@ class TestSSLSocketIsSet(BaseSocket):
         self.sockets = sockets()
 
     def test_ssl_socket_is_set(self):
-        self.assertIsInstance(self.sockets['ssl'], socket.socket)
+        self.assertTrue(isinstance(self.sockets['ssl'], socket.socket))
 
 
 class TestSSLSocketIsNotSet(BaseSocket):
@@ -68,4 +68,4 @@ class TestSSLSocketIsNotSet(BaseSocket):
         self.sockets = sockets()
 
     def test_ssl_socket_is_not_set(self):
-        self.assertNotIn('ssl', self.sockets)
+        self.assertTrue('ssl' not in self.sockets)

@@ -188,7 +188,7 @@ class TestGetAcceptResponse(unittest.TestCase):
         options.mode = "accept"
 
     def test_get_accept_response(self):
-        self.assertIn(get_response(), ACCEPT_RESPONSES)
+        self.assertTrue(get_response() in ACCEPT_RESPONSES)
 
 
 class TestGetBounceResponse(unittest.TestCase):
@@ -197,7 +197,7 @@ class TestGetBounceResponse(unittest.TestCase):
         options.mode = "bounce"
 
     def test_get_bounce_response(self):
-        self.assertIn(get_response(), BOUNCE_RESPONSES)
+        self.assertTrue(get_response() in BOUNCE_RESPONSES)
 
 
 class TestGetOfflineResponse(unittest.TestCase):
@@ -206,7 +206,7 @@ class TestGetOfflineResponse(unittest.TestCase):
         options.mode = "offline"
 
     def test_get_offline_response(self):
-        self.assertIn(get_response(), OFFLINE_RESPONSES)
+        self.assertTrue(get_response() in OFFLINE_RESPONSES)
 
 
 class TestGetUnavailableResponse(unittest.TestCase):
@@ -215,7 +215,7 @@ class TestGetUnavailableResponse(unittest.TestCase):
         options.mode = "unavailable"
 
     def test_get_unavailable_response(self):
-        self.assertIn(get_response(), UNAVAILABLE_RESPONSES)
+        self.assertTrue(get_response() in UNAVAILABLE_RESPONSES)
 
 
 class TestGetRandomResponse(unittest.TestCase):
@@ -224,4 +224,4 @@ class TestGetRandomResponse(unittest.TestCase):
         options.mode = "random"
 
     def test_get_random_response(self):
-        self.assertIn(get_response(), RANDOM_RESPONSES)
+        self.assertTrue(get_response() in RANDOM_RESPONSES)
