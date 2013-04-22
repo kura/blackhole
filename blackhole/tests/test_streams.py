@@ -1,4 +1,4 @@
-import unittest2
+import unittest
 import random
 import socket
 
@@ -9,7 +9,7 @@ from blackhole.connection import connection_stream
 from blackhole.opts import *
 
 
-class BaseStream(unittest2.TestCase):
+class BaseStream(unittest.TestCase):
 
     def setUp(self):
         options.ssl = False
@@ -29,7 +29,7 @@ class TestSocketConnectionStream(BaseStream):
         self.socket = socket.socket()
 
     def test_socket_connection_stream(self):
-        self.assertIsInstance(connection_stream(self.socket), iostream.IOStream)
+        self.assertTrue(isinstance(connection_stream(self.socket), iostream.IOStream))
 
     def tearDown(self):
         self.socket.close()
@@ -44,7 +44,7 @@ class TestSSLSocketConnectionStream(BaseStream):
         self.socket.bind(('127.0.0.1', options.ssl_port))
 
     def test_ssl_socket_connection_stream(self):
-        self.assertIsInstance(connection_stream(self.socket), iostream.SSLIOStream)
+        self.assertTrue(isinstance(connection_stream(self.socket), iostream.SSLIOStream))
 
     def tearDown(self):
         self.socket.close()
