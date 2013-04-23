@@ -118,7 +118,6 @@ Python versions
 
 ::
 
-    Python 2.5    # see notes below
     Python 2.6
     Python 2.7
     Python 3.2
@@ -126,20 +125,14 @@ Python versions
     PyPy 1.9      # see notes below
     PyPy 2.0      # see notes below
 
-Blackhole works on Python 2.6 and 2.7, it also works with PyPy (see :ref:`blackhole-pypy` section below). It can work with Python 2.5
-but requires downgrading to Tornado 2.4.1 with a modification to blackhole's setup.py and blackhole/bin/blackhole to
-change or remove the Python version check.::
-
-    if sys.version_info < (2, 6):
-        print "blackhole requires Python 2.6 or greater"
-        sys.exit(1)
+Blackhole works on Python 2.6 and 2.7, it also works with PyPy (see :ref:`blackhole-pypy` section below).
 
 Third party libraries
 ---------------------
 
 ::
 
-    tornado>=2.2.1,<=3.1  # 2.2.1 to 2.4.1 are known to work with Python 2.5 and above
+    tornado>=2.2.1,<=3.1  
     setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
     deiman>=0.1.4         # older version of Deiman will not work because of API changes
 
