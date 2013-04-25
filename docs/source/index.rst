@@ -18,6 +18,12 @@ Blackhole
 .. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
         :target: https://coveralls.io/r/kura/blackhole
 
+.. image:: https://pypip.in/d/blackhole/badge.png
+        :target: https://crate.io/packages/blackhole
+
+.. image:: https://pypip.in/v/blackhole/badge.png
+        :target: https://crate.io/packages/blackhole 
+
 Blackhole is a `Tornado`_ powered MTA (mail transport agent) that is designed
 for handling large volumes of email without handling any of the messages and
 doing no disk bound I/O.
