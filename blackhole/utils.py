@@ -65,7 +65,7 @@ def terminate(signum, frame):
     down.
     """
     try:
-        for pid in frame.f_locals['children'].iterkeys():
+        for pid in frame.f_locals['children'].keys():
             os.kill(pid, signal.SIGTERM)
     except KeyError:
         # not the parent

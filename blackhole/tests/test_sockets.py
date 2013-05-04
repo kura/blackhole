@@ -1,4 +1,4 @@
-import unittest2
+import unittest
 import random
 import socket
 
@@ -8,7 +8,7 @@ from blackhole.connection import sockets
 from blackhole.opts import *
 
 
-class TestNoSSLPorts(unittest2.TestCase):
+class TestNoSSLPorts(unittest.TestCase):
 
     def setUp(self):
         options.ssl = False
@@ -16,7 +16,7 @@ class TestNoSSLPorts(unittest2.TestCase):
     def test_no_ssl_ports(self):
         self.assertEquals(ports(), ['std', ])
 
-class TestSSLPorts(unittest2.TestCase):
+class TestSSLPorts(unittest.TestCase):
 
     def setUp(self):
         options.ssl=True
@@ -25,7 +25,7 @@ class TestSSLPorts(unittest2.TestCase):
         self.assertEquals(ports(), ['std', 'ssl'])
 
 
-class BaseSocket(unittest2.TestCase):
+class BaseSocket(unittest.TestCase):
 
     def setUp(self):
         options.ssl = False
@@ -33,7 +33,7 @@ class BaseSocket(unittest2.TestCase):
         options.ssl_port = random.randint(5000, 10000)
 
     def tearDown(self):
-        for s in self.sockets.itervalues():
+        for s in self.sockets.values():
             s.close()
         self.sockets = {}
 
@@ -46,7 +46,7 @@ class TestSocketIsSet(BaseSocket):
         self.sockets = sockets()
 
     def test_ssl_socket_is_set(self):
-        self.assertIsInstance(self.sockets['std'], socket.socket)
+        self.assertTrue(isinstance(self.sockets['std'], socket.socket))
 
 
 class TestSSLSocketIsSet(BaseSocket):
@@ -57,7 +57,7 @@ class TestSSLSocketIsSet(BaseSocket):
         self.sockets = sockets()
 
     def test_ssl_socket_is_set(self):
-        self.assertIsInstance(self.sockets['ssl'], socket.socket)
+        self.assertTrue(isinstance(self.sockets['ssl'], socket.socket))
 
 
 class TestSSLSocketIsNotSet(BaseSocket):
@@ -68,4 +68,4 @@ class TestSSLSocketIsNotSet(BaseSocket):
         self.sockets = sockets()
 
     def test_ssl_socket_is_not_set(self):
-        self.assertNotIn('ssl', self.sockets)
+        self.assertTrue('ssl' not in self.sockets)

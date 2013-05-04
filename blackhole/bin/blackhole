@@ -85,6 +85,9 @@ if __name__ == "__main__":
         print_help()
         sys.exit(2)
 
+    # Deprecated options check
+    deprecated_opts()
+
     if options.debug:
         print """WARNING: Running with debug flag!\n"""\
               """This will generate a lots of disk I/O """\

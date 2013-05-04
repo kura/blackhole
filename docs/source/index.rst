@@ -18,6 +18,12 @@ Blackhole
 .. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
         :target: https://coveralls.io/r/kura/blackhole
 
+.. image:: https://pypip.in/d/blackhole/badge.png
+        :target: https://crate.io/packages/blackhole
+
+.. image:: https://pypip.in/v/blackhole/badge.png
+        :target: https://crate.io/packages/blackhole 
+
 Blackhole is a `Tornado`_ powered MTA (mail transport agent) that is designed
 for handling large volumes of email without handling any of the messages and
 doing no disk bound I/O.
@@ -118,29 +124,26 @@ Python versions
 
 ::
 
-    Python 2.5    # see notes below
     Python 2.6
     Python 2.7
+    Python 3.2
+    Python 3.3
     PyPy 1.9      # see notes below
     PyPy 2.0      # see notes below
 
-Blackhole works on Python 2.6 and 2.7, it also works with PyPy (see :ref:`blackhole-pypy` section below). It can work with Python 2.5
-but requires downgrading to Tornado 2.4.1 with a modification to blackhole's setup.py and blackhole/bin/blackhole to
-change or remove the Python version check.::
+Blackhole works on Python 2.6 and 2.7, it also works with PyPy (see :ref:`blackhole-pypy` section below).
 
-    if sys.version_info < (2, 6):
-        print "blackhole requires Python 2.6 or greater"
-        sys.exit(1)
+Third party libraries
+---------------------
 
-+Third party libraries
-+---------------------
-+
-+::
-+
-+    tornado>=2.2.1,<=3.1  # 2.2.1 to 2.4.1 are known to work with Python 2.5 and above
-+    setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
-+    deiman>=0.1.3         # older version of Deiman will not work because of API changes
+::
 
+    tornado>=2.2.1,<=3.1  
+    setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
+    deiman>=0.1.4         # older version of Deiman will not work because of API changes
+
+Getting started
+---------------
 
 .. toctree::
     :maxdepth: 2
@@ -157,6 +160,24 @@ change or remove the Python version check.::
 Tests & Coverage
 ================
 
+Running tests manually
+----------------------
+
+Running tests manually is pretty simple, there is a Make target dedicated to it.
+
+The test suite relies on `unittest2` and `nose`, both if which get installed by the Make target during test running.
+
+::
+
+    make tests
+
+There is also a Make target for generating coverage::
+
+    make coverage
+
+Third party CI/Coverage
+-----------------------
+
 .. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
         :target: https://travis-ci.org/kura/blackhole
 
@@ -171,6 +192,8 @@ And the test coverage report on `coveralls`_.
 
 .. _coveralls: https://coveralls.io/r/kura/blackhole
 
+.. _blackhole-pypy:
+
 Blackhole + PyPy
 ================
 
@@ -183,6 +206,12 @@ of up to 30% in certain situations.
 
 However, blackhole does have issues with both PyPy 1.9 and 2.0 beta1 and 2.0 beta2 when using the pre-compiled binaries, this is due to a conflict in the version of OpenSSL compiled in to PyPy and the version compiled in to your CPython installation.
 If you wish to use blackhole with SSL support on PyPy I suggest you either compile PyPy yourself or try to make sure your PyPy and CPython have the same versions.
+
+FAQ
+===
+
+A few people have emailed me questions about why blackhole exists, how I use it, why Tornado and things like that
+so I have outlined some questions and responses in an :ref:`faq`.
 
 Reference
 =========

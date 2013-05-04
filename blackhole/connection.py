@@ -44,7 +44,7 @@ def sockets():
             sock.bind((options.host, port))
             sock.listen(5)
             socks[s] = sock
-        except socket.error, e:
+        except socket.error as e:
             if e.errno == 13:
                 log.error("Permission denied, could not bind to %s:%s" %
                           (options.host, port))
@@ -66,7 +66,7 @@ def connection_stream(connection):
     if connection.getsockname()[1] == options.ssl_port and options.ssl:
         try:
             ssl_connection = ssl.wrap_socket(connection, **sslkwargs)
-        except (ssl.SSLError, socket.error), e:
+        except (ssl.SSLError, socket.error) as e:
             if e.errno == ssl.SSL_ERROR_EOF or e.errno == errno.ECONNABORTED:
                 ssl_connection.close()
                 return
@@ -75,7 +75,7 @@ def connection_stream(connection):
         # Do a nasty blanket Exception until SSL exceptions are fully known
         try:
             return iostream.SSLIOStream(ssl_connection)
-        except Exception, e:
+        except Exception as e:
             log.error(e)
             ssl_connection.close()
             return
@@ -144,7 +144,7 @@ def connection_ready(sock, fd, events):
     while True:
         try:
             connection, address = sock.accept()
-        except socket.error, e:
+        except socket.error as e:
             if e.errno not in (errno.EWOULDBLOCK, errno.EAGAIN):
                 raise
             return

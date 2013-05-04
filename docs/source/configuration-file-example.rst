@@ -1,4 +1,4 @@
-  .. _configuration_file_example:
+.. _configuration_file_example:
 
 ==========================
 Configuration file example
