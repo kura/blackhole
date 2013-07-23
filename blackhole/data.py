@@ -46,7 +46,7 @@ RESPONSES = {
     '571': "Blocked",
 }
 
-ACCEPT_RESPONSES = ('250', '251', '252', '253')
+ACCEPT_RESPONSES = ('250',)
 
 # Bounce responses
 BOUNCE_RESPONSES = ('421', '431', '450', '451', '452',
