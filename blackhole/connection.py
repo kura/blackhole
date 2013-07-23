@@ -98,6 +98,9 @@ def handle_command(line, mail_state):
         if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
             mail_state.reading = False
             resp = response()
+            from tornado.ioloop import IOLoop
+            import time
+            IOLoop.instance().add_timeout(time.time() + 5, time.time())
     elif line.lower().startswith("ehlo"):
         resp = ["%s\n" % x for x in EHLO_RESPONSES]
     elif any(line.lower().startswith(e) for e in ['helo', 'mail from',
@@ -128,7 +131,7 @@ def handle_command(line, mail_state):
 
 def write_response(stream, mail_state, resp):
     """Write the response back to the stream"""
-    log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.rstrip()))
+    log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.upper().rstrip()))
     stream.write(resp)
 
 

@@ -56,4 +56,4 @@ class MailState(object):
     @email_id.deleter
     def email_id(self):
         """Reset email_id back to None."""
-        self.email_id = None
+        self._email_id = None
