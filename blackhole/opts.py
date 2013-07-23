@@ -41,6 +41,10 @@ define('debug', default=False, metavar="BOOL", type=bool,
        help="Enable/disable debug logging mode. Causes a lot of disk I/O",
        group="Debug")
 
+define('delay', default=0, metavar="INT", type=int,
+       help="Delay SMTP connection for number of seconds passed",
+       group="Delay")
+
 define("mode", default="accept",
        metavar="MODE", help="Mode to run blackhole in (accept, bounce, random,\n%-37sunavailable, offline)" % "",
        group="Mode")
@@ -99,7 +103,7 @@ def print_help():
         # hack to bypass Tornado options
         if option.startswith(("workers", "host", "port", "pid",
                               "conf", "user", "group", "log",
-                              "debug", "mode", "ssl",
+                              "debug", "delay", "mode", "ssl",
                               "ssl_port", "ssl_cert", "ssl_key")):
             if not option.startswith(("log_", "logging", "ssl_ca_certs_dir")):
                 opts[option] = value

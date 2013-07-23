@@ -16,6 +16,7 @@ as below:
   --group=GROUP					Group to drop privs to during run time. (default: blackhole)
   --mode=MODE					Mode to run blackhole in (accept, bounce, random, unavailable, offline) (default: accept) - see :ref:`modes` section
   --debug=BOOL					Will set the debug flag and causes all received and sent command/email data to be logged. Will degrade performance with high throughput (default: False)
+  --delay=SECONDS				Will set the delay flag and cause the server to wait X seconds before responding. (default: 0)
 
 SSL options
 

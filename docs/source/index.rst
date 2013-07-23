@@ -152,6 +152,7 @@ Getting started
     configuration-options
     configuration-file-example
     debug-flag
+    delay-flag
     controlling-the-server
     controlling-the-server-init-d
     modes

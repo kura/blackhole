@@ -127,6 +127,15 @@ def handle_command(line, mail_state):
         mail_state.reading = True
     else:
         resp = response(500)
+    
+    # this is a blocking action, sadly
+    # async non blocking methods did not
+    # work. =(
+    if options.delay > 0:
+        # import has to be called here for
+        # some reason...
+        import time
+        time.sleep(options.delay)
     return resp, close
 
 
