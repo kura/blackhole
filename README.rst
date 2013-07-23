@@ -35,3 +35,4 @@ The latest build status on `travis`_.
 And the test coverage report on `coveralls`_.
 
 .. _coveralls: https://coveralls.io/r/kura/blackhole
+
