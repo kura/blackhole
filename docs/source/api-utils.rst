@@ -56,3 +56,10 @@ blackhole.utils
 
     Will be reused later down the line
     due to the limited number of characters.
+
+.. function:: get_mailename()
+
+    Return a mailname for HELO.
+
+    Reads /etc/mailname if present
+    and falls back to socket.getfqdn

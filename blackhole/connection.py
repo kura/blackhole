@@ -12,12 +12,13 @@ import sys
 from tornado import iostream
 from tornado.options import options
 
+from blackhole import __fullname__
 from blackhole.state import MailState
 from blackhole.data import response, EHLO_RESPONSES
 from blackhole.opts import ports
 from blackhole.ssl_utils import sslkwargs
 from blackhole.log import log
-from blackhole.utils import email_id
+from blackhole.utils import email_id, get_mailname
 
 
 def sockets():
@@ -102,7 +103,7 @@ def handle_command(line, mail_state):
             import time
             IOLoop.instance().add_timeout(time.time() + 5, time.time())
     elif line.lower().startswith("ehlo"):
-        resp = ["%s\n" % x for x in EHLO_RESPONSES]
+        resp = ["%s\r\n" % x for x in EHLO_RESPONSES]
     elif any(line.lower().startswith(e) for e in ['helo', 'mail from',
                                                   'rcpt to', 'noop']):
         resp = response(250)
@@ -194,5 +195,7 @@ def connection_ready(sock, fd, events):
             """
             stream.read_until("\n", handle)
 
-        stream.write(response(220))
+        hm = "220 %s [%s]\r\n" % (get_mailname(),
+                              __fullname__)
+        stream.write(hm)
         loop()

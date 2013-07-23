@@ -101,3 +101,18 @@ def email_id():
     """
     alpha = list("1234567890ABCDEF")
     return ''.join(random.choice(alpha) for x in range(10))
+
+
+def get_mailname():
+    """
+    Return a mailname for HELO.
+
+    Reads /etc/mailname if present
+    and falls back to socket.getfqdn
+    """
+    mailname_file = "/etc/mailname"
+    if os.path.exists(mailname_file):
+        mnc = file(mailname_file, 'r').read().strip()
+        if mnc != "":
+            return mnc
+    return socket.getfqdn()

@@ -11,14 +11,14 @@ from blackhole.data import get_response, ACCEPT_RESPONSES,\
 
 
 class TestResponses(unittest.TestCase):
-    ok_done = ('250 2.5.0 OK, done\n', False)
-    quit = ('221 2.2.1 Thank you for speaking to me\n', True)
-    data = ('354 3.5.4 Start mail input; end with <CRLF>.<CRLF>\n', False)
-    unknown = ('500 5.0.0 Command not recognized\n', False)
-    ok = ('220 2.2.0 OK, ready\n', False)
-    vrfy = ('252 2.5.2 OK, cannot VRFY user but will attempt delivery\n', False)
-    ehlo = (['250-2.5.0 OK, done\n', '250-SIZE 512000\n', '250-VRFY\n', '250-STARTTLS\n',
-             '250-ENHANCEDSTATUSCODES\n', '250-8BITMIME\n', '250 DSN\n'], False)
+    ok_done = ('250 OK\r\n', False)
+    quit = ('221 Thank you for speaking to me\r\n', True)
+    data = ('354 Start mail input; end with <CRLF>.<CRLF>\r\n', False)
+    unknown = ('500 Command not recognized\r\n', False)
+    ok = ('220 OK\r\n', False)
+    vrfy = ('252 OK, cannot VRFY user but will attempt delivery\r\n', False)
+    ehlo = (['250-OK\r\n', '250-SIZE 512000\r\n', '250-VRFY\r\n', '250-STARTTLS\r\n',
+             '250-ENHANCEDSTATUSCODES\r\n', '250-8BITMIME\r\n', '250 DSN\r\n'], False)
 
     def test_handle_command_helo_response(self):
         m = MailState()

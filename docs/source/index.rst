@@ -157,6 +157,14 @@ Getting started
     modes
     response-codes
 
+FQDN
+----
+
+The FQDN that Blackhole will print on a new connection is automatically generated.
+
+It will use the contents of `/etc/mailname`, if that file does not exist it will
+use a name returned by `socket.getfqdn()`.
+
 Tests & Coverage
 ================
 

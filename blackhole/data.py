@@ -14,9 +14,9 @@ from tornado.options import options
 
 
 RESPONSES = {
-    '220': "OK, ready",
+    '220': "OK",
     '221': "Thank you for speaking to me",
-    '250': "OK, done",
+    '250': "OK",
     '251': "OK, user not local, will forward",
     '252': "OK, cannot VRFY user but will attempt delivery",
     '253': "OK, messages pending",
@@ -63,7 +63,7 @@ UNAVAILABLE_RESPONSES = ('421',)
 # Random responses
 RANDOM_RESPONSES = ACCEPT_RESPONSES + BOUNCE_RESPONSES
 
-EHLO_RESPONSES = ("250-2.5.0 OK, done", "250-SIZE 512000",
+EHLO_RESPONSES = ("250-OK", "250-SIZE 512000",
                   "250-VRFY", "250-STARTTLS",
                   "250-ENHANCEDSTATUSCODES", "250-8BITMIME",
                   "250 DSN")
@@ -123,5 +123,4 @@ def response_message(response):
     response = str(response)
     message = RESPONSES[response]
     smtp_code = response
-    esmtp_code = ".".join(list(response))
-    return "%s %s %s\n" % (smtp_code, esmtp_code, message)
+    return "%s %s\r\n" % (smtp_code, message)
