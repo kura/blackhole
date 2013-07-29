@@ -4,17 +4,11 @@ server.
 Also creates a list of available ports for the server to be
 run on, based on configuration and responds with the help
 menu when requested or invalid options are given."""
-
-import sys
-
 from tornado.options import define, options
+from tornado import process
 
 from blackhole import __pname__, __fullname__
 
-
-define('workers', default=None, metavar="NUM", type=int,
-       help="Number of worker processes to spawn. (default: # of CPUs/Cores + 1 master)",
-       group="Blackhole")
 define('host', default="0.0.0.0", metavar="IP", type=str,
        help="IP address to bind go",
        group="Blackhole")
@@ -36,6 +30,10 @@ define("group", default="blackhole",
 define("log", default="/tmp/blackhole.log",
        metavar="FILE", help="File to write logs to (not very verbose)",
        group="Blackhole")
+
+define('workers', default=None, metavar="NUM", type=int,
+       help="Number of worker processes to spawn. (default: # of CPUs/Cores - 2 + 1 master)",
+       group="Workers")
 
 define('debug', default=False, metavar="BOOL", type=bool,
        help="Enable/disable debug logging mode. Causes a lot of disk I/O",
@@ -83,6 +81,11 @@ def ports():
     if options.ssl:
         socks_list.append('ssl')
     return socks_list
+
+def workers():
+    if options.workers is None:
+        return process.cpu_count() - 2
+    return options.workers
 
 def deprecated_opts():
     dep = ('ssl_ca_certs_dir', )

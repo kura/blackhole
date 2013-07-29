@@ -130,6 +130,7 @@ if __name__ == "__main__":
     set_process_title()
 
      # Fork and create the ioloop
+    options.workers = workers()
     tornado.process.fork_processes(options.workers)
     io_loop = ioloop.IOLoop.instance()
 

@@ -22,7 +22,7 @@ Blackhole
         :target: https://crate.io/packages/blackhole
 
 .. image:: https://pypip.in/v/blackhole/badge.png
-        :target: https://crate.io/packages/blackhole 
+        :target: https://crate.io/packages/blackhole
 
 Blackhole is a `Tornado`_ powered MTA (mail transport agent) that is designed
 for handling large volumes of email without handling any of the messages and
@@ -138,7 +138,7 @@ Third party libraries
 
 ::
 
-    tornado>=2.2.1,<=3.1  
+    tornado>=2.2.1,<=3.1
     setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
     deiman>=0.1.5         # older version of Deiman will not work because of API changes
 

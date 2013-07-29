@@ -7,7 +7,7 @@ Configuration options
 Configuration options can be passed via the command line
 as below:
 
-  --workers=NUM					Number of child workers to spawn (default: # of CPUs/cores + 1 master)
+  --workers=NUM					Number of child workers to spawn (default: # of CPUs/cores - 2 + 1 master)
   --host=IP					IP address to bind go (default: 0.0.0.0)
   --port=PORT					Port to listen for connections on (default: 25)
   --pid=FILE					File to write process information to (default: /tmp/blackhole.pid)

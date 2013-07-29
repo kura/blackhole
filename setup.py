@@ -19,6 +19,7 @@ desc = """Tornado powered MTA for accepting all incoming emails without any disk
 setup(name='blackhole',
       version=version,
       url='http://blackhole.io/',
+      download_url='https://github.com/kura/blackhole/archive/%s.zip' % version,
       author="Kura",
       author_email="kura@kura.io",
       maintainer="Kura",

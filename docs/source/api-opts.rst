@@ -19,4 +19,6 @@ blackhole.opts
 
 .. autofunction:: ports()
 
+.. autofunction:: workers()
+
 .. autofunction:: print_help(file)
