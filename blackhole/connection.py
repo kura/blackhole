@@ -136,7 +136,14 @@ def handle_command(line, mail_state):
 def write_response(stream, mail_state, resp):
     """Write the response back to the stream"""
     log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.upper().rstrip()))
-    stream.write(resp)
+    # This is required for returning
+    # multiple status codes for EHLO
+    if isinstance(rest, list):
+        for r in resp:
+            stream.write(resp)
+    else
+        # Otherwise it's a single response
+        stream.write(resp)
 
 
 def connection_ready(sock, fd, events):
@@ -177,12 +184,9 @@ def connection_ready(sock, fd, events):
             resp, close = handle_command(line, mail_state)
             if resp:
                 if isinstance(resp, list):
-                    # This is required for returning
-                    # multiple status codes for EHLO
                     for r in resp:
                         write_response(stream, mail_state, r)
                 else:
-                    # Otherwise it's a single response
                     write_response(stream, mail_state, resp)
             if close is True:
                 log.debug("Closing")
@@ -200,5 +204,5 @@ def connection_ready(sock, fd, events):
 
         hm = "220 %s [%s]\r\n" % (get_mailname(),
                                   __fullname__)
-        stream.write(hm)
+        write_response(stream, mail_state, hm)
         loop()
