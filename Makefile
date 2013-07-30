@@ -1,12 +1,12 @@
-.PHONY: install uninstall travis install_coverage install_testrig coverage pypi docs test
+.PHONY: install uninstall install_coverage install_testrig test coverage travis pypi docs web tag release
 install:
 	python setup.py install
 
-install_coverage:
-	pip install coverage coveralls
-
 uninstall:
 	pip uninstall blackhole
+
+install_coverage:
+	pip install coverage coveralls
 
 install_testrig:
 	pip install nose
@@ -29,3 +29,16 @@ docs:
 
 web: docs
 	rsync -e "ssh -p 2222" -P -rvz --delete docs/build/ kura@blackhole.io:/var/www/blackhole.io/
+
+tag:
+	sed -i 's/__version__ = ".*"/__version__ = "1.8.0"/g' blackhole/__init__.py
+	git add blackhole/__init__.py
+	git ci -m "New release ${ARGS}"
+	git push origin master
+	git tag ${ARGS}
+	git push --tags
+
+release:
+	tag ${ARGS}
+	pypi
+	web
