@@ -73,13 +73,7 @@ def connection_stream(connection):
                 return
             else:
                 raise
-        # Do a nasty blanket Exception until SSL exceptions are fully known
-        try:
-            return iostream.SSLIOStream(ssl_connection)
-        except Exception as e:
-            log.error(e)
-            ssl_connection.close()
-            return
+        return iostream.SSLIOStream(ssl_connection)
     else:
         return iostream.IOStream(connection)
 
@@ -205,6 +199,6 @@ def connection_ready(sock, fd, events):
             stream.read_until("\n", handle)
 
         hm = "220 %s [%s]\r\n" % (get_mailname(),
-                              __fullname__)
+                                  __fullname__)
         stream.write(hm)
         loop()
