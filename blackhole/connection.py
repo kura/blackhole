@@ -222,7 +222,9 @@ def connection_ready(sock, fd, events):
             Loop over the socket data until we receive
             a newline character (\n)
             """
-            mail_state.stream.read_until("\n", handle)
+            # Protection against stream already reading exceptions
+            if not mail_state.stream.reading():
+                mail_state.stream.read_until("\n", handle)
 
         hm = "220 %s [%s]\r\n" % (get_mailname(), __fullname__)
         mail_state.stream.write(hm)
