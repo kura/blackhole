@@ -93,9 +93,6 @@ def handle_command(line, mail_state):
         if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
             mail_state.reading = False
             resp = response()
-            from tornado.ioloop import IOLoop
-            import time
-            IOLoop.instance().add_timeout(time.time() + 5, time.time())
     elif line.lower().startswith("ehlo"):
         resp = ["%s\r\n" % x for x in EHLO_RESPONSES]
     elif any(line.lower().startswith(e) for e in ['helo', 'mail from',
@@ -138,10 +135,10 @@ def write_response(stream, mail_state, resp):
     log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.upper().rstrip()))
     # This is required for returning
     # multiple status codes for EHLO
-    if isinstance(rest, list):
+    if isinstance(resp, list):
         for r in resp:
             stream.write(resp)
-    else
+    else:
         # Otherwise it's a single response
         stream.write(resp)
 
