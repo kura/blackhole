@@ -9,7 +9,7 @@ import socket
 import ssl
 import sys
 
-from tornado import iostream
+from tornado import iostream, ioloop
 from tornado.options import options
 
 from blackhole import __fullname__
@@ -73,11 +73,11 @@ def connection_stream(connection):
 def ssl_connection(connection):
     try:
         ssl_connection = ssl.wrap_socket(connection, **sslkwargs)
+        return iostream.SSLIOStream(ssl_connection)
     except (ssl.SSLError, socket.error) as e:
         if e.errno == ssl.SSL_ERROR_EOF or e.errno == errno.ECONNABORTED:
             ssl_connection.close()
             return
-    return iostream.SSLIOStream(ssl_connection)
 
 
 def handle_command(line, mail_state):
@@ -138,7 +138,7 @@ def handle_command(line, mail_state):
 def write_response(stream, mail_state, resp):
     """Write the response back to the stream"""
     log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.upper().rstrip()))
-    stream.write(resp)
+    mail_state._stream.write(resp)
 
 
 def connection_ready(sock, fd, events):
@@ -166,6 +166,7 @@ def connection_ready(sock, fd, events):
             return
         mail_state = MailState()
         mail_state.email_id = email_id()
+        mail_state._stream = stream
 
         # Sadly there is nothing I can do about the handle and loop
         # fuctions. They have to exist within connection_ready
@@ -182,15 +183,16 @@ def connection_ready(sock, fd, events):
                     # This is required for returning
                     # multiple status codes for EHLO
                     for r in resp:
-                        write_response(stream, mail_state, r)
+                        write_response(mail_state._stream, mail_state, r)
                 else:
                     # Otherwise it's a single response
-                    write_response(stream, mail_state, resp)
+                    write_response(mail_state._stream, mail_state, resp)
             if line.lower().startswith("starttls"):
-                stream = ssl_connection(connection)
+                ioloop.IOLoop.current().remove_handler(mail_state._stream.socket.fileno())
+                mail_state._stream = ssl_connection(connection)
             if close is True:
                 log.debug("Closing")
-                stream.close()
+                mail_state._stream.close()
                 return
             else:
                 loop()
@@ -200,9 +202,9 @@ def connection_ready(sock, fd, events):
             Loop over the socket data until we receive
             a newline character (\n)
             """
-            stream.read_until("\n", handle)
+            mail_state._stream.read_until("\n", handle)
 
         hm = "220 %s [%s]\r\n" % (get_mailname(),
                               __fullname__)
-        stream.write(hm)
+        mail_state._stream.write(hm)
         loop()

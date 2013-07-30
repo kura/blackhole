@@ -11,6 +11,7 @@ class MailState(object):
     """
     _reading_data = False
     _email_id = None
+    _stream = None
 
     @property
     def reading(self):
