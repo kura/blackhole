@@ -1,3 +1,25 @@
+# (The MIT License)
+#
+# Copyright (c) 2013 Kura
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """blackhole.connection - Provide mechanisms for processing socket data.
 
 This module provides methods for Blackhole to use internally
@@ -9,7 +31,8 @@ import socket
 import ssl
 import sys
 
-from tornado import iostream, ioloop
+from tornado import iostream
+from tornado.ioloop import IOLoop
 from tornado.options import options
 
 from blackhole import __fullname__
@@ -95,9 +118,6 @@ def handle_command(line, mail_state):
         if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
             mail_state.reading = False
             resp = response()
-            from tornado.ioloop import IOLoop
-            import time
-            IOLoop.instance().add_timeout(time.time() + 5, time.time())
     elif line.lower().startswith("ehlo"):
         resp = ["%s\r\n" % x for x in EHLO_RESPONSES]
     elif any(line.lower().startswith(e) for e in ['helo', 'mail from',
@@ -135,10 +155,10 @@ def handle_command(line, mail_state):
     return resp, close
 
 
-def write_response(stream, mail_state, resp):
+def write_response(mail_state, resp):
     """Write the response back to the stream"""
     log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.upper().rstrip()))
-    mail_state._stream.write(resp)
+    mail_state.stream.write(resp)
 
 
 def connection_ready(sock, fd, events):
@@ -166,7 +186,7 @@ def connection_ready(sock, fd, events):
             return
         mail_state = MailState()
         mail_state.email_id = email_id()
-        mail_state._stream = stream
+        mail_state.stream = stream
 
         # Sadly there is nothing I can do about the handle and loop
         # fuctions. They have to exist within connection_ready
@@ -183,16 +203,18 @@ def connection_ready(sock, fd, events):
                     # This is required for returning
                     # multiple status codes for EHLO
                     for r in resp:
-                        write_response(mail_state._stream, mail_state, r)
+                        write_response(mail_state, r)
                 else:
                     # Otherwise it's a single response
-                    write_response(mail_state._stream, mail_state, resp)
+                    write_response(mail_state, resp)
             if line.lower().startswith("starttls"):
-                ioloop.IOLoop.current().remove_handler(mail_state._stream.socket.fileno())
-                mail_state._stream = ssl_connection(connection)
+                fileno = mail_state.stream.socket.fileno()
+                IOLoop.current().remove_handler(fileno)
+                mail_state.stream = ssl_connection(connection)
             if close is True:
                 log.debug("Closing")
-                mail_state._stream.close()
+                mail_state.stream.close()
+                del mail_state.stream
                 return
             else:
                 loop()
@@ -202,9 +224,8 @@ def connection_ready(sock, fd, events):
             Loop over the socket data until we receive
             a newline character (\n)
             """
-            mail_state._stream.read_until("\n", handle)
+            mail_state.stream.read_until("\n", handle)
 
-        hm = "220 %s [%s]\r\n" % (get_mailname(),
-                              __fullname__)
-        mail_state._stream.write(hm)
+        hm = "220 %s [%s]\r\n" % (get_mailname(), __fullname__)
+        mail_state.stream.write(hm)
         loop()
