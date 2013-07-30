@@ -200,8 +200,6 @@ def connection_ready(sock, fd, events):
             resp, close = handle_command(line, mail_state)
             if resp:
                 if isinstance(resp, list):
-                    # This is required for returning
-                    # multiple status codes for EHLO
                     for r in resp:
                         write_response(mail_state, r)
                 else:
