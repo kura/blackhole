@@ -65,23 +65,19 @@ def connection_stream(connection):
     from stdlib.
     """
     if connection.getsockname()[1] == options.ssl_port and options.ssl:
-        try:
-            ssl_connection = ssl.wrap_socket(connection, **sslkwargs)
-        except (ssl.SSLError, socket.error) as e:
-            if e.errno == ssl.SSL_ERROR_EOF or e.errno == errno.ECONNABORTED:
-                ssl_connection.close()
-                return
-            else:
-                raise
-        # Do a nasty blanket Exception until SSL exceptions are fully known
-        try:
-            return iostream.SSLIOStream(ssl_connection)
-        except Exception as e:
-            log.error(e)
-            ssl_connection.close()
-            return
+        return ssl_connection(connection)
     else:
         return iostream.IOStream(connection)
+
+
+def ssl_connection(connection):
+    try:
+        ssl_connection = ssl.wrap_socket(connection, **sslkwargs)
+    except (ssl.SSLError, socket.error) as e:
+        if e.errno == ssl.SSL_ERROR_EOF or e.errno == errno.ECONNABORTED:
+            ssl_connection.close()
+            return
+    return iostream.SSLIOStream(ssl_connection)
 
 
 def handle_command(line, mail_state):
@@ -190,6 +186,8 @@ def connection_ready(sock, fd, events):
                 else:
                     # Otherwise it's a single response
                     write_response(stream, mail_state, resp)
+            if line.lower().startswith("starttls"):
+                stream = ssl_connection(connection)
             if close is True:
                 log.debug("Closing")
                 stream.close()
