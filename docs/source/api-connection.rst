@@ -20,8 +20,10 @@ blackhole.connection
 
 .. autofunction:: connection_stream(connection)
 
+.. autofunction:: ssl_connection(connection)
+
 .. autofunction:: handle_command(line, mail_state)
 
 .. autofunction:: connection_ready(sock, fd, events)
 
-.. autofunction:: write_response(stream, mail_state, resp)
+.. autofunction:: write_response(mail_state, resp)
