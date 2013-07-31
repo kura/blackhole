@@ -26,7 +26,7 @@ setup(name='blackhole',
       maintainer_email="kura@kura.io",
       description=desc,
       long_description=open("README.rst").read(),
-      license=open("LICENSE").read(),
+      license='MIT',
       platforms=['linux'],
       packages=find_packages(exclude=["*.tests"]),
       install_requires=[

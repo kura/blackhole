@@ -1,4 +1,4 @@
-.PHONY: install uninstall install_coverage install_testrig test coverage travis pypi docs web tag release
+.PHONY: install uninstall install_coverage install_testrig install_tox tox test coverage travis pypi docs web tag release
 install:
 	python setup.py install
 
@@ -11,6 +11,12 @@ install_coverage:
 install_testrig:
 	pip install nose
 
+install_tox:
+	pip install tox detox
+
+tox: install_tox
+	detox
+
 test: install_testrig
 	nosetests
 
@@ -22,6 +28,7 @@ travis:
 pypi:
 	python setup.py sdist upload
 	python setup.py bdist_egg upload
+        python setup.py bdist_wheel upload
 
 docs:
 	pip install sphinx
