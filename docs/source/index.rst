@@ -58,24 +58,24 @@ Testing via telnet
     Trying 198.199.126.159...
     Connected to blackhole.io.
     Escape character is '^]'.
-    220 2.2.0 OK, ready
+    220 blackhole.io [blackhole 1.7.0 (Stable)]
     HELO fake.mail.server
-    250 2.5.0 OK, done
+    250 OK
     MAIL FROM:<user@address.tld>
-    250 2.5.0 OK, done
+    250 OK
     RCPT TO:<someone@another.tld>
-    250 2.5.0 OK, done
+    250 OK
     DATA
-    354 3.5.4 Start mail input; end with <CRLF>.<CRLF>
+    354 Start mail input; end with <CRLF>.<CRLF>
     To: Someone <someone@another.tld>
     From: User <user@address.tld>
     Subject: Bye
 
     Bye bye email
     .
-    251 2.5.1 OK, user not local, will forward
+    250 OK
     QUIT
-    221 2.2.1 Thank you for speaking to me
+    221 Thank you for speaking to me
     Connection closed by foreign host.
 
 Testing SSL
@@ -88,24 +88,24 @@ Testing SSL
     depth=0 C = GB, ST = London, L = London, O = blackhole.io, OU = blackhole.io, CN = blackhole.io, emailAddress = kura@blackhole.io
     ... snip ...
     ---
-    220 2.2.0 OK, ready
+    220 blackhole.io [blackhole 1.7.0 (Stable)]
     HELO fake.mail.server
-    250 2.5.0 OK, done
+    250 OK
     MAIL FROM:<user@address.tld>
-    250 2.5.0 OK, done
+    250 OK
     RCPT TO:<someone@another.tld>
-    250 2.5.0 OK, done
+    250 OK
     DATA
-    354 3.5.4 Start mail input; end with <CRLF>.<CRLF>
+    354 Start mail input; end with <CRLF>.<CRLF>
     To: Someone <someone@another.tld>
     From: User <user@address.tld>
     Subject: Bye
 
     Bye bye email
     .
-    251 2.5.1 OK, user not local, will forward
+    250 OK
     QUIT
-    221 2.2.1 Thank you for speaking to me
+    221 Thank you for speaking to me
     DONE
 
 Testing STARTTLS
@@ -120,22 +120,22 @@ Testing STARTTLS
     ---
     250 DSN
     HELO fake.mail.server
-    250 2.5.0 OK, done
+    250 OK
     MAIL FROM:<user@address.tld>
-    250 2.5.0 OK, done
+    250 OK
     RCPT TO:<someone@another.tld>
-    250 2.5.0 OK, done
+    250 OK
     DATA
-    354 3.5.4 Start mail input; end with <CRLF>.<CRLF>
+    354 Start mail input; end with <CRLF>.<CRLF>
     To: Someone <someone@another.tld>
     From: User <user@address.tld>
     Subject: Bye
 
     Bye bye email
     .
-    251 2.5.1 OK, user not local, will forward
+    250 OK
     QUIT
-    221 2.2.1 Thank you for speaking to me
+    221 Thank you for speaking to me
     DONE
 
 Getting the source code
