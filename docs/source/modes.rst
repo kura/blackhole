@@ -11,7 +11,7 @@ and which mode responds with which codes.
 accept
 ======
 
-Accept all email with code 250, 251, 252 or 253.
+Accept all email with code 250
 
 bounce
 ======
