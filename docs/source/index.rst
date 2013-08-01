@@ -155,7 +155,7 @@ Testing with Python
 
     server = smtplib.SMTP('blackhole.io', 25)
     server.sendmail("user@address.tld", "someone@another.tld", 
-                msg)
+                    msg)
     server.quit()
 
 Getting the source code
