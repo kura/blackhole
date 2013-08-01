@@ -146,8 +146,8 @@ Testing with Python
 
     import smtplib
 
-    msg = """From: <kura@kura.io>
-    To: <kura@kura.io>
+    msg = """From: <user@address.tld>
+    To: <someone@another.tld>
     Subject: Test
 
     gwergerg
