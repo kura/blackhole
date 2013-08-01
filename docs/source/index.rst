@@ -138,6 +138,26 @@ Testing STARTTLS
     221 Thank you for speaking to me
     DONE
 
+Testing with Python
+-------------------
+
+.. code-block:: python
+   :linenos:
+
+    import smtplib
+
+    msg = """From: <kura@kura.io>
+    To: <kura@kura.io>
+    Subject: Test
+
+    gwergerg
+    """
+
+    server = smtplib.SMTP('blackhole.io', 25)
+    server.sendmail("user@address.tld", "someone@another.tld", 
+                msg)
+    server.quit()
+
 Getting the source code
 =======================
 
