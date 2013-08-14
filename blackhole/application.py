@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # (The MIT License)
 #
 # Copyright (c) 2013 Kura
@@ -22,10 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# std
-import os
+
 import functools
-import sys
+import os
 import signal
 
 # ssl check
@@ -33,104 +30,62 @@ try:
     import ssl
 except ImportError:
     ssl = None
-
-# install checks
-try:
-    import tornado
-except ImportError:
-    print "Tornado is not installed but is required. Please run 'pip install tornado==3.0'"
-    sys.exit(1)
-
-try:
-    import setproctitle
-except ImportError:
-    print "setproctitle is not installed but is required. Please run 'pip install setproctitle==1.1.7'"
-    sys.exit(1)
-
-try:
-    from deiman import Deiman
-except ImportError:
-    print "deiman is not installed but is required. Please run 'pip install deiman==0.1.3'"
-    sys.exit(1)
-
-# Just in case some tit tries to run the file in /bin
-try:
-    from blackhole import __fullname__
-except ImportError:
-    print "blackhole is not installed, please install it using the instructions in the README file"
-    sys.exit(1)
-
-if sys.version_info < (2, 6):
-    print "blackhole requires Python 2.6 or greater"
-    sys.exit(1)
+import sys
 
 # Bypass tornado.options to print custom version
 # and help message
+from blackhole import __fullname__
 from blackhole.opts import print_help
 for arg in sys.argv[1:]:
     if arg in ("--version", "-v"):
-        print "Version:", __fullname__
+        print __fullname__
         sys.exit(0)
     if arg in ("--help", "-h"):
         print_help()
         sys.exit(0)
 
-# pip stuff
-from tornado import ioloop, process
-from tornado.options import options
-
-tornado.options.parse_command_line()
-if options.conf and os.path.exists(options.conf):
-    tornado.options.parse_config_file(options.conf)
-
-# blackhole
+# set default options
 from blackhole.opts import *
+
+from deiman import Deiman
+from tornado import ioloop
+from tornado.options import options
+options.parse_command_line()
+if options.conf and os.path.exists(options.conf):
+    options.parse_config_file(options.conf)
+
+from blackhole.connection import (connection_ready, sockets)
 from blackhole.log import log
-from blackhole.connection import connection_ready, sockets
-from blackhole.ssl_utils import verify_ssl_opts, BlackholeSSLException,\
-    sslkwargs
-from blackhole.utils import setgid, setuid, terminate, set_process_title
-
-if options.ssl and not ssl:
-    log.error("Unable to use SSL as SSL library is not compiled in")
-    sys.exit(1)
+from blackhole.ssl_utils import (BlackholeSSLException, verify_ssl_opts,
+                                 sslkwargs)
+from blackhole.utils import (setgid, setuid, terminate, set_process_title)
 
 
-if __name__ == "__main__":
-    signal.signal(signal.SIGTERM, terminate)
+def set_action():
     action = None
     for arg in sys.argv[1:]:
         if not arg.startswith("--"):
             action = arg
-
     if action not in ('start', 'stop', 'status') or action is None:
         print_help()
         sys.exit(2)
+    return action
 
+
+def set_options():
     # Deprecated options check
     deprecated_opts()
-
     if options.debug:
-        print """WARNING: Using the debug flag!\n"""\
+        print("""WARNING: Using the debug flag!\n"""\
               """This will generate a lots of disk I/O """\
-              """and large log files\n"""
+              """and large log files\n""")
     if options.delay > 0:
-        print """WARNING: Using the delay flag!\n"""\
+        print("""WARNING: Using the delay flag!\n"""\
               """The delay flag is a blocking action """\
-              """and will cause connections to block.\n"""
-
-    d = Deiman(options.pid)
-    if action == "stop":
-        d.stop()
-        sys.exit(0)
-    elif action == "status":
-        d.status()
-        sys.exit(0)
-
-    if len(sys.argv) == 1:
-        print_help()
-        sys.exit(2)
-
+              """and will cause connections to block.\n""")
+    if options.ssl and not ssl:
+        log.error("Unable to use SSL as SSL library is not compiled in")
+        sys.exit(1)
     if options.ssl:
         try:
             verify_ssl_opts()
@@ -141,34 +96,54 @@ if __name__ == "__main__":
         sslkwargs['keyfile'] = options.ssl_key
         sslkwargs['certfile'] = options.ssl_cert
 
-    # Grab the sockets early for multiprocessing
-    sockets = sockets()
+
+def daemon(action):
+    d = Deiman(options.pid)
+    if action == "stop":
+        d.stop()
+        sys.exit(0)
+    elif action == "status":
+        d.status()
+        sys.exit(0)
+    if len(sys.argv) == 1:
+        print_help()
+        sys.exit(2)
     if action == "start":
         d.start()
+        return d
     else:
         sys.exit(0)
 
-    # Change group and user
-    setgid()
-    setuid()
 
+def fork():
     # Set the custom process title of the master
     set_process_title()
-
      # Fork and create the ioloop
     options.workers = workers()
-    tornado.process.fork_processes(options.workers)
+    process.fork_processes(options.workers)
     io_loop = ioloop.IOLoop.instance()
-
     # Set the custom process title of the workers
     set_process_title()
+    return io_loop
 
+
+def run():
+    signal.signal(signal.SIGTERM, terminate)
+    action = set_action()
+    set_options()
+    # Grab the sockets early for multiprocessing
+    if action in ('start',):
+        socks = sockets()
+        setgid()
+        setuid()
+    d = daemon(action)
+    # Change group and user
+    io_loop = fork()
     # Iterate over the dictionary of socket connections
     # and add them to the IOLoop
-    for _, sock in sockets.iteritems():
+    for _, sock in socks.iteritems():
         callback = functools.partial(connection_ready, sock)
         io_loop.add_handler(sock.fileno(), callback, io_loop.READ)
-
     try:
         io_loop.start()
     except (KeyboardInterrupt, SystemExit):

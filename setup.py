@@ -15,6 +15,12 @@ desc = """Tornado powered MTA for accepting all incoming emails without any disk
  send rates, for making sure developers don't accidentally send emails to real
  users, email integration testing and things like that."""
 
+entry_points = {
+    'console_scripts': [
+        'blackhole = blackhole.application:run',
+    ]
+}
+
 
 setup(name='blackhole',
       version=version,
@@ -34,9 +40,7 @@ setup(name='blackhole',
           'setproctitle>=1.1.7',
           'deiman>=0.1.5',
       ],
-      scripts=[
-          'blackhole/bin/blackhole',
-      ],
+      entry_points=entry_points,
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Operating System :: POSIX',

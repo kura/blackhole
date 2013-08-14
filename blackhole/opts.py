@@ -26,6 +26,12 @@ server.
 Also creates a list of available ports for the server to be
 run on, based on configuration and responds with the help
 menu when requested or invalid options are given."""
+
+try:
+    import ssl
+except ImportError:
+    ssl = None
+
 from tornado.options import define, options
 from tornado import process
 
@@ -100,7 +106,9 @@ def ports():
     (std) and SSL (ssl) it is enabled.
     """
     socks_list = ['std']
-    if options.ssl:
+    # We shouldn't be able to create an SSL socket if it's
+    # disabled or if there's non SSL libary
+    if options.ssl and ssl:
         socks_list.append('ssl')
     return socks_list
 

@@ -1,0 +1,28 @@
+=======
+Changes
+=======
+
+1.8.0
+=====
+
+- Removed bin/blackhole and replaced it with a Python entry point
+- Cleaned up the source code and modified error checking
+
+1.7.0
+=====
+
+- Added STARTTLS
+
+1.6.4
+=====
+
+- Added delay flag
+- Fixed daemonisation issue on PyPy
+- Added FQDN to HELO/EHLO
+- Removed SMTP 251-253 from responses
+
+1.6.0
+=====
+
+- Python 3
+- Deprecate ssl_ca_certs_dir
