@@ -7,8 +7,8 @@
     :synopsis: Application
 .. moduleauthor:: Kura <kura@kura.io>
 
-This module is responsible for configuring, managing and running the blackhole
-server instance and it's children.
+blackhole.application - Module is responsible for configuring, managing and
+running the blackhole server instance and it's children.
 
 It is the Python entry-point for the blackhole binary.
 
