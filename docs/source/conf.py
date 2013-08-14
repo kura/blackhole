@@ -42,7 +42,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Blackhole'
-copyright = u'2013, Kura'
+import datetime
+copyright = u'{}, Kura'.format(datetime.datetime.now().strftime("%Y"))
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
