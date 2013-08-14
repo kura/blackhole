@@ -26,9 +26,7 @@ travis:
 	coverage run --source=blackhole runtests.py
 
 pypi:
-	python setup.py sdist upload
-	python setup.py bdist_egg upload
-	python setup.py bdist_wheel upload
+	python setup.py sdist bdist_egg bdist_wheel upload
 
 docs:
 	pip install sphinx
@@ -38,14 +36,14 @@ web: docs
 	rsync -e "ssh -p 2222" -P -rvz --delete docs/build/ kura@blackhole.io:/var/www/blackhole.io/
 
 tag:
-	sed -i 's/__version__ = ".*"/__version__ = "1.8.0"/g' blackhole/__init__.py
+	sed -i 's/__version__ = ".*"/__version__ = "${version}"/g' blackhole/__init__.py
 	git add blackhole/__init__.py
-	git ci -m "New release ${ARGS}"
+	git ci -m "New release ${version}"
 	git push origin master
-	git tag ${ARGS}
+	git tag ${version}
 	git push --tags
 
 release:
-	tag ${ARGS}
+	tag ${version}
 	pypi
 	web

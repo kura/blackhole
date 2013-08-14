@@ -60,7 +60,8 @@ define("log", default="/tmp/blackhole.log",
        group="Blackhole")
 
 define('workers', default=None, metavar="NUM", type=int,
-       help="Number of worker processes to spawn. (default: # of CPUs/Cores - 2 + 1 master)",
+       help="""Number of worker processes to spawn."""
+            """(default: # of CPUs/Cores - 2 + 1 master)""",
        group="Workers")
 
 define('debug', default=False, metavar="BOOL", type=bool,
@@ -72,7 +73,8 @@ define('delay', default=0, metavar="INT", type=int,
        group="Delay")
 
 define("mode", default="accept",
-       metavar="MODE", help="Mode to run blackhole in (accept, bounce, random,\n%-37sunavailable, offline)" % "",
+       metavar="MODE", help="""Mode to run blackhole in (accept, bounce, """
+                            """random,\n%-37sunavailable, offline)""" % "",
        group="Mode")
 
 define('ssl', default=True, metavar="BOOL", type=bool,
@@ -112,16 +114,18 @@ def ports():
         socks_list.append('ssl')
     return socks_list
 
+
 def workers():
     if options.workers is None:
         return process.cpu_count() - 2
     return options.workers
 
+
 def deprecated_opts():
     dep = ('ssl_ca_certs_dir', )
     for d in dep:
         if getattr(options, d) is not None:
-           print("Deprecated option: %s" % d)
+            print("Deprecated option: %s" % d)
 
 
 def print_help():
@@ -160,9 +164,16 @@ def print_help():
             print("  --%-30s %s" % (prefix, option.help or ""))
             if option.name == "mode":
                 print("")
-                print("%-34s accept - accept all email with code 250, 251, 252 or 253" % "")
-                print("%-34s bounce - bounce all email with a random code,\n%-37sexcluding 250, 251, 252, 253" % ("", ""))
-                print("%-34s random - randomly accept or bounce all email with a random code" % "")
-                print("%-34s unavailable - server always respondes with code 421\n%-37s- service is unavailable" % ("", ""))
-                print("%-34s offline - server always responds with code 521 - server\n%-37sdoes not accept mail" % ("", ""))
+                print("""%-34s accept - accept all email with code 250, 251,"""
+                      """ 252 or 253""" % "")
+                print("""%-34s bounce - bounce all email with a random code,"""
+                      """\n%-37sexcluding 250, 251, 252, 253""" % ("", ""))
+                print("""%-34s random - randomly accept or bounce all email"""
+                      """ with a random code""" % "")
+                print("""%-34s unavailable - server always respondes with"""
+                      """ code 421\n%-37s- service is unavailable""" %
+                      ("", ""))
+                print("""%-34s offline - server always responds with code"""
+                      """ 521 - server\n%-37sdoes not accept mail""" %
+                      ("", ""))
     print("")

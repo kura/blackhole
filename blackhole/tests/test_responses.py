@@ -17,8 +17,9 @@ class TestResponses(unittest.TestCase):
     unknown = ('500 Command not recognized\r\n', False)
     ok = ('220 OK\r\n', False)
     vrfy = ('252 OK, cannot VRFY user but will attempt delivery\r\n', False)
-    ehlo = (['250-OK\r\n', '250-SIZE 512000\r\n', '250-VRFY\r\n', '250-STARTTLS\r\n',
-             '250-ENHANCEDSTATUSCODES\r\n', '250-8BITMIME\r\n', '250 DSN\r\n'], False)
+    ehlo = (['250-OK\r\n', '250-SIZE 512000\r\n', '250-VRFY\r\n',
+             '250-STARTTLS\r\n', '250-ENHANCEDSTATUSCODES\r\n',
+             '250-8BITMIME\r\n', '250 DSN\r\n'], False)
 
     def test_handle_command_helo_response(self):
         m = MailState()

@@ -31,7 +31,8 @@ class TestSocketConnectionStream(BaseStream):
         self.socket = socket.socket()
 
     def test_socket_connection_stream(self):
-        self.assertTrue(isinstance(connection_stream(self.socket), iostream.IOStream))
+        self.assertTrue(isinstance(connection_stream(self.socket),
+                                   iostream.IOStream))
 
     def tearDown(self):
         self.socket.close()
@@ -42,13 +43,16 @@ class TestSSLSocketConnectionStream(BaseStream):
     def setUp(self):
         super(TestSSLSocketConnectionStream, self).setUp()
         options.ssl = True
-        sslkwargs['keyfile'] = os.path.join(os.path.dirname(__file__), 'test.key')
-        sslkwargs['certfile'] = os.path.join(os.path.dirname(__file__), 'test.crt')
+        sslkwargs['keyfile'] = os.path.join(os.path.dirname(__file__),
+                                            'test.key')
+        sslkwargs['certfile'] = os.path.join(os.path.dirname(__file__),
+                                             'test.crt')
         self.socket = socket.socket()
         self.socket.bind(('127.0.0.1', options.ssl_port))
 
     def test_ssl_socket_connection_stream(self):
-        self.assertTrue(isinstance(connection_stream(self.socket), iostream.SSLIOStream))
+        self.assertTrue(isinstance(connection_stream(self.socket),
+                        iostream.SSLIOStream))
 
     def tearDown(self):
         self.socket.close()
