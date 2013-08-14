@@ -278,6 +278,7 @@ Reference
 .. toctree::
     :maxdepth: 2
 
+    api-application
     api-connection
     api-data
     api-log

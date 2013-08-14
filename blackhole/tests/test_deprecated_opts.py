@@ -19,3 +19,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+import unittest
+
+from mock import patch
+from tornado.options import options
+
+from blackhole.opts import *
+
+
+class TestDeprecatedOpts(unittest.TestCase):
+
+    def setUp(self):
+        options.ssl_ca_certs_dir = "/dev/null"
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_deprecated_opts(self, stdout_mock):
+        val = "Deprecated option: ssl_ca_certs_dir\n"
+        deprecated_opts()
+        self.assertEquals(stdout_mock.getvalue(), val)

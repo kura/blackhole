@@ -1,3 +1,25 @@
+# (The MIT License)
+#
+# Copyright (c) 2013 Kura
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import unittest
 
 from tornado.options import options
@@ -5,9 +27,9 @@ from tornado.options import options
 from blackhole.opts import *
 from blackhole.connection import handle_command
 from blackhole.state import MailState
-from blackhole.data import get_response, ACCEPT_RESPONSES,\
-    BOUNCE_RESPONSES, OFFLINE_RESPONSES, UNAVAILABLE_RESPONSES,\
-    RANDOM_RESPONSES, EHLO_RESPONSES
+from blackhole.data import (get_response, ACCEPT_RESPONSES,
+                            BOUNCE_RESPONSES, OFFLINE_RESPONSES,
+                            UNAVAILABLE_RESPONSES, RANDOM_RESPONSES)
 
 
 class TestResponses(unittest.TestCase):
@@ -17,8 +39,14 @@ class TestResponses(unittest.TestCase):
     unknown = ('500 Command not recognized\r\n', False)
     ok = ('220 OK\r\n', False)
     vrfy = ('252 OK, cannot VRFY user but will attempt delivery\r\n', False)
-    ehlo = (['250-OK\r\n', '250-SIZE 512000\r\n', '250-VRFY\r\n', '250-STARTTLS\r\n',
-             '250-ENHANCEDSTATUSCODES\r\n', '250-8BITMIME\r\n', '250 DSN\r\n'], False)
+    ehlo = (['250-OK\r\n', '250-SIZE 512000\r\n', '250-VRFY\r\n',
+             '250-STARTTLS\r\n', '250-ENHANCEDSTATUSCODES\r\n',
+             '250-8BITMIME\r\n', '250 DSN\r\n'], False)
+
+    def setUp(self):
+        options.ssl = True
+        options.delay = 0
+        options.debug = False
 
     def test_handle_command_helo_response(self):
         m = MailState()
@@ -32,7 +60,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_helo_reading_state(self):
         m = MailState()
-        r = handle_command("HELO", m)
+        handle_command("HELO", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_ehlo_response(self):
@@ -47,7 +75,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_ehlo_reading_state(self):
         m = MailState()
-        r = handle_command("EHLO", m)
+        handle_command("EHLO", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_mail_from_response(self):
@@ -62,7 +90,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_mail_from_reading_state(self):
         m = MailState()
-        r = handle_command("MAIL FROM", m)
+        handle_command("MAIL FROM", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_rcpt_to_response(self):
@@ -77,7 +105,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_rcpt_to_reading_state(self):
         m = MailState()
-        r = handle_command("RCPT TO", m)
+        handle_command("RCPT TO", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_rset_response(self):
@@ -90,9 +118,9 @@ class TestResponses(unittest.TestCase):
         r = handle_command("RSET", m)
         self.assertEqual(self.ok_done[1], r[1])
 
-    def test_handle_command_rset_reading_state(self):
+    def test_handle_crommand_rset_reading_state(self):
         m = MailState()
-        r = handle_command("RSET", m)
+        handle_command("RSET", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_quit_response(self):
@@ -107,7 +135,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_quit_reading_state(self):
         m = MailState()
-        r = handle_command("QUIT", m)
+        handle_command("QUIT", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_data_response(self):
@@ -122,7 +150,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_data_reading_state(self):
         m = MailState()
-        r = handle_command("DATA", m)
+        handle_command("DATA", m)
         self.assertEqual(m.reading, True)
 
     def test_handle_command_unknown_command_response(self):
@@ -137,7 +165,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_unknown_command_reading_state(self):
         m = MailState()
-        r = handle_command("KURA", m)
+        handle_command("KURA", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_starttls_response(self):
@@ -152,7 +180,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_starttls_reading_state(self):
         m = MailState()
-        r = handle_command("STARTTLS", m)
+        handle_command("STARTTLS", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_vrfy_response(self):
@@ -167,7 +195,7 @@ class TestResponses(unittest.TestCase):
 
     def test_handle_command_vrfy_reading_state(self):
         m = MailState()
-        r = handle_command("VRFY", m)
+        handle_command("VRFY", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_data_after_data_command_response(self):

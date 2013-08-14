@@ -28,7 +28,12 @@ incoming socket data and responding appropriately."""
 
 import errno
 import socket
-import ssl
+
+# ssl check
+try:
+    import ssl
+except ImportError:
+    ssl = None
 import sys
 
 from tornado import iostream
@@ -37,11 +42,11 @@ from tornado.options import options
 
 from blackhole import __fullname__
 from blackhole.state import MailState
-from blackhole.data import response, EHLO_RESPONSES
+from blackhole.data import (response, EHLO_RESPONSES)
 from blackhole.opts import ports
 from blackhole.ssl_utils import sslkwargs
 from blackhole.log import log
-from blackhole.utils import email_id, get_mailname
+from blackhole.utils import (email_id, get_mailname)
 
 
 def sockets():
@@ -132,7 +137,10 @@ def handle_command(line, mail_state):
         mail_state.email_id = new_id
         resp = response(250)
     elif line.lower().startswith("starttls"):
-        resp = response(220)
+        if not ssl or not options.ssl:
+            resp = response(500)
+        else:
+            resp = response(220)
     elif line.lower().startswith("vrfy"):
         resp = response(252)
     elif line.lower().startswith("quit"):
@@ -182,6 +190,7 @@ def connection_ready(sock, fd, events):
 
         connection.setblocking(0)
         stream = connection_stream(connection)
+        # No stream, bail out
         if not stream:
             return
         mail_state = MailState()
@@ -199,16 +208,20 @@ def connection_ready(sock, fd, events):
             log.debug("[%s] RECV: %s" % (mail_state.email_id, line.rstrip()))
             resp, close = handle_command(line, mail_state)
             if resp:
+                # Multiple responses, i.e. EHLO
                 if isinstance(resp, list):
                     for r in resp:
                         write_response(mail_state, r)
                 else:
                     # Otherwise it's a single response
                     write_response(mail_state, resp)
-            if line.lower().startswith("starttls"):
+            # Switch to SSL connection if starttls is called
+            # and we have an SSL library
+            if line.lower().startswith("starttls") and ssl and options.ssl:
                 fileno = mail_state.stream.socket.fileno()
                 IOLoop.current().remove_handler(fileno)
                 mail_state.stream = ssl_connection(connection)
+            # Close connection
             if close is True:
                 log.debug("Closing")
                 mail_state.stream.close()
