@@ -7,6 +7,12 @@ Changes
 
 - Removed bin/blackhole and replaced it with a Python entry point
 - Cleaned up the source code and modified error checking
+- Major refactoring of tests
+- Added a requirement of the mock libary to run tests
+- Added a wealth of tests for many new methods and some old ones that were
+  absent
+- Changed get_mailname method to use __builtin__.open instead of
+  __builtin__.file
 
 1.7.0
 =====

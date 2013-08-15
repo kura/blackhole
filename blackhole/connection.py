@@ -42,11 +42,11 @@ from tornado.options import options
 
 from blackhole import __fullname__
 from blackhole.state import MailState
-from blackhole.data import response, EHLO_RESPONSES
+from blackhole.data import (response, EHLO_RESPONSES)
 from blackhole.opts import ports
 from blackhole.ssl_utils import sslkwargs
 from blackhole.log import log
-from blackhole.utils import email_id, get_mailname
+from blackhole.utils import (email_id, get_mailname)
 
 
 def sockets():

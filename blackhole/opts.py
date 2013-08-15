@@ -32,10 +32,10 @@ try:
 except ImportError:
     ssl = None
 
-from tornado.options import define, options
+from tornado.options import (define, options)
 from tornado import process
 
-from blackhole import __pname__, __fullname__
+from blackhole import __pname__
 
 define('host', default="0.0.0.0", metavar="IP", type=str,
        help="IP address to bind go",

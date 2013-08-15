@@ -9,7 +9,7 @@ install_coverage:
 	pip install coverage coveralls
 
 install_testrig:
-	pip install nose
+	pip install nose mock
 
 install_tox:
 	pip install tox detox

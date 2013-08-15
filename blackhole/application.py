@@ -44,7 +44,7 @@ from blackhole import __fullname__
 from blackhole.opts import print_help
 for arg in sys.argv[1:]:
     if arg in ("--version", "-v"):
-        print __fullname__
+        print(__fullname__)
         sys.exit(0)
     if arg in ("--help", "-h"):
         print_help()
@@ -54,7 +54,7 @@ for arg in sys.argv[1:]:
 from blackhole.opts import *
 
 from deiman import Deiman
-from tornado import ioloop
+from tornado import (ioloop, process)
 from tornado.options import options
 options.parse_command_line()
 if options.conf and os.path.exists(options.conf):
@@ -107,7 +107,7 @@ def set_options():
     if options.ssl:
         try:
             verify_ssl_opts()
-        except BlackholeSSLException, e:
+        except BlackholeSSLException as e:
             log.error(e)
             sys.exit(1)
         # Override SSL options based on options passed in

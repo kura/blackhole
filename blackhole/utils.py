@@ -135,7 +135,7 @@ def get_mailname():
     """
     mailname_file = "/etc/mailname"
     if os.path.exists(mailname_file):
-        mnc = file(mailname_file, 'r').read().strip()
+        mnc = open(mailname_file, 'r').read().strip()
         if mnc != "":
             return mnc
     return socket.getfqdn()
