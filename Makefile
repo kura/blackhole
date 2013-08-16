@@ -1,4 +1,7 @@
-.PHONY: install uninstall install_coverage install_testrig install_tox tox test coverage travis pypi docs web tag release
+.PHONY: clean install uninstall install_coverage install_testrig install_tox tox test coverage travis pypi docs web tag release
+clean:
+	find . -name "*.pyc" -delete
+
 install:
 	python setup.py install
 

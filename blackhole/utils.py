@@ -20,9 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""blackhole.utils - A utility module used for
+"""
+blackhole.utils - A utility module used for
 methods and features that do not belong in
-their own module."""
+their own module.
+"""
 
 import os
 import sys
@@ -32,8 +34,8 @@ import random
 import signal
 import socket
 
-from tornado.options import options
 import setproctitle
+from tornado.options import options
 
 from blackhole.log import log
 

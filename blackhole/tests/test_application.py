@@ -88,7 +88,7 @@ class TestSetOptionsSSLNoCertNoKey(unittest.TestCase):
     @patch('sys.exit')
     def test_set_options_ssl_no_cert_no_key(self, exit_mock):
         set_options()
-        assert exit_mock.called
+        self.assertTrue(exit_mock.called)
 
 
 class TestSetOptionsSSLCertNoKey(unittest.TestCase):
@@ -104,7 +104,7 @@ class TestSetOptionsSSLCertNoKey(unittest.TestCase):
     @patch('sys.exit')
     def test_set_options_ssl_cert_no_key(self, exit_mock):
         set_options()
-        assert exit_mock.called
+        self.assertTrue(exit_mock.called)
 
 
 class TestSetOptionsSSLKeyNoCert(unittest.TestCase):
@@ -120,7 +120,7 @@ class TestSetOptionsSSLKeyNoCert(unittest.TestCase):
     @patch('sys.exit')
     def test_set_options_ssl_key_no_cert(self, exit_mock):
         set_options()
-        assert exit_mock.called
+        self.assertTrue(exit_mock.called)
 
 
 class TestSetOptionsSSLCertAndKey(unittest.TestCase):
@@ -137,7 +137,7 @@ class TestSetOptionsSSLCertAndKey(unittest.TestCase):
     @patch('sys.exit')
     def test_set_options_ssl_cert_and_key(self, exit_mock):
         set_options()
-        assert exit_mock.not_called
+        self.assertFalse(exit_mock.called)
 
 
 class TestSetOptionsDebug(unittest.TestCase):
@@ -180,8 +180,8 @@ class TestDaemonStop(unittest.TestCase):
     @patch('deiman.Deiman.stop')
     def test_daemon_stop(self, exit_mock, daemon_mock):
             daemon('stop')
-            assert daemon_mock.called
-            assert exit_mock.called
+            self.assertTrue(daemon_mock.called)
+            self.assertTrue(exit_mock.called)
 
 
 class TestDaemonStatus(unittest.TestCase):
@@ -193,8 +193,8 @@ class TestDaemonStatus(unittest.TestCase):
     @patch('deiman.Deiman.status')
     def test_daemon_status(self, exit_mock, daemon_mock):
             daemon('status')
-            assert daemon_mock.called
-            assert exit_mock.called
+            self.assertTrue(daemon_mock.called)
+            self.assertTrue(exit_mock.called)
 
 
 class TestDaemonStart(unittest.TestCase):
@@ -205,7 +205,7 @@ class TestDaemonStart(unittest.TestCase):
     @patch('deiman.Deiman.start')
     def test_daemon_start(self, daemon_mock):
             d = daemon('start')
-            assert daemon_mock.called
+            self.assertTrue(daemon_mock.called)
             self.assertTrue(isinstance(d, Deiman))
 
 
@@ -214,7 +214,7 @@ class TestDaemonInvalidAction(unittest.TestCase):
     @patch('sys.exit')
     def test_daemon_invalid_action(self, exit_mock):
             daemon('kurakurakura')
-            assert exit_mock.called
+            self.assertTrue(exit_mock.called)
 
 
 class TestFork(unittest.TestCase):
@@ -223,5 +223,5 @@ class TestFork(unittest.TestCase):
     @patch('tornado.process.fork_processes')
     def test_fork(self, set_proc_title_mock, fork_processes_mock):
         io_loop = fork()
-        assert set_proc_title_mock.called
+        self.assertTrue(set_proc_title_mock.called)
         self.assertTrue(isinstance(io_loop, ioloop.IOLoop))

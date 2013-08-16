@@ -20,12 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""blackhole.ssl_utils - Utility functions for SSL
+"""
+blackhole.ssl_utils - Utility functions for SSL
 wrapped sockets.
 
 This module provides a simple default SSL configuration
 for the blackhole server and also exposes a custom
-'BlackholeSSLException' for SSL-based exceptions."""
+'BlackholeSSLException' for SSL-based exceptions.
+"""
 
 import os
 import ssl

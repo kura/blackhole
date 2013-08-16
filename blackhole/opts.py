@@ -20,12 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""blackhole.opts - command line options for the blackhole
+"""
+blackhole.opts - command line options for the blackhole
 server.
 
 Also creates a list of available ports for the server to be
 run on, based on configuration and responds with the help
-menu when requested or invalid options are given."""
+menu when requested or invalid options are given.
+"""
 
 try:
     import ssl

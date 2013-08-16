@@ -31,7 +31,7 @@ from mock import (patch)
 from tornado.options import options
 
 from blackhole.opts import *
-from blackhole.utils import (email_id, get_mailname)
+from blackhole.utils import (email_id, get_mailname, setgid, setuid)
 
 
 class TestEmailIDGenerator(unittest.TestCase):
@@ -65,3 +65,67 @@ class TestMailNameSocket(unittest.TestCase):
     def test_mail_name_socket(self, exists_mock, socket_mock):
         mn = get_mailname()
         self.assertEqual(mn, self.check_value)
+
+
+class TestChgGroupNoGroup(unittest.TestCase):
+
+    @patch('os.setgid', return_value=KeyError)
+    @patch('grp.getgrnam')
+    @patch('sys.exit')
+    def test_change_group_no_group(self, setgid_mock, getgrname_mock,
+                                   exit_mock):
+        setgid()
+        self.assertTrue(exit_mock.called)
+
+
+class TestChgGroupNoPermission(unittest.TestCase):
+
+    @patch('os.setgid', return_value=OSError)
+    @patch('grp.getgrnam')
+    @patch('sys.exit')
+    def test_change_group_no_permission(self, setgid_mock, getgrname_mock,
+                                        exit_mock):
+        setgid()
+        self.assertTrue(exit_mock.called)
+
+
+class TestChgGroupValid(unittest.TestCase):
+
+    @patch('os.setgid', return_value=True)
+    @patch('grp.getgrnam')
+    def test_change_group_valid(self, setgid_mock, getgrname_mock):
+        with patch('sys.exit') as exit_mock:
+            setgid()
+            self.assertFalse(exit_mock.called)
+
+
+class TestChgUserNoUser(unittest.TestCase):
+
+    @patch('os.setuid', return_value=KeyError)
+    @patch('pwd.getpwnam')
+    @patch('sys.exit')
+    def test_change_user_no_user(self, setgid_mock, getpwnam_mock,
+                                 exit_mock):
+        setuid()
+        self.assertTrue(exit_mock.called)
+
+
+class TestChgUserNoPermission(unittest.TestCase):
+
+    @patch('os.setuid', return_value=OSError)
+    @patch('pwd.getpwnam')
+    @patch('sys.exit')
+    def test_change_user_no_permission(self, setgid_mock, getpwnam_mock,
+                                       exit_mock):
+        setuid()
+        self.assertTrue(exit_mock.called)
+
+
+class TestChgUserValid(unittest.TestCase):
+
+    @patch('os.setuid', return_value=True)
+    @patch('pwd.getpwnam')
+    def test_change_user_valid(self, setgid_mock, getpwnam_mock):
+        with patch('sys.exit') as exit_mock:
+            setuid()
+            self.assertFalse(exit_mock.called)
