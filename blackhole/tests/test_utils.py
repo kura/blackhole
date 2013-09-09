@@ -27,8 +27,7 @@ except ImportError:
     from io import StringIO
 import unittest
 
-from mock import (patch)
-from tornado.options import options
+from mock import patch
 
 from blackhole.opts import *
 from blackhole.utils import (email_id, get_mailname, setgid, setuid)

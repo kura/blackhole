@@ -1,4 +1,4 @@
-.PHONY: clean install uninstall install_coverage install_testrig install_tox tox test coverage travis pypi docs web tag release
+.PHONY: clean install uninstall install_testrig tox test coverage travis flake8 pypi docs web tag release
 clean:
 	find . -name "*.pyc" -delete
 
@@ -8,25 +8,27 @@ install:
 uninstall:
 	pip uninstall blackhole
 
-install_coverage:
-	pip install coverage coveralls
-
 install_testrig:
 	pip install nose mock
 
-install_tox:
+tox:
 	pip install tox detox
-
-tox: install_tox
 	detox
 
 test: install_testrig
 	nosetests
 
-coverage: install_coverage travis
+coverage:
+	pip install coverage
+	travis
 
 travis:
+	pip install coveralls
 	coverage run --source=blackhole runtests.py
+
+flake8:
+	pip install flake8
+	flake8 blackhole --ignore="F403"
 
 pypi:
 	python setup.py sdist bdist_egg bdist_wheel upload

@@ -9,6 +9,9 @@ install:
   - make install
   - make install_coverage
   - make install_testrig
-script: make travis
+script:
+  - make travis
+  - make flake8
+  - make travis
 after_success:
   - coveralls
