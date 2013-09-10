@@ -35,7 +35,7 @@ pypi:
 
 docs:
 	pip install sphinx
-	sphinx-build docs/source/ docs/build/
+	sphinx-build -b html docs/source/ docs/build/
 
 web: docs
 	rsync -e "ssh -p 2222" -P -rvz --delete docs/build/ kura@blackhole.io:/var/www/blackhole.io/
