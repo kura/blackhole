@@ -109,7 +109,7 @@ def set_process_title():
     worker.
     """
     if os.path.exists(options.pid):
-        pid = int(file(options.pid, 'r').read().strip())
+        pid = int(open(options.pid, 'r').read().strip())
         if pid == os.getpid():
             setproctitle.setproctitle("blackhole: master")
         else:

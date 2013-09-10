@@ -11,6 +11,5 @@ install:
 script:
   - make travis
   - make flake8
-  - make docs
 after_success:
   - coveralls
