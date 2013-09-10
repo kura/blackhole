@@ -7,11 +7,10 @@ python:
   - "pypy"
 install:
   - make install
-  - make install_coverage
   - make install_testrig
 script:
   - make travis
   - make flake8
-  - make travis
+  - make docs
 after_success:
   - coveralls
