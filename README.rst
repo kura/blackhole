@@ -16,7 +16,7 @@ Blackhole
 
 Tornado powered MTA for accepting all incoming emails 
 without any disk I/O, although no messages actually ever 
-get delivered. 
+get delivered.
 Mainly for testing huge send rates, for making sure developers
 don't accidentally send emails to real users, email
 integration testing and things like that.
@@ -24,15 +24,12 @@ integration testing and things like that.
 Documentation
 =============
 
-You can find the latest documentation `here`_.
+You can find the latest documentation `here <http://blackhole.io>`_.
 
-.. _here: http://blackhole.io
+If you would like to contribute, please read the `contributors guide
+<https://blackhole.io/contributing.html>`_.
 
-The latest build status on `travis`_.
+The latest build status on `travis <https://travis-ci.org/kura/blackhole>`_.
 
-.. _travis: https://travis-ci.org/kura/blackhole
-
-And the test coverage report on `coveralls`_.
-
-.. _coveralls: https://coveralls.io/r/kura/blackhole
-
+And the test coverage report on `coveralls
+<https://coveralls.io/r/kura/blackhole>`_.

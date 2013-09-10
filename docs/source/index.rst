@@ -33,19 +33,26 @@ doing no disk bound I/O.
 Blackhole is designed mostly for testing purposes and can be used to test
 numerous things suchs as;
 
-- Email send rates, if you need to test how much mail you can send per minute, hour etc
+- Email send rates, if you need to test how much mail you can send per minute,
+  hour etc
 - Email integration testing and finally
-- if you work in the real world, chances are you'll need work on a copy of production data from time to time. You can try to anonymous all the data but there is always a chance you'll miss something. Configuring blackhole as your applications default SMTP gateway will remove any chance of a real person receiving an email they shouldn't have received.
+- if you work in the real world, chances are you'll need work on a copy of
+  production data from time to time. You can try to anonymous all the data but
+  there is always a chance you'll miss something. Configuring blackhole as
+  your applications default SMTP gateway will remove any chance of a real
+  person receiving an email they shouldn't have received.
 
 Using the blackhole.io service
 ==============================
 
-All data sent to blackhole.io will be forgotten instantly, we store nothing you send.
+All data sent to blackhole.io will be forgotten instantly, we store nothing
+you send.
 
 1. Point your application's outgoing SMTP server to 'blackhole.io',
 2. Sit back and watch mail never get delivered to a real user.
 
-or, send an email to blackhole.io using an @blackhole.io address, any address is fine e.g.::
+or, send an email to blackhole.io using an @blackhole.io address, any
+address is fine e.g.::
 
     user1@blackhole.io
 
@@ -154,7 +161,7 @@ Testing with Python
     """
 
     server = smtplib.SMTP('blackhole.io', 25)
-    server.sendmail("user@address.tld", "someone@another.tld", 
+    server.sendmail("user@address.tld", "someone@another.tld",
                     msg)
     server.quit()
 
@@ -181,7 +188,8 @@ Python versions
     PyPy 1.9      # see notes below
     PyPy 2.0      # see notes below
 
-Blackhole works on Python 2.6 and 2.7, it also works with PyPy (see :ref:`blackhole-pypy` section below).
+Blackhole works on Python 2.6 and 2.7, it also works with PyPy
+(see :ref:`blackhole-pypy` section below).
 
 Third party libraries
 ---------------------
@@ -189,8 +197,10 @@ Third party libraries
 ::
 
     tornado>=2.2.1,<=3.1
-    setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for all PyPy versions
-    deiman>=0.1.5         # older version of Deiman will not work because of API changes
+    setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for
+                          # all PyPy versions
+    deiman>=0.1.5         # older version of Deiman will not work because of
+                          #API changes
 
 Getting started
 ---------------
@@ -211,10 +221,17 @@ Getting started
 FQDN
 ----
 
-The FQDN that Blackhole will print on a new connection is automatically generated.
+The FQDN that Blackhole will print on a new connection is automatically
+generated.
 
-It will use the contents of `/etc/mailname`, if that file does not exist it will
-use a name returned by `socket.getfqdn()`.
+It will use the contents of `/etc/mailname`, if that file does not exist it
+will use a name returned by `socket.getfqdn()`.
+
+Contributing
+============
+
+Please see the :ref:`contributing` section for information on how to
+contribute.
 
 Tests & Coverage
 ================
@@ -222,13 +239,15 @@ Tests & Coverage
 Running tests manually
 ----------------------
 
-Running tests manually is pretty simple, there is a Make target dedicated to it.
+Running tests manually is pretty simple, there is a Make target dedicated to
+it.
 
-The test suite relies on `unittest2` and `nose`, both if which get installed by the Make target during test running.
+The test suite relies on `unittest2` and `nose`, both if which get installed by
+the Make target during test running.
 
 ::
 
-    make tests
+    make test
 
 There is also a Make target for generating coverage::
 
@@ -256,20 +275,27 @@ And the test coverage report on `coveralls`_.
 Blackhole + PyPy
 ================
 
-`PyPy`_ is a Python interpreter and just-in-time compiler. PyPy focuses on speed, efficiency and compatibility with the original CPython interpreter.
+`PyPy`_ is a Python interpreter and just-in-time compiler. PyPy focuses on
+speed, efficiency and compatibility with the original CPython interpreter.
 
 .. _PyPy: http://pypy.org/
 
-Blackhole works well under PyPy 1.9, 2.0 beta1 and 2.0 beta2, you can see performance improvements
-of up to 30% in certain situations.
+Blackhole works well under PyPy 1.9, 2.0 beta1 and 2.0 beta2, you can see
+performance improvements of up to 30% in certain situations.
 
-However, blackhole does have issues with both PyPy 1.9 and 2.0 beta1 and 2.0 beta2 when using the pre-compiled binaries, this is due to a conflict in the version of OpenSSL compiled in to PyPy and the version compiled in to your CPython installation.
-If you wish to use blackhole with SSL support on PyPy I suggest you either compile PyPy yourself or try to make sure your PyPy and CPython have the same versions.
+However, blackhole does have issues with both PyPy 1.9 and 2.0 beta1 and 2.0
+beta2 when using the pre-compiled binaries, this is due to a conflict in the
+version of OpenSSL compiled in to PyPy and the version compiled in to your
+CPython installation.
+If you wish to use blackhole with SSL support on PyPy I suggest you either
+compile PyPy yourself or try to make sure your PyPy and CPython have the same
+versions.
 
 FAQ
 ===
 
-A few people have emailed me questions about why blackhole exists, how I use it, why Tornado and things like that
+A few people have emailed me questions about why blackhole exists, how I use
+it, why Tornado and things like that
 so I have outlined some questions and responses in an :ref:`faq`.
 
 Reference
