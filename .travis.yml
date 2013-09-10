@@ -10,6 +10,5 @@ install:
   - make install_testrig
 script:
   - make travis
-  - make flake8
 after_success:
   - coveralls
