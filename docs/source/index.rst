@@ -245,11 +245,13 @@ it.
 The test suite relies on `unittest2` and `nose`, both if which get installed by
 the Make target during test running.
 
-::
+.. code-block:: bash
 
     make test
 
-There is also a Make target for generating coverage::
+There is also a Make target for generating coverage
+
+.. code-block:: bash
 
     make coverage
 

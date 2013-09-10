@@ -29,7 +29,9 @@ The init scripts can be found `here`_.
 
 i.e. for Debian/Ubuntu users, mv the file from *init.d/debian-ubuntu/* to */etc/init.d/*.
 
-Then make sure it's executable::
+Then make sure it's executable
+
+.. code-block:: bash
 
   chmod +x /etc/init.d/blackhole
 

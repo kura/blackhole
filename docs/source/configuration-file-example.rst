@@ -4,7 +4,8 @@
 Configuration file example
 ==========================
 
-::
+.. code-block:: ini
+   :linenos:
 
     host="0.0.0.0"
     port=25
