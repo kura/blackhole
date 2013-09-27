@@ -19,3 +19,30 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+import unittest
+
+from tornado import process
+from tornado.options import options
+
+from blackhole import opts
+
+
+class TestWorkersOptionsPassed(unittest.TestCase):
+
+    def setUp(self):
+        options.workers = 4
+
+    def test_workers_options_passed(self):
+        w = opts.workers()
+        self.assertEquals(w, options.workers)
+
+
+class TestWorkersOptionsDefault(unittest.TestCase):
+
+    def setUp(self):
+        options.workers = None
+
+    def test_workers_options_default(self):
+        w = opts.workers()
+        self.assertEquals(w, process.cpu_count() - 2)

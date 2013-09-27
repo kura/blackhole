@@ -34,10 +34,12 @@ from tornado import ioloop
 from tornado.options import options
 
 from blackhole.application import (set_action, set_options, fork, daemon)
-from blackhole.opts import *
+from blackhole import opts
+
+from .tests import BaseTest
 
 
-class TestSetActionStart(unittest.TestCase):
+class TestSetActionStart(BaseTest):
 
     def setUp(self):
         sys.argv = ['blackhole_unused', 'start']
@@ -46,7 +48,7 @@ class TestSetActionStart(unittest.TestCase):
         self.assertEquals(set_action(), 'start')
 
 
-class TestSetActionStop(unittest.TestCase):
+class TestSetActionStop(BaseTest):
 
     def setUp(self):
         sys.argv = ['blackhole_unused', 'stop']
@@ -55,7 +57,7 @@ class TestSetActionStop(unittest.TestCase):
         self.assertEquals(set_action(), 'stop')
 
 
-class TestSetActionStatus(unittest.TestCase):
+class TestSetActionStatus(BaseTest):
 
     def setUp(self):
         sys.argv = ['blackhole_unused', 'status']
@@ -64,7 +66,7 @@ class TestSetActionStatus(unittest.TestCase):
         self.assertEquals(set_action(), 'status')
 
 
-class TestSetOptions(unittest.TestCase):
+class TestSetOptions(BaseTest):
 
     def setUp(self):
         options.delay = 0
@@ -76,7 +78,7 @@ class TestSetOptions(unittest.TestCase):
         self.assertEquals(True, True)
 
 
-class TestSetOptionsSSLNoCertNoKey(unittest.TestCase):
+class TestSetOptionsSSLNoCertNoKey(BaseTest):
 
     def setUp(self):
         options.delay = 0
@@ -91,7 +93,7 @@ class TestSetOptionsSSLNoCertNoKey(unittest.TestCase):
         self.assertTrue(exit_mock.called)
 
 
-class TestSetOptionsSSLCertNoKey(unittest.TestCase):
+class TestSetOptionsSSLCertNoKey(BaseTest):
 
     def setUp(self):
         options.delay = 0
@@ -107,7 +109,7 @@ class TestSetOptionsSSLCertNoKey(unittest.TestCase):
         self.assertTrue(exit_mock.called)
 
 
-class TestSetOptionsSSLKeyNoCert(unittest.TestCase):
+class TestSetOptionsSSLKeyNoCert(BaseTest):
 
     def setUp(self):
         options.delay = 0
@@ -123,7 +125,7 @@ class TestSetOptionsSSLKeyNoCert(unittest.TestCase):
         self.assertTrue(exit_mock.called)
 
 
-class TestSetOptionsSSLCertAndKey(unittest.TestCase):
+class TestSetOptionsSSLCertAndKey(BaseTest):
 
     def setUp(self):
         options.delay = 0
@@ -140,7 +142,7 @@ class TestSetOptionsSSLCertAndKey(unittest.TestCase):
         self.assertFalse(exit_mock.called)
 
 
-class TestSetOptionsDebug(unittest.TestCase):
+class TestSetOptionsDebug(BaseTest):
 
     def setUp(self):
         options.delay = 0
@@ -155,7 +157,7 @@ class TestSetOptionsDebug(unittest.TestCase):
         self.assertEquals(stdout_mock.getvalue(), val)
 
 
-class TestSetOptionsDelay(unittest.TestCase):
+class TestSetOptionsDelay(BaseTest):
 
     def setUp(self):
         options.debug = False
@@ -171,7 +173,7 @@ class TestSetOptionsDelay(unittest.TestCase):
         self.assertEquals(stdout_mock.getvalue(), val)
 
 
-class TestDaemonStop(unittest.TestCase):
+class TestDaemonStop(BaseTest):
 
     def setUp(self):
         sys.argv = ('blackhole', 'stop')
@@ -184,7 +186,7 @@ class TestDaemonStop(unittest.TestCase):
             self.assertTrue(exit_mock.called)
 
 
-class TestDaemonStatus(unittest.TestCase):
+class TestDaemonStatus(BaseTest):
 
     def setUp(self):
         sys.argv = ('blackhole', 'status')
@@ -197,7 +199,7 @@ class TestDaemonStatus(unittest.TestCase):
             self.assertTrue(exit_mock.called)
 
 
-class TestDaemonStart(unittest.TestCase):
+class TestDaemonStart(BaseTest):
 
     def setUp(self):
         sys.argv = ('blackhole', 'start')
@@ -209,7 +211,7 @@ class TestDaemonStart(unittest.TestCase):
             self.assertTrue(isinstance(d, Deiman))
 
 
-class TestDaemonInvalidAction(unittest.TestCase):
+class TestDaemonInvalidAction(BaseTest):
 
     @patch('sys.exit')
     def test_daemon_invalid_action(self, exit_mock):
@@ -217,7 +219,7 @@ class TestDaemonInvalidAction(unittest.TestCase):
             self.assertTrue(exit_mock.called)
 
 
-class TestFork(unittest.TestCase):
+class TestFork(BaseTest):
 
     @patch('blackhole.utils.set_process_title')
     @patch('tornado.process.fork_processes')

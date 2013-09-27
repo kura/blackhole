@@ -24,7 +24,7 @@ import unittest
 
 from tornado.options import options
 
-from blackhole.opts import *
+from blackhole import opts
 from blackhole.connection import handle_command
 from blackhole.state import MailState
 from blackhole.data import (get_response, ACCEPT_RESPONSES,

@@ -21,28 +21,11 @@
 # SOFTWARE.
 
 import unittest
-
-from tornado import process
-from tornado.options import options
-
-from blackhole.opts import *
+import sys
 
 
-class TestWorkersOptionsPassed(unittest.TestCase):
+class BaseTest(unittest.TestCase):
 
-    def setUp(self):
-        options.workers = 4
-
-    def test_workers_options_passed(self):
-        w = workers()
-        self.assertEquals(w, options.workers)
-
-
-class TestWorkersOptionsDefault(unittest.TestCase):
-
-    def setUp(self):
-        options.workers = None
-
-    def test_workers_options_default(self):
-        w = workers()
-        self.assertEquals(w, process.cpu_count() - 2)
+    def __init__(self):
+        sys.argv = []
+        super(BaseTest, self).__init__()

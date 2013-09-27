@@ -96,10 +96,8 @@ define('ssl_ca_certs_dir', default=None, metavar="PATH", type=str,
        group="Blackhole SSL")
 
 # Eugh, had to replicate to shut up Tornado..
-define('version', default=True,
-       help="Return program version")
-define('v', default=True,
-       help="Return program version")
+define('version', help="Return program version")
+define('v', help="Return program version")
 
 
 def ports():

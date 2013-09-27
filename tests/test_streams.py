@@ -20,35 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
 import unittest
 import random
 import socket
 
 from tornado.options import options
+from tornado import iostream
 
-from blackhole.connection import sockets
-from blackhole.opts import *
-
-
-class TestNoSSLPorts(unittest.TestCase):
-
-    def setUp(self):
-        options.ssl = False
-
-    def test_no_ssl_ports(self):
-        self.assertEquals(ports(), ['std', ])
+from blackhole.connection import connection_stream
+from blackhole import opts
+from blackhole.ssl_utils import sslkwargs
 
 
-class TestSSLPorts(unittest.TestCase):
-
-    def setUp(self):
-        options.ssl = True
-
-    def test_no_ssl_ports(self):
-        self.assertEquals(ports(), ['std', 'ssl'])
-
-
-class BaseSocket(unittest.TestCase):
+class BaseStream(unittest.TestCase):
 
     def setUp(self):
         options.ssl = False
@@ -61,34 +46,35 @@ class BaseSocket(unittest.TestCase):
         self.sockets = {}
 
 
-class TestSocketIsSet(BaseSocket):
+class TestSocketConnectionStream(BaseStream):
 
     def setUp(self):
-        super(TestSocketIsSet, self).setUp()
-        self.ssl = False
-        self.sockets = sockets()
+        super(TestSocketConnectionStream, self).setUp()
+        self.socket = socket.socket()
 
-    def test_ssl_socket_is_set(self):
-        self.assertTrue(isinstance(self.sockets['std'], socket.socket))
+    def test_socket_connection_stream(self):
+        self.assertTrue(isinstance(connection_stream(self.socket),
+                                   iostream.IOStream))
+
+    def tearDown(self):
+        self.socket.close()
 
 
-class TestSSLSocketIsSet(BaseSocket):
+class TestSSLSocketConnectionStream(BaseStream):
 
     def setUp(self):
-        super(TestSSLSocketIsSet, self).setUp()
+        super(TestSSLSocketConnectionStream, self).setUp()
         options.ssl = True
-        self.sockets = sockets()
+        sslkwargs['keyfile'] = os.path.join(os.path.dirname(__file__),
+                                            'test.key')
+        sslkwargs['certfile'] = os.path.join(os.path.dirname(__file__),
+                                             'test.crt')
+        self.socket = socket.socket()
+        self.socket.bind(('127.0.0.1', options.ssl_port))
 
-    def test_ssl_socket_is_set(self):
-        self.assertTrue(isinstance(self.sockets['ssl'], socket.socket))
+    def test_ssl_socket_connection_stream(self):
+        self.assertTrue(isinstance(connection_stream(self.socket),
+                        iostream.SSLIOStream))
 
-
-class TestSSLSocketIsNotSet(BaseSocket):
-
-    def setUp(self):
-        super(TestSSLSocketIsNotSet, self).setUp()
-        options.ssl = False
-        self.sockets = sockets()
-
-    def test_ssl_socket_is_not_set(self):
-        self.assertTrue('ssl' not in self.sockets)
+    def tearDown(self):
+        self.socket.close()

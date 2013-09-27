@@ -29,7 +29,7 @@ import unittest
 
 from mock import patch
 
-from blackhole.opts import *
+from blackhole import opts
 from blackhole.utils import (email_id, get_mailname, setgid, setuid)
 
 

@@ -51,7 +51,7 @@ for arg in sys.argv[1:]:
         sys.exit(0)
 
 # set default options
-from blackhole.opts import *
+from blackhole import opts
 
 from deiman import Deiman
 from tornado import (ioloop, process)
@@ -92,7 +92,7 @@ def set_options():
     responsible for warning about deprecated options.
     """
     # Deprecated options check
-    deprecated_opts()
+    opts.deprecated_opts()
     if options.debug:
         print("""WARNING: Using the debug flag!\n"""
               """This will generate a lots of disk I/O """
@@ -150,7 +150,7 @@ def fork():
     # Set the custom process title of the master
     set_process_title()
      # Fork and create the ioloop
-    options.workers = workers()
+    options.workers = opts.workers()
     process.fork_processes(options.workers)
     io_loop = ioloop.IOLoop.instance()
     # Set the custom process title of the workers

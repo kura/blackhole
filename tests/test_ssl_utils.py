@@ -25,7 +25,7 @@ import unittest
 
 from tornado.options import options
 
-from blackhole.opts import *
+from blackhole import opts
 from blackhole.ssl_utils import (BlackholeSSLException, verify_ssl_opts)
 
 

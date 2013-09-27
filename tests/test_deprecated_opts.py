@@ -29,10 +29,10 @@ import unittest
 from mock import patch
 from tornado.options import options
 
-from blackhole.opts import *
+from blackhole import opts
 
 
-class TestDeprecatedOpts(unittest.TestCase):
+class TestDeprecatedOpts(BaseTest):
 
     def setUp(self):
         options.ssl_ca_certs_dir = "/dev/null"
@@ -40,5 +40,5 @@ class TestDeprecatedOpts(unittest.TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     def test_deprecated_opts(self, stdout_mock):
         val = "Deprecated option: ssl_ca_certs_dir\n"
-        deprecated_opts()
+        opts.deprecated_opts()
         self.assertEquals(stdout_mock.getvalue(), val)
