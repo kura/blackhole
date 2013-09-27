@@ -217,6 +217,7 @@ Getting started
     controlling-the-server-init-d
     modes
     response-codes
+    changelog
 
 FQDN
 ----

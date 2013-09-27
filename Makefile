@@ -41,14 +41,11 @@ web: docs
 	rsync -e "ssh -p 2222" -P -rvz --delete docs/build/ kura@blackhole.io:/var/www/blackhole.io/
 
 tag:
-	sed -i 's/__version__ = ".*"/__version__ = "${version}"/g' blackhole/__init__.py
-	git add blackhole/__init__.py
-	git ci -m "New release ${version}"
+	bumpversion minor
 	git push origin master
-	git tag ${version}
 	git push --tags
 
 release:
-	tag ${version}
+	tag
 	pypi
 	web
