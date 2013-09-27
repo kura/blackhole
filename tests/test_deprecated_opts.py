@@ -32,7 +32,7 @@ from tornado.options import options
 from blackhole import opts
 
 
-class TestDeprecatedOpts(BaseTest):
+class TestDeprecatedOpts(unittest.TestCase):
 
     def setUp(self):
         options.ssl_ca_certs_dir = "/dev/null"

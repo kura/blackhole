@@ -36,10 +36,8 @@ from tornado.options import options
 from blackhole.application import (set_action, set_options, fork, daemon)
 from blackhole import opts
 
-from .tests import BaseTest
 
-
-class TestSetActionStart(BaseTest):
+class TestSetActionStart(unittest.TestCase):
 
     def setUp(self):
         sys.argv = ['blackhole_unused', 'start']
@@ -48,7 +46,7 @@ class TestSetActionStart(BaseTest):
         self.assertEquals(set_action(), 'start')
 
 
-class TestSetActionStop(BaseTest):
+class TestSetActionStop(unittest.TestCase):
 
     def setUp(self):
         sys.argv = ['blackhole_unused', 'stop']
@@ -57,7 +55,7 @@ class TestSetActionStop(BaseTest):
         self.assertEquals(set_action(), 'stop')
 
 
-class TestSetActionStatus(BaseTest):
+class TestSetActionStatus(unittest.TestCase):
 
     def setUp(self):
         sys.argv = ['blackhole_unused', 'status']
@@ -66,7 +64,7 @@ class TestSetActionStatus(BaseTest):
         self.assertEquals(set_action(), 'status')
 
 
-class TestSetOptions(BaseTest):
+class TestSetOptions(unittest.TestCase):
 
     def setUp(self):
         options.delay = 0
@@ -78,7 +76,7 @@ class TestSetOptions(BaseTest):
         self.assertEquals(True, True)
 
 
-class TestSetOptionsSSLNoCertNoKey(BaseTest):
+class TestSetOptionsSSLNoCertNoKey(unittest.TestCase):
 
     def setUp(self):
         options.delay = 0
@@ -93,7 +91,7 @@ class TestSetOptionsSSLNoCertNoKey(BaseTest):
         self.assertTrue(exit_mock.called)
 
 
-class TestSetOptionsSSLCertNoKey(BaseTest):
+class TestSetOptionsSSLCertNoKey(unittest.TestCase):
 
     def setUp(self):
         options.delay = 0
@@ -109,7 +107,7 @@ class TestSetOptionsSSLCertNoKey(BaseTest):
         self.assertTrue(exit_mock.called)
 
 
-class TestSetOptionsSSLKeyNoCert(BaseTest):
+class TestSetOptionsSSLKeyNoCert(unittest.TestCase):
 
     def setUp(self):
         options.delay = 0
@@ -125,7 +123,7 @@ class TestSetOptionsSSLKeyNoCert(BaseTest):
         self.assertTrue(exit_mock.called)
 
 
-class TestSetOptionsSSLCertAndKey(BaseTest):
+class TestSetOptionsSSLCertAndKey(unittest.TestCase):
 
     def setUp(self):
         options.delay = 0
@@ -142,7 +140,7 @@ class TestSetOptionsSSLCertAndKey(BaseTest):
         self.assertFalse(exit_mock.called)
 
 
-class TestSetOptionsDebug(BaseTest):
+class TestSetOptionsDebug(unittest.TestCase):
 
     def setUp(self):
         options.delay = 0
@@ -157,7 +155,7 @@ class TestSetOptionsDebug(BaseTest):
         self.assertEquals(stdout_mock.getvalue(), val)
 
 
-class TestSetOptionsDelay(BaseTest):
+class TestSetOptionsDelay(unittest.TestCase):
 
     def setUp(self):
         options.debug = False
@@ -173,7 +171,7 @@ class TestSetOptionsDelay(BaseTest):
         self.assertEquals(stdout_mock.getvalue(), val)
 
 
-class TestDaemonStop(BaseTest):
+class TestDaemonStop(unittest.TestCase):
 
     def setUp(self):
         sys.argv = ('blackhole', 'stop')
@@ -186,7 +184,7 @@ class TestDaemonStop(BaseTest):
             self.assertTrue(exit_mock.called)
 
 
-class TestDaemonStatus(BaseTest):
+class TestDaemonStatus(unittest.TestCase):
 
     def setUp(self):
         sys.argv = ('blackhole', 'status')
@@ -199,7 +197,7 @@ class TestDaemonStatus(BaseTest):
             self.assertTrue(exit_mock.called)
 
 
-class TestDaemonStart(BaseTest):
+class TestDaemonStart(unittest.TestCase):
 
     def setUp(self):
         sys.argv = ('blackhole', 'start')
@@ -211,7 +209,7 @@ class TestDaemonStart(BaseTest):
             self.assertTrue(isinstance(d, Deiman))
 
 
-class TestDaemonInvalidAction(BaseTest):
+class TestDaemonInvalidAction(unittest.TestCase):
 
     @patch('sys.exit')
     def test_daemon_invalid_action(self, exit_mock):
@@ -219,7 +217,7 @@ class TestDaemonInvalidAction(BaseTest):
             self.assertTrue(exit_mock.called)
 
 
-class TestFork(BaseTest):
+class TestFork(unittest.TestCase):
 
     @patch('blackhole.utils.set_process_title')
     @patch('tornado.process.fork_processes')
