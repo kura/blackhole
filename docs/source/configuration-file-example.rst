@@ -11,5 +11,5 @@ Configuration file example
     port=25
     pid="/tmp/blackhole.io"
     mode="offline"
-    ssl_key=/etc/ssl/private/blackhole.io.key
-    ssl_cert=/etc/ssl/certs/blackhole.io.crt
+    ssl_key="/etc/ssl/private/blackhole.io.key"
+    ssl_cert="/etc/ssl/certs/blackhole.io.crt"
