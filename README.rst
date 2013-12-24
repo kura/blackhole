@@ -17,6 +17,9 @@ Blackhole
 .. image:: https://pypip.in/wheel/blackhole/badge.png
         :target: https://pypi.python.org/pypi/blackhole/
 
+.. image:: https://pypip.in/license/blackhole/badge.png
+        :target: https://pypi.python.org/pypi/blackhole/
+
 Tornado powered MTA for accepting all incoming emails 
 without any disk I/O, although no messages actually ever 
 get delivered.
