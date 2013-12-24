@@ -24,6 +24,9 @@ Blackhole
 .. image:: https://pypip.in/v/blackhole/badge.png
         :target: https://crate.io/packages/blackhole
 
+.. image:: https://pypip.in/egg/blackhole/badge.png
+        :target: https://pypi.python.org/pypi/blackhole/
+
 .. image:: https://pypip.in/wheel/blackhole/badge.png
         :target: https://pypi.python.org/pypi/blackhole/
 
