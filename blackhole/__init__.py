@@ -37,8 +37,6 @@ __version__ = "1.8.1"
 __maintainer__ = "Kura"
 __email__ = "kura@kura.io"
 __status__ = "Stable"
-
+__project__ = "Blackhole"
 __pname__ = "blackhole"
-__desc__ = "blackhole.io MTA"
-
 __fullname__ = "%s %s" % (__pname__, __version__)

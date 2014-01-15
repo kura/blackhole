@@ -1,4 +1,3 @@
-from blackhole import __version__
 # -*- coding: utf-8 -*-
 #
 # Blackhole documentation build configuration file, created by
@@ -12,7 +11,11 @@ from blackhole import __version__
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import datetime
+import os
+import sys
+
+from blackhole import __author__, __version__, __project__
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -41,9 +44,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Blackhole'
-import datetime
-copyright = u'{}, Kura'.format(datetime.datetime.now().strftime("%Y"))
+project = __project__
+copyright = u'{}, {}'.format(datetime.datetime.now().strftime("%Y"), __author__)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -218,8 +220,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'blackhole', u'Blackhole Documentation',
-     [u'Kura'], 1)
+    ('index', __project__, u'{} Documentation'.format(__project__),
+     [__author__], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -232,8 +234,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Blackhole', u'Blackhole Documentation',
-   u'Kura', 'Blackhole', 'One line description of project.',
+  ('index', __project__, u'{} Documentation'.format(__project__),
+   __author__, __project__, 'An MTA.',
    'Miscellaneous'),
 ]
 

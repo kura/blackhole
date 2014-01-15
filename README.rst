@@ -14,7 +14,13 @@ Blackhole
 .. image:: https://pypip.in/v/blackhole/badge.png
         :target: https://pypi.python.org/pypi/blackhole/
 
+.. image:: https://pypip.in/egg/blackhole/badge.png
+        :target: https://pypi.python.org/pypi/blackhole/
+
 .. image:: https://pypip.in/wheel/blackhole/badge.png
+        :target: https://pypi.python.org/pypi/blackhole/
+
+.. image:: https://pypip.in/license/blackhole/badge.png
         :target: https://pypi.python.org/pypi/blackhole/
 
 Tornado powered MTA for accepting all incoming emails 
