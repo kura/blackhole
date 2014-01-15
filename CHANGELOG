@@ -2,6 +2,15 @@
 Changelog
 =========
 
+1.8.1
+=====
+
+- Added message_size_limit configuration flag to modify the EHLO 205-SIZE
+  output. Some clients read this value and evaluate the message they're
+  sending to the server and refuse to send it due to the message size being
+  larger than the default limit.
+  This limit is not enforced by the server itself.
+
 1.8.0
 =====
 

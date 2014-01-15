@@ -44,36 +44,42 @@ class TestPrintHelp(unittest.TestCase):
               """                    Group to drop privs to during run"""\
               """ time\n  --host=IP                        IP address to"""\
               """ bind go\n  --log=FILE                       """\
-              """File to write logs to (not very verbose)\n  --pid=FILE"""\
-              """                       File to write process information"""\
-              """ to\n  --port=PORT                      Port to listen for"""\
-              """ connections on\n  --user=USER                      """\
-              """User to drop privs to during run time\n\nBlackhole SSL"""\
-              """\n-------------\n\n  --ssl=BOOL                       """\
-              """Enable/disable SSL\n  --ssl_cert=PATH                  """\
-              """SSL Certificate\n  --ssl_key=PATH                   """\
-              """SSL Private Key\n  --ssl_port=PORT                  """\
-              """Port to listen for SSL connections on\n\nDebug\n-----\n\n"""\
-              """  --debug=BOOL                     Enable/disable debug"""\
-              """ logging mode. Causes a lot of disk I/O\n\nDelay\n-----\n"""\
-              """\n  --delay=INT                      Delay SMTP connection"""\
-              """ for number of seconds passed\n\nMode\n----\n\n  """\
-              """--mode=MODE                      Mode to run blackhole in"""\
-              """ (accept, bounce, random,\n                               """\
-              """      unavailable, offline)\n\n                           """\
-              """        accept - accept all email with code 250, 251, 252"""\
-              """ or 253\n                                   bounce - """\
-              """bounce all email with a random code,\n                    """\
-              """                 excluding 250, 251, 252, 253\n           """\
-              """                        random - randomly accept or bounce"""\
-              """ all email with a random code\n                           """\
-              """        unavailable - server always respondes with code """\
-              """421\n                                     - service is """\
-              """unavailable\n                                   offline - """\
-              """server always responds with code 521 - server\n           """\
-              """                          does not accept mail\n\nWorkers"""\
-              """\n-------\n\n  --workers=NUM                    Number of """\
-              """worker processes to spawn.(default: # of CPUs/Cores - 2 + """\
-              """1 master)\n\n"""
+              """File to write logs to (not very verbose)\n  """\
+              """--message_size_limit=BYTES       Maximum size of a message"""\
+              """ in Bytes, returned in EHLO but\n"""\
+              """                                     not enforced\n"""\
+              """  --pid=FILE                       File to write process"""\
+              """ information to\n  --port=PORT                      """\
+              """Port to listen for connections on\n  --user=USER"""\
+              """                      User to drop privs to during run"""\
+              """ time\n\nBlackhole SSL\n-------------\n\n  --ssl=BOOL"""\
+              """                       Enable/disable SSL\n"""\
+              """  --ssl_cert=PATH                  SSL Certificate\n"""\
+              """  --ssl_key=PATH                   SSL Private Key\n"""\
+              """  --ssl_port=PORT                  Port to listen for"""\
+              """ SSL connections on\n\nDebug\n-----\n\n  --debug=BOOL"""\
+              """                     Enable/disable debug logging mode."""\
+              """ Causes a lot of disk I/O\n\nDelay\n-----\n\n"""\
+              """  --delay=INT                      Delay SMTP connection"""\
+              """ for number of seconds passed\n\nMode\n----\n\n"""\
+              """  --mode=MODE                      Mode to run blackhole"""\
+              """ in (accept, bounce, random,\n"""\
+              """                                     unavailable,"""\
+              """ offline)\n\n                                   """\
+              """accept - accept all email with code 250, 251, 252 or"""\
+              """ 253\n                                   bounce -"""\
+              """ bounce all email with a random code,\n"""\
+              """                                     excluding 250, 251,"""\
+              """ 252, 253\n                                   random"""\
+              """ - randomly accept or bounce all email with a random"""\
+              """ code\n                                   unavailable"""\
+              """ - server always respondes with code 421\n"""\
+              """                                     - service is"""\
+              """ unavailable\n                                   """\
+              """offline - server always responds with code 521 - """\
+              """server\n                                     does not"""\
+              """ accept mail\n\nWorkers\n-------\n\n  --workers=NUM"""\
+              """                    Number of worker processes to"""\
+              """ spawn.(default: # of CPUs/Cores - 2 + 1 master)\n\n"""
         print_help()
         self.assertEquals(stdout_mock.getvalue(), val)

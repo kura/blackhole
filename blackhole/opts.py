@@ -60,6 +60,10 @@ define("group", default="blackhole",
 define("log", default="/tmp/blackhole.log",
        metavar="FILE", help="File to write logs to (not very verbose)",
        group="Blackhole")
+define("message_size_limit", default=512000, metavar="BYTES", type=int,
+       help="""Maximum size of a message in Bytes, returned in EHLO but"""
+            """\n%-37snot enforced""" % "",
+       group="Blackhole")
 
 define('workers', default=None, metavar="NUM", type=int,
        help="""Number of worker processes to spawn."""
@@ -141,7 +145,8 @@ def print_help():
         if option.startswith(("workers", "host", "port", "pid",
                               "conf", "user", "group", "log",
                               "debug", "delay", "mode", "ssl",
-                              "ssl_port", "ssl_cert", "ssl_key")):
+                              "ssl_port", "ssl_cert", "ssl_key",
+                              "message_size_limit")):
             if not option.startswith(("log_", "logging", "ssl_ca_certs_dir")):
                 opts[option] = value
     for option in opts.values():

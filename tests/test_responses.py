@@ -39,9 +39,6 @@ class TestResponses(unittest.TestCase):
     unknown = ('500 Command not recognized\r\n', False)
     ok = ('220 OK\r\n', False)
     vrfy = ('252 OK, cannot VRFY user but will attempt delivery\r\n', False)
-    ehlo = (['250-OK\r\n', '250-SIZE 512000\r\n', '250-VRFY\r\n',
-             '250-STARTTLS\r\n', '250-ENHANCEDSTATUSCODES\r\n',
-             '250-8BITMIME\r\n', '250 DSN\r\n'], False)
 
     def setUp(self):
         options.ssl = True
@@ -61,21 +58,6 @@ class TestResponses(unittest.TestCase):
     def test_handle_command_helo_reading_state(self):
         m = MailState()
         handle_command("HELO", m)
-        self.assertEqual(m.reading, False)
-
-    def test_handle_command_ehlo_response(self):
-        m = MailState()
-        r = handle_command("EHLO", m)
-        self.assertEqual(self.ehlo[0], r[0])
-
-    def test_handle_command_ehlo_connection_close(self):
-        m = MailState()
-        r = handle_command("EHLO", m)
-        self.assertEqual(self.ehlo[1], r[1])
-
-    def test_handle_command_ehlo_reading_state(self):
-        m = MailState()
-        handle_command("EHLO", m)
         self.assertEqual(m.reading, False)
 
     def test_handle_command_mail_from_response(self):
@@ -208,6 +190,55 @@ class TestResponses(unittest.TestCase):
         m = MailState()
         r = handle_command("VRFY", m)
         self.assertEqual(False, r[1])
+
+
+class TestEhlo512(unittest.TestCase):
+    ehlo = (['250-OK\r\n', '250-SIZE 512000\r\n', '250-VRFY\r\n',
+             '250-STARTTLS\r\n', '250-ENHANCEDSTATUSCODES\r\n',
+             '250-8BITMIME\r\n', '250 DSN\r\n'], False)
+
+    def setUp(self):
+        o = options._options['message_size_limit']
+        options.message_size_limit = o.default
+
+    def test_handle_command_ehlo_response_512(self):
+        m = MailState()
+        r = handle_command("EHLO", m)
+        self.assertEqual(self.ehlo[0], r[0])
+
+    def test_handle_command_ehlo_connection_close_512(self):
+        m = MailState()
+        r = handle_command("EHLO", m)
+        self.assertEqual(self.ehlo[1], r[1])
+
+    def test_handle_command_ehlo_reading_state_512(self):
+        m = MailState()
+        handle_command("EHLO", m)
+        self.assertEqual(m.reading, False)
+
+
+class TestEhlo1024(unittest.TestCase):
+    ehlo = (['250-OK\r\n', '250-SIZE 1024000\r\n', '250-VRFY\r\n',
+             '250-STARTTLS\r\n', '250-ENHANCEDSTATUSCODES\r\n',
+             '250-8BITMIME\r\n', '250 DSN\r\n'], False)
+
+    def setUp(self):
+        options.message_size_limit = 1024000
+
+    def test_handle_command_ehlo_response_1024(self):
+        m = MailState()
+        r = handle_command("EHLO", m)
+        self.assertEqual(self.ehlo[0], r[0])
+
+    def test_handle_command_ehlo_connection_close_1024(self):
+        m = MailState()
+        r = handle_command("EHLO", m)
+        self.assertEqual(self.ehlo[1], r[1])
+
+    def test_handle_command_ehlo_reading_state_1024(self):
+        m = MailState()
+        handle_command("EHLO", m)
+        self.assertEqual(m.reading, False)
 
 
 class TestGetAcceptResponse(unittest.TestCase):

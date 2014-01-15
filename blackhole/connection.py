@@ -124,7 +124,10 @@ def handle_command(line, mail_state):
             mail_state.reading = False
             resp = response()
     elif line.lower().startswith("ehlo"):
-        resp = ["%s\r\n" % x for x in EHLO_RESPONSES]
+        resp = []
+        for k, r in enumerate(EHLO_RESPONSES):
+            r = r.format(options.message_size_limit) if k == 1 else r
+            resp.append("%s\r\n" % r)
     elif any(line.lower().startswith(e) for e in ['helo', 'mail from',
                                                   'rcpt to', 'noop']):
         resp = response(250)
