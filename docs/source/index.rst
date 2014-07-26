@@ -18,19 +18,25 @@ Blackhole
 .. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
         :target: https://coveralls.io/r/kura/blackhole
 
-.. image:: https://pypip.in/d/blackhole/badge.png
-        :target: https://crate.io/packages/blackhole
-
-.. image:: https://pypip.in/v/blackhole/badge.png
-        :target: https://crate.io/packages/blackhole
-
-.. image:: https://pypip.in/egg/blackhole/badge.png
+.. image:: https://pypip.in/d/blackhole/badge.svg?style=flat
         :target: https://pypi.python.org/pypi/blackhole/
 
-.. image:: https://pypip.in/wheel/blackhole/badge.png
+.. image:: https://pypip.in/v/blackhole/badge.svg?style=flat
         :target: https://pypi.python.org/pypi/blackhole/
 
-.. image:: https://pypip.in/license/blackhole/badge.png
+.. image:: https://pypip.in/py_versions/blackhole/badge.svg?style=flat
+        :target: https://pypi.python.org/pypi/blackhole/
+
+.. image:: https://pypip.in/implementation/blackhole/badge.svg?style=flat
+        :target: https://pypi.python.org/pypi/blackhole/
+
+.. image:: https://pypip.in/wheel/blackhole/badge.svg?style=flat
+        :target: https://pypi.python.org/pypi/blackhole/
+
+.. image:: https://pypip.in/format/blackhole/badge.svg?style=flat
+        :target: https://pypi.python.org/pypi/blackhole/
+
+.. image:: https://pypip.in/license/blackhole/badge.svg?style=flat
         :target: https://pypi.python.org/pypi/blackhole/
 
 Blackhole is a `Tornado`_ powered MTA (mail transport agent) that is designed
@@ -309,6 +315,11 @@ FAQ
 A few people have emailed me questions about why blackhole exists, how I use
 it, why Tornado and things like that
 so I have outlined some questions and responses in an :ref:`faq`.
+
+Author
+======
+
+Written and maintained by `Kura <https://kura.io/>`_.
 
 Reference
 =========
