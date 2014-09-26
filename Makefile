@@ -31,10 +31,9 @@ flake8:
 	flake8 blackhole --ignore="F403"
 
 pypi:
-	python setup.py sdist upload
-	python2.6 setup.py bdist_wheel upload
-	python2.7 setup.py bdist_wheel upload
-	python3.3 setup.py bdist_wheel upload
+	pip install twine wheel
+	python setup.py sdist bdist_wheel
+        twine upload dist/*
 
 docs:
 	pip install sphinx
