@@ -33,7 +33,7 @@ flake8:
 pypi:
 	pip install twine wheel
 	python setup.py sdist bdist_wheel
-        twine upload dist/*
+	twine upload dist/*
 
 docs:
 	pip install sphinx
