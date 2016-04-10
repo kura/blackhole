@@ -38,7 +38,7 @@ from tornado.options import options
 sslkwargs = {
     'do_handshake_on_connect': False,
     'server_side': True,
-    'ssl_version': ssl.PROTOCOL_SSLv3,
+    'ssl_version': ssl.PROTOCOL_TLSv1,
     'keyfile': options.ssl_key,
     'certfile': options.ssl_cert,
 }

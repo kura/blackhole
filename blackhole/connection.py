@@ -40,13 +40,12 @@ from tornado import iostream
 from tornado.ioloop import IOLoop
 from tornado.options import options
 
-from blackhole import __fullname__
 from blackhole.state import MailState
 from blackhole.data import (response, EHLO_RESPONSES)
 from blackhole.opts import ports
 from blackhole.ssl_utils import sslkwargs
 from blackhole.log import log
-from blackhole.utils import (email_id, get_mailname)
+from blackhole.utils import (mailname, message_id)
 
 
 def sockets():
@@ -75,8 +74,8 @@ def sockets():
             socks[s] = sock
         except socket.error as e:
             if e.errno == 13:
-                log.error("Permission denied, could not bind to %s:%s" %
-                          (options.host, port))
+                log.error("Permission denied, could not bind to %s:%s",
+                          options.host, port)
             else:
                 log.error(e)
             sys.exit(1)
@@ -100,61 +99,111 @@ def connection_stream(connection):
 
 def ssl_connection(connection):
     try:
-        ssl_connection = ssl.wrap_socket(connection, **sslkwargs)
-        return iostream.SSLIOStream(ssl_connection)
-    except (ssl.SSLError, socket.error) as e:
-        if e.errno == ssl.SSL_ERROR_EOF or e.errno == errno.ECONNABORTED:
-            ssl_connection.close()
+        ssl_conn = ssl.wrap_socket(connection, **sslkwargs)
+        return iostream.SSLIOStream(ssl_conn)
+    except (ssl.SSLError, socket.error) as err:
+        if err.errno == ssl.SSL_ERROR_EOF or err.errno == errno.ECONNABORTED:
+            ssl_conn.close()
             return
 
 
-def handle_command(line, mail_state):
+def handle_UNKNOWN(mail_state):
+    return response(500)
+
+
+def handle_EHLO(mail_state):
+    resp = ["250-{}\r\n".format(mailname())]
+    if options.ssl:
+        resp.append("250-STARTTLS\r\n")
+    for k, r in enumerate(EHLO_RESPONSES):
+        r = r.format(options.message_size_limit) if k == 0 else r
+        resp.append("{}\r\n".format(r))
+    return resp
+
+
+def handle_HELO(mail_state):
+    return response(250)
+
+
+def handle_MAIL(mail_state):
+    return response(250)
+
+
+def handle_RCPT(mail_state):
+    return response(250)
+
+
+def handle_NOOP(mail_state):
+    return response(250)
+
+
+def handle_RSET(mail_state):
+    mail_state.message_id = message_id()
+    mail_state.reading = False
+    return response(250)
+
+
+def handle_STARTTLS(mail_state):
+    if not ssl or not options.ssl:
+        return response(500)
+    fileno = mail_state.stream.socket.fileno()
+    IOLoop.current().remove_handler(fileno)
+    mail_state.stream = ssl_connection(mail_state.connection)
+    return response(250)
+
+
+def handle_VRFY(mail_state):
+    return response(252)
+
+
+def handle_QUIT(mail_state):
+    resp = response(221)
+    write_response(mail_state, resp)
+    mail_state.stream.close()
+    mail_state.closed = True
+    del mail_state.stream
+
+
+def handle_DATA(mail_state):
+    mail_state.reading = True
+    return response(354)
+
+
+def handle_reading(mail_state):
+    if mail_state.data[0] == "." and len(mail_state.data) == 3 and ord(mail_state.data[0]) == 46:
+        mail_state.reading = False
+        return response()
+    return None
+
+
+def handle_greeting(mail_state):
+    hm = "220 {} ESMTP\r\n".format(mailname())
+    mail_state.stream.write(hm)
+
+
+def lookup_handler(command):
+    mod = sys.modules[__name__]
+    cmd = "handle_{}".format(command.upper())
+    return getattr(mod, cmd, None)
+
+
+def handle_command(mail_state):
     """Handle each SMTP command as it's sent to the server
 
     The paramater 'line' is the currently stream of data
     ending in '\\n'.
     'mail_state' is an instance of 'blackhole.state.MailState'.
     """
-    close = False
     if mail_state.reading:
-        resp = None
-        # Not exactly nice but it's only way I could safely figure
-        # out if it was the \n.\n
-        if line[0] == "." and len(line) == 3 and ord(line[0]) == 46:
-            mail_state.reading = False
-            resp = response()
-    elif line.lower().startswith("ehlo"):
-        resp = []
-        for k, r in enumerate(EHLO_RESPONSES):
-            r = r.format(options.message_size_limit) if k == 1 else r
-            resp.append("%s\r\n" % r)
-    elif any(line.lower().startswith(e) for e in ['helo', 'mail from',
-                                                  'rcpt to', 'noop']):
-        resp = response(250)
-    elif line.lower().startswith("rset"):
-        new_id = email_id()
-        log.debug("[%s] RSET received, changing ID to [%s]" %
-                  (mail_state.email_id, new_id))
-        # Reset mail state
-        mail_state.reading = False
-        mail_state.email_id = new_id
-        resp = response(250)
-    elif line.lower().startswith("starttls"):
-        if not ssl or not options.ssl:
-            resp = response(500)
-        else:
-            resp = response(220)
-    elif line.lower().startswith("vrfy"):
-        resp = response(252)
-    elif line.lower().startswith("quit"):
-        resp = response(221)
-        close = True
-    elif line.lower().startswith("data"):
-        resp = response(354)
-        mail_state.reading = True
+        resp = handle_reading(mail_state)
     else:
-        resp = response(500)
-
+        mail_state.data = mail_state.data.strip()
+        parts = mail_state.data.split(None, 1)
+        if parts:
+            method = lookup_handler(parts[0]) or handle_UNKNOWN
+            resp = method(mail_state)
+        else:
+            resp = response(501)
     # this is a blocking action, sadly
     # async non blocking methods did not
     # work. =(
@@ -163,12 +212,12 @@ def handle_command(line, mail_state):
         # some reason...
         import time
         time.sleep(options.delay)
-    return resp, close
+    return resp
 
 
 def write_response(mail_state, resp):
     """Write the response back to the stream"""
-    log.debug("[%s] SEND: %s" % (mail_state.email_id, resp.upper().rstrip()))
+    log.debug("[%s] SEND: %s", mail_state.message_id, resp.upper().rstrip())
     mail_state.stream.write(resp)
 
 
@@ -189,17 +238,14 @@ def connection_ready(sock, fd, events):
                 raise
             return
 
-        log.debug("Connection from '%s'" % address[0])
+        log.debug("Connection from '%s'", address[0])
 
         connection.setblocking(0)
         stream = connection_stream(connection)
         # No stream, bail out
         if not stream:
             return
-        mail_state = MailState()
-        mail_state.email_id = email_id()
-        mail_state.stream = stream
-
+        mail_state = MailState(connection, stream)
         # Sadly there is nothing I can do about the handle and loop
         # fuctions. They have to exist within connection_ready
         def handle(line):
@@ -208,8 +254,10 @@ def connection_ready(sock, fd, events):
             it's a valid SMTP keyword and handle it
             accordingly.
             """
-            log.debug("[%s] RECV: %s" % (mail_state.email_id, line.rstrip()))
-            resp, close = handle_command(line, mail_state)
+            mail_state.data = line
+            print mail_state.message_id
+            log.debug("[%s] RECV: %s", mail_state.message_id, mail_state.data)
+            resp = handle_command(mail_state)
             if resp:
                 # Multiple responses, i.e. EHLO
                 if isinstance(resp, list):
@@ -218,17 +266,8 @@ def connection_ready(sock, fd, events):
                 else:
                     # Otherwise it's a single response
                     write_response(mail_state, resp)
-            # Switch to SSL connection if starttls is called
-            # and we have an SSL library
-            if line.lower().startswith("starttls") and ssl and options.ssl:
-                fileno = mail_state.stream.socket.fileno()
-                IOLoop.current().remove_handler(fileno)
-                mail_state.stream = ssl_connection(connection)
             # Close connection
-            if close is True:
-                log.debug("Closing")
-                mail_state.stream.close()
-                del mail_state.stream
+            if mail_state.closed is True:
                 return
             else:
                 loop()
@@ -236,12 +275,11 @@ def connection_ready(sock, fd, events):
         def loop():
             """
             Loop over the socket data until we receive
-            a newline character (\n)
+            a newline character (\r\n)
             """
             # Protection against stream already reading exceptions
             if not mail_state.stream.reading():
-                mail_state.stream.read_until("\n", handle)
+                mail_state.stream.read_until("\r\n", handle)
 
-        hm = "220 %s [%s]\r\n" % (get_mailname(), __fullname__)
-        mail_state.stream.write(hm)
+        handle_greeting(mail_state)
         loop()

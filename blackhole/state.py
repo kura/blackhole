@@ -22,6 +22,8 @@
 
 """blackhole.state - State object for the current connection."""
 
+from blackhole.utils import message_id
+
 
 class MailState(object):
     """A state object used for remembering
@@ -32,8 +34,54 @@ class MailState(object):
     DATA command.
     """
     _reading_data = False
-    _email_id = None
+    _message_id = None
+    _connection = None
     _stream = None
+    _closed = False
+    _data = ""
+    _history = []
+
+    def __init__(self, connection, stream):
+        self.message_id = message_id()
+        self.connection = connection
+        self.stream = stream
+
+    @property
+    def closed(self):
+        return self._closed
+
+    @closed.setter
+    def closed(self, val):
+        self._closed = val
+
+    @closed.deleter
+    def closed(self):
+        self._closed = False
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, val):
+        self.history = val
+        self._data = val
+
+    @data.deleter
+    def data(self):
+        self._data = ""
+
+    @property
+    def history(self):
+        return self._history
+
+    @history.setter
+    def history(self, val):
+        self._history.append(val)
+
+    @history.deleter
+    def history(self):
+        self._history = []
 
     @property
     def reading(self):
@@ -57,7 +105,7 @@ class MailState(object):
         del self._reading_data
 
     @property
-    def email_id(self):
+    def message_id(self):
         """
         Email ID is used to assign commands
         sent and received against an email/connection
@@ -65,21 +113,33 @@ class MailState(object):
 
         Only utilized when debug flag is set.
         """
-        return self._email_id
+        return self._message_id
 
-    @email_id.setter
-    def email_id(self, val):
+    @message_id.setter
+    def message_id(self, val):
         """
         Set email_id
 
         'val' is a hexidecimal string.
         """
-        self._email_id = val
+        self._message_id = val
 
-    @email_id.deleter
-    def email_id(self):
+    @message_id.deleter
+    def message_id(self):
         """Reset email_id back to None."""
-        self._email_id = None
+        self._message_id = None
+
+    @property
+    def connection(self):
+        return self._connection
+
+    @connection.setter
+    def connection(self, conn):
+        self._connection = conn
+
+    @connection.deleter
+    def connection(self):
+        del self._connection
 
     @property
     def stream(self):

@@ -85,8 +85,8 @@ UNAVAILABLE_RESPONSES = ('421',)
 # Random responses
 RANDOM_RESPONSES = ACCEPT_RESPONSES + BOUNCE_RESPONSES
 
-EHLO_RESPONSES = ["250-OK", "250-SIZE {0}",
-                  "250-VRFY", "250-STARTTLS",
+EHLO_RESPONSES = ["250-SIZE {}",
+                  "250-VRFY",
                   "250-ENHANCEDSTATUSCODES", "250-8BITMIME",
                   "250 DSN"]
 
@@ -145,4 +145,4 @@ def response_message(response):
     response = str(response)
     message = RESPONSES[response]
     smtp_code = response
-    return "%s %s\r\n" % (smtp_code, message)
+    return "{} {}\r\n".format(smtp_code, message)

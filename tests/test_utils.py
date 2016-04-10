@@ -30,13 +30,15 @@ import unittest
 from mock import patch
 
 from blackhole import opts
-from blackhole.utils import (email_id, get_mailname, setgid, setuid)
+from blackhole.utils import (message_id, mailname, setgid, setuid)
 
 
 class TestEmailIDGenerator(unittest.TestCase):
 
-    def test_email_id_generator(self):
-        self.assertTrue(re.match(r"^[A-F0-9]{10}$", email_id()))
+    def test_message_id_generator(self):
+        r = r"[0-9]{14}\.[0-9]{4}\.[0-9]{10}\.[0-9]{1}@[a-z0-9\-\_\.]*"
+        mid = re.compile(r, re.IGNORECASE)
+        self.assertTrue(mid.match(message_id()))
 
 
 class TestMailNameFile(unittest.TestCase):
@@ -47,12 +49,12 @@ class TestMailNameFile(unittest.TestCase):
         try:
             with patch('__builtin__.open',
                        return_value=StringIO(self.check_value)):
-                mn = get_mailname()
+                mn = mailname()
                 self.assertEqual(mn, self.check_value)
         except ImportError:
             with patch('builtins.open',
                        return_value=StringIO(self.check_value)):
-                mn = get_mailname()
+                mn = mailname()
                 self.assertEqual(mn, self.check_value)
 
 
@@ -62,7 +64,7 @@ class TestMailNameSocket(unittest.TestCase):
     @patch('os.path.exists', return_value=False)
     @patch('socket.getfqdn', return_value=check_value)
     def test_mail_name_socket(self, exists_mock, socket_mock):
-        mn = get_mailname()
+        mn = mailname()
         self.assertEqual(mn, self.check_value)
 
 

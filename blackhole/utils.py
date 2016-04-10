@@ -33,6 +33,7 @@ import pwd
 import random
 import signal
 import socket
+import time
 
 import setproctitle
 from tornado.options import options
@@ -52,11 +53,11 @@ def setgid():
     try:
         os.setgid(grp.getgrnam(options.group).gr_gid)
     except KeyError:
-        log.error("Group '%s' does not exist" % options.group)
+        log.error("Group '%s' does not exist", options.group)
         sys.exit(1)
     except OSError:
-        log.error("You do not have permission to switch to group '%s'"
-                  % options.group)
+        log.error("You do not have permission to switch to group '%s'",
+                  options.group)
         sys.exit(1)
 
 
@@ -72,11 +73,11 @@ def setuid():
     try:
         os.setuid(pwd.getpwnam(options.user).pw_uid)
     except KeyError:
-        log.error("User '%s' does not exist" % options.user)
+        log.error("User '%s' does not exist", options.user)
         sys.exit(1)
     except OSError:
-        log.error("You do not have permission to switch to user '%s'"
-                  % options.user)
+        log.error("You do not have permission to switch to user '%s'",
+                  options.user)
         sys.exit(1)
 
 
@@ -116,19 +117,27 @@ def set_process_title():
             setproctitle.setproctitle("blackhole: worker")
 
 
-def email_id():
+def id_generator():
+    i = 0
+    while True:
+        yield i
+        i += 1
+
+
+def message_id(n=id_generator().next):
+    """Return a globally unique random string in RFC 2822 Message-ID format
+
+    <datetime.pid.random@host.dom.ain>
+
+    Optional uniq string will be added to strengthen uniqueness if given.
     """
-    Generate an HEX ID to assign to each
-    connection.
-
-    Will be reused later down the line
-    due to the limited number of characters.
-    """
-    alpha = list("1234567890ABCDEF")
-    return ''.join(random.choice(alpha) for x in range(10))
+    datetime = time.strftime('%Y%m%d%H%M%S', time.gmtime())
+    pid = os.getpid()
+    rand = random.randrange(2**31L-1)
+    return '<%s.%s.%s.%s@%s>' % (datetime, pid, rand, n(), mailname())
 
 
-def get_mailname():
+def mailname():
     """
     Return a mailname for HELO.
 

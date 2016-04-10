@@ -129,12 +129,12 @@ def deprecated_opts():
     dep = ('ssl_ca_certs_dir', )
     for d in dep:
         if getattr(options, d) is not None:
-            print("Deprecated option: %s" % d)
+            print("Deprecated option: {}".format(d))
 
 
 def print_help():
     """Prints all the command line options to stdout."""
-    print("Usage: %s [OPTIONS] (start|stop|status)" % (__pname__))
+    print("Usage: {} [OPTIONS] (start|stop|status)".format(__pname__))
     print("")
     print("  -v, --%-26s %s" % ("version", "Print out program version"))
     print("  -h, --%-26s %s" % ("help", "Show this help information"))
