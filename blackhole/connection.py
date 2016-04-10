@@ -281,8 +281,9 @@ def connection_ready(sock, fd, events):
         a newline character (\r\n)
         """
         # Protection against stream already reading exceptions
-        if not mail_state.stream.reading():
-            mail_state.stream.read_until("\r\n", handle)
+        with auto_timeout(mail_state):
+            if not mail_state.stream.reading():
+                mail_state.stream.read_until("\r\n", handle)
 
     handle_greeting(mail_state)
     loop()
