@@ -26,6 +26,7 @@ This module provides methods for Blackhole to use internally
 for binding and listening on sockets as well as process all
 incoming socket data and responding appropriately."""
 
+import contextlib
 import errno
 import socket
 
@@ -35,8 +36,9 @@ try:
 except ImportError:
     ssl = None
 import sys
+import time
 
-from tornado import iostream
+from tornado import (gen, iostream)
 from tornado.ioloop import IOLoop
 from tornado.options import options
 
@@ -170,7 +172,8 @@ def handle_DATA(mail_state):
 
 
 def handle_reading(mail_state):
-    if mail_state.data[0] == "." and len(mail_state.data) == 3 and ord(mail_state.data[0]) == 46:
+    prev = "".join(mail_state.history[-2:])
+    if prev == "\r\n.\r\n":
         mail_state.reading = False
         return response()
     return None
@@ -204,14 +207,6 @@ def handle_command(mail_state):
             resp = method(mail_state)
         else:
             resp = response(501)
-    # this is a blocking action, sadly
-    # async non blocking methods did not
-    # work. =(
-    if options.delay > 0:
-        # import has to be called here for
-        # some reason...
-        import time
-        time.sleep(options.delay)
     return resp
 
 
@@ -221,6 +216,16 @@ def write_response(mail_state, resp):
     mail_state.stream.write(resp)
 
 
+@contextlib.contextmanager
+def auto_timeout(mail_state, timeout=10):
+    handle = IOLoop.instance().add_timeout(time.time() + timeout, mail_state.stream.close)
+    try:
+        yield handle
+    finally:
+        IOLoop.instance().remove_timeout(handle)
+
+
+@gen.coroutine
 def connection_ready(sock, fd, events):
     """
     Accepts the socket connections and passes them off
@@ -230,56 +235,54 @@ def connection_ready(sock, fd, events):
     'fd' is an open file descriptor for the current connection.
     'events' is an integer of the number of events on the socket.
     """
-    while True:
-        try:
-            connection, address = sock.accept()
-        except socket.error as e:
-            if e.errno not in (errno.EWOULDBLOCK, errno.EAGAIN):
-                raise
-            return
+    try:
+        connection, address = sock.accept()
+    except socket.error as e:
+        if e.errno not in (errno.EWOULDBLOCK, errno.EAGAIN):
+            raise
+        return
 
-        log.debug("Connection from '%s'", address[0])
+    log.debug("Connection from '%s'", address[0])
 
-        connection.setblocking(0)
-        stream = connection_stream(connection)
-        # No stream, bail out
-        if not stream:
-            return
-        mail_state = MailState(connection, stream)
-        # Sadly there is nothing I can do about the handle and loop
-        # fuctions. They have to exist within connection_ready
-        def handle(line):
-            """
-            Handle a line of socket data, figure out if
-            it's a valid SMTP keyword and handle it
-            accordingly.
-            """
-            mail_state.data = line
-            print mail_state.message_id
-            log.debug("[%s] RECV: %s", mail_state.message_id, mail_state.data)
-            resp = handle_command(mail_state)
-            if resp:
-                # Multiple responses, i.e. EHLO
-                if isinstance(resp, list):
-                    for r in resp:
-                        write_response(mail_state, r)
-                else:
-                    # Otherwise it's a single response
-                    write_response(mail_state, resp)
-            # Close connection
-            if mail_state.closed is True:
-                return
+    connection.setblocking(0)
+    stream = connection_stream(connection)
+    # No stream, bail out
+    if not stream:
+        return
+    mail_state = MailState(connection, stream)
+    # Sadly there is nothing I can do about the handle and loop
+    # fuctions. They have to exist within connection_ready
+    def handle(line):
+        """
+        Handle a line of socket data, figure out if
+        it's a valid SMTP keyword and handle it
+        accordingly.
+        """
+        mail_state.data = line
+        log.debug("[%s] RECV: %s", mail_state.message_id, mail_state.data)
+        resp = handle_command(mail_state)
+        if resp:
+            # Multiple responses, i.e. EHLO
+            if isinstance(resp, list):
+                for r in resp:
+                    write_response(mail_state, r)
             else:
-                loop()
+                # Otherwise it's a single response
+                write_response(mail_state, resp)
+        # Close connection
+        if mail_state.closed is True:
+            return
+        else:
+            loop()
 
-        def loop():
-            """
-            Loop over the socket data until we receive
-            a newline character (\r\n)
-            """
-            # Protection against stream already reading exceptions
-            if not mail_state.stream.reading():
-                mail_state.stream.read_until("\r\n", handle)
+    def loop():
+        """
+        Loop over the socket data until we receive
+        a newline character (\r\n)
+        """
+        # Protection against stream already reading exceptions
+        if not mail_state.stream.reading():
+            mail_state.stream.read_until("\r\n", handle)
 
-        handle_greeting(mail_state)
-        loop()
+    handle_greeting(mail_state)
+    loop()
