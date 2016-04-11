@@ -118,11 +118,14 @@ def ssl_connection(connection):
 def switch_response_mode(mail_state):
     if options.switch_mode:
         data = mail_state.data
-        _, text = data.split(":")
-        _, domain = text.split("@")
-        bits = domain.split('.')
-        if bits[0] in MODES:
-            mail_state.mode = bits[0]
+        try:
+            _, text = data.split(":")
+            _, domain = text.split("@")
+            bits = domain.split('.')
+            if bits[0] in MODES:
+                mail_state.mode = bits[0]
+        except ValueError:
+            pass
 
 
 def handle_UNKNOWN(mail_state):
