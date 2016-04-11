@@ -109,8 +109,6 @@ def response(resp=None):
 
 def get_response(mode=None):
     """Get a response from available responses based on configuration."""
-    if options.mode and mode is None:
-        mode = options.mode
     if mode == "random":
         return random_choice(RANDOM_RESPONSES)
     elif mode == "bounce":

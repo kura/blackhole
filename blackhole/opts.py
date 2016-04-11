@@ -82,7 +82,7 @@ define('debug', default=False, metavar="BOOL", type=bool,
        help="Enable/disable debug logging mode. Causes a lot of disk I/O",
        group="Debug")
 
-define("switch_mode", default=True, type=bool,
+define("switch_mode", default=False, type=bool,
        metavar="HELO_MODE", help="""Change mode based on MAIL FROM/RCPT TO."""
                                  """Please see documentation""",
        group="Mode")

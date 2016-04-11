@@ -27,6 +27,7 @@ for binding and listening on sockets as well as process all
 incoming socket data and responding appropriately."""
 
 import errno
+import re
 import socket
 
 # ssl check
@@ -115,7 +116,7 @@ def ssl_connection(connection):
 
 
 def switch_response_mode(mail_state):
-    if options.helo_mode:
+    if options.switch_mode:
         data = mail_state.data
         _, text = data.split(":")
         _, domain = text.split("@")
@@ -193,7 +194,11 @@ def handle_reading(mail_state):
     prev = "".join(mail_state.history[-2:])
     if prev == "\r\n.\r\n":
         mail_state.reading = False
-        rresp = get_response(mail_state.mode)
+        if options.switch_mode:
+            mode = mail_state.mode
+        else:
+            mode = options.mode
+        rresp = get_response(mode)
         resp = response_message(rresp)
         write_response(mail_state, resp)
 
