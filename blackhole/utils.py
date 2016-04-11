@@ -80,7 +80,6 @@ def setuid():
                   options.user)
         sys.exit(1)
 
-
 def terminate(signum, frame):
     """
     Terminate the parent process and send signals
@@ -132,7 +131,7 @@ def message_id():
     datetime = time.strftime('%Y%m%d%H%M%S', time.gmtime())
     pid = os.getpid()
     rand = random.randrange(2**31L-1)
-    return '<{}.{}.{}.{}@{}>'.format(datetime, pid, rand, id_generator().next,
+    return '<{}.{}.{}.{}@{}>'.format(datetime, pid, rand, id_generator().next(),
                                      mailname())
 
 
