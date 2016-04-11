@@ -29,6 +29,8 @@ run on, based on configuration and responds with the help
 menu when requested or invalid options are given.
 """
 
+import getpass
+
 try:
     import ssl
 except ImportError:
@@ -51,10 +53,10 @@ define('pid', default="/tmp/blackhole.pid", metavar="FILE", type=str,
 define("conf", metavar="FILE",
        help="Config file to parse and use. Overrides command line args",
        group="Blackhole")
-define("user", default="blackhole",
+define("user", default=getpass.getuser(),
        metavar="USER", help="User to drop privs to during run time",
        group="Blackhole")
-define("group", default="blackhole",
+define("group", default=getpass.getuser(),
        metavar="GROUP", help="Group to drop privs to during run time",
        group="Blackhole")
 define("log", default="/tmp/blackhole.log",
@@ -64,6 +66,9 @@ define("message_size_limit", default=512000, metavar="BYTES", type=int,
        help="""Maximum size of a message in Bytes, returned in EHLO but"""
             """\n%-37snot enforced""" % "",
        group="Blackhole")
+define("timeout", default=60, metavar="SECONDS", type=int,
+       help="""Number of seconds to wait before dropping a connection due"""
+            """to inactivity""", group="Blackhole")
 
 define('workers', default=None, metavar="NUM", type=int,
        help="""Number of worker processes to spawn."""
@@ -73,10 +78,6 @@ define('workers', default=None, metavar="NUM", type=int,
 define('debug', default=False, metavar="BOOL", type=bool,
        help="Enable/disable debug logging mode. Causes a lot of disk I/O",
        group="Debug")
-
-define('delay', default=0, metavar="INT", type=int,
-       help="Delay SMTP connection for number of seconds passed",
-       group="Delay")
 
 define("mode", default="accept",
        metavar="MODE", help="""Mode to run blackhole in (accept, bounce, """
@@ -144,9 +145,9 @@ def print_help():
         # hack to bypass Tornado options
         if option.startswith(("workers", "host", "port", "pid",
                               "conf", "user", "group", "log",
-                              "debug", "delay", "mode", "ssl",
+                              "debug", "mode", "ssl",
                               "ssl_port", "ssl_cert", "ssl_key",
-                              "message_size_limit")):
+                              "message_size_limit", "timeout")):
             if not option.startswith(("log_", "logging", "ssl_ca_certs_dir")):
                 opts[option] = value
     for option in opts.values():

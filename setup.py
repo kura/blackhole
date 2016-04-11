@@ -36,7 +36,7 @@ setup(name='blackhole',
       platforms=['linux'],
       packages=find_packages(exclude=["*.tests"]),
       install_requires=[
-          'tornado>=3.0,<=3.1',
+          'tornado>=3.0',
           'setproctitle>=1.1.7',
           'deiman>=0.1.5',
       ],

@@ -123,6 +123,7 @@ def daemon(action):
     'action' is a string, either start, stop or status
     Returns an instance of deiman.Deiman
     """
+    return
     d = Deiman(options.pid)
     if action == "stop":
         d.stop()

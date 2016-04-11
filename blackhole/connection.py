@@ -28,6 +28,7 @@ incoming socket data and responding appropriately."""
 
 import contextlib
 import errno
+import functools
 import socket
 
 # ssl check
@@ -38,7 +39,7 @@ except ImportError:
 import sys
 import time
 
-from tornado import (gen, iostream)
+from tornado import (gen, iostream, stack_context)
 from tornado.ioloop import IOLoop
 from tornado.options import options
 
@@ -200,8 +201,8 @@ def handle_command(mail_state):
     if mail_state.reading:
         resp = handle_reading(mail_state)
     else:
-        mail_state.data = mail_state.data.strip()
-        parts = mail_state.data.split(None, 1)
+        data = mail_state.data.strip()
+        parts = data.split(None, 1)
         if parts:
             method = lookup_handler(parts[0]) or handle_UNKNOWN
             resp = method(mail_state)
@@ -214,15 +215,6 @@ def write_response(mail_state, resp):
     """Write the response back to the stream"""
     log.debug("[%s] SEND: %s", mail_state.message_id, resp.upper().rstrip())
     mail_state.stream.write(resp)
-
-
-@contextlib.contextmanager
-def auto_timeout(mail_state, timeout=10):
-    handle = IOLoop.instance().add_timeout(time.time() + timeout, mail_state.stream.close)
-    try:
-        yield handle
-    finally:
-        IOLoop.instance().remove_timeout(handle)
 
 
 @gen.coroutine
@@ -249,16 +241,21 @@ def connection_ready(sock, fd, events):
     # No stream, bail out
     if not stream:
         return
+
+    def _on_timeout():
+        write_response(mail_state, '421 Timeout\r\n')
+        mail_state.stream.close()
+
     mail_state = MailState(connection, stream)
-    # Sadly there is nothing I can do about the handle and loop
-    # fuctions. They have to exist within connection_ready
+
     def handle(line):
         """
         Handle a line of socket data, figure out if
         it's a valid SMTP keyword and handle it
         accordingly.
         """
-        mail_state.data = line
+        IOLoop.instance().remove_timeout(mail_state.timeout)
+        mail_state.history = line
         log.debug("[%s] RECV: %s", mail_state.message_id, mail_state.data)
         resp = handle_command(mail_state)
         if resp:
@@ -280,10 +277,12 @@ def connection_ready(sock, fd, events):
         Loop over the socket data until we receive
         a newline character (\r\n)
         """
+        timeout = time.time() + options.timeout
+        mail_state.timeout = IOLoop.instance().add_timeout(timeout,
+                                                           _on_timeout)
         # Protection against stream already reading exceptions
-        with auto_timeout(mail_state):
-            if not mail_state.stream.reading():
-                mail_state.stream.read_until("\r\n", handle)
+        if not mail_state.stream.reading():
+            mail_state.stream.read_until("\r\n", handle)
 
     handle_greeting(mail_state)
     loop()

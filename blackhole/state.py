@@ -38,7 +38,7 @@ class MailState(object):
     _connection = None
     _stream = None
     _closed = False
-    _data = ""
+    _timeout = None
     _history = []
 
     def __init__(self, connection, stream):
@@ -59,17 +59,20 @@ class MailState(object):
         self._closed = False
 
     @property
-    def data(self):
-        return self._data
+    def timeout(self):
+        return self._timeout
 
-    @data.setter
-    def data(self, val):
-        self.history = val
-        self._data = val
+    @timeout.setter
+    def timeout(self, timeout):
+        self._timeout = timeout
 
-    @data.deleter
+    @timeout.deleter
+    def timeout(self):
+        self._timeout = None
+
+    @property
     def data(self):
-        self._data = ""
+        return self._history[-1]
 
     @property
     def history(self):
@@ -78,6 +81,8 @@ class MailState(object):
     @history.setter
     def history(self, val):
         self._history.append(val)
+        # only store the last 10 items
+        self._history = self._history[-10:]
 
     @history.deleter
     def history(self):
