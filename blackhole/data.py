@@ -91,21 +91,21 @@ EHLO_RESPONSES = ["250-SIZE {}",
                   "250 DSN"]
 
 
-def response(response=None):
-    """Return an SMTP response code and message.
+def response(resp=None):
+    """
+    Return an SMTP response code and message.
+
     'response' an string refering to the code
-    you wish to return."""
-    if response is not None:
-        return response_message(response)
+    you wish to return.
+    """
+    if resp is not None:
+        return response_message(resp)
     else:
         return response_message(get_response())
 
 
 def get_response():
-    """
-    Get our response from available responses
-    based on configuration settings.
-    """
+    """Get a response from available responses based on configuration."""
     if options.mode == "random":
         return random_choice(RANDOM_RESPONSES)
     elif options.mode == "bounce":
@@ -120,8 +120,7 @@ def get_response():
 
 def random_choice(response_list):
     """
-    Pick a random choice for the configured choices
-    dictionary.
+    Pick a random choice for the configured choices dictionary.
 
     'response_list' is a list of available response
     types from 'blackhole.data', this can be:
@@ -137,12 +136,14 @@ def random_choice(response_list):
     return response_list[rand]
 
 
-def response_message(response):
-    """Format our response in ESMTP format.
+def response_message(resp):
+    """
+    Format our response in ESMTP format.
 
-    'response' is a string containing the
-    reponse code you wish to return."""
-    response = str(response)
-    message = RESPONSES[response]
-    smtp_code = response
+    'resp' is a string containing the
+    reponse code you wish to return.
+    """
+    resp = str(resp)
+    message = RESPONSES[resp]
+    smtp_code = resp
     return "{} {}\r\n".format(smtp_code, message)

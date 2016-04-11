@@ -67,28 +67,11 @@ from blackhole.ssl_utils import (BlackholeSSLException, verify_ssl_opts,
 from blackhole.utils import (setgid, setuid, terminate, set_process_title)
 
 
-def set_action():
-    """
-    Figure out what action to perform based on arguments passed on the command
-    line.
-
-    start, stop or status
-    """
-    action = None
-    for arg in sys.argv[1:]:
-        if not arg.startswith("--"):
-            action = arg
-    if action not in ('start', 'stop', 'status') or action is None:
-        print_help()
-        sys.exit(2)
-    return action
-
-
 def set_options():
     """
     Set our default options, overriding them as required i.e. for SSL.
 
-    Also outputs warning message when using Debug and Delay modes and is
+    Also outputs warning message when using Debug mode and is
     responsible for warning about deprecated options.
     """
     # Deprecated options check
@@ -97,10 +80,6 @@ def set_options():
         print("""WARNING: Using the debug flag!\n"""
               """This will generate a lots of disk I/O """
               """and large log files\n""")
-    if options.delay > 0:
-        print("""WARNING: Using the delay flag!\n"""
-              """The delay flag is a blocking action """
-              """and will cause connections to block.\n""")
     if options.ssl and not ssl:
         log.error("Unable to use SSL as SSL library is not compiled in")
         sys.exit(1)
@@ -115,36 +94,10 @@ def set_options():
         sslkwargs['certfile'] = options.ssl_cert
 
 
-def daemon(action):
-    """
-    Trigger the daemon, run the action command and return the daemon object
-    if required.
-
-    'action' is a string, either start, stop or status
-    Returns an instance of deiman.Deiman
-    """
-    return
-    d = Deiman(options.pid)
-    if action == "stop":
-        d.stop()
-        sys.exit(0)
-    elif action == "status":
-        d.status()
-        sys.exit(0)
-    if len(sys.argv) == 1:
-        print_help()
-        sys.exit(2)
-    if action == "start":
-        d.start()
-        return d
-    else:
-        sys.exit(0)
-
-
 def fork():
     """
     Fork the processes off, set process titles (master, worker) and return
-    and ioloop.
+    the ioloop.
 
     Returns an instance of tornado.ioloop.IOLoop
     """
@@ -160,18 +113,18 @@ def fork():
 
 
 def run():
-    """
-    The run method is what actually spawns and manages blackhole.
-    """
+    """The run method is what actually spawns and manages blackhole."""
     signal.signal(signal.SIGTERM, terminate)
-    action = set_action()
     set_options()
     # Grab the sockets early for multiprocessing
-    if action in ('start',):
-        socks = sockets()
-        setgid()
-        setuid()
-    d = daemon(action)
+    socks = sockets()
+    setgid()
+    setuid()
+    if options.daemon:
+        Deiman(options.pid).start()
+    elif options.pid:
+        with open(options.pid, 'w') as pid:
+            pid.write(str(os.getpid()))
     # Change group and user
     io_loop = fork()
     # Iterate over the dictionary of socket connections
@@ -183,5 +136,6 @@ def run():
         io_loop.start()
     except (KeyboardInterrupt, SystemExit):
         io_loop.stop()
-        d.stop()
+        if os.path.exists(options.pid):
+            os.remove(options.pid)
         sys.exit(0)

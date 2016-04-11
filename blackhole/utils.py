@@ -117,24 +117,23 @@ def set_process_title():
             setproctitle.setproctitle("blackhole: worker")
 
 
-def id_generator():
-    i = 0
-    while True:
-        yield i
-        i += 1
-
-
-def message_id(n=id_generator().next):
+def message_id():
     """Return a globally unique random string in RFC 2822 Message-ID format
 
     <datetime.pid.random@host.dom.ain>
 
     Optional uniq string will be added to strengthen uniqueness if given.
     """
+    def id_generator():
+        i = 0
+        while True:
+            yield i
+            i += 1
     datetime = time.strftime('%Y%m%d%H%M%S', time.gmtime())
     pid = os.getpid()
     rand = random.randrange(2**31L-1)
-    return '<%s.%s.%s.%s@%s>' % (datetime, pid, rand, n(), mailname())
+    return '<{}.{}.{}.{}@{}>'.format(datetime, pid, rand, id_generator().next,
+                                     mailname())
 
 
 def mailname():

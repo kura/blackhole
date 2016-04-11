@@ -47,6 +47,9 @@ define('host', default="0.0.0.0", metavar="IP", type=str,
 define('port', default=25, metavar="PORT", type=int,
        help="Port to listen for connections on",
        group="Blackhole")
+define('daemon', default=False, metavar="DAEMON", type=bool,
+       help="Daemonise the program to the background",
+       group="Blackhole")
 define('pid', default="/tmp/blackhole.pid", metavar="FILE", type=str,
        help="File to write process information to",
        group="Blackhole")

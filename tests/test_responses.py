@@ -42,7 +42,6 @@ class TestResponses(unittest.TestCase):
 
     def setUp(self):
         options.ssl = True
-        options.delay = 0
         options.debug = False
 
     def test_handle_command_helo_response(self):

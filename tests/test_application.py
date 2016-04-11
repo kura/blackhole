@@ -67,7 +67,6 @@ class TestSetActionStatus(unittest.TestCase):
 class TestSetOptions(unittest.TestCase):
 
     def setUp(self):
-        options.delay = 0
         options.debug = False
         options.ssl = False
 
@@ -79,7 +78,6 @@ class TestSetOptions(unittest.TestCase):
 class TestSetOptionsSSLNoCertNoKey(unittest.TestCase):
 
     def setUp(self):
-        options.delay = 0
         options.debug = False
         options.ssl = True
         options.ssl_cert = None
@@ -94,7 +92,6 @@ class TestSetOptionsSSLNoCertNoKey(unittest.TestCase):
 class TestSetOptionsSSLCertNoKey(unittest.TestCase):
 
     def setUp(self):
-        options.delay = 0
         options.debug = False
         options.ssl = True
         options.ssl_cert = os.path.join(os.path.dirname(__file__),
@@ -110,7 +107,6 @@ class TestSetOptionsSSLCertNoKey(unittest.TestCase):
 class TestSetOptionsSSLKeyNoCert(unittest.TestCase):
 
     def setUp(self):
-        options.delay = 0
         options.debug = False
         options.ssl = True
         options.ssl_cert = None
@@ -126,7 +122,6 @@ class TestSetOptionsSSLKeyNoCert(unittest.TestCase):
 class TestSetOptionsSSLCertAndKey(unittest.TestCase):
 
     def setUp(self):
-        options.delay = 0
         options.debug = False
         options.ssl = True
         options.ssl_cert = os.path.join(os.path.dirname(__file__),
@@ -143,7 +138,6 @@ class TestSetOptionsSSLCertAndKey(unittest.TestCase):
 class TestSetOptionsDebug(unittest.TestCase):
 
     def setUp(self):
-        options.delay = 0
         options.debug = True
         options.ssl = False
 
@@ -151,22 +145,6 @@ class TestSetOptionsDebug(unittest.TestCase):
     def test_set_options_debug(self, stdout_mock):
         val = """WARNING: Using the debug flag!\nThis will generate a lots"""\
               """ of disk I/O and large log files\n\n"""
-        set_options()
-        self.assertEquals(stdout_mock.getvalue(), val)
-
-
-class TestSetOptionsDelay(unittest.TestCase):
-
-    def setUp(self):
-        options.debug = False
-        options.delay = 1
-        options.ssl = False
-
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_set_options_delay(self, stdout_mock):
-        val = """WARNING: Using the delay flag!\n"""\
-              """The delay flag is a blocking action """\
-              """and will cause connections to block.\n\n"""
         set_options()
         self.assertEquals(stdout_mock.getvalue(), val)
 

@@ -26,9 +26,7 @@ This module provides methods for Blackhole to use internally
 for binding and listening on sockets as well as process all
 incoming socket data and responding appropriately."""
 
-import contextlib
 import errno
-import functools
 import socket
 
 # ssl check
@@ -39,7 +37,7 @@ except ImportError:
 import sys
 import time
 
-from tornado import (gen, iostream, stack_context)
+from tornado import (gen, iostream)
 from tornado.ioloop import IOLoop
 from tornado.options import options
 
@@ -53,8 +51,7 @@ from blackhole.utils import (mailname, message_id)
 
 def sockets():
     """
-    Spawn a looper which loops over socket data and creates
-    the sockets.
+    Spawn a looper which loops over socket data and creates the sockets.
 
     It should only ever loop over a maximum of two - standard (std)
     and SSL (ssl).
@@ -66,27 +63,29 @@ def sockets():
     the IOLoop.
     """
     socks = {}
-    for s in ports():
+    for aport in ports():
         try:
-            port = options.ssl_port if s == "ssl" else options.port
+            port = options.ssl_port if aport == "ssl" else options.port
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sock.setblocking(0)
             sock.bind((options.host, port))
             sock.listen(5)
-            socks[s] = sock
-        except socket.error as e:
-            if e.errno == 13:
+            socks[aport] = sock
+        except socket.error as err:
+            if err.errno == 13:
                 log.error("Permission denied, could not bind to %s:%s",
                           options.host, port)
             else:
-                log.error(e)
+                log.error(err)
             sys.exit(1)
     return socks
 
 
 def connection_stream(connection):
     """
+    Create an IOStream object.
+
     Detect which socket the connection is being made on,
     create and iostream for the connection, wrapping it
     in SSL if connected over the SSL socket.
@@ -101,6 +100,8 @@ def connection_stream(connection):
 
 
 def ssl_connection(connection):
+    if ssl is None:
+        return
     try:
         ssl_conn = ssl.wrap_socket(connection, **sslkwargs)
         return iostream.SSLIOStream(ssl_conn)
@@ -118,9 +119,9 @@ def handle_EHLO(mail_state):
     resp = ["250-{}\r\n".format(mailname())]
     if options.ssl:
         resp.append("250-STARTTLS\r\n")
-    for k, r in enumerate(EHLO_RESPONSES):
-        r = r.format(options.message_size_limit) if k == 0 else r
-        resp.append("{}\r\n".format(r))
+    for key, val in enumerate(EHLO_RESPONSES):
+        val = val.format(options.message_size_limit) if key == 0 else val
+        resp.append("{}\r\n".format(val))
     return resp
 
 
@@ -181,8 +182,8 @@ def handle_reading(mail_state):
 
 
 def handle_greeting(mail_state):
-    hm = "220 {} ESMTP\r\n".format(mailname())
-    mail_state.stream.write(hm)
+    greeting = "220 {}\r\n".format(mailname())
+    mail_state.stream.write(greeting)
 
 
 def lookup_handler(command):
@@ -192,10 +193,10 @@ def lookup_handler(command):
 
 
 def handle_command(mail_state):
-    """Handle each SMTP command as it's sent to the server
+    r"""Handle each SMTP command as it's sent to the server.
 
     The paramater 'line' is the currently stream of data
-    ending in '\\n'.
+    ending in '\n'.
     'mail_state' is an instance of 'blackhole.state.MailState'.
     """
     if mail_state.reading:
@@ -218,19 +219,18 @@ def write_response(mail_state, resp):
 
 
 @gen.coroutine
-def connection_ready(sock, fd, events):
+def connection_ready(sock, *args):
     """
-    Accepts the socket connections and passes them off
-    to be handled.
+    Handle socket connections.
 
     'sock' is an instance of 'socket'.
-    'fd' is an open file descriptor for the current connection.
+    'filedesc' is an open file descriptor for the current connection.
     'events' is an integer of the number of events on the socket.
     """
     try:
         connection, address = sock.accept()
-    except socket.error as e:
-        if e.errno not in (errno.EWOULDBLOCK, errno.EAGAIN):
+    except socket.error as err:
+        if err.errno not in (errno.EWOULDBLOCK, errno.EAGAIN):
             raise
         return
 
@@ -261,8 +261,8 @@ def connection_ready(sock, fd, events):
         if resp:
             # Multiple responses, i.e. EHLO
             if isinstance(resp, list):
-                for r in resp:
-                    write_response(mail_state, r)
+                for single_resp in resp:
+                    write_response(mail_state, single_resp)
             else:
                 # Otherwise it's a single response
                 write_response(mail_state, resp)
@@ -273,7 +273,7 @@ def connection_ready(sock, fd, events):
             loop()
 
     def loop():
-        """
+        r"""
         Loop over the socket data until we receive
         a newline character (\r\n)
         """
