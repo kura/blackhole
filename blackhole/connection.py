@@ -42,7 +42,10 @@ from tornado.ioloop import IOLoop
 from tornado.options import options
 
 from blackhole.state import MailState
-from blackhole.data import (response, EHLO_RESPONSES)
+from blackhole.data import (response, response_message, get_response,
+                            EHLO_RESPONSES, MODES, ACCEPT_RESPONSES,
+                            BOUNCE_RESPONSES, OFFLINE_RESPONSES,
+                            UNAVAILABLE_RESPONSES, RANDOM_RESPONSES)
 from blackhole.opts import ports
 from blackhole.ssl_utils import sslkwargs
 from blackhole.log import log
@@ -84,7 +87,7 @@ def sockets():
 
 def connection_stream(connection):
     """
-    Create an IOStream object.
+    Create an IOStream from a connection.
 
     Detect which socket the connection is being made on,
     create and iostream for the connection, wrapping it
@@ -111,58 +114,71 @@ def ssl_connection(connection):
             return
 
 
+def switch_response_mode(mail_state):
+    if options.helo_mode:
+        data = mail_state.data
+        _, text = data.split(":")
+        _, domain = text.split("@")
+        bits = domain.split('.')
+        if bits[0] in MODES:
+            mail_state.mode = bits[0]
+
+
 def handle_UNKNOWN(mail_state):
-    return response(500)
+    write_response(mail_state, response(500))
 
 
 def handle_EHLO(mail_state):
-    resp = ["250-{}\r\n".format(mailname())]
+    resps = ["250-{}\r\n".format(mailname())]
     if options.ssl:
-        resp.append("250-STARTTLS\r\n")
+        resps.append("250-STARTTLS\r\n")
     for key, val in enumerate(EHLO_RESPONSES):
         val = val.format(options.message_size_limit) if key == 0 else val
-        resp.append("{}\r\n".format(val))
-    return resp
+        resps.append("{}\r\n".format(val))
+    for resp in resps:
+        write_response(mail_state, resp)
 
 
 def handle_HELO(mail_state):
-    return response(250)
+    write_response(mail_state, response(250))
 
 
 def handle_MAIL(mail_state):
-    return response(250)
+    switch_response_mode(mail_state)
+    write_response(mail_state, response(250))
 
 
 def handle_RCPT(mail_state):
-    return response(250)
+    switch_response_mode(mail_state)
+    write_response(mail_state, response(250))
 
 
 def handle_NOOP(mail_state):
-    return response(250)
+    write_response(mail_state, response(250))
 
 
 def handle_RSET(mail_state):
     mail_state.message_id = message_id()
     mail_state.reading = False
-    return response(250)
+    write_response(mail_state, response(250))
 
 
 def handle_STARTTLS(mail_state):
     if not ssl or not options.ssl:
-        return response(500)
+        write_response(mail_state, response(500))
+        return
     fileno = mail_state.stream.socket.fileno()
     IOLoop.current().remove_handler(fileno)
     mail_state.stream = ssl_connection(mail_state.connection)
-    return response(250)
+    write_response(mail_state, response(252))
 
 
 def handle_VRFY(mail_state):
-    return response(252)
+    write_response(mail_state, response(252))
 
 
 def handle_QUIT(mail_state):
-    resp = response(221)
-    write_response(mail_state, resp)
+    write_response(mail_state, response(221))
     mail_state.stream.close()
     mail_state.closed = True
     del mail_state.stream
@@ -170,20 +186,21 @@ def handle_QUIT(mail_state):
 
 def handle_DATA(mail_state):
     mail_state.reading = True
-    return response(354)
+    write_response(mail_state, response(354))
 
 
 def handle_reading(mail_state):
     prev = "".join(mail_state.history[-2:])
     if prev == "\r\n.\r\n":
         mail_state.reading = False
-        return response()
-    return None
+        rresp = get_response(mail_state.mode)
+        resp = response_message(rresp)
+        write_response(mail_state, resp)
 
 
 def handle_greeting(mail_state):
     greeting = "220 {}\r\n".format(mailname())
-    mail_state.stream.write(greeting)
+    write_response(mail_state, greeting)
 
 
 def lookup_handler(command):
@@ -196,20 +213,19 @@ def handle_command(mail_state):
     r"""Handle each SMTP command as it's sent to the server.
 
     The paramater 'line' is the currently stream of data
-    ending in '\n'.
+    ending in '\r\n'.
     'mail_state' is an instance of 'blackhole.state.MailState'.
     """
     if mail_state.reading:
-        resp = handle_reading(mail_state)
+        handle_reading(mail_state)
     else:
         data = mail_state.data.strip()
         parts = data.split(None, 1)
         if parts:
             method = lookup_handler(parts[0]) or handle_UNKNOWN
-            resp = method(mail_state)
+            method(mail_state)
         else:
-            resp = response(501)
-    return resp
+            write_response(mail_state, response(501))
 
 
 def write_response(mail_state, resp):
@@ -243,40 +259,25 @@ def connection_ready(sock, *args):
         return
 
     def _on_timeout():
+        """Time out inactive connections."""
         write_response(mail_state, '421 Timeout\r\n')
         mail_state.stream.close()
 
     mail_state = MailState(connection, stream)
 
     def handle(line):
-        """
-        Handle a line of socket data, figure out if
-        it's a valid SMTP keyword and handle it
-        accordingly.
-        """
+        """Handle a line of socket data."""
         IOLoop.instance().remove_timeout(mail_state.timeout)
         mail_state.history = line
         log.debug("[%s] RECV: %s", mail_state.message_id, mail_state.data)
-        resp = handle_command(mail_state)
-        if resp:
-            # Multiple responses, i.e. EHLO
-            if isinstance(resp, list):
-                for single_resp in resp:
-                    write_response(mail_state, single_resp)
-            else:
-                # Otherwise it's a single response
-                write_response(mail_state, resp)
-        # Close connection
+        handle_command(mail_state)
         if mail_state.closed is True:
             return
         else:
             loop()
 
     def loop():
-        r"""
-        Loop over the socket data until we receive
-        a newline character (\r\n)
-        """
+        r"""Loop over the socket data until we receive \r\n ."""
         timeout = time.time() + options.timeout
         mail_state.timeout = IOLoop.instance().add_timeout(timeout,
                                                            _on_timeout)

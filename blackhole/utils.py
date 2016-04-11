@@ -80,6 +80,7 @@ def setuid():
                   options.user)
         sys.exit(1)
 
+
 def terminate(signum, frame):
     """
     Terminate the parent process and send signals

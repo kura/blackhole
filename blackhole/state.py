@@ -22,6 +22,7 @@
 
 """blackhole.state - State object for the current connection."""
 
+from blackhole.opts import options
 from blackhole.utils import message_id
 
 
@@ -40,11 +41,24 @@ class MailState(object):
     _closed = False
     _timeout = None
     _history = []
+    _mode = 'accept'
 
     def __init__(self, connection, stream):
         self.message_id = message_id()
         self.connection = connection
         self.stream = stream
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, value):
+        self._mode = value
+
+    @mode.deleter
+    def mode(self):
+        self._mode = 'accept'
 
     @property
     def closed(self):

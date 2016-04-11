@@ -82,6 +82,10 @@ define('debug', default=False, metavar="BOOL", type=bool,
        help="Enable/disable debug logging mode. Causes a lot of disk I/O",
        group="Debug")
 
+define("switch_mode", default=True, type=bool,
+       metavar="HELO_MODE", help="""Change mode based on MAIL FROM/RCPT TO."""
+                                 """Please see documentation""",
+       group="Mode")
 define("mode", default="accept",
        metavar="MODE", help="""Mode to run blackhole in (accept, bounce, """
                             """random,\n%-37sunavailable, offline)""" % "",
@@ -148,9 +152,9 @@ def print_help():
         # hack to bypass Tornado options
         if option.startswith(("workers", "host", "port", "pid",
                               "conf", "user", "group", "log",
-                              "debug", "mode", "ssl",
+                              "debug", "mode", "ssl", "daemon",
                               "ssl_port", "ssl_cert", "ssl_key",
-                              "message_size_limit", "timeout")):
+                              "message_size_limit", "timeout",)):
             if not option.startswith(("log_", "logging", "ssl_ca_certs_dir")):
                 opts[option] = value
     for option in opts.values():
@@ -171,6 +175,13 @@ def print_help():
             if option.metavar:
                 prefix += "=" + option.metavar
             print("  --%-30s %s" % (prefix, option.help or ""))
+            if option.name == "switch_mode":
+                print("")
+                print("""%-34s @accept.blackhole.io""" % "")
+                print("""%-34s @bounce.blackhole.io""" % "")
+                print("""%-34s @random.blackhole.io""" % "")
+                print("""%-34s @unavailable.blackhole.io""" % "")
+                print("""%-34s @offline.blackhole.io""" % "")
             if option.name == "mode":
                 print("")
                 print("""%-34s accept - accept all email with code 250, 251,"""

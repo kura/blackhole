@@ -91,6 +91,9 @@ EHLO_RESPONSES = ["250-SIZE {}",
                   "250 DSN"]
 
 
+MODES = ('accept', 'bounce', 'unavailable', 'offline', 'random')
+
+
 def response(resp=None):
     """
     Return an SMTP response code and message.
@@ -104,15 +107,17 @@ def response(resp=None):
         return response_message(get_response())
 
 
-def get_response():
+def get_response(mode=None):
     """Get a response from available responses based on configuration."""
-    if options.mode == "random":
+    if options.mode and mode is None:
+        mode = options.mode
+    if mode == "random":
         return random_choice(RANDOM_RESPONSES)
-    elif options.mode == "bounce":
+    elif mode == "bounce":
         return random_choice(BOUNCE_RESPONSES)
-    elif options.mode == "offline":
+    elif mode == "offline":
         return random_choice(OFFLINE_RESPONSES)
-    elif options.mode == "unavailable":
+    elif mode == "unavailable":
         return random_choice(UNAVAILABLE_RESPONSES)
     else:
         return random_choice(ACCEPT_RESPONSES)
