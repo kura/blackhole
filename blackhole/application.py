@@ -20,9 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
+import argparse
 import asyncore
+import os
 import socket
+import sys
 
 from blackhole.config import Config
 from blackhole.smtp import SmtpHandler
@@ -42,11 +44,34 @@ class SmtpServer(asyncore.dispatcher):
         pair = self.accept()
         if pair is not None:
             sock, addr = pair
-            handler = SmtpHandler(sock)
+            SmtpHandler(sock)
+
+
+def config_test(args):
+    conffile = args.config_file if args.config_file else None
+    if conffile is None:
+        print "No config file"
+        sys.exit(os.EX_NOINPUT)
+    Config(conffile).load().self_test()
+    print "OK"
+    sys.exit(os.EX_OK)
 
 
 def run():
-    config = Config('test.conf').load().self_test()
+    parser = argparse.ArgumentParser('blackhole')
+    parser.add_argument('-c', '--conf', help="Configuration file", type=str,
+                        dest='config_file')
+    parser.add_argument('-v', '--version', action='version',
+                        version='2.0.1')
+    parser.add_argument('-t', '--test', dest='test', action='store_true',
+                        help="Perform a configuration test and exit")
+    parser.add_argument('-d', '--debug', dest='debug', action='store_true',
+                        help="Perform a configuration test and exit")
+    args = parser.parse_args()
+    if args.test:
+        config_test(args)
+    conffile = args.config_file if args.config_file else None
+    config = Config(conffile).load().self_test()
     SmtpServer(config.address, config.port)
 #    Server()
     asyncore.loop()
