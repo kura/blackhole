@@ -48,6 +48,7 @@ class SmtpServer(asyncore.dispatcher):
 
 
 def config_test(args):
+    # TODO: make less shitty
     conffile = args.config_file if args.config_file else None
     if conffile is None:
         print "No config file"
@@ -58,6 +59,7 @@ def config_test(args):
 
 
 def run():
+    # TODO: make less shitty
     parser = argparse.ArgumentParser('blackhole')
     parser.add_argument('-c', '--conf', help="Configuration file", type=str,
                         dest='config_file')
