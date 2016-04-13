@@ -48,7 +48,6 @@ from blackhole.data import (response, response_message, get_response,
                             BOUNCE_RESPONSES, OFFLINE_RESPONSES,
                             UNAVAILABLE_RESPONSES, RANDOM_RESPONSES)
 from blackhole.opts import ports
-from blackhole.ssl_utils import sslkwargs
 from blackhole.log import log
 from blackhole.utils import (mailname, message_id)
 
@@ -107,6 +106,13 @@ def ssl_connection(connection):
     if ssl is None:
         return
     try:
+        sslkwargs = {
+            'ssl_version': ssl.PROTOCOL_TLSv1,
+            'keyfile': options.ssl_key,
+            'certfile': options.ssl_cert,
+            'server_side': True,
+            'do_handshake_on_connect': False,
+        }
         ssl_conn = ssl.wrap_socket(connection, **sslkwargs)
         return iostream.SSLIOStream(ssl_conn)
     except (ssl.SSLError, socket.error) as err:
@@ -171,8 +177,15 @@ def handle_STARTTLS(mail_state):
     if not ssl or not options.ssl:
         write_response(mail_state, response(500))
         return
-    mail_state.stream = ssl_connection(mail_state.connection)
-    write_response(mail_state, response(252))
+
+    sslkwargs = {
+        'ssl_version': ssl.PROTOCOL_TLSv1,
+        'keyfile': options.ssl_key,
+        'certfile': options.ssl_cert,
+    }
+    write_response(mail_state, "220 2.0.0 Ready to start TLS")
+    mail_state.stream = mail_state.stream.start_tls(True, ssl_options=sslkwargs)
+    mail_state.stream.add_done_callblack(connection_ready._collect_incoming_data)
 
 
 def handle_VRFY(mail_state):
@@ -192,7 +205,9 @@ def handle_DATA(mail_state):
 
 
 def handle_reading(mail_state):
-    prev = "".join(mail_state.history[-2:])
+    print mail_state.data
+    print mail_state.history[-2:]
+    prev = "".join(mail_state.history[-2:])[-5:]
     if prev == "\r\n.\r\n":
         mail_state.reading = False
         if options.switch_mode:
@@ -282,7 +297,7 @@ def connection_ready(sock, *args):
         """Handle a line of socket data."""
         IOLoop.instance().remove_timeout(mail_state.timeout)
         mail_state.history = line
-        log.debug("[%s] RECV: %s", mail_state.message_id, mail_state.data)
+        log.debug("[%s] RECV: '%s'", mail_state.message_id, mail_state.data)
         handle_command(mail_state)
         if mail_state.closed is True:
             return
