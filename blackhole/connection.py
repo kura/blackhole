@@ -171,9 +171,7 @@ def handle_STARTTLS(mail_state):
     if not ssl or not options.ssl:
         write_response(mail_state, response(500))
         return
-    IOLoop.current().remove_handler(mail_state.stream.socket.fileno())
     mail_state.stream = ssl_connection(mail_state.connection)
-    IOLoop.current().add_handler(mail_state.stream.socket.fileno())
     write_response(mail_state, response(252))
 
 
