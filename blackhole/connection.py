@@ -171,9 +171,9 @@ def handle_STARTTLS(mail_state):
     if not ssl or not options.ssl:
         write_response(mail_state, response(500))
         return
-    fileno = mail_state.stream.socket.fileno()
-    IOLoop.current().remove_handler(fileno)
+    IOLoop.current().remove_handler(mail_state.stream.socket.fileno())
     mail_state.stream = ssl_connection(mail_state.connection)
+    IOLoop.current().add_handler(mail_state.stream.socket.fileno())
     write_response(mail_state, response(252))
 
 
@@ -242,6 +242,22 @@ def write_response(mail_state, resp):
     mail_state.stream.write(resp)
 
 
+def create_connection(sock):
+    try:
+        connection, address = sock.accept()
+    except socket.error as err:
+        if err.errno not in (errno.EWOULDBLOCK, errno.EAGAIN):
+            raise
+    connection.setblocking(0)
+    log.debug("Connection from '%s'", address[0])
+    connection.setblocking(0)
+    stream = connection_stream(connection)
+    # No stream, bail out
+    if not stream:
+        return None
+    return (connection, stream)
+
+
 @gen.coroutine
 def connection_ready(sock, *args):
     """
@@ -251,20 +267,11 @@ def connection_ready(sock, *args):
     'filedesc' is an open file descriptor for the current connection.
     'events' is an integer of the number of events on the socket.
     """
-    try:
-        connection, address = sock.accept()
-    except socket.error as err:
-        if err.errno not in (errno.EWOULDBLOCK, errno.EAGAIN):
-            raise
+    conn = create_connection(sock)
+    if conn is None:
         return
 
-    log.debug("Connection from '%s'", address[0])
-
-    connection.setblocking(0)
-    stream = connection_stream(connection)
-    # No stream, bail out
-    if not stream:
-        return
+    connection, stream = conn
 
     def _on_timeout():
         """Time out inactive connections."""
@@ -273,7 +280,7 @@ def connection_ready(sock, *args):
 
     mail_state = MailState(connection, stream)
 
-    def handle(line):
+    def _on_receive(line):
         """Handle a line of socket data."""
         IOLoop.instance().remove_timeout(mail_state.timeout)
         mail_state.history = line
@@ -282,16 +289,16 @@ def connection_ready(sock, *args):
         if mail_state.closed is True:
             return
         else:
-            loop()
+            _collect_incoming_data()
 
-    def loop():
+    def _collect_incoming_data():
         r"""Loop over the socket data until we receive \r\n ."""
         timeout = time.time() + options.timeout
         mail_state.timeout = IOLoop.instance().add_timeout(timeout,
                                                            _on_timeout)
         # Protection against stream already reading exceptions
         if not mail_state.stream.reading():
-            mail_state.stream.read_until("\r\n", handle)
+            mail_state.stream.read_until("\r\n", _on_receive)
 
     handle_greeting(mail_state)
-    loop()
+    _collect_incoming_data()
