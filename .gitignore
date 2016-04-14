@@ -1,0 +1,15 @@
+*.log
+*.pyc
+*.wpr
+docs/build
+*.egg-info
+build/*
+*.crt
+*.key
+*.pem
+dist/*
+*.html
+.ropeproject
+*.sublime*
+.coveralls.yml
+.tox
