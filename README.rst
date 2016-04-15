@@ -2,12 +2,6 @@
 Blackhole
 =========
 
-.. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
-        :target: https://travis-ci.org/kura/blackhole
-
-.. image:: https://codecov.io/github/kura/blackhole2/coverage.svg?branch=master
-        :target: https://codecov.io/github/kura/blackhole2?branch=master
-
 Blackhole is an email MTA that pipes all mail to /dev/null.
 
 Blackhole is built on top of asyncio and utilises `async` and `await`
