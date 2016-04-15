@@ -41,13 +41,14 @@ from blackhole.exceptions import ConfigException
 from blackhole.smtp import Smtp
 
 
-name = __import__('blackhole').__project__
+version = __import__('blackhole').__version__
 
+debug_format = '[%(levelname)s] blackhole.%(module)s: %(message)s'
 log_config = {
     'version': 1,
     'formatters': {
         'console': {'format': '%(message)s'},
-        'debug': {'format': 'blackhole.%(module)s.%(levelname)s: %(message)s'}
+        'debug': {'format': debug_format}
     },
     'handlers': {
     },
@@ -56,10 +57,8 @@ log_config = {
     }
 }
 
-
 debug_handler = {'class': 'logging.StreamHandler',
                  'formatter': 'debug', 'level': logging.DEBUG}
-
 default_handler = {'class': 'logging.StreamHandler',
                    'formatter': 'console', 'level': logging.INFO}
 
@@ -133,7 +132,7 @@ def create_server(use_tls=False):
 
 def run():
     """
-    Creates the asyncio loop and starts the blackhole server.
+    Create the asyncio loop and start the blackhole server.
 
     .. note::
 
@@ -141,23 +140,24 @@ def run():
        Configures the `logging` module.
     """
     # TODO: make less shitty
-    parser = argparse.ArgumentParser(name.lower())
-    parser.add_argument('-c', '--conf', help='Configuration file', type=str,
-                        dest='config_file')
+    parser = argparse.ArgumentParser('blackhole')
+    parser.add_argument('-c', '--conf', type=str,
+                        dest='config_file', metavar='/etc/blackhole.conf')
     parser.add_argument('-v', '--version', action='version',
-                        version='2.0.1')
+                        version=version)
     parser.add_argument('-t', '--test', dest='test', action='store_true',
-                        help='Perform a configuration test and exit')
+                        help='perform a configuration test and exit')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true',
-                        help='Enable debugging mode.')
+                        help='enable debugging mode.')
     args = parser.parse_args()
     logger = logging.getLogger('blackhole')
-    if args.debug:
+    logger_handlers = log_config['loggers']['blackhole']['handlers']
+    if args.debug and not args.test:
         log_config['handlers']['debug_handler'] = debug_handler
-        log_config['loggers']['blackhole']['handlers'].append('debug_handler')
+        logger_handlers.append('debug_handler')
     else:
         log_config['handlers']['default_handler'] = default_handler
-        log_config['loggers']['blackhole']['handlers'].append('default_handler')
+        logger_handlers.append('default_handler')
     dictConfig(log_config)
     if args.test:
         config_test(args)

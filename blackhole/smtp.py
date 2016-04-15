@@ -61,7 +61,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     def connection_made(self, transport):
         """
-        Ties a connection to blackhole to the SMTP Protocol.
+        Tie a connection to blackhole to the SMTP Protocol.
 
         :param transport:
         :type transport: `asyncio.transport.Transport`

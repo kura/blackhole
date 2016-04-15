@@ -205,6 +205,8 @@ class Config(metaclass=Singleton):
 
         :returns: int
         """
+        if self._tls_port is None:
+            return None
         return int(self._tls_port)
 
     @tls_port.setter
@@ -352,6 +354,8 @@ class Config(metaclass=Singleton):
            Only verifies port is a valid integer, does not verify port is
            available or not in use.
         """
+        if self._tls_port is None:
+            return
         try:
             int(self.tls_port)
         except ValueError:
@@ -370,9 +374,11 @@ class Config(metaclass=Singleton):
 
            Verifies that if you provide all TLS settings, not just some.
         """
-        port = self.tls_port
+        port = self.tls_port if self.tls_port is not None else False
         cert = os.access(self.tls_cert, os.R_OK) if self.tls_cert else False
         key = os.access(self.tls_key, os.R_OK) if self.tls_key else False
+        if (port, cert, key) == (False, False, False):
+            return
         if not all((port, cert, key)):
             msg = 'To use TLS you must supply a port, certificate file and key file.'
             raise ConfigException(msg)
