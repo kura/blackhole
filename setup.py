@@ -33,21 +33,12 @@ delivered.
 """
 
 
-import sys
-
-from setuptools import setup
-from setuptools import find_packages
+from setup_helpers import require_python, get_version, long_description
+from setuptools import setup, find_packages
 
 
-if sys.version_info < (3, 5):
-    print("blackhole requires Python 3.5 or greater")
-    sys.exit(1)
-
-
-version = __import__('blackhole').__version__
-name = __import__('blackhole').__project__
-maintainer = __import__('blackhole').__maintainer__
-email = __import__('blackhole').__email__
+require_python(50659568)
+__version__ = get_version('blackhole/__init__.py')
 
 desc = """Blackhole is an email MTA that pipes all mail to /dev/null.
 
@@ -66,15 +57,15 @@ entry_points = {
 }
 
 
-setup(name=name.lower(),
-      version=version,
+setup(name='blackhole',
+      version=__version__,
       url='https://blackhole.io/',
-      author=maintainer,
-      author_email=email,
-      maintainer=maintainer,
-      maintainer_email=email,
+      author='Kura',
+      author_email='kura@kura.io',
+      maintainer='Kura',
+      maintainer_email='kura@kura.io',
       description=desc,
-      long_description=open("README.rst").read(),
+      long_description=long_description('README.rst'),
       license='MIT',
       platforms=['linux'],
       packages=find_packages(exclude=["*.tests"]),

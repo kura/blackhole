@@ -81,7 +81,7 @@ def config_test(args):
     logger = logging.getLogger('blackhole.config_test')
     logger.setLevel(logging.INFO)
     if conffile is None:
-        logger.fatal('No config file provided')
+        logger.fatal('No config file provided.')
         sys.exit(os.EX_USAGE)
     Config(conffile).load().self_test()
     logger.info('%s syntax is OK', conffile)
