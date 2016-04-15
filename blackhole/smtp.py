@@ -136,8 +136,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         response = "250-{}\r\n".format(self.fqdn).encode('utf-8')
         self._writer.write(response)
         logger.debug('SENT %s', response)
-        responses = ('250-SIZE 512000', '250-VRFY',
-                     '250-ENHANCEDSTATUSCODES', '250-8BITMIME', '250 DSN', )
+        responses = ('250-PIPELINING', '250-SIZE 512000', '250-VRFY',
+                     '250-ETRN', '250-ENHANCEDSTATUSCODES', '250-8BITMIME',
+                     '250 DSN', )
         for response in responses:
             response = "{}\r\n".format(response).encode('utf-8')
             logger.debug("SENT %s", response)
@@ -175,6 +176,9 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def do_VRFY(self):
         await self.push(252, '2.0.0 OK')
+
+    async def do_ETRN(self):
+        await self.push(250, 'Queueing started')
 
     async def do_QUIT(self):
         await self.push(221, '2.0.0 Goodbye')
