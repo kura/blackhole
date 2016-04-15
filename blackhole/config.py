@@ -59,11 +59,12 @@ class Config(metaclass=Singleton):
     _port = 25
     _user = None
     _group = None
-    _log_file = None
-    _timeout = 60
+    # _log_file = None
+    # _timeout = 60
     _tls_port = None
     _tls_key = None
     _tls_cert = None
+    _pidfile = None
 
     def __init__(self, config_file="/etc/blackhole.conf"):
         """
@@ -116,8 +117,8 @@ class Config(metaclass=Singleton):
         return self._address
 
     @address.setter
-    def address(self):
-        return self._address
+    def address(self, address):
+        self._address = address
 
     @property
     def port(self):
@@ -129,8 +130,8 @@ class Config(metaclass=Singleton):
         return int(self._port)
 
     @port.setter
-    def port(self, value):
-        self._port = value
+    def port(self, port):
+        self._port = port
 
     @property
     def user(self):
@@ -146,8 +147,8 @@ class Config(metaclass=Singleton):
         return self._user
 
     @user.setter
-    def user(self, value):
-        self._user = value
+    def user(self, user):
+        self._user = user
 
     @property
     def group(self):
@@ -165,38 +166,38 @@ class Config(metaclass=Singleton):
         return self._group
 
     @group.setter
-    def group(self, value):
-        self._group = value
+    def group(self, group):
+        self._group = group
 
-    @property
-    def log_file(self):
-        """
-        A full file path.
-
-        :returns: str -- A full file path.
-        """
-        return self._log_file
-
-    @log_file.setter
-    def log_file(self, value):
-        self._log_file = value
-
-    @property
-    def timeout(self):
-        """
-        A timeout in seconds.
-
-        .. note::
-
-           Defaults to 60 seconds.
-
-        :returns: int -- A timeout in seconds.
-        """
-        return int(self._timeout)
-
-    @timeout.setter
-    def timeout(self, value):
-        self._timeout = value
+    # @property
+    # def log_file(self):
+    #     """
+    #     A full file path.
+    #
+    #     :returns: str -- A full file path.
+    #     """
+    #     return self._log_file
+    #
+    # @log_file.setter
+    # def log_file(self, value):
+    #     self._log_file = value
+    #
+    # @property
+    # def timeout(self):
+    #     """
+    #     A timeout in seconds.
+    #
+    #     .. note::
+    #
+    #        Defaults to 60 seconds.
+    #
+    #     :returns: int -- A timeout in seconds.
+    #     """
+    #     return int(self._timeout)
+    #
+    # @timeout.setter
+    # def timeout(self, value):
+    #     self._timeout = value
 
     @property
     def tls_port(self):
@@ -210,8 +211,8 @@ class Config(metaclass=Singleton):
         return int(self._tls_port)
 
     @tls_port.setter
-    def tls_port(self, value):
-        self._tls_port = value
+    def tls_port(self, tls_port):
+        self._tls_port = tls_port
 
     @property
     def tls_key(self):
@@ -236,8 +237,16 @@ class Config(metaclass=Singleton):
         return self._tls_cert
 
     @tls_cert.setter
-    def tls_cert(self, value):
-        self._tls_cert = value
+    def tls_cert(self, tls_cert):
+        self._tls_cert = tls_cert
+
+    @property
+    def pidfile(self):
+        return self._pidfile
+
+    @pidfile.setter
+    def pidfile(self, pidfile):
+        self._pidfile = pidfile
 
     def self_test(self):
         """Test configuration validity.
@@ -321,27 +330,27 @@ class Config(metaclass=Singleton):
             msg = '{} is a not a valid group.'.format(self.group)
             raise ConfigException(msg)
 
-    def test_log_file(self):
-        """
-        Validate log file and location are writable.
-
-        :raises: `blackhole.exceptions.ConfigException`
-        """
-        if self.log_file is not None and not os.access(self.log_file, os.W_OK):
-            msg = 'Cannot open log file {} for writing.'.format(self.log_file)
-            raise ConfigException(msg)
-
-    def test_timeout(self):
-        """
-        Validate timeout - only allow a valid integer value in seconds.
-
-        :raises: `blackhole.exceptions.ConfigException`
-        """
-        try:
-            int(self.timeout)
-        except ValueError:
-            msg = '{} is not a valid number of seconds.'.format(self.timeout)
-            raise ConfigException(msg)
+    # def test_log_file(self):
+    #     """
+    #     Validate log file and location are writable.
+    #
+    #     :raises: `blackhole.exceptions.ConfigException`
+    #     """
+    #     if self.log_file is not None and not os.access(self.log_file, os.W_OK):
+    #         msg = 'Cannot open log file {} for writing.'.format(self.log_file)
+    #         raise ConfigException(msg)
+    #
+    # def test_timeout(self):
+    #     """
+    #     Validate timeout - only allow a valid integer value in seconds.
+    #
+    #     :raises: `blackhole.exceptions.ConfigException`
+    #     """
+    #     try:
+    #         int(self.timeout)
+    #     except ValueError:
+    #         msg = '{} is not a valid number of seconds.'.format(self.timeout)
+    #         raise ConfigException(msg)
 
     def test_tls_port(self):
         """

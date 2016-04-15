@@ -3,6 +3,7 @@
 *.wpr
 docs/build
 *.egg-info
+.eggs/*
 build/*
 *.crt
 *.key

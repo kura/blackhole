@@ -33,10 +33,12 @@ import logging
 from logging.config import dictConfig
 import os
 import socket
+import signal
 import ssl
 import sys
 
 from blackhole.config import Config
+from blackhole.daemon import Daemon
 from blackhole.exceptions import ConfigException
 from blackhole.smtp import Smtp
 
@@ -61,6 +63,18 @@ debug_handler = {'class': 'logging.StreamHandler',
                  'formatter': 'debug', 'level': logging.DEBUG}
 default_handler = {'class': 'logging.StreamHandler',
                    'formatter': 'console', 'level': logging.INFO}
+
+_servers = []
+
+
+def stop():
+    loop = asyncio.get_event_loop()
+    logger = logging.getLogger('blackhole.config_test')
+    logger.info('stopping')
+    for server in _servers:
+        server.close()
+        loop.run_until_complete(server.wait_closed())
+    loop.close()
 
 
 def config_test(args):
@@ -149,6 +163,9 @@ def run():
                         help='perform a configuration test and exit')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true',
                         help='enable debugging mode.')
+    parser.add_argument('-b', '--background', dest='background',
+                        action='store_true',
+                        help='run as a background process (daemonise).')
     args = parser.parse_args()
     logger = logging.getLogger('blackhole')
     logger_handlers = log_config['loggers']['blackhole']['handlers']
@@ -167,11 +184,20 @@ def run():
     except ConfigException as err:
         logger.fatal(err)
         sys.exit(os.EX_USAGE)
+    if args.background and not config.pidfile:
+        logger.fatal('Cannot run in background without a pidfile.')
+        sys.exit(os.EX_USAGE)
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(create_server())
+    _servers.append(create_server())
     if config.tls_port and config.tls_cert and config.tls_key:
-        loop.run_until_complete(create_server(True))
+        _servers.append(create_server(True))
+    for server in _servers:
+        loop.run_until_complete(server)
+    loop.add_signal_handler(signal.SIGINT, stop)
+    if args.background:
+        d = Daemon(config.pidfile)
+        d.daemonize()
     try:
         loop.run_forever()
     except KeyboardInterrupt:
-        pass
+        stop()
