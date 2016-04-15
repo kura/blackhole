@@ -20,17 +20,65 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Configuration structure for Blackhole."""
+"""Configuration structure."""
 
 
+import argparse
 import getpass
 import grp
 import inspect
+import logging
 import os
 import pwd
 import re
+import sys
 
 from blackhole.exceptions import ConfigException
+
+
+version = __import__('blackhole').__version__
+
+
+def parse_cmd_args():
+    parser = argparse.ArgumentParser('blackhole')
+    parser.add_argument('-c', '--conf', type=str,
+                        dest='config_file', metavar='/etc/blackhole.conf')
+    parser.add_argument('-v', '--version', action='version',
+                        version=version)
+    parser.add_argument('-t', '--test', dest='test', action='store_true',
+                        help='perform a configuration test and exit')
+    parser.add_argument('-d', '--debug', dest='debug', action='store_true',
+                        help='enable debugging mode.')
+    parser.add_argument('-b', '--background', dest='background',
+                        action='store_true',
+                        help='run as a background process (daemonise).')
+    return parser.parse_args()
+
+
+def config_test(args):
+    """
+    Test the validity of the configuration file content.
+
+    .. note::
+
+       Problems with the configuration will be written to the console using
+       the `logging` module.
+
+       Calls `sys.exit` upon an error.
+
+    :param args: arguments parsed from `argparse`.
+    :type args: `argparse.Namespace`
+    """
+    conffile = args.config_file if args.config_file else None
+    logger = logging.getLogger('blackhole.config_test')
+    logger.setLevel(logging.INFO)
+    if conffile is None:
+        logger.fatal('No config file provided.')
+        sys.exit(os.EX_USAGE)
+    Config(conffile).load().self_test()
+    logger.info('%s syntax is OK', conffile)
+    logger.info('%s test was successful', conffile)
+    sys.exit(os.EX_OK)
 
 
 class Singleton(type):
@@ -48,7 +96,7 @@ class Singleton(type):
 
 class Config(metaclass=Singleton):
     """
-    Configuration module for Blackhole.
+    Configuration module.
 
     Default values are provided as well as self-test functionality
     to sanity check configuration.
@@ -60,7 +108,7 @@ class Config(metaclass=Singleton):
     _user = None
     _group = None
     # _log_file = None
-    # _timeout = 60
+    _timeout = 60
     _tls_port = None
     _tls_key = None
     _tls_cert = None
@@ -70,15 +118,13 @@ class Config(metaclass=Singleton):
         """
         Initialise the configuration.
 
-        Set the default user and group to the current user and group from
-        `getpass.getuser`.
-
         :param config_file: The configuration file,
                             default '/etc/blackhole.conf'
         :type config_file: str
         """
         self.config_file = config_file
-        self.user, self.group = getpass.getuser(), getpass.getuser()
+        self.user = getpass.getuser()
+        self.group = grp.getgrgid(os.getgid()).gr_name
 
     def load(self):
         """
@@ -140,7 +186,7 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-           Defaults to the current user using `getpass.getuser`.
+           Defaults to the current user.
 
         :returns: str -- A UNIX user.
         """
@@ -157,9 +203,7 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-           Defaults to a group named after the current user
-           from `getpass.getuser`, assumes a group exists that is named after
-           the current user.
+           Defaults to the current group.
 
         :returns: str -- A UNIX group.
         """
@@ -181,23 +225,23 @@ class Config(metaclass=Singleton):
     # @log_file.setter
     # def log_file(self, value):
     #     self._log_file = value
-    #
-    # @property
-    # def timeout(self):
-    #     """
-    #     A timeout in seconds.
-    #
-    #     .. note::
-    #
-    #        Defaults to 60 seconds.
-    #
-    #     :returns: int -- A timeout in seconds.
-    #     """
-    #     return int(self._timeout)
-    #
-    # @timeout.setter
-    # def timeout(self, value):
-    #     self._timeout = value
+
+    @property
+    def timeout(self):
+        """
+        A timeout in seconds.
+
+        .. note::
+
+           Defaults to 60 seconds.
+
+        :returns: int -- A timeout in seconds.
+        """
+        return int(self._timeout)
+
+    @timeout.setter
+    def timeout(self, value):
+        self._timeout = value
 
     @property
     def tls_port(self):
@@ -339,18 +383,18 @@ class Config(metaclass=Singleton):
     #     if self.log_file is not None and not os.access(self.log_file, os.W_OK):
     #         msg = 'Cannot open log file {} for writing.'.format(self.log_file)
     #         raise ConfigException(msg)
-    #
-    # def test_timeout(self):
-    #     """
-    #     Validate timeout - only allow a valid integer value in seconds.
-    #
-    #     :raises: `blackhole.exceptions.ConfigException`
-    #     """
-    #     try:
-    #         int(self.timeout)
-    #     except ValueError:
-    #         msg = '{} is not a valid number of seconds.'.format(self.timeout)
-    #         raise ConfigException(msg)
+
+    def test_timeout(self):
+        """
+        Validate timeout - only allow a valid integer value in seconds.
+
+        :raises: `blackhole.exceptions.ConfigException`
+        """
+        try:
+            int(self.timeout)
+        except ValueError:
+            msg = '{} is not a valid number of seconds.'.format(self.timeout)
+            raise ConfigException(msg)
 
     def test_tls_port(self):
         """

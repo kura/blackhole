@@ -29,7 +29,6 @@ This module contains the Smtp protocol.
 
 import asyncio
 import logging
-import ssl
 
 from blackhole.config import Config
 from blackhole.utils import (mailname, message_id)
@@ -94,7 +93,13 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def _handle_client(self):
         await self.greet()
         while not self.connection_closed:
-            line = await self._reader.readline()
+            try:
+                line = await asyncio.wait_for(self._reader.readline(),
+                                              self.config.timeout,
+                                              loop=self.loop)
+            except asyncio.TimeoutError:
+                await self.push(421, 'Timeout')
+                await self.close()
             logger.debug('RECV %s', line)
             line = line.decode('utf-8').rstrip('\r\n')
             parts = line.split(None, 1)

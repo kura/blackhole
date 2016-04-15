@@ -20,7 +20,7 @@ delivered.
 Documentation
 =============
 
-You can find the latest documentation `here <http://blackhole.io/2>`_.
+You can find the latest documentation `here <https://blackhole.io/2>`_.
 
 If you would like to contribute, please read the `contributors guide
 <https://blackhole.io/2/contributing.html>`_.
@@ -30,7 +30,7 @@ The latest build status on `travis <https://travis-ci.org/kura/blackhole2/>`_.
 And the test coverage report on `coveralls
 <https://coveralls.io/github/kura/blackhole2?branch=master>`_.
 
-.. |pypi| image:: https://img.shields.io/pypi/v/blackhole2.svg?style=flat-square&label=latest%20stable%20version
+.. |pypi| image:: https://img.shields.io/pypi/v/blackhole2.svg?style=flat-square&label=version
     :target: https://pypi.python.org/pypi/blackhole2
     :alt: Latest version released on PyPi
 

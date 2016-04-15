@@ -29,4 +29,9 @@ Exceptions for the blackhole server.
 
 class ConfigException(Exception):
     """A configuration exception."""
+
+    pass
+
+
+class DaemonException(Exception):
     pass
