@@ -20,30 +20,128 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+blackhole.application.
+
+This module houses methods and functionality to start the blackhole server.
+"""
+
 import argparse
 import asyncio
 import functools
+import logging
+from logging.config import dictConfig
 import os
 import socket
+import ssl
 import sys
 
 from blackhole.config import Config
+from blackhole.exceptions import ConfigException
 from blackhole.smtp import Smtp
 
+
+name = __import__('blackhole').__project__
+
+log_config = {
+    'version': 1,
+    'formatters': {
+        'console': {'format': '%(message)s'},
+        'debug': {'format': 'blackhole.%(module)s.%(levelname)s: %(message)s'}
+    },
+    'handlers': {
+    },
+    'loggers': {
+        'blackhole': {'handlers': [], 'level': logging.WARN},
+    }
+}
+
+
+debug_handler = {'class': 'logging.StreamHandler',
+                 'formatter': 'debug', 'level': logging.DEBUG}
+
+default_handler = {'class': 'logging.StreamHandler',
+                   'formatter': 'console', 'level': logging.INFO}
+
+
 def config_test(args):
-    # TODO: make less shitty
+    """
+    Test the validity of the configuration file content.
+
+    .. note::
+
+       Problems with the configuration will be written to the console using
+       the `logging` module.
+
+       Calls `sys.exit` upon an error.
+
+    :param args: arguments parsed from `argparse`.
+    :type args: `argparse.Namespace`
+    """
     conffile = args.config_file if args.config_file else None
+    logger = logging.getLogger('blackhole.config_test')
+    logger.setLevel(logging.INFO)
     if conffile is None:
-        print("No config file")
-        sys.exit(os.EX_NOINPUT)
+        logger.fatal('No config file provided')
+        sys.exit(os.EX_USAGE)
     Config(conffile).load().self_test()
-    print("OK")
+    logger.info('%s syntax is OK', conffile)
+    logger.info('%s test was successful', conffile)
     sys.exit(os.EX_OK)
 
 
+def create_server(use_tls=False):
+    """
+    Create an instance of `socket.socket`, binds it and attaches it to loop.
+
+    .. note::
+
+       Calls `sys.exit` when there is an error binding to the socket.
+       If `use_tls` is passed, the SSL/TLS context will be created with
+       `ssl.OP_NO_SSLv2` and `ssl.OP_NO_SSLv3`.
+
+    :param use_tls: default False.
+    :type use_tls: bool
+    :returns: generator
+    """
+    logger = logging.getLogger('blackhole')
+    config = Config()
+    port = config.tls_port if use_tls else config.port
+    if use_tls:
+        logger.debug('Creating server (%s, %s, TLS=True)', config.address,
+                     port)
+    else:
+        logger.debug('Creating server (%s, %s)', config.address, port)
+    loop = asyncio.get_event_loop()
+    factory = functools.partial(Smtp)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+    try:
+        sock.bind((config.address, port))
+    except socket.error:
+        logger.fatal("Cannot bind to port %s.", port)
+        sys.exit(os.EX_NOPERM)
+    if use_tls:
+        ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ctx.load_cert_chain(config.tls_cert, config.tls_key)
+        ctx.options &= ~ssl.OP_NO_SSLv2
+        ctx.options &= ~ssl.OP_NO_SSLv3
+    else:
+        ctx = None
+    return loop.create_server(factory, sock=sock, ssl=ctx)
+
+
 def run():
+    """
+    Creates the asyncio loop and starts the blackhole server.
+
+    .. note::
+
+       Calls `sys.exit` upon a configuration error.
+       Configures the `logging` module.
+    """
     # TODO: make less shitty
-    parser = argparse.ArgumentParser('blackhole')
+    parser = argparse.ArgumentParser(name.lower())
     parser.add_argument('-c', '--conf', help='Configuration file', type=str,
                         dest='config_file')
     parser.add_argument('-v', '--version', action='version',
@@ -51,20 +149,29 @@ def run():
     parser.add_argument('-t', '--test', dest='test', action='store_true',
                         help='Perform a configuration test and exit')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true',
-                        help='Perform a configuration test and exit')
+                        help='Enable debugging mode.')
     args = parser.parse_args()
+    logger = logging.getLogger('blackhole')
+    if args.debug:
+        log_config['handlers']['debug_handler'] = debug_handler
+        log_config['loggers']['blackhole']['handlers'].append('debug_handler')
+    else:
+        log_config['handlers']['default_handler'] = default_handler
+        log_config['loggers']['blackhole']['handlers'].append('default_handler')
+    dictConfig(log_config)
     if args.test:
         config_test(args)
     conffile = args.config_file if args.config_file else None
-    config = Config(conffile).load().self_test()
-    factory = functools.partial(Smtp)
+    try:
+        config = Config(conffile).load().self_test()
+    except ConfigException as err:
+        logger.fatal(err)
+        sys.exit(os.EX_USAGE)
     loop = asyncio.get_event_loop()
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-    sock.bind((config.address, config.port))
-    server = loop.run_until_complete(loop.create_server(factory, sock=sock))
+    loop.run_until_complete(create_server())
+    if config.tls_port and config.tls_cert and config.tls_key:
+        loop.run_until_complete(create_server(True))
     try:
         loop.run_forever()
     except KeyboardInterrupt:
         pass
-    server.close()

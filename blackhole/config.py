@@ -39,6 +39,7 @@ class Singleton(type):
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
+        """A singleton for `blackhole.config.Config`."""
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
                                                                  **kwargs)
@@ -71,7 +72,8 @@ class Config(metaclass=Singleton):
         Set the default user and group to the current user and group from
         `getpass.getuser`.
 
-        :param config_file: The configuration file.
+        :param config_file: The configuration file,
+                            default '/etc/blackhole.conf'
         :type config_file: str
         """
         self.config_file = config_file
@@ -101,8 +103,6 @@ class Config(metaclass=Singleton):
             key, value = key.strip(), value.strip()
             key = "_{}".format(key)
             value = value.replace('"', '').replace("'", '')
-            if not getattr(self, key):
-                continue
             setattr(self, key, value)
         return self
 
@@ -198,6 +198,45 @@ class Config(metaclass=Singleton):
     def timeout(self, value):
         self._timeout = value
 
+    @property
+    def tls_port(self):
+        """
+        A port number.
+
+        :returns: int
+        """
+        return int(self._tls_port)
+
+    @tls_port.setter
+    def tls_port(self, value):
+        self._tls_port = value
+
+    @property
+    def tls_key(self):
+        """
+        A TLS key file.
+
+        :returns: str
+        """
+        return self._tls_key
+
+    @tls_key.setter
+    def tls_key(self, value):
+        self._tls_key = value
+
+    @property
+    def tls_cert(self):
+        """
+        A TLS certificate file.
+
+        :returns: str
+        """
+        return self._tls_cert
+
+    @tls_cert.setter
+    def tls_cert(self, value):
+        self._tls_cert = value
+
     def self_test(self):
         """Test configuration validity.
 
@@ -227,7 +266,7 @@ class Config(metaclass=Singleton):
         """
         address = re.match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", self.address)
         if self.address not in ('localhost',) and not address:
-            msg = '{} is not a valid IPv4 address'.format(self.address)
+            msg = '{} is not a valid IPv4 address.'.format(self.address)
             raise ConfigException(msg)
 
     def test_port(self):
@@ -244,7 +283,7 @@ class Config(metaclass=Singleton):
         try:
             int(self.port)
         except ValueError:
-            msg = '{} is not a valid port number'.format(self.port)
+            msg = '{} is not a valid port number.'.format(self.port)
             raise ConfigException(msg)
 
     def test_user(self):
@@ -260,7 +299,7 @@ class Config(metaclass=Singleton):
         try:
             pwd.getpwnam(self.user)
         except ValueError:
-            msg = '{} is not a valid user'.format(self.user)
+            msg = '{} is not a valid user.'.format(self.user)
             raise ConfigException(msg)
 
     def test_group(self):
@@ -277,7 +316,7 @@ class Config(metaclass=Singleton):
         try:
             grp.getgrnam(self.group)
         except ValueError:
-            msg = '{} is a not a valid group'.format(self.group)
+            msg = '{} is a not a valid group.'.format(self.group)
             raise ConfigException(msg)
 
     def test_log_file(self):
@@ -287,7 +326,7 @@ class Config(metaclass=Singleton):
         :raises: `blackhole.exceptions.ConfigException`
         """
         if self.log_file is not None and not os.access(self.log_file, os.W_OK):
-            msg = 'Cannot open log file {} for writing'.format(self.log_file)
+            msg = 'Cannot open log file {} for writing.'.format(self.log_file)
             raise ConfigException(msg)
 
     def test_timeout(self):
@@ -299,5 +338,41 @@ class Config(metaclass=Singleton):
         try:
             int(self.timeout)
         except ValueError:
-            msg = '{} is not a valid number of seconds'.format(self.timeout)
+            msg = '{} is not a valid number of seconds.'.format(self.timeout)
+            raise ConfigException(msg)
+
+    def test_tls_port(self):
+        """
+        Validate TLS port number.
+
+        :raises: `blackhole.exceptions.ConfigException`
+
+        .. note::
+
+           Only verifies port is a valid integer, does not verify port is
+           available or not in use.
+        """
+        try:
+            int(self.tls_port)
+        except ValueError:
+            msg = '{} is not a valid port number.'.format(self.tls_port)
+            raise ConfigException(msg)
+        if self.port == self.tls_port:
+            raise ConfigException("SMTP and SMTP/TLS ports must be different.")
+
+    def test_tls_settings(self):
+        """
+        Validate TLS configuration.
+
+        :raises: `blackhole.exceptions.ConfigException`
+
+        .. note::
+
+           Verifies that if you provide all TLS settings, not just some.
+        """
+        port = self.tls_port
+        cert = os.access(self.tls_cert, os.R_OK) if self.tls_cert else False
+        key = os.access(self.tls_key, os.R_OK) if self.tls_key else False
+        if not all((port, cert, key)):
+            msg = 'To use TLS you must supply a port, certificate file and key file.'
             raise ConfigException(msg)

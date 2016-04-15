@@ -23,20 +23,20 @@
 """
 Blackhole is an email MTA that pipes all mail to /dev/null.
 
-Blackhole is just any other MTA out there except it does not
-actual do any disk I/O with the mail it receives. It is simply
-accept or rejected based on configuration and pretends it's
-actually done something.
+Blackhole is built on top of asyncio and utilises `async` and `await`
+statements on available in Python 3.5 and above.
+
+While Blackhole is an MTA (mail transport agent), none of the actions
+performed of SMTP or SMTPS are actually processed and no email or sent or
+delivered.
 """
 
 __author__ = "Kura"
 __copyright__ = "None"
 __credits__ = ["Kura", ]
 __license__ = "MIT"
-__version__ = "2.0.1"
+__version__ = "2.0.0"
 __maintainer__ = "Kura"
 __email__ = "kura@kura.io"
 __status__ = "Stable"
 __project__ = "Blackhole"
-__pname__ = "blackhole"
-__fullname__ = "%s %s" % (__pname__, __version__)

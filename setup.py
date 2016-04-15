@@ -21,6 +21,18 @@
 # SOFTWARE.
 
 
+"""
+Blackhole is an email MTA that pipes all mail to /dev/null.
+
+Blackhole is built on top of asyncio and utilises `async` and `await`
+statements on available in Python 3.5 and above.
+
+While Blackhole is an MTA (mail transport agent), none of the actions
+performed of SMTP or SMTPS are actually processed and no email or sent or
+delivered.
+"""
+
+
 import sys
 
 from setuptools import setup
@@ -31,9 +43,21 @@ if sys.version_info < (3, 5):
     print("blackhole requires Python 3.5 or greater")
     sys.exit(1)
 
-version = __import__('blackhole').__version__
 
-desc = """Needs changing"""
+version = __import__('blackhole').__version__
+name = __import__('blackhole').__project__
+maintainer = __import__('blackhole').__maintainer__
+email = __import__('blackhole').__email__
+
+desc = """Blackhole is an email MTA that pipes all mail to /dev/null.
+
+Blackhole is built on top of asyncio and utilises `async` and `await`
+statements on available in Python 3.5 and above.
+
+While Blackhole is an MTA (mail transport agent), none of the actions
+performed of SMTP or SMTPS are actually processed and no email or sent or
+delivered."""
+
 
 entry_points = {
     'console_scripts': [
@@ -42,14 +66,13 @@ entry_points = {
 }
 
 
-setup(name='blackhole',
+setup(name=name.lower(),
       version=version,
-      url='http://blackhole.io/',
-      download_url='https://github.com/kura/blackhole/archive/%s.zip' % version,
-      author="Kura",
-      author_email="kura@kura.io",
-      maintainer="Kura",
-      maintainer_email="kura@kura.io",
+      url='https://blackhole.io/',
+      author=maintainer,
+      author_email=email,
+      maintainer=maintainer,
+      maintainer_email=email,
       description=desc,
       long_description=open("README.rst").read(),
       license='MIT',

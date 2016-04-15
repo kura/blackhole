@@ -21,12 +21,18 @@
 # SOFTWARE.
 
 """
-blackhole.exceptions.
+Blackhole is an email MTA that pipes all mail to /dev/null.
 
-Exceptions for the blackhole server.
+Blackhole is built on top of asyncio and utilises `async` and `await`
+statements on available in Python 3.5 and above.
+
+While Blackhole is an MTA (mail transport agent), none of the actions
+performed of SMTP or SMTPS are actually processed and no email or sent or
+delivered.
 """
 
+from blackhole.application import run
 
-class ConfigException(Exception):
-    """A configuration exception."""
-    pass
+
+if __name__ == '__main__':
+    run()
