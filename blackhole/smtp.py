@@ -155,12 +155,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, '2.0.0 OK: queued as {}'.format(self.message_id))
 
     async def do_STARTTLS(self):
-        await self.push(220, '2.0.0 Ready to start TLS')
-        ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        ctx.load_cert_chain(self.config.tls_cert, self.config.tls_key)
-        ctx.options &= ~ssl.OP_NO_SSLv2
-        ctx.options &= ~ssl.OP_NO_SSLv3
-        await self.start_tls()
+        # It's currently not possible to implement STARTTLS due to lack of
+        # support in asyncio. - https://bugs.python.org/review/23749/
+        await self.do_UNKNOWN()
 
     async def do_NOOP(self):
         await self.push(250, '2.0.0 OK')
