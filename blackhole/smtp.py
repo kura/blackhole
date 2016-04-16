@@ -98,8 +98,7 @@ class Smtp(asyncio.StreamReaderProtocol):
                                               self.config.timeout,
                                               loop=self.loop)
             except asyncio.TimeoutError:
-                await self.push(421, 'Timeout')
-                await self.close()
+                await self.timeout()
             logger.debug('RECV %s', line)
             line = line.decode('utf-8').rstrip('\r\n')
             parts = line.split(None, 1)
@@ -109,6 +108,12 @@ class Smtp(asyncio.StreamReaderProtocol):
                 handler = self.lookup_handler(verb) or self.do_UNKNOWN
                 logger.debug("USING %s", handler.__name__)
                 await handler()
+
+    async def timeout(self):
+        logger.debug('%s timed out, no data received for %d seconds',
+                     repr(self.peer), self.config.timeout)
+        await self.push(421, 'Timeout')
+        await self.close()
 
     async def close(self):
         logger.debug('Closing connection: %s', repr(self.peer))
@@ -154,7 +159,12 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def do_DATA(self):
         await self.push(354, 'End data with <CR><LF>.<CR><LF>')
         while not self.connection_closed:
-            line = await self._reader.readline()
+            try:
+                line = await asyncio.wait_for(self._reader.readline(),
+                                              self.config.timeout,
+                                              loop=self.loop)
+            except asyncio.TimeoutError:
+                await self.timeout()
             logger.debug('RECV %s', line)
             if line == b'.\r\n':
                 break

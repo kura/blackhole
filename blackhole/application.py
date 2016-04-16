@@ -29,7 +29,6 @@ This module houses methods and functionality to start the server.
 import asyncio
 import logging
 import os
-import signal
 import sys
 
 from blackhole.config import Config, config_test, parse_cmd_args
@@ -56,7 +55,6 @@ def run():
         logger.fatal('Cannot run in background without a pidfile.')
         sys.exit(os.EX_USAGE)
     loop = asyncio.get_event_loop()
-    loop.add_signal_handler(signal.SIGINT, stop_servers)
     start_servers()
     setgid()
     setuid()
