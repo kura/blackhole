@@ -33,7 +33,6 @@ import grp
 import logging
 import os
 import pwd
-import signal
 import socket
 import ssl
 import sys
@@ -98,7 +97,6 @@ def start_servers():
 
 
 def stop_servers():
-    config = Config()
     loop = asyncio.get_event_loop()
     logger.debug('Stopping...')
     for server in _servers:

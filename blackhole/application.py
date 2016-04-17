@@ -35,7 +35,7 @@ from blackhole.config import Config, config_test, parse_cmd_args
 from blackhole.control import stop_servers, start_servers, setgid, setuid
 from blackhole.daemon import Daemon
 from blackhole.exceptions import ConfigException, DaemonException
-from blackhole.logging import configure_logs
+from blackhole.logs import configure_logs
 
 
 def run():

@@ -127,6 +127,7 @@ class Config(metaclass=Singleton):
         self.config_file = config_file
         self.user = getpass.getuser()
         self.group = grp.getgrgid(os.getgid()).gr_name
+        print(self._port)
 
     def load(self):
         """
@@ -332,10 +333,9 @@ class Config(metaclass=Singleton):
         :returns: obj -- An instance of `blackhole.config.Config`.
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
-        for member in members:
-            name, mcallable = member
+        for name, _ in members:
             if name.startswith('test_'):
-                mcallable()
+                getattr(self, name)()
         return self
 
     def test_address(self):
@@ -350,7 +350,20 @@ class Config(metaclass=Singleton):
         """
         address = re.match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", self.address)
         if self.address not in ('localhost',) and not address:
-            msg = '{} is not a valid IPv4 address.'.format(self.address)
+            msg = '{} is not a valid IPv4 address.'.format(self._address)
+            raise ConfigException(msg)
+
+    def _min_max_port(self, port):
+        min, max = 1, 65535
+        if port < min:
+            msg = '''Port number {} is not usable because it is less than '''\
+                  '''{} which is the lowest available port.'''.format(port,
+                                                                      min)
+            raise ConfigException(msg)
+        if port > max:
+            msg = '''Port number {} is not usable because it is less than '''\
+                  '''{} which is the highest available port'''.format(port,
+                                                                      max)
             raise ConfigException(msg)
 
     def test_port(self):
@@ -365,10 +378,12 @@ class Config(metaclass=Singleton):
            available or not in use.
         """
         try:
-            int(self.port)
+            _ = self.port
         except ValueError:
-            msg = '{} is not a valid port number.'.format(self.port)
+            msg = '{} is not a valid port number.'.format(self._port)
             raise ConfigException(msg)
+        self._min_max_port(self.port)
+
 
     def test_user(self):
         """
@@ -382,8 +397,8 @@ class Config(metaclass=Singleton):
         """
         try:
             pwd.getpwnam(self.user)
-        except ValueError:
-            msg = '{} is not a valid user.'.format(self.user)
+        except KeyError:
+            msg = '{} is not a valid user.'.format(self._user)
             raise ConfigException(msg)
 
     def test_group(self):
@@ -394,13 +409,12 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-           Defaults to `getpass.getuser` if no group is specified. Assumes a
-           group has been created with the same name as the user.
+           Defaults to `grp.getgrgid.gr_name` if no group is specified.
         """
         try:
             grp.getgrnam(self.group)
-        except ValueError:
-            msg = '{} is a not a valid group.'.format(self.group)
+        except KeyError:
+            msg = '{} is a not a valid group.'.format(self._group)
             raise ConfigException(msg)
 
     # def test_log_file(self):
@@ -420,9 +434,9 @@ class Config(metaclass=Singleton):
         :raises: `blackhole.exceptions.ConfigException`
         """
         try:
-            int(self.timeout)
+            _ = self.timeout
         except ValueError:
-            msg = '{} is not a valid number of seconds.'.format(self.timeout)
+            msg = '{} is not a valid number of seconds.'.format(self._timeout)
             raise ConfigException(msg)
 
     def test_tls_port(self):
@@ -441,10 +455,11 @@ class Config(metaclass=Singleton):
         try:
             int(self.tls_port)
         except ValueError:
-            msg = '{} is not a valid port number.'.format(self.tls_port)
+            msg = '{} is not a valid port number.'.format(self._tls_port)
             raise ConfigException(msg)
         if self.port == self.tls_port:
             raise ConfigException('SMTP and SMTP/TLS ports must be different.')
+        self._min_max_port(self.tls_port)
 
     def test_tls_settings(self):
         """
@@ -462,7 +477,7 @@ class Config(metaclass=Singleton):
         if (port, cert, key) == (False, False, False):
             return
         if not all((port, cert, key)):
-            msg = '''To use TLS you must supply a port, certificate file'''\
+            msg = '''To use TLS you must supply a port, certificate file '''\
                   '''and key file.'''
             raise ConfigException(msg)
 

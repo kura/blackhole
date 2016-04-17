@@ -39,9 +39,9 @@ def mailname():
     """
     mailname_file = '/etc/mailname'
     if os.path.exists(mailname_file):
-        mnc = open(mailname_file, 'r').read().strip()
-        if mnc != '':
-            return mnc
+        mailname_content = open(mailname_file, 'r').read().strip()
+        if mailname_content != '':
+            return mailname_content
     return socket.getfqdn()
 
 
