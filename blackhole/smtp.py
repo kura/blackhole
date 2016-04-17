@@ -29,6 +29,7 @@ This module contains the Smtp protocol.
 
 import asyncio
 import logging
+import random
 
 from blackhole.config import Config
 from blackhole.utils import (mailname, message_id)
@@ -39,6 +40,19 @@ logger = logging.getLogger('blackhole.smtp')
 
 class Smtp(asyncio.StreamReaderProtocol):
     """The class responsible for handling SMTP/SMTPS commands."""
+
+    bounce_responses = {
+        450: 'Requested mail action not taken: mailbox unavailable',
+        451: 'Requested action aborted: local error in processing',
+        452: 'Requested action not taken: insufficient system storage',
+        458: 'Unable to queue message',
+        521: 'Machine does not accept mail',
+        550: 'Requested action not taken: mailbox unavailable',
+        551: 'User not local',
+        552: 'Requested mail action aborted: exceeded storage allocation',
+        553: 'Requested action not taken: mailbox name not allowed',
+        571: 'Blocked',
+    }
 
     def __init__(self, *args, **kwargs):
         """
@@ -168,7 +182,19 @@ class Smtp(asyncio.StreamReaderProtocol):
             logger.debug('RECV %s', line)
             if line == b'.\r\n':
                 break
-        await self.push(250, '2.0.0 OK: queued as {}'.format(self.message_id))
+        if self.config.delay:
+            asyncio.sleep(self.config.delay)
+        if self.config.mode == 'bounce':
+            key = random.choice(list(self.bounce_responses.keys()))
+            await self.push(key, self.bounce_responses[key])
+        elif self.config.mode == 'random':
+            resps = {250, '2.0.0 OK: queued as {}'.format(self.message_id), }
+            resps.update(self.bounce_responses)
+            key = random.choice(list(resps.keys()))
+            await self.push(key, resps[key])
+        else:
+            msg = '2.0.0 OK: queued as {}'.format(self.message_id)
+            await self.push(250, msg)
 
     async def do_STARTTLS(self):
         # It's currently not possible to implement STARTTLS due to lack of

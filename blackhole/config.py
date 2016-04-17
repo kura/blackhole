@@ -36,7 +36,7 @@ import sys
 from blackhole.exceptions import ConfigException
 
 
-version = __import__('blackhole').__version__
+__version__ = __import__('blackhole').__version__
 
 
 def parse_cmd_args():
@@ -44,7 +44,7 @@ def parse_cmd_args():
     parser.add_argument('-c', '--conf', type=str,
                         dest='config_file', metavar='/etc/blackhole.conf')
     parser.add_argument('-v', '--version', action='version',
-                        version=version)
+                        version=__version__)
     parser.add_argument('-t', '--test', dest='test', action='store_true',
                         help='perform a configuration test and exit')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true',
@@ -113,6 +113,8 @@ class Config(metaclass=Singleton):
     _tls_key = None
     _tls_cert = None
     _pidfile = None
+    _delay = None
+    _mode = 'accept'
 
     def __init__(self, config_file="/etc/blackhole.conf"):
         """
@@ -240,8 +242,8 @@ class Config(metaclass=Singleton):
         return int(self._timeout)
 
     @timeout.setter
-    def timeout(self, value):
-        self._timeout = value
+    def timeout(self, timeout):
+        self._timeout = timeout
 
     @property
     def tls_port(self):
@@ -268,8 +270,8 @@ class Config(metaclass=Singleton):
         return self._tls_key
 
     @tls_key.setter
-    def tls_key(self, value):
-        self._tls_key = value
+    def tls_key(self, tls_key):
+        self._tls_key = tls_key
 
     @property
     def tls_cert(self):
@@ -291,6 +293,33 @@ class Config(metaclass=Singleton):
     @pidfile.setter
     def pidfile(self, pidfile):
         self._pidfile = pidfile
+
+    @property
+    def delay(self):
+        """
+        A delay in seconds.
+
+        .. note::
+
+           Defaults to None.
+
+        :returns: int or None -- A timeout in seconds.
+        """
+        if self._delay is not None:
+            return int(self._delay)
+        return None
+
+    @delay.setter
+    def delay(self, delay):
+        self._delay = delay
+
+    @property
+    def mode(self):
+        return self._mode
+
+    @mode.setter
+    def mode(self, mode):
+        self._mode = mode
 
     def self_test(self):
         """Test configuration validity.
@@ -415,7 +444,7 @@ class Config(metaclass=Singleton):
             msg = '{} is not a valid port number.'.format(self.tls_port)
             raise ConfigException(msg)
         if self.port == self.tls_port:
-            raise ConfigException("SMTP and SMTP/TLS ports must be different.")
+            raise ConfigException('SMTP and SMTP/TLS ports must be different.')
 
     def test_tls_settings(self):
         """
@@ -433,5 +462,14 @@ class Config(metaclass=Singleton):
         if (port, cert, key) == (False, False, False):
             return
         if not all((port, cert, key)):
-            msg = 'To use TLS you must supply a port, certificate file and key file.'
+            msg = '''To use TLS you must supply a port, certificate file'''\
+                  '''and key file.'''
             raise ConfigException(msg)
+
+    def test_delay(self):
+        if self.delay and self.delay >= self.timeout:
+            raise ConfigException('Delay must be lower than timeout.')
+
+    def test_mode(self):
+        if self.mode not in ('accept', 'bounce', 'random'):
+            raise ConfigException('Mode must be accept, bounce or random.')

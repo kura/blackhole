@@ -5,7 +5,20 @@ import atexit
 from blackhole.exceptions import DaemonException
 
 
-class Daemon(object):
+class Singleton(type):
+    """A singleton for `blackhole.daemon.Daemon`."""
+
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        """A singleton for `blackhole.daemon.Daemon`."""
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args,
+                                                                 **kwargs)
+        return cls._instances[cls]
+
+
+class Daemon(metaclass=Singleton):
 
     def __init__(self, pidfile):
         self.pidfile = pidfile
@@ -27,9 +40,6 @@ class Daemon(object):
         except OSError as err:
             raise DaemonException(err.strerror)
 
-    def delpid(self):
-        os.remove(self.pidfile)
-
     @property
     def pid(self):
         if os.path.exists(self.pidfile):
@@ -38,7 +48,7 @@ class Daemon(object):
             except IOError as err:
                 raise(err.strerror)
             if not os.path.exists(os.path.join(os.path.sep, 'proc', pid)):
-                self.delpid()
+                del self.pid
             return int(pid)
         return None
 
@@ -53,4 +63,4 @@ class Daemon(object):
 
     @pid.deleter
     def pid(self):
-        self.delpid()
+        os.remove(self.pidfile)

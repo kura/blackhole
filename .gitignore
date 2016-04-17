@@ -1,6 +1,5 @@
 *.log
 *.pyc
-*.wpr
 docs/build
 *.egg-info
 .eggs/*
@@ -10,7 +9,5 @@ build/*
 *.pem
 dist/*
 *.html
-.ropeproject
-*.sublime*
 .coveralls.yml
 .tox

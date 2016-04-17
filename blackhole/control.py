@@ -39,6 +39,7 @@ import ssl
 import sys
 
 from blackhole.config import Config
+from blackhole.daemon import Daemon
 from blackhole.smtp import Smtp
 
 
@@ -97,16 +98,15 @@ def start_servers():
 
 
 def stop_servers():
-    logger = logging.getLogger('blackhole.control')
-    logger.debug('Stopping...')
     config = Config()
     loop = asyncio.get_event_loop()
+    logger.debug('Stopping...')
     for server in _servers:
         server.close()
         loop.run_until_complete(server.wait_closed())
     loop.close()
-    if os.path.exists(config.pidfile):
-        os.remove(config.pidfile)
+    if Daemon().pid:
+        del Daemon().pid
     sys.exit(os.EX_OK)
 
 
