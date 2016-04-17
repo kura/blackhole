@@ -41,7 +41,6 @@ entry_points = {
 
 tests_require = [
     'pytest',
-    'mock'
 ]
 
 

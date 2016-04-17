@@ -13,8 +13,8 @@ tox:
 	detox
 
 test:
-	pip install nose mock coveralls
-	py.test --verbose --doctest-modules {postargs:./blackhole ./tests}
+	pip install pytest pytest-cov coveralls
+	py.test --cov ./blackhole --cov ./tests --doctest-modules --verbose ./blackhole ./tests
 
 lint:
 	pip install flake8 pylint
