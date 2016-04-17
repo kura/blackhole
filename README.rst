@@ -42,6 +42,6 @@ And the test coverage report on `coveralls
     :target: http://travis-ci.org/kura/blackhole2
     :alt: Build status of the master branch
 
-.. |gitter| image:: https://badges.gitter.im/kura/blackhole2.svg
+.. |gitter| image:: https://img.shields.io/gitter/room/kura/blackhole2.svg?style=flat-square
     :target: https://gitter.im/kura/blackhole2
     :alt: Chat on Gitter

@@ -31,7 +31,6 @@ import logging
 import os
 import pwd
 import re
-import sys
 
 from blackhole.exceptions import ConfigException
 
@@ -74,11 +73,11 @@ def config_test(args):
     logger.setLevel(logging.INFO)
     if conffile is None:
         logger.fatal('No config file provided.')
-        sys.exit(os.EX_USAGE)
+        raise SystemExit(os.EX_USAGE)
     Config(conffile).load().self_test()
     logger.info('%s syntax is OK', conffile)
     logger.info('%s test was successful', conffile)
-    sys.exit(os.EX_OK)
+    raise SystemExit(os.EX_OK)
 
 
 class Singleton(type):
@@ -127,7 +126,6 @@ class Config(metaclass=Singleton):
         self.config_file = config_file
         self.user = getpass.getuser()
         self.group = grp.getgrgid(os.getgid()).gr_name
-        print(self._port)
 
     def load(self):
         """
@@ -320,7 +318,7 @@ class Config(metaclass=Singleton):
 
     @mode.setter
     def mode(self, mode):
-        self._mode = mode
+        self._mode = mode.lower()
 
     def self_test(self):
         """Test configuration validity.
@@ -453,7 +451,7 @@ class Config(metaclass=Singleton):
         if self._tls_port is None:
             return
         try:
-            int(self.tls_port)
+            _ = self.tls_port
         except ValueError:
             msg = '{} is not a valid port number.'.format(self._tls_port)
             raise ConfigException(msg)
