@@ -8,8 +8,7 @@ from setuptools.command.test import test as TestCommand
 require_python(50659568)
 __version__ = get_version('blackhole/__init__.py')
 
-desc = """Blackhole is an email MTA that (figuratively ) pipes all mail to
-/dev/null.
+desc = """Blackhole is an email MTA that pipes all mail to /dev/null.
 
 Blackhole is built on top of asyncio and utilises `async` and `await`
 statements on available in Python 3.5 and above.

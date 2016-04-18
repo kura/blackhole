@@ -51,10 +51,10 @@ over due to the stess -- thus blackhole was born.
 Documentation
 =============
 
-You can find the latest documentation `here <https://blackhole.io/>`_.
+You can find the latest documentation `here <https://blackhole.io/2>`_.
 
 If you would like to contribute, please read the `contributors guide
-<https://blackhole.io/contributing.html>`_.
+<https://blackhole.io/2/contributing.html>`_.
 
 The latest build status on `travis <https://travis-ci.org/kura/blackhole/>`_.
 
