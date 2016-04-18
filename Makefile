@@ -24,7 +24,7 @@ lint:
 
 docs:
 	pip install sphinx
-	sphinx-build -b html docs/source/ docs/build/
+	sphinx-build -b html docs/source/ docs/build/ -c docs/source
 
 release:
 	pip install twine wheel
