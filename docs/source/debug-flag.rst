@@ -1,3 +1,5 @@
+.. _debug_flag:
+
 ==========
 Debug Flag
 ==========

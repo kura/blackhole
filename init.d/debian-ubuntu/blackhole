@@ -12,13 +12,16 @@
 
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-CONF="/etc/blackhole.conf"
+CONF=/etc/blackhole.conf
 NAME=blackhole
-DESC=blackhole
+DESC="blackhole mta"
 DAEMON_OPTS=""
-DAEMON="/usr/local/bin/blackhole"
+DAEMON=/usr/local/bin/blackhole
+pidfile=/var/run/blackhole.pid
+SCRIPTNAME=/etc/init.d/$NAME
 
-test -x $DAEMON || exit 0
+# Exit if the package is not installed
+[ -x "$DAEMON" ] || exit 0
 
 if test -f $CONF
 then
@@ -28,71 +31,55 @@ else
   exit
 fi
 
-SDAEMON_OPTS="${DAEMON_OPTS} --conf=${CONF}"
-
-set -e
+SDAEMON_OPTS="${DAEMON_OPTS} -c ${CONF} -b"
 
 . /lib/lsb/init-functions
 
 start() {
-  cmd="start-stop-daemon -S --quiet --pidfile $pid --exec $DAEMON -- $SDAEMON_OPTS start"
-  if $cmd
-  then
-    log_end_msg 0
-  else
-    log_end_msg 1
-  fi
-
+  start-stop-daemon --start --quiet --pidfile $pidfile --exec $DAEMON -- $SDAEMON_OPTS
 }
 
 stop() {
-  if [ -e $pid ]
-  then
-    cmd="start-stop-daemon -K --quiet --pidfile $pid"
-  else
-    log_end_msg 1
-  fi
-  if $cmd
-  then
-    rm -f $pid
-    log_end_msg 0
-  else
-    log_end_msg 1
-  fi
+  start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $pidfile --exec $DAEMON
 }
 
-status() {
-  if [ -e $pid ]
-  then
-    status_of_proc -p $pid $DAEMON $DESC && exit 0 || exit $?
-  fi
-  echo
+configtest() {
+  $DAEMON -c ${CONF} -t
 }
-
 
 case "$1" in
   start)
     log_daemon_msg "Starting" $DESC
     start
+    case "$?" in
+            0) log_end_msg 0 ;;
+            1) log_progress_msg "already started"
+               log_end_msg 0 ;;
+            *) log_end_msg 1 ;;
+    esac
     ;;
   stop)
     log_daemon_msg "Stopping" $DESC
     stop
+    case "$?" in
+            0) log_end_msg 0 ;;
+            1) log_progress_msg "already stopped"
+               log_end_msg 0 ;;
+            *) log_end_msg 1 ;;
+    esac
     ;;
   restart)
-    log_daemon_msg "Stopping" $DESC
-    stop
-    log_daemon_msg "Starting" $DESC
-    start
+    $0 stop
+    $0 start
     ;;
   status)
-    log_daemon_msg "Status of" $DESC
-    status
+    status_of_proc -p $pidfile $DAEMON $NAME && exit 0 || exit $?
+    ;;
+  configtest)
+    configtest
     ;;
   *)
-    log_action_msg "Usage: /etc/init.d/${NAME} {start|stop|restart|status}"
+    log_action_msg "Usage: /etc/init.d/${NAME} {start|stop|restart|status|configtest}"
     exit 1
     ;;
 esac
-
-exit 0

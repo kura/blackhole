@@ -13,20 +13,26 @@ need to feel daunted. You can contribute in a variety of ways:
 - Write tests
 - Improve performance
 - Add additional support i.e. new versions of Python or PyPy
-- Write additional engines, i.e. using Twisted instead of Tornado
 
 Getting started
 ===============
 
-Getting started is very similar to installation blackhole yourself. You should
-familarise yourself with the documentation and
-`PEP8 <http://www.python.org/dev/peps/pep-0008/>`_ Python style guide.
+Getting started is very similar to installing blackhole yourself. You should
+familarise yourself with the documentation,
+`PEP8 <http://www.python.org/dev/peps/pep-0008/>`_ Python style guide and
+`PEP257 <https://www.python.org/dev/peps/pep-0257/>`_ docstring conventions.
 
 Writing some code
 -----------------
 
 You'll need to fork the blackhole repository and checkout the source to your
 machine, much like any other project.
+
+You'll need to create a new branch for each piece of work you wish to do.
+
+.. code-block:: bash
+
+    git checkout -b branch_name
 
 Once this is done, you need to run setup.py with the `develop` argument instead
 of `install`.
@@ -35,44 +41,41 @@ of `install`.
 
     python setup.py develop
 
-This will install all of blackhole's requirements for running the server.
-
-You can do then simply branch and work away.
+Now you can hackaway.
 
 Things to do before submitting a pull request
 ---------------------------------------------
 
-- Make sure that you written tests for what you have changed, or at least try
-  to.
+- Make sure that you've written tests for what you have changed, or at least
+  try to.
 - Add your name to the CONTRIBUTORS list, feel free to add a comment about what
-  you did i.e. `Kura added Twisted support`.
+  you did i.e. `Kura added STARTTLS support`.
 - Submit your pull request.
 
 Running tests
 =============
 
 The Makefile supplied has a target for installing and running the test rig
-against all currently supported versions of Python and PyPy, including a
-documentation build test.
+against all currently supported versions of Python, including a documentation
+build test.
 
 .. code-block:: bash
 
     make tox
 
-If you'd only like to test against a single version of Python or PyPy you can
-use the singular make target.
+If you'd only like to test against a single version of Python you can use the
+singular `Makefile` target.
 
     make test
 
 Lint and style guide tests
 ==========================
 
-The Makefile contains a target for testing against PyFlakes and PEP8 using
-flake8.
+The Makefile contains a target for testing PEP8 and PEP257
 
 .. code-block:: bash
 
-    make flake8
+    make lint
 
 Building the documentation
 ==========================

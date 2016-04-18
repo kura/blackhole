@@ -1,5 +1,6 @@
 .. _modes:
 
+=====
 Modes
 =====
 
@@ -16,19 +17,9 @@ Accept all email with code 250
 bounce
 ======
 
-Bounce all email with a random code, excluding 250, 251, 252, 253.
+Bounce all email with a random code, excluding 250.
 
 random
 ======
 
 Randomly accept or bounce all email with a random code.
-
-unavailable
-===========
-
-Server always respondes with code 421 - service is unavailable.
-
-offline
-=======
-
-Server always responds with code 521 - server does not accept mail.

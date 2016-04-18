@@ -1,3 +1,5 @@
+.. _delay_flag:
+
 ==========
 Delay Flag
 ==========
@@ -5,16 +7,26 @@ Delay Flag
 The delay flag was something that was requested during the Q+A phase
 when I did a talk on Blackhole.
 
-Sadly it is a blocking call, meaning that any other connections
-made to the server at that point in time will also block until
-the delay is complete.
+The server will delay it's response after the \r\n.\r\n line after the DATA
+verb.
 
-This is less of an issue when running more than one blackhole-worker
-but even so it is an option that must be used cautiously.
+As an example::
 
-EVery response from the server will be delayed by the amount of
-seconds you specify.
+    ...
+    ...
+    DATA
+    354 End data with <CR><LF>.<CR><LF>
+    To: <test@blackhole.io>
+    From: <test@blackhole.io>
+    Subject: Test
 
-You can enable delay using command line options :ref:`configuration_options`
-or via the configuration file :ref:`configuration_file_example`.
+    Random test message.
+    .
 
+    - THERE SERVER RUNS DELAY FUNCTIONALITY -
+
+    250 2.0.0 OK: queued as <20160418202241.7778.853458045.0@blackhole.io>
+    QUIT
+
+You can enable delay using the configuration file option
+:ref:`configuration-file-example`.

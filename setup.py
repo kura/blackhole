@@ -1,19 +1,38 @@
 import sys
 
-from setuptools import setup
-from setuptools import find_packages
+from setup_helpers import require_python, get_version, long_description
+from setuptools import setup, find_packages
+from setuptools.command.test import test as TestCommand
 
 
-if sys.version_info < (2, 6):
-    print("blackhole requires Python 2.6 or greater")
-    sys.exit(1)
+require_python(50659568)
+__version__ = get_version('blackhole/__init__.py')
 
-version = __import__('blackhole').__version__
+desc = """Blackhole is an email MTA that (figuratively ) pipes all mail to
+/dev/null.
 
-desc = """Tornado powered MTA for accepting all incoming emails without any disk
- I/O, although no messages actually ever get delivered. Mainly for testing huge
- send rates, for making sure developers don't accidentally send emails to real
- users, email integration testing and things like that."""
+Blackhole is built on top of asyncio and utilises `async` and `await`
+statements on available in Python 3.5 and above.
+
+While Blackhole is an MTA (mail transport agent), none of the actions
+performed of SMTP or SMTPS are actually processed and no email or sent or
+delivered."""
+
+
+class PyTest(TestCommand):
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = [
+            '--doctest-modules', '--verbose',
+            './blackhole', './tests'
+        ]
+        self.test_suite = True
+
+    def run_tests(self):
+        import pytest
+        sys.exit(pytest.main(self.test_args))
+
 
 entry_points = {
     'console_scripts': [
@@ -21,49 +40,39 @@ entry_points = {
     ]
 }
 
+tests_require = [
+    'pytest',
+]
+
 
 setup(name='blackhole',
-      version=version,
-      url='http://blackhole.io/',
-      download_url='https://github.com/kura/blackhole/archive/%s.zip' % version,
-      author="Kura",
-      author_email="kura@kura.io",
-      maintainer="Kura",
-      maintainer_email="kura@kura.io",
+      version=__version__,
+      url='https://blackhole.io/',
+      author='Kura',
+      author_email='kura@kura.io',
+      maintainer='Kura',
+      maintainer_email='kura@kura.io',
       description=desc,
-      long_description=open("README.rst").read(),
+      long_description=long_description('README.rst'),
       license='MIT',
       platforms=['linux'],
       packages=find_packages(exclude=["*.tests"]),
-      install_requires=[
-          'tornado>=3.0,<=3.1',
-          'setproctitle>=1.1.7',
-          'deiman>=0.1.5',
-      ],
+      install_requires=[],
+      tests_require=tests_require,
+      cmdclass={'test': PyTest},
       entry_points=entry_points,
       classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'Operating System :: POSIX',
-          'Operating System :: POSIX :: Linux',
-          'Operating System :: Unix',
-          'Programming Language :: Python',
-          'Programming Language :: Python :: 2.6',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.1',
-          'Programming Language :: Python :: 3.2',
-          'Programming Language :: Python :: 3.3',
-          'Programming Language :: Python :: Implementation :: CPython',
-          'Programming Language :: Python :: Implementation :: PyPy',
-          'Topic :: Internet',
-          'Topic :: Utilities',
-          'Topic :: Communications :: Email',
-          'Topic :: Communications :: Email :: Mail Transport Agents',
-          'Topic :: Communications :: Email :: Post-Office',
-          'Topic :: Software Development :: Testing',
-          'Topic :: Software Development :: Testing :: Traffic Generation',
-          'Intended Audience :: Developers',
-          'License :: OSI Approved :: MIT License',
+         'Programming Language :: Python :: 3.5',
+         'Environment :: Console',
+         'Topic :: Internet',
+         'Topic :: Utilities',
+         'Topic :: Communications :: Email',
+         'Topic :: Communications :: Email :: Mail Transport Agents',
+         'Topic :: Software Development :: Testing',
+         'Topic :: Software Development :: Testing :: Traffic Generation',
+         'Topic :: Software Development',
+         'Topic :: System :: Networking',
+         'Intended Audience :: Developers',
+         'License :: OSI Approved :: MIT License',
       ],
-      zip_safe=True,
       )

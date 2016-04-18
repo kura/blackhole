@@ -2,246 +2,157 @@
 Blackhole
 =========
 
-::
 
-     .o8       oooo                      oooo        oooo                  oooo                 o8o
-    "888       `888                      `888        `888                  `888                 `"'
-     888oooo.   888   .oooo.    .ooooo.   888  oooo   888 .oo.    .ooooo.   888   .ooooo.      oooo   .ooooo.
-     d88' `88b  888  `P  )88b  d88' `"Y8  888 .8P'    888P"Y88b  d88' `88b  888  d88' `88b     `888  d88' `88b
-     888   888  888   .oP"888  888        888888.     888   888  888   888  888  888ooo888      888  888   888
-     888   888  888  d8(  888  888   .o8  888 `88b.   888   888  888   888  888  888    .o .o.  888  888   888
-     `Y8bod8P' o888o `Y888""8o `Y8bod8P' o888o o888o o888o o888o `Y8bod8P' o888o `Y8bod8P' Y8P o888o `Y8bod8P'
+About
+=====
 
-.. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
-        :target: https://travis-ci.org/kura/blackhole
+Blackhole is an email MTA that (figuratively) pipes all mail to /dev/null.
 
-.. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
-        :target: https://coveralls.io/r/kura/blackhole
+Blackhole is built on top of `asyncio <https://docs.python.org/3/library/asyncio.html>`_
+and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html#async-def>`_
+and `await <https://docs.python.org/3/reference/expressions.html#await>`_
+statements available in Python 3.5 and above.
 
-.. image:: https://pypip.in/d/blackhole/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/blackhole/
+While Blackhole is an MTA (mail transport agent), none of the actions
+performed via SMTP or SMTPS are actually processed and no email or sent or
+delivered.
 
-.. image:: https://pypip.in/v/blackhole/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/blackhole/
+You can tell Blackhole how to handle mail that it receives. It can accept all
+of it, bounce it all or randomly do either of those two actions. No matter how
+you choose to configure it, the email is never actually delivered, it just
+appears to have been delivered or bounced.
 
-.. image:: https://pypip.in/py_versions/blackhole/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/blackhole/
+Think of Blackhole sort of like a honeypot in terms of how it handles mail,
+but it's specifically designed with testing in mind.
 
-.. image:: https://pypip.in/implementation/blackhole/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/blackhole/
 
-.. image:: https://pypip.in/wheel/blackhole/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/blackhole/
+Python < 3.5
+------------
 
-.. image:: https://pypip.in/format/blackhole/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/blackhole/
+The original incarnation of Blackhole -- built on top of Tornado -- is still
+available for use on Python versions lower than 3.5, including PyPy.
 
-.. image:: https://pypip.in/license/blackhole/badge.svg?style=flat
-        :target: https://pypi.python.org/pypi/blackhole/
+It is no longer maintained however, but is available for posterity's sake on
+`PyPI <https://pypi.python.org/pypi/blackhole>`_ and `GitHub
+<https://github.com/kura/blackhole/>`_.
 
-Blackhole is a `Tornado`_ powered MTA (mail transport agent) that is designed
-for handling large volumes of email without handling any of the messages and
-doing no disk bound I/O.
 
-.. _Tornado: http://www.tornadoweb.org/
+-----
 
-Blackhole is designed mostly for testing purposes and can be used to test
-numerous things suchs as;
+|pypi| |travis| |coverage| |gitter|
 
-- Email send rates, if you need to test how much mail you can send per minute,
-  hour etc
-- Email integration testing and finally
-- if you work in the real world, chances are you'll need work on a copy of
-  production data from time to time. You can try to anonymous all the data but
-  there is always a chance you'll miss something. Configuring blackhole as
-  your applications default SMTP gateway will remove any chance of a real
-  person receiving an email they shouldn't have received.
+-----
 
-Using the blackhole.io service
-==============================
 
-All data sent to blackhole.io will be forgotten instantly, we store nothing
-you send.
+Why?
+====
 
-1. Point your application's outgoing SMTP server to 'blackhole.io',
-2. Sit back and watch mail never get delivered to a real user.
+Blackhole was first built when I was working on a project that required me to
+be able to send/receive millions of emails per minute. As the sender was being
+prototyped, I quickly realised that any mail server I pointed it at would fall
+over due to the stess -- thus blackhole was born.
 
-or, send an email to blackhole.io using an @blackhole.io address, any
-address is fine e.g.::
-
-    user1@blackhole.io
-
-Testing via telnet
-------------------
-
-::
-
-    $ telnet blackhole 25
-    Trying 198.199.126.159...
-    Connected to blackhole.io.
-    Escape character is '^]'.
-    220 blackhole.io [blackhole 1.7.0 (Stable)]
-    HELO fake.mail.server
-    250 OK
-    MAIL FROM:<user@address.tld>
-    250 OK
-    RCPT TO:<someone@another.tld>
-    250 OK
-    DATA
-    354 Start mail input; end with <CRLF>.<CRLF>
-    To: Someone <someone@another.tld>
-    From: User <user@address.tld>
-    Subject: Bye
-
-    Bye bye email
-    .
-    250 OK
-    QUIT
-    221 Thank you for speaking to me
-    Connection closed by foreign host.
-
-Testing SSL
------------
-
-::
-
-    $ openssl s_client -connect blackhole.io:465
-    CONNECTED(00000003)
-    depth=0 C = GB, ST = London, L = London, O = blackhole.io, OU = blackhole.io, CN = blackhole.io, emailAddress = kura@blackhole.io
-    ... snip ...
-    ---
-    220 blackhole.io [blackhole 1.7.0 (Stable)]
-    HELO fake.mail.server
-    250 OK
-    MAIL FROM:<user@address.tld>
-    250 OK
-    RCPT TO:<someone@another.tld>
-    250 OK
-    DATA
-    354 Start mail input; end with <CRLF>.<CRLF>
-    To: Someone <someone@another.tld>
-    From: User <user@address.tld>
-    Subject: Bye
-
-    Bye bye email
-    .
-    250 OK
-    QUIT
-    221 Thank you for speaking to me
-    DONE
-
-Testing STARTTLS
-----------------
-
-::
-
-    $ openssl s_client -starttls smtp -connect blackhole.io:465
-    CONNECTED(00000003)
-    depth=0 C = GB, ST = London, L = London, O = blackhole.io, OU = blackhole.io, CN = blackhole.io, emailAddress = kura@blackhole.io
-    ... snip ...
-    ---
-    250 DSN
-    HELO fake.mail.server
-    250 OK
-    MAIL FROM:<user@address.tld>
-    250 OK
-    RCPT TO:<someone@another.tld>
-    250 OK
-    DATA
-    354 Start mail input; end with <CRLF>.<CRLF>
-    To: Someone <someone@another.tld>
-    From: User <user@address.tld>
-    Subject: Bye
-
-    Bye bye email
-    .
-    250 OK
-    QUIT
-    221 Thank you for speaking to me
-    DONE
-
-Testing with Python
--------------------
-
-.. code-block:: python
-   :linenos:
-
-    import smtplib
-
-    msg = """From: <user@address.tld>
-    To: <someone@another.tld>
-    Subject: Test
-
-    gwergerg
-    """
-
-    server = smtplib.SMTP('blackhole.io', 25)
-    server.sendmail("user@address.tld", "someone@another.tld",
-                    msg)
-    server.quit()
-
-Getting the source code
-=======================
-
-The source code is available under the `MIT license`_ from `GitHub`_.
-
-.. _MIT License: https://github.com/kura/blackhole/blob/master/LICENSE
-.. _GitHub: https://github.com/kura/blackhole/
-
-Running your own server
-=======================
-
-Python versions
----------------
-
-::
-
-    Python 2.6
-    Python 2.7
-    Python 3.2
-    Python 3.3
-    PyPy 1.9      # see notes below
-    PyPy 2.0      # see notes below
-
-Blackhole works on Python 2.6 and 2.7, it also works with PyPy
-(see :ref:`blackhole-pypy` section below).
-
-Third party libraries
----------------------
-
-::
-
-    tornado>=2.2.1,<=3.1
-    setproctitle>=1.1.6   # setproctitle 1.1.7 and above are required for
-                          # all PyPy versions
-    deiman>=0.1.5         # older version of Deiman will not work because of
-                          #API changes
 
 Getting started
----------------
+===============
 
 .. toctree::
     :maxdepth: 2
 
-    installation
-    configuration-options
+    testing-the-source-code
+    running-your-own-server
+    command-line-options
     configuration-file-example
     debug-flag
     delay-flag
-    controlling-the-server
-    controlling-the-server-init-d
+    controlling-the-server-with-init-d
     modes
     response-codes
     changelog
 
-FQDN
-----
 
-The FQDN that Blackhole will print on a new connection is automatically
-generated.
+Using the blackhole.io service
+==============================
 
-It will use the contents of `/etc/mailname`, if that file does not exist it
-will use a name returned by `socket.getfqdn()`.
+There are several ways you can use the service provided here.
+
+
+MX
+--
+
+.. code::
+
+    blackhole.io.    IN MX    10 blackhole.io.
+
+This service provides real MX records, allowing any `@blackhole.io` to appear as
+if it works.
+
+To try this, fire up your email client and send an email to
+`random@blackhole.io`. This email will appear to have been sent and
+received with no issue. That's because it has, it just never actually gets
+delivered to anyone.
+
+
+Via SMTP and SMTPS
+------------------
+
+This service can be configured as an SMTP server for an application. Any mail
+the application tries to send will hit the blackhole.io service and look as if
+it was sent and received, but no actually email is sent out.
+
+.. code-block:: python
+   :linenos:
+
+    from smtplib import SMTP
+
+    msg = """From: <test@blackhole.io>
+    To: <test@blackhole.io>
+    Subject: Test
+
+    Random test message.
+    """
+
+    smtp = SMTP('blackhole.io', 25)
+    smtp.sendmail('test@blackhole.io', 'test@blackhole.io',
+                  msg.encode('utf-8'))
+    smtp.quit()
+
+
+Test via telnet
+---------------
+
+::
+
+    Trying 127.0.0.1...
+    Connected to localhost.
+    Escape character is '^]'.
+    220 blackhole.io ESMTP
+    EHLO blackhole.io
+    250-blackhole.io
+    250-PIPELINING
+    250-SIZE 512000
+    250-VRFY
+    250-ETRN
+    250-ENHANCEDSTATUSCODES
+    250-8BITMIME
+    250 DSN
+    MAIL FROM: <test@blackhole.io>
+    250 2.1.0 OK
+    RCPT TO: <test@blackhole.io>
+    250 2.1.5 OK
+    DATA
+    354 End data with <CR><LF>.<CR><LF>
+    To: <test@blackhole.io>
+    From: <test@blackhole.io>
+    Subject: Test
+
+    Random test message.
+    .
+    250 2.0.0 OK: queued as <20160418202241.7778.853458045.0@blackhole.io>
+    QUIT
+    221 2.0.0 Goodbye
+    Connection closed by foreign host.
+
 
 Contributing
 ============
@@ -249,77 +160,21 @@ Contributing
 Please see the :ref:`contributing` section for information on how to
 contribute.
 
-Tests & Coverage
-================
-
-Running tests manually
-----------------------
-
-Running tests manually is pretty simple, there is a Make target dedicated to
-it.
-
-The test suite relies on `unittest2` and `nose`, both if which get installed by
-the Make target during test running.
-
-.. code-block:: bash
-
-    make test
-
-There is also a Make target for generating coverage
-
-.. code-block:: bash
-
-    make coverage
-
-Third party CI/Coverage
------------------------
-
-.. image:: https://api.travis-ci.org/kura/blackhole.png?branch=master
-        :target: https://travis-ci.org/kura/blackhole
-
-.. image:: https://coveralls.io/repos/kura/blackhole/badge.png?branch=master
-        :target: https://coveralls.io/r/kura/blackhole
-
-You can find the latest build status on `travis`_.
-
-.. _travis: https://travis-ci.org/kura/blackhole
-
-And the test coverage report on `coveralls`_.
-
-.. _coveralls: https://coveralls.io/r/kura/blackhole
-
-.. _blackhole-pypy:
-
-Blackhole + PyPy
-================
-
-`PyPy`_ is a Python interpreter and just-in-time compiler. PyPy focuses on
-speed, efficiency and compatibility with the original CPython interpreter.
-
-.. _PyPy: http://pypy.org/
-
-Blackhole works well under PyPy 1.9, 2.0 beta1 and 2.0 beta2, you can see
-performance improvements of up to 30% in certain situations.
-
-However, blackhole does have issues with both PyPy 1.9 and 2.0 beta1 and 2.0
-beta2 when using the pre-compiled binaries, this is due to a conflict in the
-version of OpenSSL compiled in to PyPy and the version compiled in to your
-CPython installation.
-If you wish to use blackhole with SSL support on PyPy I suggest you either
-compile PyPy yourself or try to make sure your PyPy and CPython have the same
-versions.
-
-FAQ
-===
-
-A few people have emailed me questions about why blackhole exists, how I use
-it, why Tornado and things like that
-so I have outlined some questions and responses in an :ref:`faq`.
 
 Author
 ======
 
 Written and maintained by `Kura <https://kura.io/>`_.
+
+
+Changelog
+---------
+
+.. toctree::
+    :maxdepth: 2
+
+    changelog
+
 
 Reference
 =========
@@ -328,12 +183,12 @@ Reference
     :maxdepth: 2
 
     api-application
-    api-connection
-    api-data
-    api-log
-    api-opts
-    api-ssl-utils
-    api-state
+    api-config
+    api-control
+    api-daemon
+    api-exceptions
+    api-logs
+    api-smtp
     api-utils
 
 Indices and tables
@@ -342,3 +197,20 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=flat-square&label=version
+    :target: https://pypi.python.org/pypi/blackhole
+    :alt: Latest version released on PyPi
+
+.. |coverage| image:: https://img.shields.io/coveralls/kura/blackhole/master.svg?style=flat-square&label=coverage
+    :target: https://coveralls.io/r/kura/blackhole?branch=master
+    :alt: Test coverage
+
+.. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=flat-square&label=build
+    :target: http://travis-ci.org/kura/blackhole
+    :alt: Build status of the master branch
+
+.. |gitter| image:: https://img.shields.io/gitter/room/kura/blackhole.svg?style=flat-square
+    :target: https://gitter.im/kura/blackhole
+    :alt: Chat on Gitter

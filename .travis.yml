@@ -1,5 +1,6 @@
 language: python
 python:
+<<<<<<< HEAD
   - "2.6"
   - "2.7"
   - "3.2"
@@ -12,3 +13,21 @@ script:
   - make travis
 after_success:
   - coveralls
+=======
+  - "3.5"
+before_install:
+  - pip install nose mock python-coveralls
+install:
+  - make install
+script:
+  - make test
+after_success:
+  - coveralls
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/a2cb9f1d5be16c4015a3
+    on_success: always
+    on_failure: always
+    on_start: always
+>>>>>>> blackhole2/master
