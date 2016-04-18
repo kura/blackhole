@@ -1,19 +1,5 @@
 language: python
 python:
-<<<<<<< HEAD
-  - "2.6"
-  - "2.7"
-  - "3.2"
-  - "3.3"
-  - "pypy"
-install:
-  - make install
-  - make install_testrig
-script:
-  - make travis
-after_success:
-  - coveralls
-=======
   - "3.5"
 before_install:
   - pip install nose mock python-coveralls
@@ -30,4 +16,3 @@ notifications:
     on_success: always
     on_failure: always
     on_start: always
->>>>>>> blackhole2/master

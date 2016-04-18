@@ -1,28 +1,15 @@
 *.log
 *.pyc
-<<<<<<< HEAD
-*.wpr
-docs/build
-*.egg-info
-=======
 docs/build
 *.egg-info
 .eggs/*
->>>>>>> blackhole2/master
 build/*
 *.crt
 *.key
 *.pem
 dist/*
 *.html
-<<<<<<< HEAD
-.ropeproject
-*.sublime*
-.coveralls.yml
-.tox
-=======
 .coveralls.yml
 .tox
 .cache/*
 .coverage
->>>>>>> blackhole2/master
