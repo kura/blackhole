@@ -15,7 +15,7 @@ tox:
 test:
 	pip install pytest pytest-cov coveralls sphinx
 	py.test --cov ./blackhole --cov ./tests --doctest-modules --verbose ./blackhole ./tests
-	sphinx-build -b html -d {envtmpdir}/doctrees . {envtmpdir}/html
+	sphinx-build -b html docs/source/ docs/build/
 
 lint:
 	pip install flake8 pylint
@@ -24,7 +24,7 @@ lint:
 
 docs:
 	pip install sphinx
-	sphinx-build -b html docs/source/ docs/build/ -c docs/source
+	sphinx-build -b html docs/source/ docs/build/
 
 release:
 	pip install twine wheel
