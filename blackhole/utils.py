@@ -20,6 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+blackhole.utils.
+
+Provides utility functions to blackhole.
+"""
+
 
 import os
 import random

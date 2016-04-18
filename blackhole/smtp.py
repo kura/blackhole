@@ -32,7 +32,7 @@ import logging
 import random
 
 from blackhole.config import Config
-from blackhole.utils import (mailname, message_id)
+from blackhole.utils import mailname, message_id
 
 
 logger = logging.getLogger('blackhole.smtp')
@@ -53,10 +53,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         553: 'Requested action not taken: mailbox name not allowed',
         571: 'Blocked',
     }
+    """A dictionary of response codes and messages for bouncing mail."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """
-        Initialise the SMTP Protocol.
+        Initialise the SMTP parotocol.
 
         .. note::
 
@@ -74,7 +75,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     def connection_made(self, transport):
         """
-        Tie a connection to blackhole to the SMTP Protocol.
+        Tie a connection to blackhole to the SMTP protocol.
 
         :param transport:
         :type transport: `asyncio.transport.Transport`
@@ -105,6 +106,14 @@ class Smtp(asyncio.StreamReaderProtocol):
         self._connection_closed = True
 
     async def _handle_client(self):
+        """
+        Handle a connection to the server.
+
+        This method greets the client and then accepts and handles each line
+        the client sends, passing off to the currect verb handler.
+
+        Client timeout is also managed and handled here.
+        """
         await self.greet()
         while not self.connection_closed:
             try:
@@ -124,34 +133,58 @@ class Smtp(asyncio.StreamReaderProtocol):
                 await handler()
 
     async def timeout(self):
+        """
+        Timeout a client connection.
+
+        Sends the 421 timeout message to the client and closes the connection.
+        """
         logger.debug('%s timed out, no data received for %d seconds',
                      repr(self.peer), self.config.timeout)
         await self.push(421, 'Timeout')
         await self.close()
 
     async def close(self):
+        """Close the connection from the client."""
         logger.debug('Closing connection: %s', repr(self.peer))
         if self._writer:
             self._writer.close()
         self._connection_closed = True
 
     def lookup_handler(self, verb):
+        """
+        Look up the SMTP VERB against a handler.
+
+        :param verb:
+        :type verb: str -- i.e. HELO, EHLO, DATA etc.
+        :returns: `blackhole.smtp.do_VERB`.
+        """
         cmd = "do_{}".format(verb.upper())
         return getattr(self, cmd, None)
 
     async def push(self, code, msg):
+        """
+        Write a response code and message to the client.
+
+        :param code:
+        :type int: SMTP code, i.e. 250.
+        :param msg:
+        :type msg: The message for the SMTP code.
+        """
         response = "{} {}\r\n".format(code, msg).encode('utf-8')
         logger.debug('SEND %s', response)
         self._writer.write(response)
         await self._writer.drain()
 
     async def greet(self):
+        """Send a greeting to the client."""
         await self.push(220, '{} ESMTP'.format(self.fqdn))
 
     async def do_HELO(self):
+        """Send response to HELO verb."""
         await self.push(250, 'OK')
 
     async def do_EHLO(self):
+        """Send response to EHLO verb."""
         response = "250-{}\r\n".format(self.fqdn).encode('utf-8')
         self._writer.write(response)
         logger.debug('SENT %s', response)
@@ -165,12 +198,26 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self._writer.drain()
 
     async def do_MAIL(self):
+        """Send response to MAIL TO verb."""
         await self.push(250, '2.1.0 OK')
 
     async def do_RCPT(self):
+        """Send response to RCPT TO verb."""
         await self.push(250, '2.1.5 OK')
 
     async def do_DATA(self):
+        r"""
+        Send response to DATA verb and wait for mail data.
+
+        This method will also implement timeout management and handling after
+        receiving the DATA command and no new data is received.
+
+        This method also implements they delay functionality, delaying a
+        response after the final '\r\n.\r\n' line.
+
+        This method is also responsible handling the mode with which to
+        respond to the client.
+        """
         await self.push(354, 'End data with <CR><LF>.<CR><LF>')
         while not self.connection_closed:
             try:
@@ -197,29 +244,44 @@ class Smtp(asyncio.StreamReaderProtocol):
             await self.push(250, msg)
 
     async def do_STARTTLS(self):
+        """STARTTLS is not implemented."""
         # It's currently not possible to implement STARTTLS due to lack of
         # support in asyncio. - https://bugs.python.org/review/23749/
         await self.do_UNKNOWN()
 
     async def do_NOOP(self):
+        """Send response to the NOOP verb."""
         await self.push(250, '2.0.0 OK')
 
     async def do_RSET(self):
+        """
+        Send response to the RSET verb.
+
+        A new message id is generated and assigned.
+        """
         old_msg_id = self.message_id
         self.message_id = message_id()
         logger.debug('%s is now %s', old_msg_id, self.message_id)
         await self.push(250, '2.0.0 OK')
 
     async def do_VRFY(self):
+        """Send response to the VRFY verb."""
         await self.push(252, '2.0.0 OK')
 
     async def do_ETRN(self):
+        """Send response to the ETRN verb."""
         await self.push(250, 'Queueing started')
 
     async def do_QUIT(self):
+        """
+        Send response to the QUIT verb.
+
+        Closes the client connection.
+        """
         await self.push(221, '2.0.0 Goodbye')
         self._handler_coroutine.cancel()
         await self.close()
 
     async def do_UNKNOWN(self):
+        """Send response to unknown verb."""
         await self.push(500, 'Not implemented')

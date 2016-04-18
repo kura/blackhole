@@ -11,3 +11,5 @@ dist/*
 *.html
 .coveralls.yml
 .tox
+.cache/*
+.coverage

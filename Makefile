@@ -13,11 +13,13 @@ tox:
 	detox
 
 test:
-	pip install pytest pytest-cov coveralls
+	pip install pytest pytest-cov coveralls sphinx
 	py.test --cov ./blackhole --cov ./tests --doctest-modules --verbose ./blackhole ./tests
+	sphinx-build -b html -d {envtmpdir}/doctrees . {envtmpdir}/html
 
 lint:
 	pip install flake8 pylint
+	flake8 blackhole
 	pylint blackhole
 
 docs:

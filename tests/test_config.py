@@ -7,12 +7,8 @@ import tempfile
 import unittest
 from unittest import mock
 
-from blackhole.config import Config, Singleton, config_test
+from blackhole.config import Config, Singleton, config_test, parse_cmd_args
 from blackhole.exceptions import ConfigException
-
-
-class FakeArgs(object):
-    config_file = None
 
 
 @pytest.fixture()
@@ -26,6 +22,7 @@ def reset_conf():
     Singleton._instances = {}
 
 
+pytest.mark.usefixtures('reset_conf')
 def create_config(data):
     cwd = os.getcwd()
     path = os.path.join(cwd, 'test.conf')
@@ -36,6 +33,7 @@ def create_config(data):
 
 @mock.patch('getpass.getuser')
 @mock.patch('grp.getgrgid')
+@pytest.mark.usefixtures('reset_conf')
 def test_default(mock_getuser, mock_getgrgid):
     conf = Config()
     assert conf.config_file == '/etc/blackhole.conf'
@@ -43,11 +41,12 @@ def test_default(mock_getuser, mock_getgrgid):
     assert mock_getgrgid.called
 
 
+@pytest.mark.usefixtures('reset_conf')
 @mock.patch('os.access', return_value=False)
 def test_no_access(mock_os_access):
     conf = Config()
     conf.config_file = '/fake/file.conf'
-    with pytest.raises(IOError):
+    with pytest.raises(ConfigException):
         conf.load()
 
 
@@ -63,6 +62,42 @@ def test_load():
     assert getattr(conf, 'this', None) is None
 
 
+pytest.mark.usefixtures('reset_conf')
+class TestCmdParser(unittest.TestCase):
+
+    def test_default_conf(self):
+        parser = parse_cmd_args(['-c/fake/file.conf'])
+        assert parser.config_file == '/fake/file.conf'
+        parser = parse_cmd_args(['--conf=/fake/file.conf'])
+        assert parser.config_file == '/fake/file.conf'
+
+    def test_version(self):
+        with pytest.raises(SystemExit) as exc:
+            parse_cmd_args(['-v'])
+        assert str(exc.value) == '0'
+        with pytest.raises(SystemExit) as exc:
+            parse_cmd_args(['--version'])
+        assert str(exc.value) == '0'
+
+    def test_test(self):
+        parser = parse_cmd_args(['-t'])
+        assert parser.test is True
+        parser = parse_cmd_args(['--test'])
+        assert parser.test is True
+
+    def test_debug(self):
+        parser = parse_cmd_args(['-d'])
+        assert parser.debug is True
+        parser = parse_cmd_args(['--debug'])
+        assert parser.debug is True
+
+    def test_background(self):
+        parser = parse_cmd_args(['-b'])
+        assert parser.background is True
+        parser = parse_cmd_args(['--background'])
+        assert parser.background is True
+
+
 class TestConfigTest(unittest.TestCase):
 
     class Args(object):
@@ -74,13 +109,6 @@ class TestConfigTest(unittest.TestCase):
         with open(path, 'w') as ffile:
             ffile.write('nothing')
         return path
-
-    def test_config_test_no_config(self):
-        args = self.Args()
-        args.config_file = None
-        with pytest.raises(SystemExit) as exc:
-            config_test(args)
-        assert str(exc.value) == '64'
 
     @pytest.mark.usefixtures('reset_conf', 'cleandir')
     def test_config_test(self):
@@ -180,7 +208,7 @@ class TestGroup(unittest.TestCase):
         cfile = create_config(('group=xcbsfbsrwgrwgsgrsgsdgrwty4y4fsg',))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
-            conf.self_test()
+            conf.test_group()
 
     def test_valid_group(self):
         gname = grp.getgrgid(os.getgid()).gr_name

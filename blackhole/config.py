@@ -38,20 +38,22 @@ from blackhole.exceptions import ConfigException
 __version__ = __import__('blackhole').__version__
 
 
-def parse_cmd_args():
+def parse_cmd_args(args):
     parser = argparse.ArgumentParser('blackhole')
     parser.add_argument('-c', '--conf', type=str,
-                        dest='config_file', metavar='/etc/blackhole.conf')
+                        default='/etc/blackhole.conf',
+                        dest='config_file', metavar='/etc/blackhole.conf',
+                        help='override the default configuration options')
     parser.add_argument('-v', '--version', action='version',
                         version=__version__)
     parser.add_argument('-t', '--test', dest='test', action='store_true',
                         help='perform a configuration test and exit')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true',
-                        help='enable debugging mode.')
+                        help='enable debugging mode')
     parser.add_argument('-b', '--background', dest='background',
                         action='store_true',
-                        help='run as a background process (daemonise).')
-    return parser.parse_args()
+                        help='run in the background')
+    return parser.parse_args(args)
 
 
 def config_test(args):
@@ -68,15 +70,15 @@ def config_test(args):
     :param args: arguments parsed from `argparse`.
     :type args: `argparse.Namespace`
     """
-    conffile = args.config_file if args.config_file else None
     logger = logging.getLogger('blackhole.config_test')
     logger.setLevel(logging.INFO)
-    if conffile is None:
-        logger.fatal('No config file provided.')
+    try:
+        Config(args.config_file).load().test()
+    except ConfigException as err:
+        logger.fatal(err)
         raise SystemExit(os.EX_USAGE)
-    Config(conffile).load().self_test()
-    logger.info('%s syntax is OK', conffile)
-    logger.info('%s test was successful', conffile)
+    logger.info('blackhole: %s syntax is OK', args.config_file)
+    logger.info('blackhole: %s test was successful', args.config_file)
     raise SystemExit(os.EX_OK)
 
 
@@ -139,7 +141,8 @@ class Config(metaclass=Singleton):
         if self.config_file is None:
             return self
         if not os.access(self.config_file, os.R_OK):
-            raise IOError('Config file does not exist or is not readable.')
+            msg = 'Config file does not exist or is not readable.'
+            raise ConfigException(msg)
         for line in open(self.config_file, 'r').readlines():
             line = line.strip()
             if line.startswith('#'):
@@ -287,6 +290,11 @@ class Config(metaclass=Singleton):
 
     @property
     def pidfile(self):
+        """
+        A path to store the pid.
+
+        :returns: str -- A filesystem path.
+        """
         return self._pidfile
 
     @pidfile.setter
@@ -314,16 +322,27 @@ class Config(metaclass=Singleton):
 
     @property
     def mode(self):
+        """
+        The mode with which to respond.
+
+        .. note::
+
+           Defaults to 'accept'.
+           Options: 'accept', 'bounce' and 'random'.
+
+        :returns: str -- The server response mode.
+        """
         return self._mode
 
     @mode.setter
     def mode(self, mode):
         self._mode = mode.lower()
 
-    def self_test(self):
-        """Test configuration validity.
+    def test(self):
+        """
+        Test configuration validity.
 
-        .. notes::
+        .. note::
 
            Uses the magic of `inspect.getmembers` to introspect methods
            beginning with 'test_' and calling them.
@@ -352,6 +371,17 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def _min_max_port(self, port):
+        """
+        The minimum and maximum allowed port.
+
+        :param port: The port.
+        :type port: int
+        :raises: `blackhole.config.ConfigException`
+
+        .. note::
+
+           On Linux the minimum is 1 and maximum is 65535.
+        """
         min, max = 1, 65535
         if port < min:
             msg = '''Port number {} is not usable because it is less than '''\
@@ -480,9 +510,23 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_delay(self):
+        """
+        Validate the delay period.
+
+        Delay must be lower than the timeout.
+
+        :raises: `blackhole.config.ConfigException`
+        """
         if self.delay and self.delay >= self.timeout:
             raise ConfigException('Delay must be lower than timeout.')
 
     def test_mode(self):
+        """
+        Validate the response mode.
+
+        Valid options are: 'accept', 'bounce' and 'random'.
+
+        :raises: `blackhole.config.ConfigException`
+        """
         if self.mode not in ('accept', 'bounce', 'random'):
             raise ConfigException('Mode must be accept, bounce or random.')

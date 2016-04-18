@@ -40,20 +40,19 @@ from blackhole.logs import configure_logs
 
 def run():
     """Create the asyncio loop and start the server."""
-    args = parse_cmd_args()
+    args = parse_cmd_args(sys.argv[1:])
     configure_logs(args)
     logger = logging.getLogger('blackhole')
     if args.test:
         config_test(args)
-    conffile = args.config_file if args.config_file else None
     try:
-        config = Config(conffile).load().self_test()
+        config = Config(args.config_file).load().test()
     except ConfigException as err:
         logger.fatal(err)
-        sys.exit(os.EX_USAGE)
+        raise SystemExit(os.EX_USAGE)
     if args.background and not config.pidfile:
-        logger.fatal('Cannot run in background without a pidfile.')
-        sys.exit(os.EX_USAGE)
+        logger.fatal('Cannot run in the background without a pidfile.')
+        raise SystemExit(os.EX_USAGE)
     loop = asyncio.get_event_loop()
     start_servers()
     setgid()

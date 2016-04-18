@@ -34,4 +34,5 @@ class ConfigException(Exception):
 
 
 class DaemonException(Exception):
+    """A daemon exception."""
     pass

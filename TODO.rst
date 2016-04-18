@@ -1,0 +1,2 @@
+- Add pidfile tests for config to config_test and pytest
+- Add socket bind tests to config_test and pytest

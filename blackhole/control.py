@@ -58,7 +58,6 @@ def create_server(use_tls=False):
 
     :param use_tls: default False.
     :type use_tls: bool
-    :returns: generator
     """
     logger = logging.getLogger('blackhole')
     config = Config()
@@ -89,6 +88,7 @@ def create_server(use_tls=False):
 
 
 def start_servers():
+    """Create each server listener and bind to the socket."""
     config = Config()
     logger.debug('Starting...')
     create_server()
@@ -97,15 +97,20 @@ def start_servers():
 
 
 def stop_servers():
+    """
+    Stop the listeners.
+
+    :raises: SystemExit
+    """
     loop = asyncio.get_event_loop()
     logger.debug('Stopping...')
     for server in _servers:
         server.close()
         loop.run_until_complete(server.wait_closed())
     loop.close()
-    if Daemon().pid:
-        del Daemon().pid
-    sys.exit(os.EX_OK)
+    if Daemon.instance().pidfile:
+        del Daemon.instance().pid
+    raise SystemExit(os.EX_OK)
 
 
 def setgid():
