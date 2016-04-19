@@ -37,8 +37,10 @@ def create_config(data):
 def test_default(mock_getuser, mock_getgrgid):
     conf = Config()
     assert conf.config_file == '/etc/blackhole.conf'
-    assert mock_getuser.called
-    assert mock_getgrgid.called
+    assert mock_getuser.called is True
+    assert mock_getuser.call_count is 1
+    assert mock_getgrgid.called is True
+    assert mock_getgrgid.call_count is 1
 
 
 @pytest.mark.usefixtures('reset_conf')
@@ -48,6 +50,8 @@ def test_no_access(mock_os_access):
     conf.config_file = '/fake/file.conf'
     with pytest.raises(ConfigException):
         conf.load()
+    assert mock_os_access.called is True
+    assert mock_os_access.call_count is 1
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
@@ -116,8 +120,8 @@ class TestConfigTest(unittest.TestCase):
         cert = self.create_file('crt.crt')
         user = getpass.getuser()
         group = grp.getgrgid(os.getgid()).gr_name
-        settings = ('address=0.0.0.0', 'port=25', 'user={}'.format(user),
-                    'group={}'.format(group), 'timeout=300', 'tls_port=465',
+        settings = ('address=0.0.0.0', 'port=1025', 'user={}'.format(user),
+                    'group={}'.format(group), 'timeout=300', 'tls_port=1465',
                     'tls_cert={}'.format(cert), 'tls_key={}'.format(key),
                     'delay=10', 'mode=bounce')
         cfile = create_config(settings)
@@ -184,6 +188,58 @@ class TestPort(unittest.TestCase):
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_port()
+
+    @mock.patch('os.getuid', return_value=9000)
+    def test_port_under_1024_no_perms(self, mock_getuid):
+        cfile = create_config(('port=1023',))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+
+    @mock.patch('os.getuid', return_value=0)
+    def test_port_under_1024_with_perms_available(self, mock_getuid):
+        cfile = create_config(('port=1024',))
+        conf = Config(cfile).load()
+        with mock.patch('socket.socket.bind', return_value=True):
+            conf.test_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+
+    @mock.patch('os.getuid', return_value=0)
+    @mock.patch('socket.socket.bind', side_effect=OSError(1, 'none'))
+    def test_port_under_1024_with_perms_unavailable(self, mock_getuid,
+                                                    mock_socket):
+        cfile = create_config(('port=1023',))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+        assert mock_socket.called is True
+        assert mock_socket.call_count is 1
+
+    @mock.patch('os.getuid', return_value=9000)
+    def test_port_over_1023_available(self, mock_getuid):
+        cfile = create_config(('port=1024',))
+        conf = Config(cfile).load()
+        with mock.patch('socket.socket.bind', return_value=True):
+            conf.test_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+
+    @mock.patch('os.getuid', return_value=9000)
+    @mock.patch('socket.socket.bind', side_effect=OSError(1, 'none'))
+    def test_port_over_1023_unavailable(self, mock_getuid, mock_socket):
+        cfile = create_config(('port=1024',))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+        assert mock_socket.called is True
+        assert mock_socket.call_count is 1
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
@@ -259,21 +315,73 @@ class TestTlsPort(unittest.TestCase):
             conf.test_tls_port()
 
     def test_valid_tls_port(self):
-        cfile = create_config(('port=19',))
+        cfile = create_config(('tls_port=19',))
         conf = Config(cfile).load()
-        assert conf.port == 19
+        assert conf.tls_port == 19
 
     def test_tls_lower_than_min(self):
-        cfile = create_config(('port=0',))
+        cfile = create_config(('tls_port=0',))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_port()
 
     def test_tls_larger_than_max(self):
-        cfile = create_config(('port=99999',))
+        cfile = create_config(('tls_port=99999',))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_port()
+
+    @mock.patch('os.getuid', return_value=9000)
+    def test_tls_under_1024_no_perms(self, mock_getuid):
+        cfile = create_config(('tls_port=1023',))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_tls_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+
+    @mock.patch('os.getuid', return_value=0)
+    def test_tls_under_1024_with_perms_available(self, mock_getuid):
+        cfile = create_config(('tls_port=1024',))
+        conf = Config(cfile).load()
+        with mock.patch('socket.socket.bind', return_value=True):
+            conf.test_tls_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+
+    @mock.patch('os.getuid', return_value=0)
+    @mock.patch('socket.socket.bind', side_effect=OSError(1, 'none'))
+    def test_tls_under_1024_with_perms_unavailable(self, mock_getuid,
+                                                   mock_socket):
+        cfile = create_config(('tls_port=1023',))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_tls_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+        assert mock_socket.called is True
+        assert mock_socket.call_count is 1
+
+    @mock.patch('os.getuid', return_value=9000)
+    def test_tls_over_1023_available(self, mock_getuid):
+        cfile = create_config(('tls_port=1024',))
+        conf = Config(cfile).load()
+        with mock.patch('socket.socket.bind', return_value=True):
+            conf.test_tls_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+
+    @mock.patch('os.getuid', return_value=9000)
+    @mock.patch('socket.socket.bind', side_effect=OSError(1, 'none'))
+    def test_tls_over_1023_unavailable(self, mock_getuid, mock_socket):
+        cfile = create_config(('tls_port=1024',))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_tls_port()
+        assert mock_getuid.called is True
+        assert mock_getuid.call_count is 1
+        assert mock_socket.called is True
+        assert mock_socket.call_count is 1
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 class TestTls(unittest.TestCase):

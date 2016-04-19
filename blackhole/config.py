@@ -31,6 +31,7 @@ import logging
 import os
 import pwd
 import re
+import socket
 
 from blackhole.exceptions import ConfigException
 
@@ -410,8 +411,30 @@ class Config(metaclass=Singleton):
         except ValueError:
             msg = '{} is not a valid port number.'.format(self._port)
             raise ConfigException(msg)
-        self._min_max_port(self.port)
+        self._port_permissions(self.port)
 
+    def _port_permissions(self, port):
+        """
+        Validate that we have permission to use the port and it's not in use.
+
+        :param port:
+        :type port: int
+        :raises: ConfigException
+        """
+        self._min_max_port(port)
+        if os.getuid() is not 0 and port < 1024:
+            msg = 'You do not have permission to use port {}'.format(port)
+            raise ConfigException(msg)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sock.bind(('127.0.0.1', port))
+        except OSError as err:
+            errmsg = err.strerror.lower()
+            msg = 'Could not use port {}, {}'.format(port, errmsg)
+            raise ConfigException(msg)
+        finally:
+            sock.close()
+            del sock
 
     def test_user(self):
         """
@@ -487,7 +510,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
         if self.port == self.tls_port:
             raise ConfigException('SMTP and SMTP/TLS ports must be different.')
-        self._min_max_port(self.tls_port)
+        self._port_permissions(self.tls_port)
 
     def test_tls_settings(self):
         """
@@ -497,7 +520,7 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-           Verifies that if you provide all TLS settings, not just some.
+           Verifies if you provide all TLS settings, not just some.
         """
         port = self.tls_port if self.tls_port is not None else False
         cert = os.access(self.tls_cert, os.R_OK) if self.tls_cert else False
