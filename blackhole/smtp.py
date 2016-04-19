@@ -131,6 +131,8 @@ class Smtp(asyncio.StreamReaderProtocol):
                 handler = self.lookup_handler(verb) or self.do_UNKNOWN
                 logger.debug("USING %s", handler.__name__)
                 await handler()
+            else:
+                await self.push(502, '5.5.2 Command not recognised')
 
     async def timeout(self):
         """
@@ -226,6 +228,7 @@ class Smtp(asyncio.StreamReaderProtocol):
                                               loop=self.loop)
             except asyncio.TimeoutError:
                 await self.timeout()
+            logger.debug('data?')
             logger.debug('RECV %s', line)
             if line == b'.\r\n':
                 break
