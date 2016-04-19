@@ -63,7 +63,6 @@ Getting started
     running-your-own-server
     command-line-options
     configuration-file-example
-    debug-flag
     delay-flag
     controlling-the-server-with-init-d
     modes
@@ -168,7 +167,7 @@ Written and maintained by `Kura <https://kura.io/>`_.
 
 
 Changelog
----------
+=========
 
 .. toctree::
     :maxdepth: 2

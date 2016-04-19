@@ -1,4 +1,4 @@
-.PHONY: clean install uninstall tox test lint docs release
+.PHONY: clean install uninstall tox test lint docs release web
 clean:
 	find . -name "*.pyc" -delete
 
@@ -30,3 +30,7 @@ release:
 	pip install twine wheel
 	python setup.py sdist bdist_wheel
 	twine upload dist/*
+
+web:
+	make docs
+	knock ego.kura.io && rsync -avhr -e "/usr/bin/ssh -p 2222" docs/build/ ego.kura.io:/var/www/blackhole.io/
