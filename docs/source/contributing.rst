@@ -8,7 +8,8 @@ If you're thinking about contributing, it's really quite simple. There is no
 need to feel daunted. You can contribute in a variety of ways:
 
 - `Report bugs <https://github.com/kura/blackhole/issues>`_
-- Submit pull requests for bug fixes or new behaviour
+- Bug fixes
+- New behaviour
 - Improve the documentation
 - Write tests
 - Improve performance

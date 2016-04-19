@@ -1,4 +1,9 @@
-Kura
-Richard Noble
-David Winterbottom (ideas/thoughts)
-Ben Darnell (Tornado help)
+.. _contributors:
+
+============
+Contributors
+============
+
+It's a small list.
+
+- Kura

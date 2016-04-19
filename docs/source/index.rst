@@ -204,6 +204,11 @@ Reference
     api-smtp
     api-utils
 
+Thanks & contributors
+=====================
+
+Thanks are here - :ref:`thanks` and contributors here :ref:`contributors`.
+
 Indices and tables
 ==================
 
