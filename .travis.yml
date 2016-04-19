@@ -1,8 +1,6 @@
 language: python
 python:
   - "3.5"
-before_install:
-  - pip install nose mock python-coveralls
 install:
   - make install
 script:
