@@ -59,7 +59,6 @@ Getting started
 .. toctree::
     :maxdepth: 2
 
-    testing-the-source-code
     running-your-own-server
     command-line-options
     configuration-file-example
@@ -67,6 +66,7 @@ Getting started
     controlling-the-server-with-init-d
     modes
     response-codes
+    contributing
     changelog
 
 
@@ -153,12 +153,19 @@ Test via telnet
     Connection closed by foreign host.
 
 
+
+Running the source code unit tests
+==================================
+
+Please see the :ref:`testing` section for information on how to run the unit
+tests against the source code.
+
+
 Contributing
 ============
 
 Please see the :ref:`contributing` section for information on how to
 contribute.
-
 
 Author
 ======
