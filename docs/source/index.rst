@@ -73,18 +73,25 @@ Getting started
 Using the blackhole.io service
 ==============================
 
-There are several ways you can use the service provided here.
+STARTTLS
+--------
 
+Currently `asyncio` does not have the code in place to make *STARTTLS*
+possible, the *STARTTLS* verb returns a ``500 Not implemented`` response
+until it's possible to implement. -- `https://bugs.python.org/review/23749/ <https://bugs.python.org/review/23749/>`_
+
+While *STARTTLS* is disabled, you can still talk to blackhole over SMTPS on
+it's standard port 465 as well as unencrypted, on the standard port 25.
 
 MX
 --
 
+This service provides real MX records, allowing any `@blackhole.io` to appear as
+if it works.
+
 .. code::
 
     blackhole.io.    IN MX    10 blackhole.io.
-
-This service provides real MX records, allowing any `@blackhole.io` to appear as
-if it works.
 
 To try this, fire up your email client and send an email to
 `random@blackhole.io`. This email will appear to have been sent and
