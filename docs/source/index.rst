@@ -222,8 +222,8 @@ Indices and tables
     :target: https://pypi.python.org/pypi/blackhole
     :alt: Latest version released on PyPi
 
-.. |coverage| image:: https://img.shields.io/coveralls/kura/blackhole/master.svg?style=flat-square&label=coverage
-    :target: https://coveralls.io/r/kura/blackhole?branch=master
+.. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
+    :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
 
 .. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=flat-square&label=build

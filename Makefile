@@ -13,7 +13,7 @@ tox:
 	detox
 
 test:
-	pip install pytest pytest-cov coveralls sphinx
+	pip install pytest pytest-cov codecov sphinx
 	py.test --cov ./blackhole --cov ./tests --doctest-modules --verbose ./blackhole ./tests
 	sphinx-build -b html docs/source/ docs/build/
 

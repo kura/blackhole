@@ -58,15 +58,15 @@ If you would like to contribute, please read the `contributors guide
 
 The latest build status on `travis <https://travis-ci.org/kura/blackhole/>`_.
 
-And the test coverage report on `coveralls
-<https://coveralls.io/github/kura/blackhole?branch=master>`_.
+And the test coverage report on `codecov
+<https://codecov.io/github/kura/blackhole/>`_.
 
 .. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=flat-square&label=version
     :target: https://pypi.python.org/pypi/blackhole
     :alt: Latest version released on PyPi
 
-.. |coverage| image:: https://img.shields.io/coveralls/kura/blackhole/master.svg?style=flat-square&label=coverage
-    :target: https://coveralls.io/r/kura/blackhole?branch=master
+.. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
+    :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
 
 .. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=flat-square&label=build
