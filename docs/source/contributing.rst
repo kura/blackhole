@@ -15,6 +15,8 @@ need to feel daunted. You can contribute in a variety of ways:
 - Improve performance
 - Add additional support i.e. new versions of Python or PyPy
 
+You can view a list of tasks that need work on the :ref:`todo` page.
+
 Getting started
 ===============
 
