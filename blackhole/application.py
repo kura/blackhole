@@ -69,3 +69,4 @@ def run():
     except KeyboardInterrupt:
         pass
     stop_servers()
+    raise SystemExit(os.EX_OK)

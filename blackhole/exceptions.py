@@ -27,12 +27,12 @@ Exceptions for the blackhole server.
 """
 
 
-class ConfigException(Exception):
+class ConfigException(Exception):  # pragma: no cover
     """A configuration exception."""
 
     pass
 
 
-class DaemonException(Exception):
+class DaemonException(Exception):  # pragma: no cover
     """A daemon exception."""
     pass

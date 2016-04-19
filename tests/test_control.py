@@ -137,9 +137,7 @@ def test_stop_servers(mock_server, mock_loop, mock_daemon):
     blackhole.control._servers = [asyncio.base_events.Server([], []),
                                   asyncio.base_events.Server([], []),
                                   asyncio.base_events.Server([], [])]
-    with pytest.raises(SystemExit) as err:
-        stop_servers()
-    assert str(err.value) == '0'
+    stop_servers()
     assert len(blackhole.control._servers) is 0
 
 

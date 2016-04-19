@@ -35,8 +35,6 @@ import os
 import pwd
 import socket
 import ssl
-import sys
-
 from blackhole.config import Config
 from blackhole.daemon import Daemon
 from blackhole.smtp import Smtp
@@ -102,15 +100,16 @@ def stop_servers():
     :raises: SystemExit
     """
     loop = asyncio.get_event_loop()
+    conf = Config()
     logger.debug('Stopping...')
     for _ in range(len(_servers)):
         server = _servers.pop()
         server.close()
         loop.run_until_complete(server.wait_closed())
     loop.close()
-    if Daemon.instance().pidfile:
-        del Daemon.instance().pid
-    raise SystemExit(os.EX_OK)
+    daemon = Daemon(conf.pidfile)
+    if daemon.pid:
+        del daemon.pid
 
 
 def setgid():

@@ -114,7 +114,7 @@ class Config(metaclass=Singleton):
     _tls_port = None
     _tls_key = None
     _tls_cert = None
-    _pidfile = None
+    _pidfile = '/tmp/blackhole.pid'
     _delay = None
     _mode = 'accept'
 
