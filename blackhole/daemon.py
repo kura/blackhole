@@ -27,7 +27,6 @@ Provides daemon functional to blackhole.
 """
 
 
-import sys
 import os
 import atexit
 
@@ -104,7 +103,7 @@ class Daemon(metaclass=Singleton):
         try:
             pid = os.fork()
             if pid > 0:
-                sys.exit(0)
+                raise SystemExit(os.EX_OK)
         except OSError as err:
             raise DaemonException(err.strerror)
 

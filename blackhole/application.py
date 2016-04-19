@@ -63,7 +63,7 @@ def run():
         except DaemonException as err:
             stop_servers()
             logger.fatal(err)
-            sys.exit(os.EX_USAGE)
+            raise SystemExit(os.EX_USAGE)
     try:
         loop.run_forever()
     except KeyboardInterrupt:

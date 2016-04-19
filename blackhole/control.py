@@ -73,9 +73,9 @@ def create_server(use_tls=False):
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
     try:
         sock.bind((config.address, port))
-    except socket.error:
+    except OSError:
         logger.fatal("Cannot bind to port %s.", port)
-        sys.exit(os.EX_NOPERM)
+        raise SystemExit(os.EX_NOPERM)
     if use_tls:
         ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         ctx.load_cert_chain(config.tls_cert, config.tls_key)
@@ -95,7 +95,6 @@ def start_servers():
     if config.tls_port and config.tls_cert and config.tls_key:
         create_server(use_tls=True)
 
-
 def stop_servers():
     """
     Stop the listeners.
@@ -104,7 +103,8 @@ def stop_servers():
     """
     loop = asyncio.get_event_loop()
     logger.debug('Stopping...')
-    for server in _servers:
+    for _ in range(len(_servers)):
+        server = _servers.pop()
         server.close()
         loop.run_until_complete(server.wait_closed())
     loop.close()
@@ -131,11 +131,11 @@ def setgid():
         os.setgid(grp.getgrnam(config.group).gr_gid)
     except KeyError:
         logger.error("Group '%s' does not exist", config.group)
-        sys.exit(os.EX_USAGE)
-    except OSError:
+        raise SystemExit(os.EX_USAGE)
+    except PermissionError:
         logger.error("You do not have permission to switch to group '%s'",
                      config.group)
-        sys.exit(os.EX_NOPERM)
+        raise SystemExit(os.EX_NOPERM)
 
 
 def setuid():
@@ -156,8 +156,8 @@ def setuid():
         os.setuid(pwd.getpwnam(config.user).pw_uid)
     except KeyError:
         logger.error("User '%s' does not exist", config.user)
-        sys.exit(os.EX_USAGE)
-    except OSError:
+        raise SystemExit(os.EX_USAGE)
+    except PermissionError:
         logger.error("You do not have permission to switch to user '%s'",
                      config.user)
-        sys.exit(os.EX_NOPERM)
+        raise SystemExit(os.EX_NOPERM)

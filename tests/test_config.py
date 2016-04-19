@@ -1,5 +1,6 @@
 import getpass
 import grp
+import logging
 import os
 import pytest
 import random
@@ -9,6 +10,10 @@ from unittest import mock
 
 from blackhole.config import Config, Singleton, config_test, parse_cmd_args
 from blackhole.exceptions import ConfigException
+
+
+logging.getLogger('blackhole').addHandler(logging.NullHandler())
+logging.getLogger('blackhole.config_test').addHandler(logging.NullHandler())
 
 
 @pytest.fixture()
@@ -58,7 +63,6 @@ def test_no_access(mock_os_access):
 def test_load():
     cfile = create_config(('#not=thisline', 'port=1025', 'address=10.0.0.1',
                            '''this won't be added'''))
-
     conf = Config(cfile).load()
     assert conf.port == 1025
     assert conf.address == '10.0.0.1'
