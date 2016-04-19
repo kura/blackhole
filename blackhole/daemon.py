@@ -50,25 +50,12 @@ class Singleton(type):
                                                                  **kwargs)
         return cls._instances[cls]
 
-    def instance(cls):
-        """
-        Get a instance of `blackhole.daemon.Daemon` if one exists.
-
-        :param cls:
-        :type cls: str
-        :returns: instance of `blackhole.daemon.Daemon` or None
-        """
-        if cls in cls._instances:
-            return cls._instances[cls]
-        return None
-
-
 
 class Daemon(metaclass=Singleton):
 
     def __init__(self, pidfile):
         """
-        Creates an instance of `blackhole.daemon.Daemon`.
+        Create an instance of `blackhole.daemon.Daemon`.
 
         :param pidfile:
         :type pidfile: str
@@ -77,7 +64,7 @@ class Daemon(metaclass=Singleton):
 
     def daemonize(self):
         """
-        Daemonises the process, using the UNIX double fork method.
+        Daemonize the process, using the UNIX double fork method.
 
         .. note::
 
@@ -123,10 +110,9 @@ class Daemon(metaclass=Singleton):
         if os.path.exists(self.pidfile):
             try:
                 pid = open(self.pidfile, 'r').read().strip()
-            except IOError as err:
-                raise(err.strerror)
-            if not os.path.exists(os.path.join(os.path.sep, 'proc', pid)):
-                del self.pid
+            except (FileNotFoundError, IOError, PermissionError,
+                    OSError) as err:
+                raise DaemonException(err.strerror)
             return int(pid)
         return None
 
@@ -150,4 +136,5 @@ class Daemon(metaclass=Singleton):
     @pid.deleter
     def pid(self):
         """Delete the pid from the filesystem."""
-        os.remove(self.pidfile)
+        if os.path.exists(self.pidfile):
+            os.remove(self.pidfile)

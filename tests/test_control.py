@@ -132,8 +132,7 @@ def test_start_servers_tls(mock_bind, mock_ssl):
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('asyncio.base_events.Server')
 @mock.patch('asyncio.get_event_loop')
-@mock.patch('blackhole.daemon.Singleton.instance')
-def test_stop_servers(mock_server, mock_loop, mock_daemon):
+def test_stop_servers(mock_server, mock_loop):
     blackhole.control._servers = [asyncio.base_events.Server([], []),
                                   asyncio.base_events.Server([], []),
                                   asyncio.base_events.Server([], [])]
