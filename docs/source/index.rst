@@ -2,6 +2,11 @@
 Blackhole
 =========
 
+-----
+
+|pypi| |travis| |coverage| |gitter|
+
+-----
 
 About
 =====
@@ -36,13 +41,6 @@ available for use on Python versions lower than 3.5, including PyPy.
 It is no longer maintained however, but is available for posterity's sake on
 `blackhole.io/1 <https://blackhole.io/1/>`_ and `GitHub
 <https://github.com/kura/blackhole/releases/tag/1.8.1>`_.
-
-
------
-
-|pypi| |travis| |coverage| |gitter|
-
------
 
 
 Why?
