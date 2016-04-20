@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- This file was created with the aha Ansi HTML Adapter. http://ziz.delphigl.com/tool_aha.php -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xml+xhtml; charset=UTF-8" />
+<title>stdin</title>
+</head>
+<body>
+<pre>
+<span style="font-weight:bold;">
+###########################################################
+    testssl.sh       2.7dev from https://testssl.sh/dev/
+    (</span><span style="color:dimgray;font-weight:bold;">c621770 2016-04-20 18:53:04 -- 1.478</span><span style="font-weight:bold;">)
+
+      This program is free software. Distribution and
+             modification under GPLv2 permitted.
+      USAGE w/o ANY WARRANTY. USE IT AT YOUR OWN RISK!
+
+       Please file bugs @ https://testssl.sh/bugs/
+
+###########################################################</span>
+
+ Using &quot;OpenSSL 1.0.2-chacha (1.0.2d-dev)&quot; [~181 ciphers]
+ on kura-vbox:./bin/openssl.Linux.x86_64
+ (built: &quot;Jul  6 18:05:33 2015&quot;, platform: &quot;linux-x86_64&quot;)
+
+ further IP addresses:   2a03:b0c0:3:d0::1d:a001
+ rDNS (46.101.237.170):  ego.kura.io.
+ Service detected:       SMTP, thus skipping HTTP specific checks
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing protocols </span><span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;">(via sockets except TLS 1.2, SPDY+HTTP2) </span>
+
+<span style="font-weight:bold;"> SSLv2      </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> SSLv3      </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> TLS 1      </span>not offered
+<span style="font-weight:bold;"> TLS 1.1    </span>not offered
+<span style="font-weight:bold;"> TLS 1.2    </span><span style="color:green;font-weight:bold;">offered (OK)</span>
+<span style="font-weight:bold;"> SPDY/NPN   </span>not offered
+<span style="font-weight:bold;"> HTTP2/ALPN </span>not offered
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing ~standard cipher lists </span>
+
+<span style="font-weight:bold;"> Null Ciphers                 </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> Anonymous NULL Ciphers       </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> Anonymous DH Ciphers         </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> 40 Bit encryption            </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> 56 Bit encryption            </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> Export Ciphers (general)     </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> Low (&lt;=64 Bit)               </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> DES Ciphers                  </span><span style="color:green;font-weight:bold;">not offered (OK)</span>
+<span style="font-weight:bold;"> Medium grade encryption      </span><span style="color:green;">not offered (OK)</span>
+<span style="font-weight:bold;"> Triple DES Ciphers           </span>not offered (OK)
+<span style="font-weight:bold;"> High grade encryption        </span><span style="color:green;font-weight:bold;">offered (OK)</span>
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing (perfect) forward secrecy, (P)FS -- omitting 3DES, RC4 and Null Encryption here </span>
+
+<span style="color:green;"> PFS is offered (OK)</span>  ECDHE-RSA-AES256-GCM-SHA384 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-SHA256
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing server preferences </span>
+
+<span style="font-weight:bold;"> Has server cipher order?     </span><span style="color:green;font-weight:bold;">yes (OK)</span>
+<span style="font-weight:bold;"> Negotiated protocol          </span><span style="color:green;font-weight:bold;">TLSv1.2</span>
+<span style="font-weight:bold;"> Negotiated cipher            </span><span style="color:green;font-weight:bold;">ECDHE-RSA-AES256-GCM-SHA384</span>, <span style="color:green;">256 bit ECDH</span>
+<span style="font-weight:bold;"> Cipher order</span>
+     TLSv1.2:   ECDHE-RSA-AES256-GCM-SHA384 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-SHA256
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing server defaults (Server Hello) </span>
+
+<span style="font-weight:bold;"> TLS extensions (standard)    </span>&quot;renegotiation info/#65281&quot; &quot;EC point formats/#11&quot; &quot;session ticket/#35&quot; &quot;heartbeat/#15&quot;
+<span style="font-weight:bold;"> Session Tickets RFC 5077     </span>300 seconds <span style="color:olive;font-weight:bold;">(PFS requires session ticket keys to be rotated &lt;= daily)</span>
+<span style="font-weight:bold;"> SSL Session ID support       </span>yes
+<span style="font-weight:bold;"> TLS clock skew</span>               random values, no fingerprinting possible
+<span style="font-weight:bold;"> Signature Algorithm          </span><span style="color:green;">SHA256 with RSA</span>
+<span style="font-weight:bold;"> Server key size              </span><span style="color:green;">4096</span> bits
+<span style="font-weight:bold;"> Fingerprint / Serial         </span>SHA1 C78F1DC84766234A64E8EFA4242F5AAE47D759BF / 1121117D92FB580EA40D56009D91D74829CD
+                              SHA256 1ED3A3F0CD5129081E96FBD28A03E1CD68233DC7AB12EEBFD97EE90D9A3C38BF
+<span style="font-weight:bold;"> Common Name (CN)             </span>&quot;blackhole.io&quot; (works w/o SNI)
+<span style="font-weight:bold;"> subjectAltName (SAN)         </span>&quot;blackhole.io&quot;
+<span style="font-weight:bold;"> Issuer                       </span>&quot;GlobalSign Domain Validation CA - SHA256 - G2&quot; (&quot;GlobalSign nv-sa&quot; from &quot;BE&quot;)
+<span style="font-weight:bold;"> EV cert</span> (experimental)       no
+<span style="font-weight:bold;"> Certificate Expiration       </span><span style="color:green;">189 &gt;= 60 days</span> (2015-10-27 16:28 --&gt; 2016-10-27 17:28 +0100)
+<span style="font-weight:bold;"> # of certificates provided</span>   2
+<span style="font-weight:bold;"> Chain of trust</span> (experim.)    <span style="color:green;">Ok   </span><span style="color:purple;"></span>
+<span style="font-weight:bold;"> Certificate Revocation List  </span>http://crl.globalsign.com/gs/gsdomainvalsha2g2.crl
+<span style="font-weight:bold;"> OCSP URI                     </span>http://ocsp2.globalsign.com/gsdomainvalsha2g2
+<span style="font-weight:bold;"> OCSP stapling                </span><span style="color:olive;font-weight:bold;">--</span>
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing vulnerabilities </span>
+
+<span style="font-weight:bold;"> Heartbleed</span> (CVE-2014-0160)                <span style="color:green;font-weight:bold;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> CCS</span> (CVE-2014-0224)                       <span style="color:green;font-weight:bold;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Secure Renegotiation </span>(CVE-2009-3555)      <span style="color:green;font-weight:bold;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> Secure Client-Initiated Renegotiation     </span><span style="color:green;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> CRIME, TLS </span>(CVE-2012-4929)                <span style="color:green;">not vulnerable (OK)</span> (not using HTTP anyway)
+<span style="font-weight:bold;"> POODLE, SSL</span> (CVE-2014-3566)               <span style="color:green;font-weight:bold;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> TLS_FALLBACK_SCSV</span> (RFC 7507), experim.    <span style="color:green;">No fallback possible, TLS 1.2 is the only protocol (OK)</span>
+<span style="font-weight:bold;"> FREAK</span> (CVE-2015-0204)                     <span style="color:green;font-weight:bold;">not vulnerable (OK)</span>
+<span style="font-weight:bold;"> DROWN</span> (2016-0800, CVE-2016-0703), exper.  <span style="color:green;font-weight:bold;">not vulnerable on this port (OK)</span>
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=1ED3A3F0CD5129081E96FBD28A03E1CD68233DC7AB12EEBFD97EE90D9A3C38BF could help you to find out
+<span style="font-weight:bold;"> LOGJAM</span> (CVE-2015-4000), experimental      <span style="color:green;font-weight:bold;">not vulnerable (OK)</span>, common primes not checked. See below for any DH ciphers + bit size
+<span style="font-weight:bold;"> BEAST</span> (CVE-2011-3389)                     <span style="color:green;">no SSL3 or TLS1 (OK)</span>
+<span style="font-weight:bold;"> RC4</span> (CVE-2013-2566, CVE-2015-2808)        <span style="color:green;">no RC4 ciphers detected (OK)</span>
+
+
+<span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing all 181 locally available ciphers against the server, ordered by encryption strength </span>
+
+Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher Suite Name (RFC)
+--------------------------------------------------------------------------------------------------------------------------
+ xc030   ECDHE-RSA-AES256-GCM-SHA384    ECDH <span style="color:green;">256 </span>  AESGCM     256         TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+ xc02f   ECDHE-RSA-AES128-GCM-SHA256    ECDH <span style="color:green;">256 </span>  AESGCM     128         TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+ xc027   ECDHE-RSA-AES128-SHA256        ECDH <span style="color:green;">256 </span>  AES        128         TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256             
+
+
+</pre>
+</body>
+</html>

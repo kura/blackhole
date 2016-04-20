@@ -103,6 +103,9 @@ You can test the default security using `testssl.sh <https://testssl.sh/>`_.
 
     ./testssl.sh blackhole.io 465
 
+Example output of `testssl.sh` can be found on `GitHub
+<https://github.com/kura/blackhole/blob/master/testssl.sh.html>`_.
+
 
 STARTTLS
 --------

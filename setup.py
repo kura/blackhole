@@ -8,14 +8,8 @@ from setuptools.command.test import test as TestCommand
 require_python(50659568)
 __version__ = get_version('blackhole/__init__.py')
 
-desc = """Blackhole is an email MTA that pipes all mail to /dev/null.
-
-Blackhole is built on top of asyncio and utilises `async` and `await`
-statements on available in Python 3.5 and above.
-
-While Blackhole is an MTA (mail transport agent), none of the actions
-performed of SMTP or SMTPS are actually processed and no email or sent or
-delivered."""
+desc = """Blackhole is an MTA (message transfer agent) that (figuratively)
+pipes all mail to /dev/null."""
 
 
 class PyTest(TestCommand):
@@ -54,7 +48,7 @@ setup(name='blackhole',
       maintainer_email='kura@kura.io',
       description=desc,
       long_description=long_description('README.rst'),
-      license='MIT',
+      license=long_description('LICENSE'),
       platforms=['linux'],
       packages=find_packages(exclude=["*.tests"]),
       install_requires=[],
