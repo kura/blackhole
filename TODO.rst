@@ -13,3 +13,4 @@ Things on the todo list.
 - Dynamic delay switch - min + max - helo, ehlo, delay verb, rcpt, mail from
 - Improve TLS by adding load_dh_params
 - Add AUTH mechanism
+- POP & IMAP
