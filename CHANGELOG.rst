@@ -19,7 +19,7 @@ Changelog
     C: HELP INVALID
     S: 501 Supported commands: DATA EHLO ETRN HELO...
 
-- TLS settings changed based on format on
+- TLS settings changed based on format taken from
   `<https://docs.python.org/3/library/ssl.html#ssl-security>`_.
 - TLS 'modern' ciphers enforced, ciphers taken from
   `<https://wiki.mozilla.org/Security/Server_Side_TLS>`_.
