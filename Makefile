@@ -1,4 +1,4 @@
-.PHONY: clean install uninstall tox test lint docs release web
+.PHONY: clean install uninstall tox test lint docs release web testssl
 clean:
 	find . -name "*.pyc" -delete
 
@@ -34,3 +34,7 @@ release:
 web:
 	make docs
 	knock ego.kura.io && rsync -avhr -e "/usr/bin/ssh -p 2222" docs/build/ ego.kura.io:/var/www/blackhole.io/
+	rm -rf docs/build
+
+testssl:
+	testssl.sh --wide --colorblind blackhole.io:465 | aha | grep -v Start | grep -v Done | sed 's/stdin/testssl.sh/g' | awk -v RS= -v ORS='\n\n' '1' > docs/source/_extra/testssl.sh.html
