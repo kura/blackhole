@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-import socket
 import tempfile
 from unittest import mock
 
@@ -10,10 +9,11 @@ import pytest
 import blackhole
 from blackhole.config import Singleton, Config
 from blackhole.control import (create_server, start_servers, stop_servers,
-                               setuid, setgid, _servers)
+                               setuid, setgid)
 
 
 logging.getLogger('blackhole').addHandler(logging.NullHandler())
+
 
 @pytest.fixture()
 def cleandir():
@@ -32,7 +32,7 @@ def reset_servers():
     blackhole.control._servers = []
 
 
-pytest.mark.usefixtures('reset_conf')
+@pytest.mark.usefixtures('reset_conf')
 def create_config(data):
     cwd = os.getcwd()
     path = os.path.join(cwd, 'test.conf')
@@ -118,7 +118,7 @@ def test_start_servers(mock_bind):
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind')
 @mock.patch('ssl.create_default_context')
-def test_start_servers_tls(mock_bind, mock_ssl):
+def test_start_servers_tls(_, __):
     tls_cert = create_file('cert.cert')
     tls_key = create_file('key.key')
     cfile = create_config(('port=25', 'tls_port=9000',
@@ -167,7 +167,7 @@ def test_setgid_same_group(mock_getgrnam):
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 @mock.patch('grp.getgrnam', side_effect=KeyError)
-def test_setgid_invalid_group(mock_getgrnam):
+def test_setgid_invalid_group(_):
     cfile = create_config(('group=testgroup',))
     Config(cfile).load()
     with pytest.raises(SystemExit) as err:
@@ -177,7 +177,7 @@ def test_setgid_invalid_group(mock_getgrnam):
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 @mock.patch('grp.getgrnam', side_effect=PermissionError)
-def test_setgid_no_perms(mock_getgrnam):
+def test_setgid_no_perms(_):
     cfile = create_config(('group=testgroup',))
     Config(cfile).load()
     with pytest.raises(SystemExit) as err:
@@ -211,7 +211,7 @@ def test_setuid_same_user(mock_getuser):
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 @mock.patch('pwd.getpwnam', side_effect=KeyError)
-def test_setuid_invalid_user(mock_getpwnam):
+def test_setuid_invalid_user(_):
     cfile = create_config(('user=testuser',))
     Config(cfile).load()
     with pytest.raises(SystemExit) as err:
@@ -221,7 +221,7 @@ def test_setuid_invalid_user(mock_getpwnam):
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 @mock.patch('pwd.getpwnam', side_effect=PermissionError)
-def test_setuid_no_perms(mock_getpwnam):
+def test_setuid_no_perms(_):
     cfile = create_config(('user=testuser',))
     Config(cfile).load()
     with pytest.raises(SystemExit) as err:

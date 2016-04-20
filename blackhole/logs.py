@@ -31,12 +31,12 @@ import logging
 from logging.config import dictConfig
 
 
-debug_format = '[%(levelname)s] blackhole.%(module)s: %(message)s'
-log_config = {
+DEBUG_FORMAT = '[%(levelname)s] blackhole.%(module)s: %(message)s'
+LOG_CONFIG = {
     'version': 1,
     'formatters': {
         'console': {'format': '%(message)s'},
-        'debug': {'format': debug_format}
+        'debug': {'format': DEBUG_FORMAT}
     },
     'handlers': {
     },
@@ -45,9 +45,9 @@ log_config = {
     }
 }
 
-debug_handler = {'class': 'logging.StreamHandler',
+DEBUG_HANDLER = {'class': 'logging.StreamHandler',
                  'formatter': 'debug', 'level': logging.DEBUG}
-default_handler = {'class': 'logging.StreamHandler',
+DEFAULT_HANDLER = {'class': 'logging.StreamHandler',
                    'formatter': 'console', 'level': logging.INFO}
 
 
@@ -58,12 +58,13 @@ def configure_logs(args):
     :param args:
     :type args: Parameters parsed from `argparse`.
     """
-    logger_handlers = log_config['loggers']['blackhole']['handlers']
+    logger_handlers = LOG_CONFIG['loggers']['blackhole']['handlers']
     if args.debug and not args.test:
-        log_config['loggers']['blackhole']['level'] = logging.DEBUG
-        log_config['handlers']['debug_handler'] = debug_handler
-        logger_handlers.append('debug_handler')
-    else:
-        log_config['handlers']['default_handler'] = default_handler
+        LOG_CONFIG['loggers']['blackhole']['level'] = logging.DEBUG
+        LOG_CONFIG['handlers']['default_handler'] = DEBUG_HANDLER
         logger_handlers.append('default_handler')
-    dictConfig(log_config)
+    else:
+        LOG_CONFIG['loggers']['blackhole']['level'] = logging.INFO
+        LOG_CONFIG['handlers']['default_handler'] = DEFAULT_HANDLER
+        logger_handlers.append('default_handler')
+    dictConfig(LOG_CONFIG)

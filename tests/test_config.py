@@ -27,7 +27,7 @@ def reset_conf():
     Singleton._instances = {}
 
 
-pytest.mark.usefixtures('reset_conf')
+@pytest.mark.usefixtures('reset_conf')
 def create_config(data):
     cwd = os.getcwd()
     path = os.path.join(cwd, 'test.conf')
@@ -70,8 +70,9 @@ def test_load():
     assert getattr(conf, 'this', None) is None
 
 
-pytest.mark.usefixtures('reset_conf')
+@pytest.mark.usefixtures('reset_conf')
 class TestCmdParser(unittest.TestCase):
+
 
     def test_default_conf(self):
         parser = parse_cmd_args(['-c/fake/file.conf'])
@@ -161,6 +162,7 @@ class TestAddress(unittest.TestCase):
             addr = [str(random.randint(0, 255)) for _ in range(4)]
             cfile = create_config(('.'.join(addr),))
             Config(cfile).load()
+
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 class TestPort(unittest.TestCase):
@@ -386,6 +388,7 @@ class TestTlsPort(unittest.TestCase):
         assert mock_getuid.call_count is 1
         assert mock_socket.called is True
         assert mock_socket.call_count is 1
+
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 class TestTls(unittest.TestCase):

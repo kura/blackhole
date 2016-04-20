@@ -1,7 +1,5 @@
-from io import StringIO
 import os
 import tempfile
-import unittest
 from unittest import mock
 
 import pytest
@@ -130,7 +128,7 @@ def test_fork(mock_fork):
 def test_fork_error(mock_fork):
     pfile = create_file('test.pid', 123)
     daemon = Daemon(pfile)
-    with pytest.raises(DaemonException) as err:
+    with pytest.raises(DaemonException):
         daemon.fork()
     assert mock_fork.called is True
 
