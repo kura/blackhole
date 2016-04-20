@@ -11,3 +11,5 @@ Things on the todo list.
 - Add socket bind tests to config_test and pytest.
 - Dynamic mode switch  - helo, ehlo, delay verb, rcpt, mail from
 - Dynamic delay switch - min + max - helo, ehlo, delay verb, rcpt, mail from
+- Improve TLS by adding load_dh_params
+- Add AUTH mechanism

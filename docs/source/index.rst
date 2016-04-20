@@ -98,6 +98,13 @@ are used.
 These ciphers are specifically taken from `Modern` configuration on the `Mozilla
 TLS page <https://wiki.mozilla.org/Security/Server_Side_TLS>`_.
 
+You can test the default security using `testssl.sh <https://testssl.sh/>`_.
+
+.. code-block:: bash
+
+    ./testssl.sh blackhole.io 465
+
+
 STARTTLS
 --------
 
@@ -134,7 +141,7 @@ it was sent and received, but no actually email is sent out.
 .. code-block:: python
    :linenos:
 
-    from smtplib import SMTP
+    from smtplib import SMTP_SSL  # You can import SMTP to not use SSL/TLS.
 
     msg = """From: <test@blackhole.io>
     To: <test@blackhole.io>
@@ -143,7 +150,8 @@ it was sent and received, but no actually email is sent out.
     Random test message.
     """
 
-    smtp = SMTP('blackhole.io', 25)
+    # smtp = SMTP('blackhole.io', 25)  # This would not use SSL/TLS
+    smtp = SMTP_SSL('blackhole.io', 465)
     smtp.sendmail('test@blackhole.io', 'test@blackhole.io',
                   msg.encode('utf-8'))
     smtp.quit()
