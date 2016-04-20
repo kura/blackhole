@@ -77,3 +77,8 @@ And the test coverage report on `codecov
 .. |gitter| image:: https://img.shields.io/gitter/room/kura/blackhole.svg?style=flat-square
     :target: https://gitter.im/kura/blackhole
     :alt: Chat on Gitter
+
+
+.. image:: https://badges.gitter.im/kura/blackhole.svg
+   :alt: Join the chat at https://gitter.im/kura/blackhole
+   :target: https://gitter.im/kura/blackhole?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
