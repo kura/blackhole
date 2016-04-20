@@ -28,6 +28,7 @@ This module contains the Smtp protocol.
 
 
 import asyncio
+import inspect
 import logging
 import random
 
@@ -124,12 +125,8 @@ class Smtp(asyncio.StreamReaderProtocol):
                 await self.timeout()
             logger.debug('RECV %s', line)
             line = line.decode('utf-8').rstrip('\r\n')
-            parts = line.split(None, 1)
-            if parts:
-                verb = parts[0]
-                logger.debug("RECV VERB %s", verb)
-                handler = self.lookup_handler(verb) or self.do_UNKNOWN
-                logger.debug("USING %s", handler.__name__)
+            handler = self.lookup_handler(line)
+            if handler:
                 await handler()
             else:
                 await self.push(502, '5.5.2 Command not recognised')
@@ -152,16 +149,45 @@ class Smtp(asyncio.StreamReaderProtocol):
             self._writer.close()
         self._connection_closed = True
 
-    def lookup_handler(self, verb):
+    def lookup_handler(self, line):
         """
         Look up the SMTP VERB against a handler.
 
+        :param line:
+        :type line: str -- e.g. HELO blackhole.io
+        :returns: `blackhole.smtp.do_VERB` or `blackhole.smtp.help_VERB`.
+        """
+        parts = line.split(None, 1)
+        if parts:
+            if parts[0].lower() == 'help':
+                return self.lookup_help_handler(parts)
+            else:
+                return self.lookup_verb_handler(parts[0])
+        return self.do_UNKNOWN
+
+    def lookup_help_handler(self, parts):
+        """
+        Look up a help handler for the SMTP VERB.
+
+        :param parts:
+        :type parts: list
+        :returns: `blackhole.smtp.help_VERB`.
+        """
+        if len(parts) > 1:
+            cmd = 'help_{}'.format(parts[1].upper())
+        else:
+            cmd = 'do_HELP'
+        return getattr(self, cmd, self.help_UNKNOWN)
+
+    def lookup_verb_handler(self, verb):
+        """
+        Look up a handler for the SMTP VERB.
+
         :param verb:
-        :type verb: str -- i.e. HELO, EHLO, DATA etc.
+        :type verb: str
         :returns: `blackhole.smtp.do_VERB`.
         """
-        cmd = "do_{}".format(verb.upper())
-        return getattr(self, cmd, None)
+        return getattr(self, 'do_{}'.format(verb.upper()), self.do_UNKNOWN)
 
     async def push(self, code, msg):
         """
@@ -181,31 +207,69 @@ class Smtp(asyncio.StreamReaderProtocol):
         """Send a greeting to the client."""
         await self.push(220, '{} ESMTP'.format(self.fqdn))
 
+    def get_members(self):
+        """
+        Get a list of help handlers for verbs.
+
+        :returns: list -- help handler names.
+        """
+        members = inspect.getmembers(self, predicate=inspect.ismethod)
+        cmds = []
+        for cmd, _ in members:
+            if cmd.startswith('help_') and not cmd == 'help_UNKNOWN':
+                cmds.append(cmd.replace('help_', ''))
+        return cmds
+
+    async def do_HELP(self):
+        """Send a response to the HELP verb."""
+        msg = ' '.join(self.get_members())
+        await self.push(250, 'Supported commands: {}'.format(msg))
+
+    async def help_HELO(self):
+        """Send help for HELO verb."""
+        await self.push(250, 'Syntax: HELO domain.tld')
+
     async def do_HELO(self):
         """Send response to HELO verb."""
         await self.push(250, 'OK')
+
+    async def help_EHLO(self):
+        """Send help for the EHLO verb."""
+        await self.push(250, 'Syntax: EHLO domain.tld')
 
     async def do_EHLO(self):
         """Send response to EHLO verb."""
         response = "250-{}\r\n".format(self.fqdn).encode('utf-8')
         self._writer.write(response)
         logger.debug('SENT %s', response)
-        responses = ('250-PIPELINING', '250-SIZE 512000', '250-VRFY',
-                     '250-ETRN', '250-ENHANCEDSTATUSCODES', '250-8BITMIME',
-                     '250 DSN', )
+        responses = ('250-HELP', '250-PIPELINING', '250-SIZE 512000',
+                     '250-VRFY', '250-ETRN', '250-ENHANCEDSTATUSCODES',
+                     '250-8BITMIME', '250 DSN', )
         for response in responses:
             response = "{}\r\n".format(response).encode('utf-8')
             logger.debug("SENT %s", response)
             self._writer.write(response)
         await self._writer.drain()
 
+    async def help_MAIL(self):
+        """Send help for the MAIL TO verb."""
+        await self.push(250, 'Syntax: MAIL FROM: <address>')
+
     async def do_MAIL(self):
         """Send response to MAIL TO verb."""
         await self.push(250, '2.1.0 OK')
 
+    async def help_RCPT(self):
+        """Send response to the RCPT TO verb."""
+        await self.push(250, 'Syntax: RCPT TO: <address>')
+
     async def do_RCPT(self):
         """Send response to RCPT TO verb."""
         await self.push(250, '2.1.5 OK')
+
+    async def help_DATA(self):
+        """Send help for the DATA verb."""
+        await self.push(250, 'Syntax: DATA')
 
     async def do_DATA(self):
         r"""
@@ -228,7 +292,6 @@ class Smtp(asyncio.StreamReaderProtocol):
                                               loop=self.loop)
             except asyncio.TimeoutError:
                 await self.timeout()
-            logger.debug('data?')
             logger.debug('RECV %s', line)
             if line == b'.\r\n':
                 break
@@ -250,11 +313,19 @@ class Smtp(asyncio.StreamReaderProtocol):
         """STARTTLS is not implemented."""
         # It's currently not possible to implement STARTTLS due to lack of
         # support in asyncio. - https://bugs.python.org/review/23749/
-        await self.do_UNKNOWN()
+        await self.do_NOT_IMPLEMENTED()
+
+    async def help_NOOP(self):
+        """Send help for the NOOP verb."""
+        await self.push(250, 'Syntax: NOOP')
 
     async def do_NOOP(self):
         """Send response to the NOOP verb."""
         await self.push(250, '2.0.0 OK')
+
+    async def help_RSET(self):
+        """Send help for the RSET verb."""
+        await self.push(250, 'Syntax: RSET')
 
     async def do_RSET(self):
         """
@@ -267,13 +338,25 @@ class Smtp(asyncio.StreamReaderProtocol):
         logger.debug('%s is now %s', old_msg_id, self.message_id)
         await self.push(250, '2.0.0 OK')
 
+    async def help_VRFY(self):
+        """Send help for the VRFY verb."""
+        await self.push(250, 'Syntax: VRFY <address>')
+
     async def do_VRFY(self):
         """Send response to the VRFY verb."""
         await self.push(252, '2.0.0 OK')
 
+    async def help_ETRN(self):
+        """Send help for the ETRN verb."""
+        await self.push(250, 'Syntax: ETRN')
+
     async def do_ETRN(self):
         """Send response to the ETRN verb."""
         await self.push(250, 'Queueing started')
+
+    async def help_QUIT(self):
+        """Send help for the QUIT verb."""
+        await self.push(250, 'Syntax: QUIT')
 
     async def do_QUIT(self):
         """
@@ -285,6 +368,15 @@ class Smtp(asyncio.StreamReaderProtocol):
         self._handler_coroutine.cancel()
         await self.close()
 
+    async def do_NOT_IMPLEMENTED(self):
+        """Send a not implemented response."""
+        await self.push(500, 'Not implemented')
+
+    async def help_UNKNOWN(self):
+        """Send available help verbs when an invalid verb is received."""
+        msg = ' '.join(self.get_members())
+        await self.push(501, 'Supported commands: {}'.format(msg))
+
     async def do_UNKNOWN(self):
         """Send response to unknown verb."""
-        await self.push(500, 'Not implemented')
+        await self.push(502, '5.5.2 Command not recognised')

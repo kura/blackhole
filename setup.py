@@ -41,6 +41,7 @@ entry_points = {
 
 tests_require = [
     'pytest',
+    'pytest-asyncio'
 ]
 
 
