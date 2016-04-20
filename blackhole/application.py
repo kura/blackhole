@@ -28,6 +28,7 @@ This module houses methods and functionality to start the server.
 
 import asyncio
 import logging
+import signal
 import os
 import sys
 
@@ -54,6 +55,7 @@ def run():
         logger.fatal('Cannot run in the background without a pidfile.')
         raise SystemExit(os.EX_USAGE)
     loop = asyncio.get_event_loop()
+    loop.add_signal_handler(signal.SIGINT, loop.stop)
     start_servers()
     setgid()
     setuid()

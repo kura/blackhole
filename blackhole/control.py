@@ -42,6 +42,11 @@ from blackhole.smtp import Smtp
 
 logger = logging.getLogger('blackhole.control')
 _servers = []
+ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
+           'ECDHE-ECDSA-CHACHA20-POLY1305', 'ECDHE-RSA-CHACHA20-POLY1305',
+           'CDHE-ECDSA-AES128-GCM-SHA256', 'ECDHE-RSA-AES128-GCM-SHA256:',
+           'ECDHE-ECDSA-AES256-SHA384', 'ECDHE-RSA-AES256-SHA384'
+           'ECDHE-ECDSA-AES128-SHA256', 'ECDHE-RSA-AES128-SHA256']
 
 
 def create_server(use_tls=False):
@@ -75,10 +80,11 @@ def create_server(use_tls=False):
         logger.fatal("Cannot bind to port %s.", port)
         raise SystemExit(os.EX_NOPERM)
     if use_tls:
-        ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ctx = ssl.create_default_context()
         ctx.load_cert_chain(config.tls_cert, config.tls_key)
-        ctx.options &= ~ssl.OP_NO_SSLv2
-        ctx.options &= ~ssl.OP_NO_SSLv3
+        ctx.options |= ssl.OP_NO_SSLv2
+        ctx.options |= ssl.OP_NO_SSLv3
+        ctx.set_ciphers(':'.join(ciphers))
     else:
         ctx = None
     server = loop.create_server(factory, sock=sock, ssl=ctx)
