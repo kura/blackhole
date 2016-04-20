@@ -80,7 +80,7 @@ def create_server(use_tls=False):
         logger.fatal("Cannot bind to port %s.", port)
         raise SystemExit(os.EX_NOPERM)
     if use_tls:
-        ctx = ssl.create_default_context()
+        ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         ctx.load_cert_chain(config.tls_cert, config.tls_key)
         ctx.options |= ssl.OP_NO_SSLv2
         ctx.options |= ssl.OP_NO_SSLv3

@@ -4,6 +4,39 @@
 Changelog
 =========
 
+2.0.2
+=====
+
+- Added HELP verb that lists all available SMTP verbs. Sending
+  ``HELP <COMMAND>`` will return the syntax for the specified command.
+
+.. code-block:: none
+
+    C: HELP
+    S: 250 Supported commands: DATA EHLO ETRN HELO...
+    C: HELP HELO
+    S: 250 Syntax: HELO domain.tld
+    C: HELP INVALID
+    S: 501 Supported commands: DATA EHLO ETRN HELO...
+
+- TLS settings changed based on format on
+  `<https://docs.python.org/3/library/ssl.html#ssl-security>`_.
+- TLS 'modern' ciphers enforced, ciphers taken from
+  `<https://wiki.mozilla.org/Security/Server_Side_TLS>`_.
+
+  .. code-block:: none
+
+      0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)    Mac=AEAD
+      0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)    Mac=AEAD
+      0xCC,0x14  -  ECDHE-ECDSA-CHACHA20-POLY1305  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=ChaCha20(256)  Mac=AEAD
+      0xCC,0x13  -  ECDHE-RSA-CHACHA20-POLY1305    TLSv1.2  Kx=ECDH  Au=RSA    Enc=ChaCha20(256)  Mac=AEAD
+      0xC0,0x2B  -  ECDHE-ECDSA-AES128-GCM-SHA256  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(128)    Mac=AEAD
+      0xC0,0x2F  -  ECDHE-RSA-AES128-GCM-SHA256    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(128)    Mac=AEAD
+      0xC0,0x24  -  ECDHE-ECDSA-AES256-SHA384      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(256)       Mac=SHA384
+      0xC0,0x28  -  ECDHE-RSA-AES256-SHA384        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(256)       Mac=SHA384
+      0xC0,0x23  -  ECDHE-ECDSA-AES128-SHA256      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(128)       Mac=SHA256
+      0xC0,0x27  -  ECDHE-RSA-AES128-SHA256        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(128)       Mac=SHA256
+
 2.0.1
 =====
 
