@@ -66,8 +66,8 @@ You can find the latest tests against the source code on `travis
 Running tests manually is pretty simple, there is a `Makefile` target dedicated
 to it.
 
-The test suite relies on `py.test <http://pytest.org/latest/>`_ and is install
-via the `Makefile` target and the `setup.py test` target.
+The test suite relies on `py.test <http://pytest.org/latest/>`_ and is
+installed via the `Makefile` target and the `setup.py test` target.
 
 .. code-block:: bash
 

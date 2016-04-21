@@ -1,21 +1,14 @@
-=========
-Blackhole
-=========
+=============================================
+Blackhole |pypi| |travis| |coverage| |gitter|
+=============================================
 
------
 
-|pypi| |travis| |coverage| |gitter|
+Blackhole is an `MTA (message transfer agent)
+<https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
+pipes all mail to /dev/null.
 
------
-
-About
-=====
-
-Blackhole is an MTA (message transfer agent) that (figuratively) pipes all mail
-to /dev/null.
-
-Blackhole is built on top of `asyncio <https://docs.python.org/3/library/asyncio.html>`_
-and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html#async-def>`_
+Blackhole is built on top of `asyncio
+<https://docs.python.org/3/library/asyncio.html>`_ and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html#async-def>`_
 and `await <https://docs.python.org/3/reference/expressions.html#await>`_
 statements available in Python 3.5 and above.
 
@@ -31,18 +24,6 @@ appears to have been delivered or bounced.
 Think of Blackhole sort of like a honeypot in terms of how it handles mail,
 but it's specifically designed with testing in mind.
 
-
-Python < 3.5
-------------
-
-The original incarnation of Blackhole -- built on top of Tornado -- is still
-available for use on Python versions lower than 3.5, including PyPy.
-
-It is no longer maintained however, but is available for posterity's sake on
-`blackhole.io/1 <https://blackhole.io/1/>`_ and `GitHub
-<https://github.com/kura/blackhole/releases/tag/1.8.1>`_.
-
-
 Why?
 ====
 
@@ -51,27 +32,21 @@ be able to send/receive millions of emails per minute. As the sender was being
 prototyped, I quickly realised that any mail server I pointed it at would fall
 over due to the stess -- thus blackhole was born.
 
-
-Getting started
-===============
-
-.. toctree::
-    :maxdepth: 2
-
-    running-your-own-server
-    command-line-options
-    configuration-file-example
-    delay-flag
-    controlling-the-server-with-init-d
-    modes
-    response-codes
-    contributing
-    changelog
-    todo
-
-
 Using the blackhole.io service
 ==============================
+
+Blackhole has support for the HELP verb, allowing you to quickly and easily see
+which commands are and are not implemented. You can use this command verb
+:ref:`telnet` as describe below.
+
+.. code-block:: none
+
+    C: HELP
+    S: 250 Supported commands: DATA EHLO ETRN HELO...
+    C: HELP HELO
+    S: 250 Syntax: HELO domain.tld
+    C: HELP INVALID
+    S: 501 Supported commands: DATA EHLO ETRN HELO...
 
 SSL/TLS configuration
 ---------------------
@@ -157,6 +132,7 @@ it was sent and received, but no actually email is sent out.
                   msg.encode('utf-8'))
     smtp.quit()
 
+.. _telnet:
 
 Test via telnet
 ---------------
@@ -193,10 +169,15 @@ Test via telnet
     221 2.0.0 Goodbye
     Connection closed by foreign host.
 
+Running your own server
+=======================
 
+For those of you that want to run your own copy of this service, the
+:ref:`running-your-own-server` document should have all of the information
+you'll need, and a little more.
 
-Running the source code unit tests
-==================================
+Running the test framework
+==========================
 
 Please see the :ref:`testing` section for information on how to run the unit
 tests against the source code.
@@ -206,13 +187,24 @@ Contributing
 ============
 
 Please see the :ref:`contributing` section for information on how to
-contribute.
+contribute. There :ref:`api` section also has a wealth of information on how
+the server works and how you can modify it or use parts of it.
 
-Author
-======
+Upcoming/planned features
+=========================
 
-Written and maintained by `Kura <https://kura.io/>`_.
+There is a list of upcoming/planned features on the :ref:`todo` page.
 
+Two of the biggest upcoming features will be
+`POP3 <https://en.wikipedia.org/wiki/Post_Office_Protocol>`_ and
+`IMAP4 <https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol>`_
+support, to help with email client development, tesing and whatever else you
+want to use it for.
+
+If you have a feature you need or would like, feel free to put an issue on the
+`issue tracker <https://github.com/kura/blackhole/issues>`_ or take a look at
+the :ref:`contributing` section for information on how you could implement
+the functionality yourself.
 
 Changelog
 =========
@@ -222,33 +214,17 @@ Changelog
 
     changelog
 
+Author
+======
 
-Reference
-=========
-
-.. toctree::
-    :maxdepth: 2
-
-    api-application
-    api-config
-    api-control
-    api-daemon
-    api-exceptions
-    api-logs
-    api-smtp
-    api-utils
+Written and maintained by `Kura <https://kura.io/>`_. You can stalk Kura on
+`Twitter <https://twitter.com/kuramanga>`_ and laugh at his code on `GitHub
+<https://github.com/kura>`_.
 
 Thanks & contributors
 =====================
 
-Thanks are here - :ref:`thanks` and contributors here :ref:`contributors`.
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Thanks are here -- :ref:`thanks` and contributors here -- :ref:`contributors`.
 
 
 .. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=flat-square&label=version

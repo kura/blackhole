@@ -34,7 +34,10 @@ import logging
 import os
 import pwd
 import socket
-import ssl
+try:
+    import ssl
+except ImportError:
+    ssl = None
 from blackhole.config import Config
 from blackhole.daemon import Daemon
 from blackhole.smtp import Smtp
@@ -68,6 +71,9 @@ def create_server(use_tls=False):
     if use_tls:
         logger.debug('Creating server (%s, %s, TLS=True)', config.address,
                      port)
+        if ssl is None:
+            logger.debug('TLS is disabled, skipping.')
+            return
     else:
         logger.debug('Creating server (%s, %s)', config.address, port)
     loop = asyncio.get_event_loop()
@@ -97,7 +103,11 @@ def start_servers():
     logger.debug('Starting...')
     create_server()
     if config.tls_port and config.tls_cert and config.tls_key:
-        create_server(use_tls=True)
+        if ssl is not None:
+            create_server(use_tls=True)
+        else:
+            logger.debug('TLS is disabled, skipping.')
+            return
 
 def stop_servers():
     """

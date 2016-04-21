@@ -4,6 +4,28 @@
 Changelog
 =========
 
+Upcoming/planned features
+=========================
+
+There is a list of upcoming/planned features on the :ref:`todo` page.
+
+Two of the biggest upcoming features will be
+`POP3 <https://en.wikipedia.org/wiki/Post_Office_Protocol>`_ and
+`IMAP4 <https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol>`_
+support, to help with email client development, tesing and whatever else you
+want to use it for.
+
+If you have a feature you need or would like, feel free to put an issue on the
+`issue tracker <https://github.com/kura/blackhole/issues>`_ or take a look at
+the :ref:`contributing` section for information on how you could implement
+the functionality yourself.
+
+2.0.3
+=====
+
+No changes in particular except documentation changes. Tag was created
+speficially for release to PyPI.
+
 2.0.2
 =====
 

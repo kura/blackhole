@@ -37,4 +37,5 @@ web:
 	rm -rf docs/build
 
 testssl:
-	testssl.sh --wide --colorblind blackhole.io:465 | aha | grep -v Start | grep -v Done | sed 's/stdin/testssl.sh/g' | awk -v RS= -v ORS='\n\n' '1' > docs/source/_extra/testssl.sh.html
+	sudo apt-get install -y aha
+	testssl.sh --wide --colorblind blackhole.io:465 | aha | grep -v 'Start' | grep -v 'Done' | grep -v '/usr/bin/openssl' | sed 's/stdin/testssl.sh/g' | awk -v RS= -v ORS='\n\n' '1' > docs/source/_extra/testssl.sh.html

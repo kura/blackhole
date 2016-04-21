@@ -383,16 +383,16 @@ class Config(metaclass=Singleton):
 
            On Linux the minimum is 1 and maximum is 65535.
         """
-        min, max = 1, 65535
-        if port < min:
-            msg = '''Port number {} is not usable because it is less than '''\
-                  '''{} which is the lowest available port.'''.format(port,
-                                                                      min)
+        min_port, max_port = 1, 65535
+        if port < min_port:
+            msg = ('Port number {} is not usable because it is less than '
+                   '{} which is the lowest available port.').format(port,
+                                                                    min_port)
             raise ConfigException(msg)
-        if port > max:
-            msg = '''Port number {} is not usable because it is less than '''\
-                  '''{} which is the highest available port'''.format(port,
-                                                                      max)
+        if port > max_port:
+            msg = ('Port number {} is not usable because it is less than '
+                   '{} which is the highest available port').format(port,
+                                                                    max_port)
             raise ConfigException(msg)
 
     def test_port(self):
@@ -400,11 +400,6 @@ class Config(metaclass=Singleton):
         Validate port number.
 
         :raises: `blackhole.exceptions.ConfigException`
-
-        .. note::
-
-           Only verifies port is a valid integer, does not verify port is
-           available or not in use.
         """
         try:
             _ = self.port
@@ -495,11 +490,6 @@ class Config(metaclass=Singleton):
         Validate TLS port number.
 
         :raises: `blackhole.exceptions.ConfigException`
-
-        .. note::
-
-           Only verifies port is a valid integer, does not verify port is
-           available or not in use.
         """
         if self._tls_port is None:
             return
@@ -528,8 +518,8 @@ class Config(metaclass=Singleton):
         if (port, cert, key) == (False, False, False):
             return
         if not all((port, cert, key)):
-            msg = '''To use TLS you must supply a port, certificate file '''\
-                  '''and key file.'''
+            msg = ('To use TLS you must supply a port, certificate file '
+                   'and key file.')
             raise ConfigException(msg)
 
     def test_delay(self):

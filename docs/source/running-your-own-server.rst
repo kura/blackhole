@@ -9,6 +9,34 @@ and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html
 and `await <https://docs.python.org/3/reference/expressions.html#await>`_
 statements available in Python 3.5 and above.
 
+There are plenty of reasons for running your own server and it's very simple to
+do. The base installation is a single line in length and the server will run
+out-of-the-box.
+
+Python < 3.5
+------------
+
+The original incarnation of Blackhole -- built on top of Tornado -- is still
+available for use on Python versions lower than 3.5, including PyPy.
+
+It is no longer maintained however, but is available for posterity's sake on
+`blackhole.io/1 <https://blackhole.io/1/>`_ and `GitHub
+<https://github.com/kura/blackhole/releases/tag/1.8.1>`_ for those people
+unable to use Python 3.5.
+
+Getting started
+===============
+
+.. toctree::
+    :maxdepth: 2
+
+    command-line-options
+    configuration-file-example
+    delay-flag
+    controlling-the-server-with-init-d
+    modes
+    response-codes
+
 Installation
 ============
 

@@ -1,7 +1,12 @@
 import asyncio
 import logging
 import os
+try:
+    import ssl
+except ImportError:
+    ssl = None
 import tempfile
+import unittest
 from unittest import mock
 
 import pytest
@@ -75,6 +80,7 @@ def test_create_server_bind_works(mock_sock):
     assert mock_sock.call_count is 1
 
 
+@unittest.skipIf(ssl is None, 'No ssl module')
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind', side_effect=OSError)
 def test_create_server_tls_bind_fails(mock_sock):
@@ -89,6 +95,7 @@ def test_create_server_tls_bind_fails(mock_sock):
     assert mock_sock.call_count is 1
 
 
+@unittest.skipIf(ssl is None, 'No ssl module')
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind')
 @mock.patch('ssl.create_default_context')
@@ -115,6 +122,7 @@ def test_start_servers(mock_bind):
     assert mock_bind.call_count is 1
 
 
+@unittest.skipIf(ssl is None, 'No ssl module')
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind')
 @mock.patch('ssl.create_default_context')
