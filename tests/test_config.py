@@ -126,7 +126,7 @@ class TestConfigTest(unittest.TestCase):
         user = getpass.getuser()
         group = grp.getgrgid(os.getgid()).gr_name
         settings = ('address=0.0.0.0', 'port=1025', 'user={}'.format(user),
-                    'group={}'.format(group), 'timeout=300', 'tls_port=1465',
+                    'group={}'.format(group), 'timeout=180', 'tls_port=1465',
                     'tls_cert={}'.format(cert), 'tls_key={}'.format(key),
                     'delay=10', 'mode=bounce')
         cfile = create_config(settings)
@@ -297,6 +297,12 @@ class TestTimeout(unittest.TestCase):
         cfile = create_config(('timeout=10',))
         conf = Config(cfile).load()
         assert conf.timeout == 10
+
+    def test_timeout_over_180(self):
+        cfile = create_config(('timeout=300',))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_timeout()
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
@@ -522,6 +528,12 @@ class TestDelay(unittest.TestCase):
         cfile = create_config(('timeout=30', 'delay=5'))
         conf = Config(cfile).load()
         assert conf.timeout > conf.delay
+
+    def test_delay_over_60(self):
+        cfile = create_config(('timeout=70', 'delay=70'))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_delay()
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')

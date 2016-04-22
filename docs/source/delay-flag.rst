@@ -5,10 +5,13 @@ Delay Flag
 ==========
 
 The delay flag was something that was requested during the Q+A phase
-when I did a talk on Blackhole.
+when I presented a talk on Blackhole.
 
 The server will delay it's response after the \\r\\n.\\r\\n line after the DATA
 verb.
+
+The blackhole server is hardcoded to have a maximum delay of 60 seconds for
+security (denial of service).
 
 As an example::
 
@@ -29,4 +32,4 @@ As an example::
     QUIT
 
 You can enable delay using the configuration file option
-:ref:`configuration-file-example`.
+:ref:`configuration-file-example` or using :ref:`dynamic-switches`.

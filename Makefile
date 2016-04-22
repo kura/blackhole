@@ -24,6 +24,7 @@ lint:
 
 docs:
 	pip install sphinx
+	rm -rf docs/build
 	sphinx-build -b html docs/source/ docs/build/
 
 release:

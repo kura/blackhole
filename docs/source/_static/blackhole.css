@@ -63,6 +63,12 @@ div.admonition p.admonition-title {
 
 pre, tt, code {
     font-family: FiraMono, monospace, serif !important;
+        padding: 7px 30px;
+        padding-left: 10px !important;
+}
+
+code.literal {
+    padding: 7px;
 }
 
 span.strikethrough { text-decoration: line-through; }

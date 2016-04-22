@@ -57,6 +57,10 @@ class Smtp(asyncio.StreamReaderProtocol):
     }
     """A dictionary of response codes and messages for bouncing mail."""
 
+    _delay = None
+    _max_delay = 60
+    _mode = None
+
     def __init__(self):
         """
         Initialise the SMTP parotocol.
@@ -323,7 +327,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         responses = ('250-HELP', '250-PIPELINING', '250-AUTH {}'.format(auth),
                      '250-SIZE {}'.format(self.config.max_message_size),
                      '250-VRFY', '250-ETRN', '250-ENHANCEDSTATUSCODES',
-                     '250-8BITMIME', '250 DSN', )
+                     '250-8BITMIME', '250-SMTPUTF8', '250 DSN', )
         for response in responses:
             response = "{}\r\n".format(response).encode('utf-8')
             logger.debug("SENT %s", response)
@@ -349,6 +353,29 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def help_DATA(self):
         """Send help for the DATA verb."""
         await self.push(250, 'Syntax: DATA')
+
+    def process_header(self, line):
+        logger.debug('HEADER RECV: %s', line)
+        key, value = line.split(':')
+        key, value = key.lower().strip(), value.lower().strip()
+        if key == 'x-blackhole-delay':
+            self.delay = value
+        if key == 'x-blackhole-mode':
+            self.mode = value
+
+    async def response_from_mode(self):
+        logger.debug('MODE: %s', self.mode)
+        if self.mode == 'bounce':
+            key = random.choice(list(self.bounce_responses.keys()))
+            await self.push(key, self.bounce_responses[key])
+        elif self.mode == 'random':
+            resps = {250: '2.0.0 OK: queued as {}'.format(self.message_id), }
+            resps.update(self.bounce_responses)
+            key = random.choice(list(resps.keys()))
+            await self.push(key, resps[key])
+        else:
+            msg = '2.0.0 OK: queued as {}'.format(self.message_id)
+            await self.push(250, msg)
 
     async def do_DATA(self):
         r"""
@@ -379,23 +406,17 @@ class Smtp(asyncio.StreamReaderProtocol):
             if line == b'\n':
                 body = True
             body_data.append(line)
+
         if len(b''.join(body_data)) > self.config.max_message_size:
             await self.push(552, 'Message size exceeds fixed maximum message '
                             'size')
             return
-        if self.config.delay:
-            asyncio.sleep(self.config.delay)
-        if self.config.mode == 'bounce':
-            key = random.choice(list(self.bounce_responses.keys()))
-            await self.push(key, self.bounce_responses[key])
-        elif self.config.mode == 'random':
-            resps = {250, '2.0.0 OK: queued as {}'.format(self.message_id), }
-            resps.update(self.bounce_responses)
-            key = random.choice(list(resps.keys()))
-            await self.push(key, resps[key])
-        else:
-            msg = '2.0.0 OK: queued as {}'.format(self.message_id)
-            await self.push(250, msg)
+            if line.lower().startswith(b'x-blackhole'):
+                self.process_header(line.decode('utf-8').rstrip('\n'))
+        if self.delay:
+            logger.debug('DELAYING RESPONSE: %s seconds', self.delay)
+            await asyncio.sleep(self.delay)
+        await self.response_from_mode()
 
     async def do_STARTTLS(self):
         """STARTTLS is not implemented."""
@@ -468,3 +489,91 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def do_UNKNOWN(self):
         """Send response to unknown verb."""
         await self.push(502, '5.5.2 Command not recognised')
+
+    @property
+    def delay(self):
+        if self._delay is not None:
+            return self._delay
+        if self.config.delay is not None:
+            return self.config.delay
+        return None
+
+    @delay.setter
+    def delay(self, values):
+        logger.debug('DELAY: Dymanic delay enabled')
+        value = values.split(',')
+        if len(value) == 2:
+            self._delay_range(value)
+        elif len(value) == 1:
+            self._delay_single(value[0])
+        else:
+            logger.debug('DELAY: Invalid value(s): %s. Skipping', values)
+            return
+
+    def _delay_range(self, value):
+        min_delay, max_delay = value
+        min_delay, max_delay = min_delay.strip(), max_delay.strip()
+        try:
+            min_delay = int(min_delay)
+            max_delay = int(max_delay)
+        except ValueError:
+            logger.debug('DELAY: Unable to convert %s, %s to integers. '
+                         'Skipping', min_delay, max_delay)
+            self._delay = None
+            return
+        if min_delay < 0 or max_delay < 0:
+            logger.debug('DELAY: A value is less than 0: %s, %s. Skipping',
+                         min_delay, max_delay)
+            self._delay = None
+            return
+        if min_delay > max_delay:
+            logger.debug('Min cannot be greater than max')
+            self._delay = None
+            return
+        if max_delay > self._max_delay:
+            logger.debug('DELAY: %s is higher than %s. %s is the hard coded '
+                         'maximum delay for security.', max_delay,
+                         self._max_delay, self._max_delay)
+            max_delay = self._max_delay
+        self._delay = random.randint(min_delay, max_delay)
+        logger.debug('DELAY: Set to %s from range %s-%s', self._delay,
+                     min_delay, max_delay)
+        return
+
+    def _delay_single(self, value):
+        try:
+            value = int(value)
+        except ValueError:
+            logger.debug('DELAY: Unable to convert %s to an integer. Skipping',
+                         value)
+            self._delay = None
+            return
+        logger.debug(value)
+        if value < 0:
+            logger.debug('DELAY: %s is less than 0. Skipping', value)
+            self._delay = None
+            return
+        if value > self._max_delay:
+            logger.debug('DELAY: %s is higher than %s. %s is the hard coded '
+                         'maximum delay for security.', value, self._max_delay,
+                         self._max_delay)
+            self._delay = self._max_delay
+            return
+        logger.debug('DELAY: Set to %s', value)
+        self._delay = value
+
+    @property
+    def mode(self):
+        if self._mode is not None:
+            return self._mode
+        return self.config.mode
+
+    @mode.setter
+    def mode(self, value):
+        if value not in ['accept', 'bounce', 'random']:
+            logger.debug('MODE: %s is an invalid. Allowed modes: (accept, '
+                         'bounce, random)', value)
+            self._mode = None
+            return
+        logger.debug('MODE: Dynamic mode enabled. Mode set to %s', value)
+        self._mode = value

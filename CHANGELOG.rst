@@ -4,8 +4,9 @@
 Changelog
 =========
 
+-------------------------
 Upcoming/planned features
-=========================
+-------------------------
 
 There is a list of upcoming/planned features on the :ref:`todo` page.
 
@@ -20,20 +21,35 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
+---------------
+Future releases
+---------------
+
+.. _2.0.4:
+
 2.0.4
 =====
 
-- Re-added the ability to configure max message size. Displays in EHLO and is
-  enforced in DATA command. Default is 512000 bytes (512 KB).
+- :ref:`dynamic-switches`.
+- Re-added the ability to configure max message size. Displays in `EHLO` and
+  enforced in `DATA` command. Default is 512000 bytes (512 KB).
 - Added `tls_dhparams` options for loading Diffie Hellman ephemeral parameters.
 - Added SMTP AUTH mechanisms. Currently PLAIN, LOGIN and CRAM-MD5 are
   supported.
+
+-------------
+Past releases
+-------------
+
+.. _2.0.3:
 
 2.0.3
 =====
 
 No changes in particular except documentation changes. Tag was created
 speficially for release to PyPI.
+
+.. _2.0.2:
 
 2.0.2
 =====
@@ -68,6 +84,8 @@ speficially for release to PyPI.
       0xC0,0x23  -  ECDHE-ECDSA-AES128-SHA256      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(128)       Mac=SHA256
       0xC0,0x27  -  ECDHE-RSA-AES128-SHA256        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(128)       Mac=SHA256
 
+.. _2.0.1:
+
 2.0.1
 =====
 
@@ -91,6 +109,8 @@ speficially for release to PyPI.
   `https://bugs.python.org/review/23749/ <https://bugs.python.org/review/23749/>`_
 - A lot of status codes have been removed.
 
+.. _1.8.1:
+
 1.8.1
 =====
 
@@ -99,6 +119,8 @@ speficially for release to PyPI.
   sending to the server and refuse to send it due to the message size being
   larger than the default limit.
   This limit is not enforced by the server itself.
+
+.. _1.8.0:
 
 1.8.0
 =====
@@ -112,10 +134,14 @@ speficially for release to PyPI.
 - Changed get_mailname method to use `__builtin__.open` instead of
   `__builtin__.file`
 
+.. _1.7.0:
+
 1.7.0
 =====
 
 - Added STARTTLS
+
+.. _1.6.4:
 
 1.6.4
 =====
@@ -124,6 +150,8 @@ speficially for release to PyPI.
 - Fixed daemonisation issue on PyPy
 - Added FQDN to HELO/EHLO
 - Removed SMTP 251-253 from responses
+
+.. _1.6.0:
 
 1.6.0
 =====

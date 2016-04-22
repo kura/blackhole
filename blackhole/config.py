@@ -241,6 +241,7 @@ class Config(metaclass=Singleton):
         .. note::
 
            Defaults to 60 seconds.
+           Cannot be more 180 seconds for security (denial of service).
 
         :returns: int -- A timeout in seconds.
         """
@@ -325,8 +326,9 @@ class Config(metaclass=Singleton):
         .. note::
 
            Defaults to None.
+           Cannot be higher than 60 seconds for security (denial of service).
 
-        :returns: int or None -- A timeout in seconds.
+        :returns: int or None -- A delay in seconds.
         """
         if self._delay is not None:
             return int(self._delay)
@@ -516,6 +518,9 @@ class Config(metaclass=Singleton):
         except ValueError:
             msg = '{} is not a valid number of seconds.'.format(self._timeout)
             raise ConfigException(msg)
+        if self.timeout and self.timeout > 180:
+            raise ConfigException('Timeout must be 180 seconds or less for '
+                                  'security (denial of service).')
 
     def test_tls_port(self):
         """
@@ -579,6 +584,9 @@ class Config(metaclass=Singleton):
         """
         if self.delay and self.delay >= self.timeout:
             raise ConfigException('Delay must be lower than timeout.')
+        if self.delay and self.delay > 60:
+            raise ConfigException('Delay must be 60 seconds or less for '
+                                  'security (denial of service).')
 
     def test_mode(self):
         """

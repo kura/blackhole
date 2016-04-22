@@ -12,16 +12,16 @@ Blackhole is built on top of `asyncio
 and `await <https://docs.python.org/3/reference/expressions.html#await>`_
 statements available in Python 3.5 and above.
 
-While Blackhole is an MTA (mail transport agent), none of the actions
+While blackhole is an MTA (mail transport agent), none of the actions
 performed via SMTP or SMTPS are actually processed and no email or sent or
 delivered.
 
-You can tell Blackhole how to handle mail that it receives. It can accept all
+You can tell blackhole how to handle mail that it receives. It can accept all
 of it, bounce it all or randomly do either of those two actions. No matter how
 you choose to configure it, the email is never actually delivered, it just
 appears to have been delivered or bounced.
 
-Think of Blackhole sort of like a honeypot in terms of how it handles mail,
+Think of blackhole sort of like a honeypot in terms of how it handles mail,
 but it's specifically designed with testing in mind.
 
 Why?
@@ -35,9 +35,9 @@ over due to the stess -- thus blackhole was born.
 Using the blackhole.io service
 ==============================
 
-Blackhole has support for the HELP verb, allowing you to quickly and easily see
-which commands are and are not implemented. You can use this command verb
-:ref:`telnet` as describe below.
+Blackhole has support for the ``HELP`` verb, allowing you to quickly and easily
+see which commands are and are not implemented. You can use this command verb
+:ref:`telnet` as described below.
 
 .. code-block:: none
 
@@ -45,14 +45,30 @@ which commands are and are not implemented. You can use this command verb
     S: 250 Supported commands: DATA EHLO ETRN HELO...
     C: HELP HELO
     S: 250 Syntax: HELO domain.tld
+    C: HELO kura.io
+    S: 250 OK
     C: HELP INVALID
     S: 501 Supported commands: DATA EHLO ETRN HELO...
+
+By design, the blackhole server doesn't care about the order you send commands,
+whether they are capitalised or whether you send a valid, fully qualified
+domain name or email addresses.
+
+Dynamic delay and response mode switches
+----------------------------------------
+
+Blackhole allows you to configure an amount of time to wait before responding
+to a client and how to respond, for example accept the mail or bounce it.
+
+You can also configure these settings on-the-fly per email, using headers.
+
+Please read the :ref:`dynamic-switches` section for more information on dynamic
+switches.
 
 SSL/TLS configuration
 ---------------------
 
-The blackhole server and codebase are designed with these `security
-considerations <https://docs.python.org/3/library/ssl.html#ssl-security>`_ in
+The blackhole codebase is designed with these `security considerations <https://docs.python.org/3/library/ssl.html#ssl-security>`_ in
 mind. As such, `SSLv2` and `SSLv3` are explicitly disabled and these ciphers
 are used.
 
@@ -69,33 +85,35 @@ are used.
     0xC0,0x23  -  ECDHE-ECDSA-AES128-SHA256      TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AES(128)       Mac=SHA256
     0xC0,0x27  -  ECDHE-RSA-AES128-SHA256        TLSv1.2  Kx=ECDH  Au=RSA    Enc=AES(128)       Mac=SHA256
 
-These ciphers are specifically taken from `Modern` configuration on the `Mozilla
-TLS page <https://wiki.mozilla.org/Security/Server_Side_TLS>`_.
+These ciphers are specifically taken from `modern` configuration on the
+`Mozilla TLS page <https://wiki.mozilla.org/Security/Server_Side_TLS>`_. The
+code that handles wrapping SSL/TLS sockets, can be found `on GitHub <https://github.com/kura/blackhole/blob/master/blackhole/control.py#L89-L93>`_.
 
 You can test the default security using `testssl.sh <https://testssl.sh/>`_.
 
 .. code-block:: bash
 
-    ./testssl.sh blackhole.io 465
+    testssl.sh blackhole.io 465
 
-Example output of `testssl.sh` can be found on `here </testssl.sh.html>`_.
+Example output of `testssl.sh` testing the blackhole server can be found
+`here </testssl.sh.html>`_.
 
 
 STARTTLS
 --------
 
-Currently `asyncio` does not have the code in place to make *STARTTLS*
-possible, the *STARTTLS* verb returns a ``500 Not implemented`` response
+Currently `asyncio` does not have the code in place to make STARTTLS
+possible, the STARTTLS verb returns a ``500 Not implemented`` response
 until it's possible to implement. -- `https://bugs.python.org/review/23749/ <https://bugs.python.org/review/23749/>`_
 
-While *STARTTLS* is disabled, you can still talk to blackhole over SMTPS on
-it's standard port 465 as well as unencrypted, on the standard port 25.
+While STARTTLS is disabled, you can still talk to blackhole over SMTPS on
+it's standard port `465` as well as unencrypted, on the standard port `25`.
 
 MX
 --
 
-This service provides real MX records, allowing any `@blackhole.io` to appear as
-if it works.
+This service provides real MX records, allowing any `@blackhole.io` to appear
+as if it works. Blackhole will accept any email from or to any domain.
 
 .. code::
 
@@ -115,22 +133,31 @@ the application tries to send will hit the blackhole.io service and look as if
 it was sent and received, but no actually email is sent out.
 
 .. code-block:: python
-   :linenos:
 
-    from smtplib import SMTP_SSL  # You can import SMTP to not use SSL/TLS.
+    # from smtplib import SMTP             # For sending without SSL/TLS.
+    from smtplib import SMTP_SSL
 
-    msg = """From: <test@blackhole.io>
+    msg = '''From: <test@blackhole.io>
     To: <test@blackhole.io>
-    Subject: Test
+    Subject: Test email
 
-    Random test message.
-    """
+    Random test email. Some UTF-8 characters: ßæøþ'''
 
-    # smtp = SMTP('blackhole.io', 25)  # This would not use SSL/TLS
+    # smtp = SMTP('blackhole.io', 25)      # For sending without SSL/TLS.
     smtp = SMTP_SSL('blackhole.io', 465)
     smtp.sendmail('test@blackhole.io', 'test@blackhole.io',
                   msg.encode('utf-8'))
+
+    # We can send multiple messages using the same connection.
+    smtp.sendmail('tset@blackhole.io', 'tset@blackhole.io',
+                  msg.encode('utf-8'))
+
+    # Quit after we're done
     smtp.quit()
+
+This example is written in Python but, any language can be used to communicate
+with the blackhole server. Blackhole is capable of receiving non-ASCII
+characters.
 
 .. _telnet:
 
@@ -139,8 +166,8 @@ Test via telnet
 
 ::
 
-    Trying 127.0.0.1...
-    Connected to localhost.
+    Trying 46.101.237.170...
+    Connected to blackhole.io.
     Escape character is '^]'.
     220 blackhole.io ESMTP
     EHLO blackhole.io
@@ -168,6 +195,8 @@ Test via telnet
     QUIT
     221 2.0.0 Goodbye
     Connection closed by foreign host.
+
+You can talk to the SSL/TLS endpoint using ``openssl s_client``.
 
 Running your own server
 =======================
@@ -210,7 +239,7 @@ Changelog
 =========
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     changelog
 

@@ -37,10 +37,11 @@ You can download a copy of this example file from
 
     #
     # Timeout after no data has been received in seconds.
-    # Defaults to 60 seconds.
+    # Defaults to 60 seconds. Cannot be more than 180 seconds for security
+    # (denial of service).
     #
     # timeout=45
-    # timeout=300
+    # timeout=180
 
     #
     # Port to use for TLS.
@@ -70,7 +71,8 @@ You can download a copy of this example file from
     # response.
     #
     # Must be less than timeout.
-    # Time is in seconds.
+    # Time is in seconds and cannot be set above 60 seconds for security
+    # (denial of service).
     # Non-blocking - won't affect other connections.
     #
     # delay=10
