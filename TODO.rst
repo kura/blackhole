@@ -9,7 +9,8 @@ TODO
 Things on the todo list, in no particular order.
 
 - Implement logging to a file.
-- Add pidfile tests for config to config_test and pytest.
+- :strikethrough:`Add pidfile tests for config to config_test and pytest.` -
+  :ref:`2.0.4`
 - :strikethrough:`Add socket bind tests to config_test and pytest` -
   :ref:`2.0.2`
 - :strikethrough:`Dynamic mode switch  - helo, ehlo, delay verb, rcpt, mail

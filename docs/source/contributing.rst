@@ -17,6 +17,9 @@ need to feel daunted. You can contribute in a variety of ways:
 
 You can view a list of tasks that need work on the :ref:`todo` page.
 
+The :ref:`api` section also has a wealth of information on how the server works
+and how you can modify it or use parts of it.
+
 Getting started
 ===============
 

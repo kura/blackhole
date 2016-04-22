@@ -144,7 +144,8 @@ def test_stop_servers(mock_server, mock_loop):
     blackhole.control._servers = [asyncio.base_events.Server([], []),
                                   asyncio.base_events.Server([], []),
                                   asyncio.base_events.Server([], [])]
-    stop_servers()
+    with mock.patch('os.path.exists', return_value=False):
+        stop_servers()
     assert len(blackhole.control._servers) is 0
 
 

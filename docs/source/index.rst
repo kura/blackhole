@@ -37,7 +37,7 @@ Using the blackhole.io service
 
 Blackhole has support for the ``HELP`` verb, allowing you to quickly and easily
 see which commands are and are not implemented. You can use this command verb
-:ref:`telnet` as described below.
+as described below.
 
 .. code-block:: none
 
@@ -216,7 +216,7 @@ Contributing
 ============
 
 Please see the :ref:`contributing` section for information on how to
-contribute. There :ref:`api` section also has a wealth of information on how
+contribute. The :ref:`api` section also has a wealth of information on how
 the server works and how you can modify it or use parts of it.
 
 Upcoming/planned features

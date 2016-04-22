@@ -36,6 +36,7 @@ Future releases
 - Added `tls_dhparams` options for loading Diffie Hellman ephemeral parameters.
 - Added SMTP AUTH mechanisms. Currently PLAIN, LOGIN and CRAM-MD5 are
   supported.
+- Added pidfile and related self tests to config_test command.
 
 -------------
 Past releases

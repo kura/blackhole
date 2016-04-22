@@ -130,7 +130,7 @@ class Daemon(metaclass=Singleton):
         try:
             with open(self.pidfile, 'w+') as pidfile:
                 pidfile.write("{}\n".format(pid))
-        except (IOError, FileNotFoundError) as err:
+        except (IOError, FileNotFoundError, PermissionError) as err:
             raise DaemonException(err.strerror)
 
     @pid.deleter

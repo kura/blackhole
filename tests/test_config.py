@@ -588,3 +588,24 @@ class TestMaxMessageSize(unittest.TestCase):
         conf = Config(cfile).load()
         assert conf.max_message_size == 1024000
         assert conf.test_max_message_size() is None
+
+
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+class TestPidfile(unittest.TestCase):
+
+    def test_pidfile_default(self):
+        cfile = create_config(('', ))
+        conf = Config(cfile).load()
+        assert conf.pidfile == '/tmp/blackhole.pid'
+
+    def test_pidfile_no_permission(self):
+        cfile = create_config(('pidfile=/fake/path.pid', ))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_pidfile()
+
+    def test_pidfile_with_permission(self):
+        cfile = create_config(('pidfile=/tmp/path.pid', ))
+        conf = Config(cfile).load()
+        with mock.patch('builtins.open', return_value=True):
+            conf.test_pidfile()

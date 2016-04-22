@@ -611,3 +611,17 @@ class Config(metaclass=Singleton):
             size = self._max_message_size
             msg = '{} is not a valid number of bytes.'.format(size)
             raise ConfigException(msg)
+
+    def test_pidfile(self):
+        """
+        Validate that the pidfile can be written to.
+
+        :raises: `blackhole.exceptions.ConfigException`
+        """
+        if not self.pidfile:
+            return
+        try:
+            open(self.pidfile, 'w+')
+        except (IOError, FileNotFoundError, PermissionError):
+            msg = ('You do not have permission to write to the pidfile.')
+            raise ConfigException(msg)
