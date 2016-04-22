@@ -28,6 +28,7 @@ This module contains the Smtp protocol.
 
 
 import asyncio
+import base64
 import inspect
 import logging
 import random
@@ -131,6 +132,80 @@ class Smtp(asyncio.StreamReaderProtocol):
             else:
                 await self.push(502, '5.5.2 Command not recognised')
 
+    def get_auth_members(self):
+        members = inspect.getmembers(self, predicate=inspect.ismethod)
+        cmds = []
+        for cmd, _ in members:
+            if cmd.startswith('auth_'):
+                cmd = cmd.replace('auth_', '').replace('_', '-')
+                cmds.append(cmd)
+        return cmds
+
+    def lookup_auth_handler(self, line):
+        parts = line.split(' ')
+        if len(parts) < 2:
+            return None
+        mechanism = parts[1].upper()
+        if mechanism == 'CRAM-MD5':
+            return self.auth_CRAM_MD5
+        if mechanism not in self.get_auth_members():
+            return self.do_UNKNOWN
+        if len(parts) == 3 and mechanism == 'PLAIN':
+            return self._auth_success
+        return getattr(self, 'auth_{}'.format(mechanism.upper()),
+                       self.do_UNKNOWN)
+
+    async def help_AUTH(self):
+        """Send help for AUTH verb."""
+        mechanisms = ' '.join(self.get_auth_members())
+        await self.push(250, 'Syntax: AUTH {}'.format(mechanisms))
+
+    async def auth_LOGIN(self):
+        await self.push(334, 'VXNlcm5hbWU6')
+        try:
+            line = await asyncio.wait_for(self._reader.readline(),
+                                          self.config.timeout,
+                                          loop=self.loop)
+        except asyncio.TimeoutError:
+            await self.timeout()
+        logger.debug('RECV %s', line)
+        await self.push(334, 'UGFzc3dvcmQ6')
+        try:
+            line = await asyncio.wait_for(self._reader.readline(),
+                                          self.config.timeout,
+                                          loop=self.loop)
+        except asyncio.TimeoutError:
+            await self.timeout()
+        logger.debug('RECV %s', line)
+        await self._auth_success()
+
+    async def auth_CRAM_MD5(self):
+        message_id = bytes(self.message_id.encode('utf-8'))
+        resp = base64.b64encode(message_id)
+        await self.push(334, resp)
+        try:
+            line = await asyncio.wait_for(self._reader.readline(),
+                                          self.config.timeout,
+                                          loop=self.loop)
+        except asyncio.TimeoutError:
+            await self.timeout()
+        logger.debug('RECV %s', line)
+        await self._auth_success()
+
+    async def auth_PLAIN(self):
+        await self.push(334, '')
+        try:
+            line = await asyncio.wait_for(self._reader.readline(),
+                                          self.config.timeout,
+                                          loop=self.loop)
+        except asyncio.TimeoutError:
+            await self.timeout()
+        logger.debug('RECV %s', line)
+        await self._auth_success()
+
+    async def _auth_success(self):
+        await self.push(235, '2.7.0 Authentication successful')
+
     async def timeout(self):
         """
         Timeout a client connection.
@@ -161,6 +236,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         if parts:
             if parts[0].lower() == 'help':
                 return self.lookup_help_handler(parts)
+            if parts[0].lower() == 'auth':
+                return self.lookup_auth_handler(line)
             else:
                 return self.lookup_verb_handler(parts[0])
         return self.do_UNKNOWN
@@ -207,7 +284,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """Send a greeting to the client."""
         await self.push(220, '{} ESMTP'.format(self.fqdn))
 
-    def get_members(self):
+    def get_help_members(self):
         """
         Get a list of help handlers for verbs.
 
@@ -222,7 +299,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def do_HELP(self):
         """Send a response to the HELP verb."""
-        msg = ' '.join(self.get_members())
+        msg = ' '.join(self.get_help_members())
         await self.push(250, 'Supported commands: {}'.format(msg))
 
     async def help_HELO(self):
@@ -242,7 +319,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         response = "250-{}\r\n".format(self.fqdn).encode('utf-8')
         self._writer.write(response)
         logger.debug('SENT %s', response)
-        responses = ('250-HELP', '250-PIPELINING',
+        auth = ' '.join(self.get_auth_members())
+        responses = ('250-HELP', '250-PIPELINING', '250-AUTH {}'.format(auth),
                      '250-SIZE {}'.format(self.config.max_message_size),
                      '250-VRFY', '250-ETRN', '250-ENHANCEDSTATUSCODES',
                      '250-8BITMIME', '250 DSN', )
@@ -288,7 +366,6 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(354, 'End data with <CR><LF>.<CR><LF>')
         body = False
         body_data = []
-        logger.debug(self.config.max_message_size)
         while not self.connection_closed:
             try:
                 line = await asyncio.wait_for(self._reader.readline(),
@@ -385,7 +462,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def help_UNKNOWN(self):
         """Send available help verbs when an invalid verb is received."""
-        msg = ' '.join(self.get_members())
+        msg = ' '.join(self.get_help_members())
         await self.push(501, 'Supported commands: {}'.format(msg))
 
     async def do_UNKNOWN(self):

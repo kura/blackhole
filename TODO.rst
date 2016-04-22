@@ -16,5 +16,5 @@ Things on the todo list, in no particular order.
   seconds, randomly) - helo, ehlo, delay verb, rcpt, mail from
 - :strikethrough:`HELP verb` - :ref:`2.0.2`
 - Improve TLS by adding load_dh_params
-- Add AUTH mechanism
+- :strikethrough:`Add AUTH mechanism` - :ref:`2.0.4`
 - POP & IMAP

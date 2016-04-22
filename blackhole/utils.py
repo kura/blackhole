@@ -68,7 +68,7 @@ def message_id():
             i += 1
     datetime = time.strftime('%Y%m%d%H%M%S', time.gmtime())
     pid = os.getpid()
-    rand = random.randrange(2**31-1)
+    rand = random.randrange(2**29-1)
     id_gen = id_generator()
     return '<{}.{}.{}.{}@{}>'.format(datetime, pid, rand, next(id_gen),
                                      mailname())
