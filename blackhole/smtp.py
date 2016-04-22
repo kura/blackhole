@@ -242,7 +242,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         response = "250-{}\r\n".format(self.fqdn).encode('utf-8')
         self._writer.write(response)
         logger.debug('SENT %s', response)
-        responses = ('250-HELP', '250-PIPELINING', '250-SIZE 512000',
+        responses = ('250-HELP', '250-PIPELINING',
+                     '250-SIZE {}'.format(self.config.max_message_size),
                      '250-VRFY', '250-ETRN', '250-ENHANCEDSTATUSCODES',
                      '250-8BITMIME', '250 DSN', )
         for response in responses:
@@ -285,6 +286,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         respond to the client.
         """
         await self.push(354, 'End data with <CR><LF>.<CR><LF>')
+        body = False
+        body_data = []
+        logger.debug(self.config.max_message_size)
         while not self.connection_closed:
             try:
                 line = await asyncio.wait_for(self._reader.readline(),
@@ -295,6 +299,13 @@ class Smtp(asyncio.StreamReaderProtocol):
             logger.debug('RECV %s', line)
             if line == b'.\r\n':
                 break
+            if line == b'\n':
+                body = True
+            body_data.append(line)
+        if len(b''.join(body_data)) > self.config.max_message_size:
+            await self.push(552, 'Message size exceeds fixed maximum message '
+                            'size')
+            return
         if self.config.delay:
             asyncio.sleep(self.config.delay)
         if self.config.mode == 'bounce':

@@ -536,3 +536,24 @@ class TestMode(unittest.TestCase):
         cfile = create_config(('mode=random',))
         conf = Config(cfile).load()
         assert conf.mode == 'random'
+
+
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+class TestMaxMessageSize(unittest.TestCase):
+
+    def test_no_size(self):
+        cfile = create_config(('',))
+        conf = Config(cfile).load()
+        assert conf.max_message_size == 512000
+
+    def test_invalid_size(self):
+        cfile = create_config(('max_message_size=abc',))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_max_message_size()
+
+    def test_size(self):
+        cfile = create_config(('max_message_size=1024000',))
+        conf = Config(cfile).load()
+        assert conf.max_message_size == 1024000
+        assert conf.test_max_message_size() is None

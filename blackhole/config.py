@@ -117,6 +117,7 @@ class Config(metaclass=Singleton):
     _pidfile = '/tmp/blackhole.pid'
     _delay = None
     _mode = 'accept'
+    _max_message_size = 512000
 
     def __init__(self, config_file="/etc/blackhole.conf"):
         """
@@ -339,6 +340,23 @@ class Config(metaclass=Singleton):
     def mode(self, mode):
         self._mode = mode.lower()
 
+    @property
+    def max_message_size(self):
+        """
+        The maximum size, in bytes, of a message.
+
+        .. note::
+
+            Default 512000 bytes (512 KB).
+        :returns: int
+        """
+        if self._max_message_size is not None:
+            return int(self._max_message_size)
+
+    @max_message_size.setter
+    def max_message_size(self, size):
+        self._max_message_size = size
+
     def test(self):
         """
         Test configuration validity.
@@ -543,3 +561,16 @@ class Config(metaclass=Singleton):
         """
         if self.mode not in ('accept', 'bounce', 'random'):
             raise ConfigException('Mode must be accept, bounce or random.')
+
+    def test_max_message_size(self):
+        """
+        Validate max_message size is an integer.
+
+        :raises: `blackhole.exceptions.ConfigException`
+        """
+        try:
+            _ = self.max_message_size
+        except ValueError:
+            size = self._max_message_size
+            msg = '{} is not a valid number of bytes.'.format(size)
+            raise ConfigException(msg)

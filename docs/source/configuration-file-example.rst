@@ -90,3 +90,9 @@ You can download a copy of this example file from
     # 571: Blocked
     #
     # mode=accept
+
+    #
+    # Maximum message size in bytes.
+    # Default 512000 bytes (512 KB).
+    #
+    # max_message_size=1024000
