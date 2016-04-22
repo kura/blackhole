@@ -30,7 +30,7 @@ docs:
 release:
 	pip install twine wheel
 	python setup.py sdist bdist_wheel
-	twine upload dist/*
+	twine upload -s -i 00AE065E dist/*
 
 web:
 	make docs
