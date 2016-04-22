@@ -423,13 +423,13 @@ class Smtp(asyncio.StreamReaderProtocol):
             if line == b'\n':
                 body = True
             body_data.append(line)
+            if line.lower().startswith(b'x-blackhole'):
+                self.process_header(line.decode('utf-8').rstrip('\n'))
 
         if len(b''.join(body_data)) > self.config.max_message_size:
             await self.push(552, 'Message size exceeds fixed maximum message '
                             'size')
             return
-            if line.lower().startswith(b'x-blackhole'):
-                self.process_header(line.decode('utf-8').rstrip('\n'))
         if self.delay:
             logger.debug('DELAYING RESPONSE: %s seconds', self.delay)
             await asyncio.sleep(self.delay)
