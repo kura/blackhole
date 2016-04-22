@@ -109,3 +109,14 @@ You can download a copy of this example file from
     # Default: /tmp/blackhole.pid
     #
     # pidfile=/var/run/blackhole.io
+
+    #
+    # Dynamic switches
+    # Allows switching how blackhole responds to an email and delays responding
+    # based on a header.
+    #
+    # https://blackhole.io/dynamic-switches.html#dynamic-switches
+    #
+    # Default: true
+    #
+    # dynamic_switch=false

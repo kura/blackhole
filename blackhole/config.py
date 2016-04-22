@@ -124,6 +124,7 @@ class Config(metaclass=Singleton):
     _delay = None
     _mode = 'accept'
     _max_message_size = 512000
+    _dynamic_switch = None
 
     def __init__(self, config_file="/etc/blackhole.conf"):
         """
@@ -355,7 +356,7 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-            Default 512000 bytes (512 KB).
+           Default 512000 bytes (512 KB).
         :returns: int
         """
         if self._max_message_size is not None:
@@ -364,6 +365,29 @@ class Config(metaclass=Singleton):
     @max_message_size.setter
     def max_message_size(self, size):
         self._max_message_size = size
+
+    @property
+    def dynamic_switch(self):
+        """
+        Enable or disable dynamic switches.
+
+        .. note::
+
+           Allowed values are true and false.
+           Default: true
+        """
+        if self._dynamic_switch is None:
+            return True
+        if self._dynamic_switch == 'false':
+            return False
+        return True
+
+    @dynamic_switch.setter
+    def dynamic_switch(self, dynamic_switch):
+        if dynamic_switch.lower() == 'false':
+            self._dynamic_switch = False
+        if dynamic_switch.lower() == 'true':
+            self._dynamic_switch = True
 
     def test(self):
         """
@@ -610,3 +634,15 @@ class Config(metaclass=Singleton):
         except FileNotFoundError:
             msg = ('The path to the pidfile does not exist.')
             raise ConfigException(msg)
+
+    def test_dynamic_switch(self):
+        """
+        Validate that the dynamic_switch value is correct.
+
+        :raises: `blackhole.exceptions.ConfigException`
+        """
+        if self._dynamic_switch is None:
+            return
+        if self._dynamic_switch not in ('true', 'false'):
+            raise ConfigException('Allowed dynamic_switch values are true and '
+                                  'false.')

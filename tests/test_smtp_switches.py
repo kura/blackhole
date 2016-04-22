@@ -30,6 +30,34 @@ def create_config(data):
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
+class TestHeadersSwitchDisabled(unittest.TestCase):
+
+    def test_headers_disabled(self):
+        cfile = create_config(('dynamic_switch=false', ))
+        Config(cfile).load()
+        smtp = Smtp()
+        assert smtp.mode == 'accept'
+        smtp.process_header('x-blackhole-mode: bounce')
+        assert smtp.mode == 'accept'
+
+    def test_headers_enabled(self):
+        cfile = create_config(('dynamic_switch=true', ))
+        Config(cfile).load()
+        smtp = Smtp()
+        assert smtp.mode == 'accept'
+        smtp.process_header('x-blackhole-mode: bounce')
+        assert smtp.mode == 'bounce'
+
+    def test_headers_default(self):
+        cfile = create_config(('', ))
+        Config(cfile).load()
+        smtp = Smtp()
+        assert smtp.mode == 'accept'
+        smtp.process_header('x-blackhole-mode: bounce')
+        assert smtp.mode == 'bounce'
+
+
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
 class TestProcessHeaders(unittest.TestCase):
 
     def test_valid_mode_header(self):

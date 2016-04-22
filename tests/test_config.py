@@ -609,3 +609,23 @@ class TestPidfile(unittest.TestCase):
         conf = Config(cfile).load()
         with mock.patch('builtins.open', return_value=True):
             conf.test_pidfile()
+
+
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+class TestDynamicSwitch(unittest.TestCase):
+
+    def test_dynamic_switch_default(self):
+        cfile = create_config(('', ))
+        conf = Config(cfile).load()
+        assert conf.dynamic_switch is True
+
+    def test_dynamic_switch_false(self):
+        cfile = create_config(('dynamic_switch=false', ))
+        conf = Config(cfile).load()
+        assert conf.dynamic_switch is False
+
+    def test_dynamic_switch_invalid(self):
+        cfile = create_config(('dynamic_switch=abc', ))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_dynamic_switch()

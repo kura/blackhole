@@ -373,6 +373,9 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     def process_header(self, line):
         logger.debug('HEADER RECV: %s', line)
+        if self.config.dynamic_switch is False:
+            logger.debug('Dynamic switches disabled, ignoring')
+            return
         key, value = line.split(':')
         key, value = key.lower().strip(), value.lower().strip()
         if key == 'x-blackhole-delay':

@@ -21,9 +21,20 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
--------------
-Past releases
--------------
+---------------
+Future releases
+---------------
+
+.. _2.0.6:
+
+2.0.6
+=====
+
+- Enable or disable dynamic switches in configuration.
+
+---------------
+Current release
+---------------
 
 .. _2.0.5:
 
@@ -33,6 +44,10 @@ Past releases
 - Fixed a bug with dynamic switches not being processed.
 
 .. _2.0.4:
+
+-------------
+Past releases
+-------------
 
 2.0.4
 =====
