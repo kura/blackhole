@@ -484,6 +484,23 @@ class TestTls(unittest.TestCase):
         assert conf.tls_cert == cert
         assert conf.tls_key == key
 
+    def test_default_dhparam(self):
+        cfile = create_config(('', ))
+        conf = Config(cfile).load()
+        assert conf.tls_dhparams is None
+
+    def test_dhparam_works(self):
+        dhparams = self.create_file('dhparams.pem')
+        cfile = create_config(('tls_dhparams={}'.format(dhparams), ))
+        conf = Config(cfile).load()
+        assert conf.tls_dhparams == dhparams
+
+    def test_dhparam_no_exist(self):
+        cfile = create_config(('tls_dhparams=/fake/path/dhparams.pem', ))
+        conf = Config(cfile).load()
+        with pytest.raises(ConfigException):
+            conf.test_tls_dhparams()
+
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 class TestDelay(unittest.TestCase):

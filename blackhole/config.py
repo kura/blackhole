@@ -114,6 +114,7 @@ class Config(metaclass=Singleton):
     _tls_port = None
     _tls_key = None
     _tls_cert = None
+    _tls_dhparams = None
     _pidfile = '/tmp/blackhole.pid'
     _delay = None
     _mode = 'accept'
@@ -289,6 +290,19 @@ class Config(metaclass=Singleton):
     @tls_cert.setter
     def tls_cert(self, tls_cert):
         self._tls_cert = tls_cert
+
+    @property
+    def tls_dhparams(self):
+        """
+        Diffie Hellman ephemeral parameters.
+
+        :returns: str
+        """
+        return self._tls_dhparams
+
+    @tls_dhparams.setter
+    def tls_dhparams(self, tls_dhparams):
+        self._tls_dhparams = tls_dhparams
 
     @property
     def pidfile(self):
@@ -538,6 +552,21 @@ class Config(metaclass=Singleton):
         if not all((port, cert, key)):
             msg = ('To use TLS you must supply a port, certificate file '
                    'and key file.')
+            raise ConfigException(msg)
+
+    def test_tls_dhparams(self):
+        """
+        Validate Diffie Hellman ephemeral parameters.
+
+        :raises: `blackhole.exceptions.ConfigException`
+
+        .. note::
+
+           Verifies Diffie Hellman ephemeral parameters are readable.
+        """
+        if self.tls_dhparams and not os.access(self.tls_dhparams, os.R_OK):
+            msg = ('To use Diffie Hellman ephemeral params you must supply a '
+                   'valid dhparams file.')
             raise ConfigException(msg)
 
     def test_delay(self):

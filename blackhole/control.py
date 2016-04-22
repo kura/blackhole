@@ -91,6 +91,8 @@ def create_server(use_tls=False):
         ctx.options |= ssl.OP_NO_SSLv2
         ctx.options |= ssl.OP_NO_SSLv3
         ctx.set_ciphers(':'.join(ciphers))
+        if config.tls_dhparams:
+            ctx.load_dh_params(config.tls_dhparams)
     else:
         ctx = None
     server = loop.create_server(factory, sock=sock, ssl=ctx)

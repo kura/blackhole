@@ -25,6 +25,7 @@ the functionality yourself.
 
 - Re-added the ability to configure max message size. Displays in EHLO and is
   enforced in DATA command. Default is 512000 bytes (512 KB).
+- Added `tls_dhparams` options for loading Diffie Hellman ephemeral parameters.
 
 2.0.3
 =====

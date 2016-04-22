@@ -59,6 +59,11 @@ You can download a copy of this example file from
     #
     # tls_key=/etc/ssl/blackhole.key
 
+    #
+    # Diffie Hellman ephemeral parameters.
+    # openssl dhparam 4096
+    #
+    # tls_dhparams=/etc/ssl/blackhole.dhparams.pem
 
     #
     # Delay for X seconds after the DATA command before sending the final
