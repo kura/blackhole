@@ -28,9 +28,9 @@ docs:
 	sphinx-build -b html docs/source/ docs/build/
 
 release:
-	pip install twine wheel
-	python setup.py sdist bdist_wheel
-	twine upload -s -i 00AE065E dist/*
+	pip install wheel
+	python setup.py sdist bdist_wheel upload
+	rm -rf dist/
 
 web:
 	make docs
