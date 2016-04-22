@@ -28,9 +28,7 @@ Provides utility functions to blackhole.
 
 
 import os
-import random
 import socket
-import time
 
 
 def mailname():
@@ -49,26 +47,3 @@ def mailname():
         if mailname_content != '':
             return mailname_content
     return socket.getfqdn()
-
-
-def message_id():
-    """
-    A globally unique random string in RFC 2822 Message-ID format.
-
-    .. note::
-
-       Message-ID is comprised of datetime.PID.random_int.id@f.q.dn.
-
-    :returns: str -- RFC 2822 Message-ID.
-    """
-    def id_generator():
-        i = 0
-        while True:
-            yield i
-            i += 1
-    datetime = time.strftime('%Y%m%d%H%M%S', time.gmtime())
-    pid = os.getpid()
-    rand = random.randrange(2**29-1)
-    id_gen = id_generator()
-    return '<{}.{}.{}.{}@{}>'.format(datetime, pid, rand, next(id_gen),
-                                     mailname())

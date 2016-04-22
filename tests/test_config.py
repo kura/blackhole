@@ -119,8 +119,10 @@ class TestConfigTest(unittest.TestCase):
             ffile.write('nothing')
         return path
 
+    @mock.patch('blackhole.config.Config.test_port', return_value=True)
+    @mock.patch('blackhole.config.Config.test_tls_port', return_value=True)
     @pytest.mark.usefixtures('reset_conf', 'cleandir')
-    def test_config_test(self):
+    def test_config_test(self, _, __):
         key = self.create_file('key.key')
         cert = self.create_file('crt.crt')
         user = getpass.getuser()

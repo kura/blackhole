@@ -29,12 +29,13 @@ This module contains the Smtp protocol.
 
 import asyncio
 import base64
+from email.utils import make_msgid as message_id
 import inspect
 import logging
 import random
 
 from blackhole.config import Config
-from blackhole.utils import mailname, message_id
+from blackhole.utils import mailname
 
 
 logger = logging.getLogger('blackhole.smtp')
@@ -184,9 +185,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self._auth_success()
 
     async def auth_CRAM_MD5(self):
-        message_id = bytes(self.message_id.encode('utf-8'))
-        resp = base64.b64encode(message_id)
-        await self.push(334, resp)
+        message_id = base64.b64encode(self.message_id.encode('utf-8'), b'==')
+        await self.push(334, '334 {}'.format(message_id))
         try:
             line = await asyncio.wait_for(self._reader.readline(),
                                           self.config.timeout,
