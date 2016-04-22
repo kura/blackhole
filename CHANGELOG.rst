@@ -32,9 +32,9 @@ Future releases
 
 - Enable or disable dynamic switches in configuration.
 
----------------
-Current release
----------------
+-------------
+Past releases
+-------------
 
 .. _2.0.5:
 
@@ -44,10 +44,6 @@ Current release
 - Fixed a bug with dynamic switches not being processed.
 
 .. _2.0.4:
-
--------------
-Past releases
--------------
 
 2.0.4
 =====

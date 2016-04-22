@@ -69,7 +69,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         .. note::
 
            Loads the configuration, defines the server's FQDN and generates
-           a RFC 2822 Message-ID.
+           an RFC 2822 Message-ID.
         """
         self.loop = asyncio.get_event_loop()
         super().__init__(
@@ -250,8 +250,9 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param line:
         :type line: str -- e.g. HELO blackhole.io
-        :returns: `blackhole.smtp..Smtpdo_VERB` or
-                  `blackhole.smtp..Smtphelp_VERB`.
+        :returns: `blackhole.smtp..Smtp.do_VERB`,
+                  `blackhole.smtp.Smtp.auth_MECHANISM` or
+                  `blackhole.smtp..Smtp.help_VERB`.
         """
         parts = line.split(None, 1)
         if parts:
@@ -372,6 +373,15 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, 'Syntax: DATA')
 
     def process_header(self, line):
+        """
+        Process dynamic switch email headers.
+
+        Reads x-blackhole-delay and x-blackhole-mode headers and re-configures
+        on-the-fly how the email is handled based on these headers.
+
+        :param line:
+        :type line: str -- an email header
+        """
         logger.debug('HEADER RECV: %s', line)
         if self.config.dynamic_switch is False:
             logger.debug('Dynamic switches disabled, ignoring')
@@ -384,6 +394,10 @@ class Smtp(asyncio.StreamReaderProtocol):
             self.mode = value
 
     async def response_from_mode(self):
+        """
+        Send a response based on the configured mode, including mode modified
+        by email headers.
+        """
         logger.debug('MODE: %s', self.mode)
         if self.mode == 'bounce':
             key = random.choice(list(self.bounce_responses.keys()))
@@ -512,6 +526,11 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     @property
     def delay(self):
+        """
+        Delay after the DATA command completes.
+
+        Value is in seconds, with a maximum value of 60 seconds.
+        """
         if self._delay is not None:
             return self._delay
         if self.config.delay is not None:
@@ -531,6 +550,17 @@ class Smtp(asyncio.StreamReaderProtocol):
             return
 
     def _delay_range(self, value):
+        """
+        Generate a delay from a range provided in the email header.
+
+        :param value:
+        :type value: str  -- a list of minimum and maximum values as a string.
+                     i.e. (10, 20).
+
+        .. note::
+
+           Converted from a string of a list to a list of integers.
+        """
         min_delay, max_delay = value
         min_delay, max_delay = min_delay.strip(), max_delay.strip()
         try:
@@ -561,6 +591,16 @@ class Smtp(asyncio.StreamReaderProtocol):
         return
 
     def _delay_single(self, value):
+        """
+        Generate a delay from a value provided in an email header.
+
+        :param value:
+        :type value: str -- 10
+
+        .. note:
+
+           Converted from a string to an integer.
+        """
         try:
             value = int(value)
         except ValueError:
@@ -584,6 +624,10 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     @property
     def mode(self):
+        """
+        How to responde to an email, taken from the email header is enabled
+        or falling back to the configuration.
+        """
         if self._mode is not None:
             return self._mode
         return self.config.mode
