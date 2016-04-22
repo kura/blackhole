@@ -47,19 +47,20 @@ def parse_cmd_args(args):
     :type args: list
     """
     parser = argparse.ArgumentParser('blackhole')
+    parser.add_argument('-v', '--version', action='version',
+                        version=__version__)
     parser.add_argument('-c', '--conf', type=str,
                         default='/etc/blackhole.conf',
                         dest='config_file', metavar='/etc/blackhole.conf',
                         help='override the default configuration options')
-    parser.add_argument('-v', '--version', action='version',
-                        version=__version__)
-    parser.add_argument('-t', '--test', dest='test', action='store_true',
-                        help='perform a configuration test and exit')
-    parser.add_argument('-d', '--debug', dest='debug', action='store_true',
-                        help='enable debugging mode')
-    parser.add_argument('-b', '--background', dest='background',
-                        action='store_true',
-                        help='run in the background')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-t', '--test', dest='test', action='store_true',
+                       help='perform a configuration test')
+    group.add_argument('-d', '--debug', dest='debug', action='store_true',
+                       help='enable debugging mode')
+    group.add_argument('-b', '--background', dest='background',
+                       action='store_true',
+                       help='run in the background')
     return parser.parse_args(args)
 
 

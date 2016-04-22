@@ -22,7 +22,7 @@ the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
 ---------------
-Future releases
+Current release
 ---------------
 
 .. _2.0.6:
