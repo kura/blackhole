@@ -138,6 +138,11 @@ class Smtp(asyncio.StreamReaderProtocol):
                 await self.push(502, '5.5.2 Command not recognised')
 
     def get_auth_members(self):
+        """
+        Get a list of available AUTH mechanisms.
+
+        :returns: list -- AUTH mechanisms.
+        """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
         for cmd, _ in members:
@@ -147,6 +152,13 @@ class Smtp(asyncio.StreamReaderProtocol):
         return cmds
 
     def lookup_auth_handler(self, line):
+        """
+        Look up a handler for the received AUTH mechanism.
+
+        :param line:
+        :type line: str
+        :returns: `blackhole.smtp.Smtp.auth_MECHANISM`.
+        """
         parts = line.split(' ')
         if len(parts) < 2:
             return None
@@ -161,11 +173,12 @@ class Smtp(asyncio.StreamReaderProtocol):
                        self.do_UNKNOWN)
 
     async def help_AUTH(self):
-        """Send help for AUTH verb."""
+        """Send help for AUTH mechanisms."""
         mechanisms = ' '.join(self.get_auth_members())
         await self.push(250, 'Syntax: AUTH {}'.format(mechanisms))
 
     async def auth_LOGIN(self):
+        """Handle an AUTH LOGIN request."""
         await self.push(334, 'VXNlcm5hbWU6')
         try:
             line = await asyncio.wait_for(self._reader.readline(),
@@ -185,8 +198,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self._auth_success()
 
     async def auth_CRAM_MD5(self):
+        """Handle an AUTH CRAM-MD5 request."""
         message_id = base64.b64encode(self.message_id.encode('utf-8'), b'==')
-        await self.push(334, '334 {}'.format(message_id))
+        await self.push(334, message_id)
         try:
             line = await asyncio.wait_for(self._reader.readline(),
                                           self.config.timeout,
@@ -197,7 +211,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self._auth_success()
 
     async def auth_PLAIN(self):
-        await self.push(334, '')
+        """Handle an AUTH PLAIN request."""
+        await self.push(334, ' ')
         try:
             line = await asyncio.wait_for(self._reader.readline(),
                                           self.config.timeout,
@@ -208,6 +223,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self._auth_success()
 
     async def _auth_success(self):
+        """Send an authentication successful response."""
         await self.push(235, '2.7.0 Authentication successful')
 
     async def timeout(self):
@@ -234,7 +250,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param line:
         :type line: str -- e.g. HELO blackhole.io
-        :returns: `blackhole.smtp.do_VERB` or `blackhole.smtp.help_VERB`.
+        :returns: `blackhole.smtp..Smtpdo_VERB` or
+                  `blackhole.smtp..Smtphelp_VERB`.
         """
         parts = line.split(None, 1)
         if parts:
@@ -252,7 +269,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param parts:
         :type parts: list
-        :returns: `blackhole.smtp.help_VERB`.
+        :returns: `blackhole.smtp.Smtp.help_VERB`.
         """
         if len(parts) > 1:
             cmd = 'help_{}'.format(parts[1].upper())
@@ -266,7 +283,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param verb:
         :type verb: str
-        :returns: `blackhole.smtp.do_VERB`.
+        :returns: `blackhole.smtp.Smtp.do_VERB`.
         """
         return getattr(self, 'do_{}'.format(verb.upper()), self.do_UNKNOWN)
 
@@ -290,7 +307,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     def get_help_members(self):
         """
-        Get a list of help handlers for verbs.
+        Get a list of HELP handlers for verbs.
 
         :returns: list -- help handler names.
         """
