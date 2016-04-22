@@ -20,6 +20,12 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
+2.0.4
+=====
+
+- Re-added the ability to configure max message size. Displays in EHLO and is
+  enforced in DATA command. Default is 512000 bytes (512 KB).
+
 2.0.3
 =====
 
