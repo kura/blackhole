@@ -1,5 +1,4 @@
 from io import StringIO
-import re
 from unittest import mock
 
 from blackhole.utils import mailname
