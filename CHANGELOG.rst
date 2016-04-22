@@ -21,9 +21,9 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
----------------
-Future releases
----------------
+-------------
+Past releases
+-------------
 
 .. _2.0.4:
 
@@ -37,10 +37,6 @@ Future releases
 - Added SMTP AUTH mechanisms. Currently PLAIN, LOGIN and CRAM-MD5 are
   supported.
 - Added pidfile and related self tests to config_test command.
-
--------------
-Past releases
--------------
 
 .. _2.0.3:
 

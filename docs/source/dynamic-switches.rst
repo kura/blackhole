@@ -12,8 +12,6 @@ switches, you can tell blackhole to bounce an email instead of accepting it or
 delay for 10 seconds before processing the email -- without affecting any
 other emails you are sending to the service.
 
-Dynamic switches are an upcoming feature in :ref:`2.0.4`.
-
 Dynamic mode switches
 =====================
 
