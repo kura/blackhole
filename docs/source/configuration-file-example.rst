@@ -103,3 +103,9 @@ You can download a copy of this example file from
     # Default 512000 bytes (512 KB).
     #
     # max_message_size=1024000
+
+    #
+    # Pid file location.
+    # Default: /tmp/blackhole.pid
+    #
+    # pidfile=/var/run/blackhole.io

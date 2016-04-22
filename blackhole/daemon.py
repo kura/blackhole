@@ -110,10 +110,11 @@ class Daemon(metaclass=Singleton):
         if os.path.exists(self.pidfile):
             try:
                 pid = open(self.pidfile, 'r').read().strip()
+                if pid != '':
+                    return int(pid)
             except (FileNotFoundError, IOError, PermissionError,
                     OSError) as err:
                 raise DaemonException(err.strerror)
-            return int(pid)
         return None
 
     @pid.setter

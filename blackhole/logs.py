@@ -31,12 +31,13 @@ import logging
 from logging.config import dictConfig
 
 
-DEBUG_FORMAT = '[%(levelname)s] blackhole.%(module)s: %(message)s'
+DEBUG_FORMAT = '[%(asctime)s] [%(levelname)s] blackhole.%(module)s: %(message)s'
+
 LOG_CONFIG = {
     'version': 1,
     'formatters': {
         'console': {'format': '%(message)s'},
-        'debug': {'format': DEBUG_FORMAT}
+        'debug': {'format': DEBUG_FORMAT},
     },
     'handlers': {
     },
@@ -46,9 +47,12 @@ LOG_CONFIG = {
 }
 
 DEBUG_HANDLER = {'class': 'logging.StreamHandler',
-                 'formatter': 'debug', 'level': logging.DEBUG}
+                 'formatter': 'debug',
+                 'level': logging.DEBUG}
+
 DEFAULT_HANDLER = {'class': 'logging.StreamHandler',
-                   'formatter': 'console', 'level': logging.INFO}
+                   'formatter': 'console',
+                   'level': logging.INFO}
 
 
 def configure_logs(args):

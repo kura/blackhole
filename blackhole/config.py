@@ -40,6 +40,12 @@ __version__ = __import__('blackhole').__version__
 
 
 def parse_cmd_args(args):
+    """
+    Parse arguments from the command line.
+
+    :param args:
+    :type args: list
+    """
     parser = argparse.ArgumentParser('blackhole')
     parser.add_argument('-c', '--conf', type=str,
                         default='/etc/blackhole.conf',
@@ -109,7 +115,6 @@ class Config(metaclass=Singleton):
     _port = 25
     _user = None
     _group = None
-    # _log_file = None
     _timeout = 60
     _tls_port = None
     _tls_key = None
@@ -219,19 +224,6 @@ class Config(metaclass=Singleton):
     @group.setter
     def group(self, group):
         self._group = group
-
-    # @property
-    # def log_file(self):
-    #     """
-    #     A full file path.
-    #
-    #     :returns: str -- A full file path.
-    #     """
-    #     return self._log_file
-    #
-    # @log_file.setter
-    # def log_file(self, value):
-    #     self._log_file = value
 
     @property
     def timeout(self):
@@ -497,16 +489,6 @@ class Config(metaclass=Singleton):
             msg = '{} is a not a valid group.'.format(self._group)
             raise ConfigException(msg)
 
-    # def test_log_file(self):
-    #     """
-    #     Validate log file and location are writable.
-    #
-    #     :raises: `blackhole.exceptions.ConfigException`
-    #     """
-    #     if self.log_file is not None and not os.access(self.log_file, os.W_OK):
-    #         msg = 'Cannot open log file {} for writing.'.format(self.log_file)
-    #         raise ConfigException(msg)
-
     def test_timeout(self):
         """
         Validate timeout - only allow a valid integer value in seconds.
@@ -622,6 +604,9 @@ class Config(metaclass=Singleton):
             return
         try:
             open(self.pidfile, 'w+')
-        except (IOError, FileNotFoundError, PermissionError):
+        except PermissionError:
             msg = ('You do not have permission to write to the pidfile.')
+            raise ConfigException(msg)
+        except FileNotFoundError:
+            msg = ('The path to the pidfile does not exist.')
             raise ConfigException(msg)

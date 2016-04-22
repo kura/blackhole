@@ -124,6 +124,8 @@ def stop_servers():
         server = _servers.pop()
         server.close()
         loop.run_until_complete(server.wait_closed())
+    for task in asyncio.Task.all_tasks():
+        task.cancel()
     loop.close()
     daemon = Daemon(conf.pidfile)
     if daemon.pid:
