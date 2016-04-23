@@ -30,7 +30,7 @@ docs:
 release:
 	pip install wheel
 	python setup.py sdist bdist_wheel upload
-	rm -rf dist/
+	rm -rf dist/ build/
 
 web:
 	make docs
