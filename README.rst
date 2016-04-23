@@ -75,4 +75,5 @@ And the test coverage report on `codecov
 Changelog
 =========
 
-You can find a list of changes `here <https://blackhole.io/changelog.html>`_.
+You can find a list of changes `on the
+blackhole website <https://blackhole.io/changelog.html>`_.
