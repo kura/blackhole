@@ -23,15 +23,20 @@
 # SOFTWARE.
 
 
-function _blackhole() {
-  cur="${COMP_WORDS[COMP_CWORD]}"
-  case "${COMP_WORDS[COMP_CWORD-1]}" in
-    *)
-      comms="-h --help -v --version -c --conf -t --test -d --debug -b --background"
-      COMPREPLY=($(compgen -W "${comms}" -- ${cur}))
-      ;;
-  esac
-  return 0
+_blackhole_complete() {
+    local cur_word=${COMP_WORDS[COMP_CWORD]}
+    local prev_word=${COMP_WORDS[COMP_CWORD - 1]}
+
+    if [[ "$cur_word" == -*  ]]; then
+        _blackhole_complete_options "$cur_word"
+    fi
 }
 
-complete -F _blackhole blackhole
+complete -o default -F _blackhole_complete blackhole
+
+_blackhole_complete_options() {
+    local cur_word=$1
+    local options="-h --help -v --version -c --conf -t --test -d --debug -b
+                  --background"
+    COMPREPLY=( $( compgen -W "$options" -- "$cur_word" ) )
+}
