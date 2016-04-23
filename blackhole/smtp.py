@@ -419,23 +419,22 @@ class Smtp(asyncio.StreamReaderProtocol):
         respond to the client.
         """
         await self.push(354, 'End data with <CR><LF>.<CR><LF>')
-        body = False
-        body_data = []
+        on_body = False
+        msg = []
         while not self.connection_closed:
             line = await self.wait()
             logger.debug('RECV %s', line)
+            msg.append(line)
+            if line.lower().startswith(b'x-blackhole') and on_body is False:
+                self.process_header(line.decode('utf-8').rstrip('\n'))
+            if len(b''.join(msg)) > self.config.max_message_size:
+                await self.push(552, 'Message size exceeds fixed maximum '
+                                'message size')
+                return
+            if line == b'\n':
+                on_body = True
             if line == b'.\r\n':
                 break
-            if line == b'\n':
-                body = True
-            body_data.append(line)
-            if line.lower().startswith(b'x-blackhole') and body is False:
-                self.process_header(line.decode('utf-8').rstrip('\n'))
-
-        if len(b''.join(body_data)) > self.config.max_message_size:
-            await self.push(552, 'Message size exceeds fixed maximum message '
-                            'size')
-            return
         if self.delay:
             logger.debug('DELAYING RESPONSE: %s seconds', self.delay)
             await asyncio.sleep(self.delay)

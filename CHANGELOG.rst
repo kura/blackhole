@@ -25,16 +25,23 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.0.7:
+
+2.0.7
+=====
+
+- Added email headers to SIZE checks. Resolves a potential DoS risk.
+
+-------------
+Past releases
+-------------
+
 .. _2.0.6:
 
 2.0.6
 =====
 
 - Enable or disable dynamic switches in configuration.
-
--------------
-Past releases
--------------
 
 .. _2.0.5:
 
