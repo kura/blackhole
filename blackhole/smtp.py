@@ -123,12 +123,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         await self.greet()
         while not self.connection_closed:
-            try:
-                line = await asyncio.wait_for(self._reader.readline(),
-                                              self.config.timeout,
-                                              loop=self.loop)
-            except asyncio.TimeoutError:
-                await self.timeout()
+            line = await self.wait()
             logger.debug('RECV %s', line)
             line = line.decode('utf-8').rstrip('\r\n')
             handler = self.lookup_handler(line)
@@ -180,20 +175,7 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def auth_LOGIN(self):
         """Handle an AUTH LOGIN request."""
         await self.push(334, 'VXNlcm5hbWU6')
-        try:
-            line = await asyncio.wait_for(self._reader.readline(),
-                                          self.config.timeout,
-                                          loop=self.loop)
-        except asyncio.TimeoutError:
-            await self.timeout()
-        logger.debug('RECV %s', line)
-        await self.push(334, 'UGFzc3dvcmQ6')
-        try:
-            line = await asyncio.wait_for(self._reader.readline(),
-                                          self.config.timeout,
-                                          loop=self.loop)
-        except asyncio.TimeoutError:
-            await self.timeout()
+        line = await self.wait()
         logger.debug('RECV %s', line)
         await self._auth_success()
 
@@ -201,24 +183,34 @@ class Smtp(asyncio.StreamReaderProtocol):
         """Handle an AUTH CRAM-MD5 request."""
         message_id = base64.b64encode(self.message_id.encode('utf-8'), b'==')
         await self.push(334, message_id)
-        try:
-            line = await asyncio.wait_for(self._reader.readline(),
-                                          self.config.timeout,
-                                          loop=self.loop)
-        except asyncio.TimeoutError:
-            await self.timeout()
+        line = await self.wait()
         logger.debug('RECV %s', line)
         await self._auth_success()
+
+    async def wait(self):
+        """
+        Wait for data from the client.
+
+        .. note::
+
+           Also handles client timeouts if they wait too long before sending
+           data.
+
+        :returns: str
+        """
+        while not self.connection_closed:
+            try:
+                line = await asyncio.wait_for(self._reader.readline(),
+                                              self.config.timeout,
+                                              loop=self.loop)
+            except asyncio.TimeoutError:
+                await self.timeout()
+            return line
 
     async def auth_PLAIN(self):
         """Handle an AUTH PLAIN request."""
         await self.push(334, ' ')
-        try:
-            line = await asyncio.wait_for(self._reader.readline(),
-                                          self.config.timeout,
-                                          loop=self.loop)
-        except asyncio.TimeoutError:
-            await self.timeout()
+        line = await self.wait()
         logger.debug('RECV %s', line)
         await self._auth_success()
 
@@ -395,8 +387,10 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def response_from_mode(self):
         """
-        Send a response based on the configured mode, including mode modified
-        by email headers.
+        Send a response based on the configured response mode.
+
+        Response mode is configured in configuration file and can be overridden
+        by email headers, if enabled.
         """
         logger.debug('MODE: %s', self.mode)
         if self.mode == 'bounce':
@@ -428,19 +422,14 @@ class Smtp(asyncio.StreamReaderProtocol):
         body = False
         body_data = []
         while not self.connection_closed:
-            try:
-                line = await asyncio.wait_for(self._reader.readline(),
-                                              self.config.timeout,
-                                              loop=self.loop)
-            except asyncio.TimeoutError:
-                await self.timeout()
+            line = await self.wait()
             logger.debug('RECV %s', line)
             if line == b'.\r\n':
                 break
             if line == b'\n':
                 body = True
             body_data.append(line)
-            if line.lower().startswith(b'x-blackhole'):
+            if line.lower().startswith(b'x-blackhole') and body is False:
                 self.process_header(line.decode('utf-8').rstrip('\n'))
 
         if len(b''.join(body_data)) > self.config.max_message_size:
@@ -625,8 +614,10 @@ class Smtp(asyncio.StreamReaderProtocol):
     @property
     def mode(self):
         """
-        How to responde to an email, taken from the email header is enabled
-        or falling back to the configuration.
+        How to respond to an email, based on configuration.
+
+        Reponse is configured in the configuration file or configured from
+        email headers, if configured to allow that option.
         """
         if self._mode is not None:
             return self._mode
