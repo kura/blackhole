@@ -126,7 +126,7 @@ def long_description(*filenames):
     for filename in filenames:
         with open(filename) as fp:
             for line in fp:
-                res.append('   ' + line)
+                res.append('' + line)
             res.append('')
         res.append('\n')
     return EMPTYSTRING.join(res)

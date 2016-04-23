@@ -71,3 +71,8 @@ The latest build status on `travis <https://travis-ci.org/kura/blackhole/>`_.
 
 And the test coverage report on `codecov
 <https://codecov.io/github/kura/blackhole/>`_.
+
+Changelog
+=========
+
+You can find a list of changes `here <https://blackhole.io/changelog.html>`_.

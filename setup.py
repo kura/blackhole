@@ -8,9 +8,6 @@ from setuptools.command.test import test as TestCommand
 require_python(50659568)
 __version__ = get_version('blackhole/__init__.py')
 
-desc = """Blackhole is an MTA (message transfer agent) that (figuratively)
-pipes all mail to /dev/null."""
-
 
 class PyTest(TestCommand):
 
@@ -46,8 +43,10 @@ setup(name='blackhole',
       author_email='kura@kura.io',
       maintainer='Kura',
       maintainer_email='kura@kura.io',
-      description=desc,
+      description=('Blackhole is an MTA (message transfer agent) that '
+                   '(figuratively) pipes all mail to /dev/null.'),
       long_description=long_description('README.rst'),
+      keywords='blackhole, mta, email',
       license=long_description('LICENSE'),
       platforms=['linux'],
       packages=find_packages(exclude=["*.tests"]),
