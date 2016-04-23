@@ -75,5 +75,5 @@ setup(name='blackhole',
             'Topic :: Software Development :: Testing :: Traffic Generation',
             'Topic :: System :: Networking',
             'Topic :: System :: Systems Administration',
-            'Topic :: Utilities',],
+            'Topic :: Utilities', ],
       )
