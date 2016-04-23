@@ -6,3 +6,4 @@ include CONTRIBUTORS.rst
 include THANKS.rst
 include TODO.rst
 include example.conf
+include blackhole-completion.bash
