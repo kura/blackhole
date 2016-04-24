@@ -21,6 +21,21 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
+-----------------
+Future release(s)
+-----------------
+
+.. _2.0.9:
+
+2.0.9
+=====
+
+- Added failsafe checks for IPv6 functionality. -- If you specify an IPv6
+  listener but Python or the kernel have not been built with IPv6 support, an
+  error will be returned.
+- Moved out functionality for creating sockets and TLS contexts to separate
+  control functions.
+
 ---------------
 Current release
 ---------------
