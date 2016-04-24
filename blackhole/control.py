@@ -52,7 +52,40 @@ ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
            'ECDHE-ECDSA-AES128-SHA256', 'ECDHE-RSA-AES128-SHA256']
 
 
-def create_server(host, port, family, use_tls=False):
+def tls_context(use_tls=False):
+    if use_tls is False:
+        return None
+    logger = logging.getLogger('blackhole')
+    config = Config()
+    ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    ctx.load_cert_chain(config.tls_cert, config.tls_key)
+    ctx.options |= ssl.OP_NO_SSLv2
+    ctx.options |= ssl.OP_NO_SSLv3
+    ctx.set_ciphers(':'.join(ciphers))
+    if config.tls_dhparams:
+        ctx.load_dh_params(config.tls_dhparams)
+    else:
+        logger.warn('TLS is enabled but no Diffie Hellman phemeral '
+                    'parameters file was provided.')
+
+
+def create_socket(addr, port, family):
+    sock = socket.socket(family, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    if hasattr(socket, 'SO_REUSEPORT'):
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+    if family == socket.AF_INET6:
+        sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
+    try:
+        sock.bind((addr, port))
+    except OSError:
+        logger.fatal("Cannot bind to  %s:%s.", addr, port)
+        sock.close()
+        raise SystemExit(os.EX_NOPERM)
+    return sock
+
+
+def create_server(addr, port, family, use_tls=False):
     """
     Create an instance of `socket.socket`, bind it and attach it to loop.
 
@@ -66,37 +99,14 @@ def create_server(host, port, family, use_tls=False):
     :type use_tls: bool
     """
     logger = logging.getLogger('blackhole')
-    config = Config()
     if use_tls:
-        logger.debug('Creating server (%s, %s, TLS=True)', host, port)
+        logger.debug('Creating TLS listener %s:%s', addr, port)
     else:
-        logger.debug('Creating server (%s, %s)', host, port)
+        logger.debug('Creating listener %s:%s', addr, port)
     loop = asyncio.get_event_loop()
     factory = functools.partial(Smtp)
-    sock = socket.socket(family, socket.SOCK_STREAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    if hasattr(socket, 'SO_REUSEPORT'):
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-    if family == socket.AF_INET6:
-        sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
-    try:
-        sock.bind((host, port))
-    except OSError:
-        logger.fatal("Cannot bind to port %s.", port)
-        raise SystemExit(os.EX_NOPERM)
-    if use_tls:
-        ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        ctx.load_cert_chain(config.tls_cert, config.tls_key)
-        ctx.options |= ssl.OP_NO_SSLv2
-        ctx.options |= ssl.OP_NO_SSLv3
-        ctx.set_ciphers(':'.join(ciphers))
-        if config.tls_dhparams:
-            ctx.load_dh_params(config.tls_dhparams)
-        else:
-            logger.warn('TLS is enabled but no Diffie Hellman phemeral '
-                        'parameters file was provided.')
-    else:
-        ctx = None
+    sock = create_socket(addr, port, family)
+    ctx = tls_context(use_tls=use_tls)
     server = loop.create_server(factory, sock=sock, ssl=ctx)
     _servers.append(loop.run_until_complete(server))
 
@@ -105,11 +115,11 @@ def start_servers():
     """Create each server listener and bind to the socket."""
     config = Config()
     logger.debug('Starting...')
-    for host, port, af in config.listen:
-        create_server(host, port, af)
+    for host, port, family in config.listen:
+        create_server(host, port, family)
     if len(config.tls_listen) > 0 and config.tls_cert and config.tls_key:
         for host, port, af in config.tls_listen:
-            create_server(host, port, af, use_tls=True)
+            create_server(host, port, family, use_tls=True)
 
 
 def stop_servers():

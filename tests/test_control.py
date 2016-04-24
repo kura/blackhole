@@ -15,7 +15,7 @@ import pytest
 import blackhole
 from blackhole.config import Singleton, Config
 from blackhole.control import (create_server, start_servers, stop_servers,
-                               setuid, setgid)
+                               setuid, setgid, tls_context, create_socket)
 
 
 logging.getLogger('blackhole').addHandler(logging.NullHandler())
@@ -53,6 +53,81 @@ def create_file(name):
     with open(path, 'w') as ffile:
         ffile.write('nothing')
     return path
+
+
+def test_tls_context_no_config():
+    ctx = tls_context()
+    assert ctx is None
+
+
+@unittest.skipIf(ssl is None, 'No ssl module')
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+def test_tls_context_dhparams():
+    tls_cert = create_file('cert.cert')
+    tls_key = create_file('key.key')
+    cfile = create_config(('listen=127.0.0.1:25', 'tls_listen=127.0.0.1:9000',
+                           'tls_cert={}'.format(tls_cert),
+                           'tls_key={}'.format(tls_key),))
+    Config(cfile).load()
+    with mock.patch('ssl.SSLContext.load_cert_chain'):
+        tls_context(use_tls=True)
+
+
+@unittest.skipIf(ssl is None, 'No ssl module')
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+def test_tls_context_dhparams():
+    tls_cert = create_file('cert.cert')
+    tls_key = create_file('key.key')
+    tls_dhparams = create_file('dhparams.pem')
+    cfile = create_config(('listen=127.0.0.1:25', 'tls_listen=127.0.0.1:9000',
+                           'tls_cert={}'.format(tls_cert),
+                           'tls_key={}'.format(tls_key),
+                           'tls_dhparams={}'.format(tls_dhparams)))
+    Config(cfile).load()
+    with mock.patch('ssl.SSLContext.load_cert_chain'):
+        with mock.patch('ssl.SSLContext.load_dh_params') as dh:
+            tls_context(use_tls=True)
+    assert dh.called is True
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+def test_create_ipv6_socket_fails():
+    with mock.patch('socket.socket.bind', side_effect=OSError):
+        with pytest.raises(SystemExit) as err:
+            create_socket('::', 25, socket.AF_INET)
+    assert str(err.value) == '77'
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+def test_create_ipv6_socket_without_reuseport():
+    SO_REUSEPORT = True
+    if hasattr(socket, 'SO_REUSEPORT'):
+        orig = socket.SO_REUSEPORT
+        del socket.SO_REUSEPORT
+        SO_REUSEPORT = False
+    with mock.patch('socket.socket.bind'):
+        create_socket('::', 25, socket.AF_INET)
+    if SO_REUSEPORT is False:
+        socket.SO_REUSEPORT = orig
+
+
+def test_create_ipv4_socket_fails():
+    with mock.patch('socket.socket.bind', side_effect=OSError):
+        with pytest.raises(SystemExit) as err:
+            create_socket('127.0.0.1', 25, socket.AF_INET)
+    assert str(err.value) == '77'
+
+
+def test_create_ipv4_socket_without_reuseport():
+    SO_REUSEPORT = True
+    if hasattr(socket, 'SO_REUSEPORT'):
+        orig = socket.SO_REUSEPORT
+        del socket.SO_REUSEPORT
+        SO_REUSEPORT = False
+    with mock.patch('socket.socket.bind'):
+        create_socket('127.0.0.1', 25, socket.AF_INET)
+    if SO_REUSEPORT is False:
+        socket.SO_REUSEPORT = orig
 
 
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
