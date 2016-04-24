@@ -52,7 +52,7 @@ ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
            'ECDHE-ECDSA-AES128-SHA256', 'ECDHE-RSA-AES128-SHA256']
 
 
-def create_server(use_tls=False):
+def create_server(host, port, af, use_tls=False):
     """
     Create an instance of `socket.socket`, bind it and attach it to loop.
 
@@ -67,21 +67,19 @@ def create_server(use_tls=False):
     """
     logger = logging.getLogger('blackhole')
     config = Config()
-    port = config.tls_port if use_tls else config.port
     if use_tls:
-        logger.debug('Creating server (%s, %s, TLS=True)', config.address,
-                     port)
-        if ssl is None:
-            logger.debug('TLS is disabled, skipping.')
-            return
+        logger.debug('Creating server (%s, %s, TLS=True)', host, port)
     else:
-        logger.debug('Creating server (%s, %s)', config.address, port)
+        logger.debug('Creating server (%s, %s)', host, port)
     loop = asyncio.get_event_loop()
     factory = functools.partial(Smtp)
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
+    sock = socket.socket(af, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    if af == socket.AF_INET6:
+        sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
     try:
-        sock.bind((config.address, port))
+        sock.bind((host, port))
     except OSError:
         logger.fatal("Cannot bind to port %s.", port)
         raise SystemExit(os.EX_NOPERM)
@@ -93,6 +91,9 @@ def create_server(use_tls=False):
         ctx.set_ciphers(':'.join(ciphers))
         if config.tls_dhparams:
             ctx.load_dh_params(config.tls_dhparams)
+        else:
+            logger.warn('TLS is enabled but no Diffie Hellman phemeral '
+                        'parameters file was provided.')
     else:
         ctx = None
     server = loop.create_server(factory, sock=sock, ssl=ctx)
@@ -103,13 +104,11 @@ def start_servers():
     """Create each server listener and bind to the socket."""
     config = Config()
     logger.debug('Starting...')
-    create_server()
-    if config.tls_port and config.tls_cert and config.tls_key:
-        if ssl is not None:
-            create_server(use_tls=True)
-        else:
-            logger.debug('TLS is disabled, skipping.')
-            return
+    for host, port, af in config.listen:
+        create_server(host, port, af)
+    if len(config.tls_listen) > 0 and config.tls_cert and config.tls_key:
+        for host, port, af in config.tls_listen:
+            create_server(host, port, af, use_tls=True)
 
 
 def stop_servers():

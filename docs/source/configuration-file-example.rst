@@ -11,17 +11,24 @@ You can download a copy of this example file from
    :linenos:
 
     #
-    # Address to bind to.
-    # Defaults to 127.0.0.1
+    # Listen for IPv4 and IPv6 connections.
     #
-    # address=localhost
-    # address=127.0.0.1
-    address=0.0.0.0
+    # Format:- HOST:PORT, HOST2:PORT2
+    #
+    # Separate multiple listeners with commas.
+    #
+    # listen=0.0.0.0:25
+    # listen=0.0.0.0:1025, fe80::a00:27ff:fe8c:9c6e:1025
+    listen=127.0.0.1:25
 
     #
-    # Port to use.
-    # Defaults to 25
-    port=25
+    # Listen IPv4 and IPv6 SSL/TLS connections.
+    #
+    # Format:- HOST:PORT, HOST2:PORT2
+    #
+    # Separate multiple listeners with commas.
+    #
+    # tls_listen=0.0.0.0:465, fe80::a00:27ff:fe8c:9c6e:465
 
     #
     # User to run blackhole as.
@@ -42,12 +49,6 @@ You can download a copy of this example file from
     #
     # timeout=45
     # timeout=180
-
-    #
-    # Port to use for TLS.
-    # 465 is the recognised port for SMTPS
-    #
-    # tls_port=465
 
     #
     # TLS certificate location.

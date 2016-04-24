@@ -5,6 +5,7 @@ try:
     import ssl
 except ImportError:
     ssl = None
+import socket
 import tempfile
 import unittest
 from unittest import mock
@@ -56,12 +57,27 @@ def create_file(name):
 
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind', side_effect=OSError)
-def test_create_server_bind_fails(mock_sock):
+def test_create_server_ipv4_bind_fails(mock_sock):
     assert len(blackhole.control._servers) is 0
-    cfile = create_config(('port=9000',))
+    cfile = create_config(('listen=127.0.0.1:9000',))
     Config(cfile).load()
     with pytest.raises(SystemExit) as err:
-        create_server()
+        create_server('127.0.0.1', 9000, socket.AF_INET)
+    assert str(err.value) == '77'
+    assert len(blackhole.control._servers) is 0
+    assert mock_sock.called is True
+    assert mock_sock.call_count is 1
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+@pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
+@mock.patch('socket.socket.bind', side_effect=OSError)
+def test_create_server_ipv6_bind_fails(mock_sock):
+    assert len(blackhole.control._servers) is 0
+    cfile = create_config(('listen=:::9000',))
+    Config(cfile).load()
+    with pytest.raises(SystemExit) as err:
+        create_server('::', 9000, socket.AF_INET)
     assert str(err.value) == '77'
     assert len(blackhole.control._servers) is 0
     assert mock_sock.called is True
@@ -70,11 +86,24 @@ def test_create_server_bind_fails(mock_sock):
 
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind')
-def test_create_server_bind_works(mock_sock):
+def test_create_server_ipv4_bind_works(mock_sock):
     assert len(blackhole.control._servers) is 0
-    cfile = create_config(('port=9000',))
+    cfile = create_config(('listen=127.0.0.1:9000',))
     Config(cfile).load()
-    create_server()
+    create_server('127.0.0.1', 9000, socket.AF_INET)
+    assert len(blackhole.control._servers) is 1
+    assert mock_sock.called is True
+    assert mock_sock.call_count is 1
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+@pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
+@mock.patch('socket.socket.bind')
+def test_create_server_ipv6_bind_works(mock_sock):
+    assert len(blackhole.control._servers) is 0
+    cfile = create_config(('listen=:::9000',))
+    Config(cfile).load()
+    create_server('::', 9000, socket.AF_INET)
     assert len(blackhole.control._servers) is 1
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
@@ -83,12 +112,28 @@ def test_create_server_bind_works(mock_sock):
 @unittest.skipIf(ssl is None, 'No ssl module')
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind', side_effect=OSError)
-def test_create_server_tls_bind_fails(mock_sock):
+def test_create_server_ipv4_tls_bind_fails(mock_sock):
     assert len(blackhole.control._servers) is 0
-    cfile = create_config(('tls_port=9000',))
+    cfile = create_config(('tls_listen=127.0.0.1:9000',))
     Config(cfile).load()
     with pytest.raises(SystemExit) as err:
-        create_server()
+        create_server('127.0.0.1', 9000, socket.AF_INET)
+    assert str(err.value) == '77'
+    assert len(blackhole.control._servers) is 0
+    assert mock_sock.called is True
+    assert mock_sock.call_count is 1
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+@unittest.skipIf(ssl is None, 'No ssl module')
+@pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
+@mock.patch('socket.socket.bind', side_effect=OSError)
+def test_create_server_ipv6_tls_bind_fails(mock_sock):
+    assert len(blackhole.control._servers) is 0
+    cfile = create_config(('tls_listen=:::9000',))
+    Config(cfile).load()
+    with pytest.raises(SystemExit) as err:
+        create_server('::', 9000, socket.AF_INET)
     assert str(err.value) == '77'
     assert len(blackhole.control._servers) is 0
     assert mock_sock.called is True
@@ -99,11 +144,30 @@ def test_create_server_tls_bind_fails(mock_sock):
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind')
 @mock.patch('ssl.create_default_context')
-def test_create_server_tls_bind_works(mock_sock, mock_ssl):
+def test_create_server_tls_ipv4_bind_works(mock_sock, mock_ssl):
     assert len(blackhole.control._servers) is 0
-    cfile = create_config(('port=25', 'tls_port=9000',))
+    cfile = create_config(('listen=127.0.0.1:25',
+                           'tls_listen=127.0.0.1:9000',))
     Config(cfile).load()
-    create_server(use_tls=True)
+    create_server('127.0.0.1', 9000, socket.AF_INET, use_tls=True)
+    assert len(blackhole.control._servers) is 1
+    assert mock_sock.called is True
+    assert mock_sock.call_count is 1
+    assert mock_ssl.called is True
+    assert mock_ssl.call_count is 1
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+@unittest.skipIf(ssl is None, 'No ssl module')
+@pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
+@mock.patch('socket.socket.bind')
+@mock.patch('ssl.create_default_context')
+def test_create_server_tls_ipv6_bind_works(mock_sock, mock_ssl):
+    assert len(blackhole.control._servers) is 0
+    cfile = create_config(('listen=:::25',
+                           'tls_listen=:::9000',))
+    Config(cfile).load()
+    create_server('::', 9000, socket.AF_INET, use_tls=True)
     assert len(blackhole.control._servers) is 1
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
@@ -113,8 +177,8 @@ def test_create_server_tls_bind_works(mock_sock, mock_ssl):
 
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind')
-def test_start_servers(mock_bind):
-    cfile = create_config(('port=9000',))
+def test_ipv4_start_servers(mock_bind):
+    cfile = create_config(('listen=127.0.0.1:9000',))
     Config(cfile).load()
     start_servers()
     assert len(blackhole.control._servers) is 1
@@ -126,15 +190,72 @@ def test_start_servers(mock_bind):
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
 @mock.patch('socket.socket.bind')
 @mock.patch('ssl.create_default_context')
-def test_start_servers_tls(_, __):
+def test_ipv4_start_servers_tls(_, __):
     tls_cert = create_file('cert.cert')
     tls_key = create_file('key.key')
-    cfile = create_config(('port=25', 'tls_port=9000',
+    cfile = create_config(('listen=127.0.0.1:25', 'tls_listen=127.0.0.1:9000',
                            'tls_cert={}'.format(tls_cert),
                            'tls_key={}'.format(tls_key)))
     Config(cfile).load()
     start_servers()
     assert len(blackhole.control._servers) is 2
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+@pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
+@mock.patch('socket.socket.bind')
+def test_ipv6_start_servers(mock_bind):
+    cfile = create_config(('listen=:::9000',))
+    Config(cfile).load()
+    start_servers()
+    assert len(blackhole.control._servers) is 1
+    assert mock_bind.called is True
+    assert mock_bind.call_count is 1
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+@unittest.skipIf(ssl is None, 'No ssl module')
+@pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
+@mock.patch('socket.socket.bind')
+@mock.patch('ssl.create_default_context')
+def test_ipv6_start_servers_tls(_, __):
+    tls_cert = create_file('cert.cert')
+    tls_key = create_file('key.key')
+    cfile = create_config(('listen=:::25', 'tls_listen=:::9000',
+                           'tls_cert={}'.format(tls_cert),
+                           'tls_key={}'.format(tls_key)))
+    Config(cfile).load()
+    start_servers()
+    assert len(blackhole.control._servers) is 2
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+@pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
+@mock.patch('socket.socket.bind')
+def test_ipv4_and_ipv6_start_servers(mock_bind):
+    cfile = create_config(('listen=127.0.0.1:9000,:::9000',))
+    Config(cfile).load()
+    start_servers()
+    assert len(blackhole.control._servers) is 2
+    assert mock_bind.called is True
+    assert mock_bind.call_count is 2
+
+
+@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
+@unittest.skipIf(ssl is None, 'No ssl module')
+@pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')
+@mock.patch('socket.socket.bind')
+@mock.patch('ssl.create_default_context')
+def test_ipv4_and_ipv6_start_servers_tls(_, __):
+    tls_cert = create_file('cert.cert')
+    tls_key = create_file('key.key')
+    cfile = create_config(('listen=127.0.0.1:25,:::25',
+                           'tls_listen=127.0.0.1:9000,:::9000',
+                           'tls_cert={}'.format(tls_cert),
+                           'tls_key={}'.format(tls_key)))
+    Config(cfile).load()
+    start_servers()
+    assert len(blackhole.control._servers) is 4
 
 
 @pytest.mark.usefixtures('reset_servers', 'reset_conf', 'cleandir')

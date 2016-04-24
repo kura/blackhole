@@ -25,16 +25,23 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.0.8:
+
+2.0.8
+=====
+
+- Added IPv6 support.
+
+-------------
+Past releases
+-------------
+
 .. _2.0.7:
 
 2.0.7
 =====
 
 - Added email headers to SIZE checks. Resolves a potential DoS risk.
-
--------------
-Past releases
--------------
 
 .. _2.0.6:
 

@@ -81,12 +81,15 @@ def config_test(args):
     logger = logging.getLogger('blackhole.config_test')
     logger.setLevel(logging.INFO)
     try:
-        Config(args.config_file).load().test()
+        conf = Config(args.config_file).load().test()
     except ConfigException as err:
         logger.fatal(err)
         raise SystemExit(os.EX_USAGE)
     logger.info('blackhole: %s syntax is OK', args.config_file)
     logger.info('blackhole: %s test was successful', args.config_file)
+    if len(conf.tls_listen) > 0 and not conf.tls_dhparams:
+        logger.warn('TLS is enabled but no Diffie Hellman phemeral parameters '
+                    'file was provided.')
     raise SystemExit(os.EX_OK)
 
 
@@ -112,12 +115,11 @@ class Config(metaclass=Singleton):
     """
 
     config_file = None
-    _address = '127.0.0.1'
-    _port = 25
+    _listen = []
+    _tls_listen = []
     _user = None
     _group = None
     _timeout = 60
-    _tls_port = None
     _tls_key = None
     _tls_cert = None
     _tls_dhparams = None
@@ -162,36 +164,70 @@ class Config(metaclass=Singleton):
             except ValueError:
                 continue
             key, value = key.strip(), value.strip()
-            key = "_{}".format(key)
             value = value.replace('"', '').replace("'", '')
             setattr(self, key, value)
         return self
 
     @property
-    def address(self):
+    def listen(self):
         """
-        An IPv4 address.
+        Addresses and ports to listen on.
 
-        :returns: str -- IPv4 address.
+        .. note::
+
+            Default value is 127.0.0.1:25
         """
-        return self._address
+        return self._listen or [('127.0.0.1', 25, socket.AF_INET)]
 
-    @address.setter
-    def address(self, address):
-        self._address = address
+    @listen.setter
+    def listen(self, addrs):
+        self._listen = self._listeners(addrs)
+
+    def _convert_port(self, port):
+        """
+        Convert a port from the configuration files' string to an integer.
+
+        :raises: ConfigException
+        """
+        try:
+            _ = int(port)
+        except ValueError:
+            raise ConfigException('Cannot convert {} to an '
+                                  'integer'.format(port))
+        return int(port)
+
+    def _listeners(self, addresses):
+        """
+        Convert listener lines from the configuration to usable values.
+
+        :param addresses:
+        :type addresses: str -- e.g. '127.0.0.1:25, 10.0.0.1:25'
+        :returns: list or None
+        """
+        addrs = []
+        _addrs = addresses.split(',')
+        if len(_addrs) == 0:
+            return
+        for addr in _addrs:
+            port = addr.split(':')[-1].strip()
+            name = addr.replace(':{}'.format(port), '').strip()
+            af = socket.AF_INET
+            if ':' in name:
+                af = socket.AF_INET6
+            host = (name, self._convert_port(port), af)
+            addrs.append(host)
+        return addrs
 
     @property
-    def port(self):
+    def tls_listen(self):
         """
-        A port number.
-
-        :returns: int -- A port number.
+        Addresses and ports to listen on for SSL/TLS connections
         """
-        return int(self._port)
+        return self._tls_listen or []
 
-    @port.setter
-    def port(self, port):
-        self._port = port
+    @tls_listen.setter
+    def tls_listen(self, addrs):
+        self._tls_listen = self._listeners(addrs)
 
     @property
     def user(self):
@@ -244,21 +280,6 @@ class Config(metaclass=Singleton):
     @timeout.setter
     def timeout(self, timeout):
         self._timeout = timeout
-
-    @property
-    def tls_port(self):
-        """
-        A port number.
-
-        :returns: int
-        """
-        if self._tls_port is None:
-            return None
-        return int(self._tls_port)
-
-    @tls_port.setter
-    def tls_port(self, tls_port):
-        self._tls_port = tls_port
 
     @property
     def tls_key(self):
@@ -379,16 +400,17 @@ class Config(metaclass=Singleton):
         """
         if self._dynamic_switch is None:
             return True
-        if self._dynamic_switch == 'false':
-            return False
-        return True
+        return self._dynamic_switch
 
     @dynamic_switch.setter
-    def dynamic_switch(self, dynamic_switch):
-        if dynamic_switch.lower() == 'false':
+    def dynamic_switch(self, switch):
+        if switch.lower() == 'false':
             self._dynamic_switch = False
-        if dynamic_switch.lower() == 'true':
+        elif switch.lower() == 'true':
             self._dynamic_switch = True
+        else:
+            raise ConfigException(''''{}' is not valid. Options are true or '''
+                                  '''false'''.format(switch))
 
     def test(self):
         """
@@ -407,20 +429,25 @@ class Config(metaclass=Singleton):
                 getattr(self, name)()
         return self
 
-    def test_address(self):
+    def test_same_listeners(self):
         """
-        Validate IPv4 address format.
-
-        :raises: `blackhole.exceptions.ConfigException`
+        Test that multiple listeners are not configured on the same port.
 
         .. note::
 
-           Classifies 'localhost' as a valid IPv4 address.
+           IPv4 and IPv6 addresses are different sockets so they can listen on
+           the same port because they have different addresses.
         """
-        address = re.match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", self.address)
-        if self.address not in ('localhost',) and not address:
-            msg = '{} is not a valid IPv4 address.'.format(self._address)
-            raise ConfigException(msg)
+        if len(self.listen) == 0 and len(self.tls_listen) == 0:
+            return
+        if set(self.listen).intersection(self.tls_listen):
+            raise ConfigException('Cannot have multiple listeners on the same'
+                                  'host and port')
+
+    def test_no_listeners(self):
+        """Test that at least one listener is configured."""
+        if not len(self.listen) > 0 and not len(self.tls_listen) > 0:
+            raise ConfigException('You need to define at least one listener')
 
     def _min_max_port(self, port):
         """
@@ -452,14 +479,10 @@ class Config(metaclass=Singleton):
 
         :raises: `blackhole.exceptions.ConfigException`
         """
-        try:
-            _ = self.port
-        except ValueError:
-            msg = '{} is not a valid port number.'.format(self._port)
-            raise ConfigException(msg)
-        self._port_permissions(self.port)
+        for host, port, af in self.listen:
+            self._port_permissions(host, port, af)
 
-    def _port_permissions(self, port):
+    def _port_permissions(self, host, port, af):
         """
         Validate that we have permission to use the port and it's not in use.
 
@@ -471,9 +494,9 @@ class Config(metaclass=Singleton):
         if os.getuid() is not 0 and port < 1024:
             msg = 'You do not have permission to use port {}'.format(port)
             raise ConfigException(msg)
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock = socket.socket(af, socket.SOCK_STREAM)
         try:
-            sock.bind(('127.0.0.1', port))
+            sock.bind((host, port))
         except OSError as err:
             errmsg = err.strerror.lower()
             msg = 'Could not use port {}, {}'.format(port, errmsg)
@@ -535,16 +558,10 @@ class Config(metaclass=Singleton):
 
         :raises: `blackhole.exceptions.ConfigException`
         """
-        if self._tls_port is None:
+        if len(self.tls_listen) == 0:
             return
-        try:
-            _ = self.tls_port
-        except ValueError:
-            msg = '{} is not a valid port number.'.format(self._tls_port)
-            raise ConfigException(msg)
-        if self.port == self.tls_port:
-            raise ConfigException('SMTP and SMTP/TLS ports must be different.')
-        self._port_permissions(self.tls_port)
+        for host, port, af in self.tls_listen:
+            self._port_permissions(host, port, af)
 
     def test_tls_settings(self):
         """
@@ -556,7 +573,9 @@ class Config(metaclass=Singleton):
 
            Verifies if you provide all TLS settings, not just some.
         """
-        port = self.tls_port if self.tls_port is not None else False
+        port = True
+        if not len(self.tls_listen) > 0:
+            port = False
         cert = os.access(self.tls_cert, os.R_OK) if self.tls_cert else False
         key = os.access(self.tls_key, os.R_OK) if self.tls_key else False
         if (port, cert, key) == (False, False, False):
