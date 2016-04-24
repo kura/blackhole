@@ -61,11 +61,15 @@ def tls_context(use_tls=False):
     ctx.load_cert_chain(config.tls_cert, config.tls_key)
     ctx.options |= ssl.OP_NO_SSLv2
     ctx.options |= ssl.OP_NO_SSLv3
+    ctx.options |= ssl.OP_NO_COMPRESSION
+    ctx.options |= ssl.OP_SINGLE_DH_USE
+    ctx.options |= ssl.OP_SINGLE_ECDH_USE
+    ctx.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
     ctx.set_ciphers(':'.join(ciphers))
     if config.tls_dhparams:
         ctx.load_dh_params(config.tls_dhparams)
     else:
-        logger.warn('TLS is enabled but no Diffie Hellman phemeral '
+        logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
                     'parameters file was provided.')
 
 
@@ -118,7 +122,7 @@ def start_servers():
     for host, port, family in config.listen:
         create_server(host, port, family)
     if len(config.tls_listen) > 0 and config.tls_cert and config.tls_key:
-        for host, port, af in config.tls_listen:
+        for host, port, family in config.tls_listen:
             create_server(host, port, family, use_tls=True)
 
 

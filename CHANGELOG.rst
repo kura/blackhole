@@ -37,6 +37,11 @@ Future release(s)
   control functions.
 - Added warning for TLS being used with no Diffie Hellman ephemeral parameters
   being configured.
+- Added further security to TSL. The following options are now enforced.
+  ``ssl.OP_NO_COMPRESSION``, ``ssl.OP_SINGLE_DH_USE``,
+  ``ssl.OP_SINGLE_ECDH_USE`` and ``ssl.OP_CIPHER_SERVER_PREFERENCE``.
+  `See the Python documentation for more information on the flags
+  <https://docs.python.org/3/library/ssl.html#ssl.OP_CIPHER_SERVER_PREFERENCE>`_.
 
 ---------------
 Current release
