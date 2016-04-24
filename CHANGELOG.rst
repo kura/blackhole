@@ -21,9 +21,24 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
------------------
-Future release(s)
------------------
+---------------
+Current release
+---------------
+
+.. _2.0.10:
+
+2.0.10
+======
+
+- Added error catching to
+  ``socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)`` -- on some
+  systems this is available while still triggering a `Protocol Error` and
+  causing blackhole to crash. The error catching will attempt to set this
+  option if it's available but silently ignore it if it errors.
+
+-------------
+Past releases
+-------------
 
 .. _2.0.9:
 
@@ -43,20 +58,12 @@ Future release(s)
   `See the Python documentation for more information on the flags
   <https://docs.python.org/3/library/ssl.html#ssl.OP_CIPHER_SERVER_PREFERENCE>`_.
 
----------------
-Current release
----------------
-
 .. _2.0.8:
 
 2.0.8
 =====
 
 - Added IPv6 support.
-
--------------
-Past releases
--------------
 
 .. _2.0.7:
 
