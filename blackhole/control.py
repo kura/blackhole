@@ -52,7 +52,7 @@ ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
            'ECDHE-ECDSA-AES128-SHA256', 'ECDHE-RSA-AES128-SHA256']
 
 
-def create_server(host, port, af, use_tls=False):
+def create_server(host, port, family, use_tls=False):
     """
     Create an instance of `socket.socket`, bind it and attach it to loop.
 
@@ -73,10 +73,11 @@ def create_server(host, port, af, use_tls=False):
         logger.debug('Creating server (%s, %s)', host, port)
     loop = asyncio.get_event_loop()
     factory = functools.partial(Smtp)
-    sock = socket.socket(af, socket.SOCK_STREAM)
+    sock = socket.socket(family, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    if af == socket.AF_INET6:
+    if hasattr(socket, 'SO_REUSEPORT'):
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+    if family == socket.AF_INET6:
         sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
     try:
         sock.bind((host, port))

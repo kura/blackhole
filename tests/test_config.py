@@ -140,7 +140,7 @@ class TestConfigTest(unittest.TestCase):
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
-class TestAddress(unittest.TestCase):
+class TestListen(unittest.TestCase):
 
     def test_default(self):
         cfile = create_config(('',))
@@ -151,6 +151,14 @@ class TestAddress(unittest.TestCase):
         cfile = create_config(('listen=localhost:25',))
         conf = Config(cfile).load()
         assert conf.listen == [('localhost', 25, socket.AF_INET)]
+
+    def test_ipv6_disabled(self):
+        cfile = create_config(('listen=:::25',))
+        conf = Config(cfile).load()
+        conf._listen = [('::', 25, socket.AF_UNSPEC)]
+        with pytest.raises(ConfigException):
+            with mock.patch('socket.has_ipv6', False):
+                conf.test_ipv6_support()
 
     @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
     def test_ipv6(self):
@@ -165,7 +173,7 @@ class TestPort(unittest.TestCase):
     def test_str_port(self):
         cfile = create_config(('listen=127.0.0.1:abc',))
         with pytest.raises(ConfigException):
-            conf = Config(cfile).load()
+            Config(cfile).load()
 
     def test_lower_than_min(self):
         cfile = create_config(('listen=127.0.0.1:0',))
@@ -421,6 +429,14 @@ class TestTls(unittest.TestCase):
         cfile = create_config(('',))
         conf = Config(cfile).load()
         assert conf.test_tls_settings() is None
+
+    def test_ipv6_disabled(self):
+        cfile = create_config(('tls_listen=:::465',))
+        conf = Config(cfile).load()
+        conf._tls_listen = [('::', 465, socket.AF_UNSPEC)]
+        with pytest.raises(ConfigException):
+            with mock.patch('socket.has_ipv6', False):
+                conf.test_tls_ipv6_support()
 
     def test_port_no_certkey(self):
         settings = ('tls_listen=127.0.0.1:123',)

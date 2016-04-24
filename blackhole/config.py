@@ -30,7 +30,6 @@ import inspect
 import logging
 import os
 import pwd
-import re
 import socket
 
 from blackhole.exceptions import ConfigException
@@ -211,10 +210,10 @@ class Config(metaclass=Singleton):
         for addr in _addrs:
             port = addr.split(':')[-1].strip()
             name = addr.replace(':{}'.format(port), '').strip()
-            af = socket.AF_INET
+            family = socket.AF_INET
             if ':' in name:
-                af = socket.AF_INET6
-            host = (name, self._convert_port(port), af)
+                family = socket.AF_INET6
+            host = (name, self._convert_port(port), family)
             addrs.append(host)
         return addrs
 
@@ -429,6 +428,22 @@ class Config(metaclass=Singleton):
                 getattr(self, name)()
         return self
 
+    def test_ipv6_support(self):
+        for address, port, family in self.listen:
+            if ':' in address:
+                if not socket.has_ipv6 and family == socket.AF_UNSPEC:
+                    raise ConfigException('An IPv6 listener is configured but '
+                                          'IPv6 is not available on this'
+                                          'platform')
+
+    def test_tls_ipv6_support(self):
+        for address, port, family in self.tls_listen:
+            if ':' in address:
+                if not socket.has_ipv6 and family == socket.AF_UNSPEC:
+                    raise ConfigException('An IPv6 listener is configured but '
+                                          'IPv6 is not available on this'
+                                          'platform')
+
     def test_same_listeners(self):
         """
         Test that multiple listeners are not configured on the same port.
@@ -551,6 +566,14 @@ class Config(metaclass=Singleton):
         if self.timeout and self.timeout > 180:
             raise ConfigException('Timeout must be 180 seconds or less for '
                                   'security (denial of service).')
+
+    def test_tls_ipv6(self):
+        for address, port, family in self.tls_listen:
+            if ':' in address:
+                if not socket.has_ipv6 and family == socket.AF_UNSPEC:
+                    raise('An IPv6 listener is configured but IPv6 is not '
+                          'available on this platform')
+
 
     def test_tls_port(self):
         """
