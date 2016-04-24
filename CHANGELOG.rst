@@ -25,6 +25,14 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.0.11:
+
+- Fixed bug with TLS context not being passed to the socket listener.
+
+-------------
+Past releases
+-------------
+
 .. _2.0.10:
 
 2.0.10
@@ -35,10 +43,6 @@ Current release
   systems this is available while still triggering a `Protocol Error` and
   causing blackhole to crash. The error catching will attempt to set this
   option if it's available but silently ignore it if it errors.
-
--------------
-Past releases
--------------
 
 .. _2.0.9:
 

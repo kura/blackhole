@@ -71,6 +71,7 @@ def tls_context(use_tls=False):
     else:
         logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
                     'parameters file was provided.')
+    return ctx
 
 
 def create_socket(addr, port, family):
