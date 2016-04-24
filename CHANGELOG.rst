@@ -31,10 +31,12 @@ Future release(s)
 =====
 
 - Added failsafe checks for IPv6 functionality. -- If you specify an IPv6
-  listener but Python or the kernel have not been built with IPv6 support, an
-  error will be returned.
+  listener but Python or the kernel have not been compiled with IPv6 support,
+  an error will be returned.
 - Moved out functionality for creating sockets and TLS contexts to separate
   control functions.
+- Added warning for TLS being used with no Diffie Hellman ephemeral parameters
+  being configured.
 
 ---------------
 Current release
