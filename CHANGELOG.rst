@@ -27,6 +27,9 @@ Current release
 
 .. _2.0.11:
 
+2.0.11
+======
+
 - Fixed bug with TLS context not being passed to the socket listener.
 
 -------------
