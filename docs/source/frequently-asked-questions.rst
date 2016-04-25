@@ -36,7 +36,7 @@ privileges for security.
 Why is SMTPS supported but STARTTLS is not?
 ===========================================
 
-Currently the ``asyncio`` library in the standard Python library does not
+Currently the ``asyncio`` library in the Python standard library does not
 support the mechanisms required to implement `STARTTLS`. The technical reason
 for this is that when asyncio was added to the standard library the
 ``ssl.MemoryBIO`` had not been included and so wrapping the
@@ -44,8 +44,8 @@ for this is that when asyncio was added to the standard library the
 is not possible. A patch is waiting to be included at a future date. --
 `<https://bugs.python.org/review/23749/>`_
 
-What encryption and security methods and practices are in place?
-================================================================
+What encryption, security methodologies and practices are in place?
+===================================================================
 
 Blackhole supports `TLSv1.2` only, `SSLv3` and `SSLv2` are explicitly disabled.
 SSL/TLS compression is also disabled and ``OP_SINGLE_DH_USE`` and
@@ -65,9 +65,17 @@ The following ciphers are enabled.
     ECDHE-RSA-AES256-GCM-SHA384
     ECDHE-ECDSA-CHACHA20-POLY1305
     ECDHE-RSA-CHACHA20-POLY1305
-    CDHE-ECDSA-AES128-GCM-SHA256
+    ECDHE-ECDSA-AES128-GCM-SHA256
     ECDHE-RSA-AES128-GCM-SHA256
     ECDHE-ECDSA-AES256-SHA384
     ECDHE-RSA-AES256-SHA384
     ECDHE-ECDSA-AES128-SHA256
     ECDHE-RSA-AES128-SHA256
+
+There is also a configuration option -- ``tls_dhparams`` --  allowing loading
+the key generation parameters for Diffie-Helman key exchange, improving forward
+secrecy.
+
+Blackhole also does not allow random user data. All commands are confined and
+controlled. Where user data acceptance is more fluid, like the ``DATA``
+command, the user-provided data is not executed, it is simply thrown away.

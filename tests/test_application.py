@@ -47,6 +47,7 @@ def test_run_test_fails():
             run()
     assert str(err.value) == '64'
 
+
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_run_load_test_fails():
     cfile = create_config(('listen=127.0.0.1:0', ))
@@ -64,7 +65,7 @@ class Args(object):
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_run_foreground():
     cfile = create_config(('listen=127.0.0.1:9000',))
-    conf = Config(cfile).load()
+    Config(cfile).load()
     args = Args()
 
     # This is fucking INSANE...
@@ -83,10 +84,31 @@ def test_run_foreground():
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
+def test_run_foreground_interrupt():
+    cfile = create_config(('listen=127.0.0.1:9000',))
+    Config(cfile).load()
+    args = Args()
+
+    # This is fucking INSANE...
+    with mock.patch('sys.argv', ['-c {}'.format(cfile)]):
+        with mock.patch('blackhole.config.parse_cmd_args', args):
+            with mock.patch('blackhole.config.Config.test'):
+                with mock.patch('asyncio.get_event_loop'):
+                    with mock.patch('blackhole.control.start_servers'):
+                        with mock.patch('blackhole.control.setgid'):
+                            with mock.patch('blackhole.control.setuid'):
+                                with mock.patch('blackhole.control.stop_servers'):
+                                    with mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever', side_effect=KeyboardInterrupt):
+                                        with pytest.raises(SystemExit) as err:
+                                            run()
+    assert str(err.value) == '0'
+
+
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_run_background():
     pid = '{}/backhole.pid'.format(os.getcwd())
     cfile = create_config(('listen=127.0.0.1:9000', 'pidfile={}'.format(pid)))
-    conf = Config(cfile).load()
+    Config(cfile).load()
     args = Args()
 
     # This is fucking INSANE...
@@ -110,7 +132,7 @@ def test_run_background():
 def test_run_daemon_error():
     pid = '{}/backhole.pid'.format(os.getcwd())
     cfile = create_config(('listen=127.0.0.1:9000', 'pidfile={}'.format(pid)))
-    conf = Config(cfile).load()
+    Config(cfile).load()
     args = Args()
 
     # This is fucking INSANE...
