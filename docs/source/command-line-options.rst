@@ -14,5 +14,6 @@ as below:
 -d			enable debugging mode
 -b			run in the background
 
-For more information on the configuration file format read
-:ref:`configuration-file-example`.
+For information on the configuration options, their default values and what
+each option does, please see the :ref:`configuration-options` document and,
+for an example configuration file see :ref:`configuration-file-example`.

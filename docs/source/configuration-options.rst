@@ -7,6 +7,10 @@ Configuration options
 Here are all available options for the configuration file, their default values
 and information on what the options actually do.
 
+For more information on the command line arguments see the
+:ref:`command-line-options` document. For an example configuration file please
+see :ref:`configuration-file-example`.
+
 - `listen`_
 - `tls_listen`_
 - `user`_

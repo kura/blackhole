@@ -4,8 +4,11 @@
 Configuration file example
 ==========================
 
-A list of all available options, their default values on what the options do is
-available on the :ref:`configuration-options` document.
+For more information on the command line arguments see the
+:ref:`command-line-options` document. For information on the configuration
+options, their default values and what each option does, please see the
+:ref:`configuration-options`.
+
 
 You can download a copy of this example file from
 `GitHub <https://github.com/kura/blackhole/blob/master/example.conf>`_.

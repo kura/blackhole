@@ -43,8 +43,9 @@ Future releases
 
 - Fixed a misspelled TLS cipher. ``CDHE-ECDSA-AES128-GCM-SHA256`` should have
   been written as ``ECDHE-ECDSA-AES128-GCM-SHA256``. This typo simply meant
-  that cipher was unavailable for use, the other nine strong ciphers will still
-  fully available.
+  that cipher was unavailable for use, the other nine strong ciphers were/are
+  still fully available.
+- :ref:`configuration-options` document compiled.
 
 -------------
 Past releases
