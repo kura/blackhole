@@ -116,21 +116,3 @@ def test_run_daemon_error():
                                     with pytest.raises(SystemExit) as err:
                                         run()
     assert str(err.value) == '64'
-
-
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
-def test_run_daemon_no_pid():
-    pid = '{}/backhole.pid'.format(os.getcwd())
-    cfile = create_config(('listen=127.0.0.1:9000', 'pidfile={}'.format(pid)))
-    conf = Config(cfile).load()
-    args = Args()
-    args.background = True
-    conf._pidfile = False
-    # This is fucking INSANE...
-    with mock.patch('sys.argv', ['-c {}'.format(cfile), '-b']):
-        with mock.patch('blackhole.config.parse_cmd_args', args):
-            with mock.patch('blackhole.config.Config.test'):
-                with mock.patch('blackhole.config.Config.pidfile', return_value=False):
-                    with pytest.raises(SystemExit) as err:
-                        run()
-    assert str(err.value) == '64'
