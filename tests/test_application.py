@@ -47,6 +47,15 @@ def test_run_test_fails():
             run()
     assert str(err.value) == '64'
 
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+def test_run_load_test_fails():
+    cfile = create_config(('listen=127.0.0.1:0', ))
+    with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]):
+        with mock.patch('blackhole.config.Config.test', side_effect=ConfigException()):
+            with pytest.raises(SystemExit) as err:
+                run()
+    assert str(err.value) == '64'
+
 
 class Args(object):
     pass
