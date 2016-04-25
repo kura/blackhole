@@ -147,16 +147,3 @@ def test_run_daemon_error():
                                     with pytest.raises(SystemExit) as err:
                                         run()
     assert str(err.value) == '64'
-
-
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
-def test_run_daemon_no_pid():
-    with mock.patch('blackhole.config.Config.test_port'):
-        cfile = create_config(('listen=127.0.0.1:9001', ))
-        conf = Config(cfile).load()
-    conf._pidfile = False
-    with mock.patch('sys.argv', ['-c {}'.format(cfile), '-b']):
-        conf.pidfile = False
-        with pytest.raises(SystemExit) as err:
-            run()
-    assert str(err.value) == '64'
