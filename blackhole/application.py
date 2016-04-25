@@ -52,7 +52,7 @@ def run():
         logger.fatal(err)
         raise SystemExit(os.EX_USAGE)
     if args.background and not config.pidfile:
-        logger.fatal('Cannot run in the background without a pidfile.')
+        logger.fatal('Cannot run in the background without a pidfile')
         raise SystemExit(os.EX_USAGE)
     loop = asyncio.get_event_loop()
     loop.add_signal_handler(signal.SIGINT, loop.stop)

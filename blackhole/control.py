@@ -70,7 +70,7 @@ def tls_context(use_tls=False):
         ctx.load_dh_params(config.tls_dhparams)
     else:
         logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
-                    'parameters file was provided.')
+                    'parameters file was provided')
     return ctx
 
 
