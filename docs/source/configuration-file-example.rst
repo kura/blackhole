@@ -4,6 +4,9 @@
 Configuration file example
 ==========================
 
+A list of all available options, their default values on what the options do is
+available on the :ref:`configuration-options` document.
+
 You can download a copy of this example file from
 `GitHub <https://github.com/kura/blackhole/blob/master/example.conf>`_.
 
@@ -14,19 +17,24 @@ You can download a copy of this example file from
     # Listen for IPv4 and IPv6 connections.
     #
     # Format:- HOST:PORT, HOST2:PORT2
-    #
     # Separate multiple listeners with commas.
+    #
+    # listen=:25  is equivalent to listening on all IPv4 addresses
+    # listen=:::25  is equivalent to listen on all IPv6 addresses
     #
     # listen=0.0.0.0:25
     # listen=0.0.0.0:1025, fe80::a00:27ff:fe8c:9c6e:1025
+    #
     listen=127.0.0.1:25
 
     #
     # Listen IPv4 and IPv6 SSL/TLS connections.
     #
     # Format:- HOST:PORT, HOST2:PORT2
-    #
     # Separate multiple listeners with commas.
+    #
+    # tls_listen=:465  is equivalent to listening on all IPv4 addresses
+    # tls_listen=:::465  is equivalent to listen on all IPv6 addresses
     #
     # tls_listen=0.0.0.0:465, fe80::a00:27ff:fe8c:9c6e:465
 

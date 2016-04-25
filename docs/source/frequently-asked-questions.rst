@@ -4,6 +4,14 @@
 Frequently asked questions
 ==========================
 
+Here are some of the questions most frequently asked.
+
+#. `What are the default configuration values?`_
+#. `Is IPv6 supported?`_
+#. `What are the permissions required for running the server?`_
+#. `Why is SMTPS supported but STARTTLS is not?`_
+#. `What encryption, security methodologies and practices are in place?`_
+
 What are the default configuration values?
 ==========================================
 
@@ -21,8 +29,19 @@ runtime:
     listen=127.0.0.1:25
     timeout=60
 
-What are the default user and group permissions?
-================================================
+Is IPv6 supported?
+==================
+
+Yes. IPv6 is supported alongside IPv4 in both the ``listen`` and ``tls_listen``
+arguments. IPv6 and IPv4 listeners can be configured together.
+
+.. code-block:: ini
+
+    listen=0.0.0.0:25, :::25
+    tls_listen=0.0.0.0:465, :::465
+
+What are the permissions required for running the server?
+=========================================================
 
 By default blackhole runs as the current user and group.
 

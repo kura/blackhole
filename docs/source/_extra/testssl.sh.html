@@ -11,7 +11,7 @@
 <span style="font-weight:bold;">
 ###########################################################
     testssl.sh       2.7dev from https://testssl.sh/dev/
-    (</span><span style="color:dimgray;font-weight:bold;">743566b 2016-04-23 01:30:25 -- 1.478</span><span style="font-weight:bold;">)
+    (</span><span style="color:dimgray;font-weight:bold;">42bb729 2016-04-25 21:25:49 -- 1.478</span><span style="font-weight:bold;">)
 
       This program is free software. Distribution and
              modification under GPLv2 permitted.
@@ -58,6 +58,7 @@
 Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher Suite Name (RFC)
 --------------------------------------------------------------------------------------------------------------------------
  xc030   ECDHE-RSA-AES256-GCM-SHA384    ECDH <span style="color:blue;">256 </span>  AESGCM     256         TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384             
+ xc028   ECDHE-RSA-AES256-SHA384        ECDH <span style="color:blue;">256 </span>  AES        256         TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384             
  xc02f   ECDHE-RSA-AES128-GCM-SHA256    ECDH <span style="color:blue;">256 </span>  AESGCM     128         TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256             
  xc027   ECDHE-RSA-AES128-SHA256        ECDH <span style="color:blue;">256 </span>  AES        128         TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256             
 
@@ -67,7 +68,7 @@ Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher
 <span style="font-weight:bold;"> Negotiated protocol          </span><span style="color:blue;font-weight:bold;">TLSv1.2</span>
 <span style="font-weight:bold;"> Negotiated cipher            </span><span style="color:blue;font-weight:bold;">ECDHE-RSA-AES256-GCM-SHA384</span>, <span style="color:blue;">256 bit ECDH</span>
 <span style="font-weight:bold;"> Cipher order</span>
-     TLSv1.2:   ECDHE-RSA-AES256-GCM-SHA384 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-SHA256 
+     TLSv1.2:   ECDHE-RSA-AES256-GCM-SHA384 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-SHA384 ECDHE-RSA-AES128-SHA256 
 
 <span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing server defaults (Server Hello) </span>
 
@@ -77,15 +78,15 @@ Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher
 <span style="font-weight:bold;"> TLS clock skew</span>               random values, no fingerprinting possible 
 <span style="font-weight:bold;"> Signature Algorithm          </span><span style="color:blue;">SHA256 with RSA</span>
 <span style="font-weight:bold;"> Server key size              </span><span style="color:blue;">4096</span> bits
-<span style="font-weight:bold;"> Fingerprint / Serial         </span>SHA1 C78F1DC84766234A64E8EFA4242F5AAE47D759BF / 1121117D92FB580EA40D56009D91D74829CD
-                              SHA256 1ED3A3F0CD5129081E96FBD28A03E1CD68233DC7AB12EEBFD97EE90D9A3C38BF
-<span style="font-weight:bold;"> Common Name (CN)             </span>&quot;blackhole.io&quot; (works w/o SNI)
-<span style="font-weight:bold;"> subjectAltName (SAN)         </span>&quot;blackhole.io&quot; 
+<span style="font-weight:bold;"> Fingerprint / Serial         </span>SHA1 E7B475A435CAE16126A0F584C912FE5070C390A4 / 1121C4EEA8F4A2814F1163FB8FDEAE2BBFF6
+                              SHA256 B5EBA51F79953A019EFCA8494044049B4C40CA5F701A61C07066952DAA6949BD
+<span style="font-weight:bold;"> Common Name (CN)             </span>&quot;*.blackhole.io&quot; (wildcard certificate match) (works w/o SNI)
+<span style="font-weight:bold;"> subjectAltName (SAN)         </span>&quot;*.blackhole.io&quot; &quot;blackhole.io&quot; 
 <span style="font-weight:bold;"> Issuer                       </span>&quot;GlobalSign Domain Validation CA - SHA256 - G2&quot; (&quot;GlobalSign nv-sa&quot; from &quot;BE&quot;)
 <span style="font-weight:bold;"> EV cert</span> (experimental)       no 
-<span style="font-weight:bold;"> Certificate Expiration       </span><span style="color:blue;">187 &gt;= 60 days</span> (2015-10-27 16:28 --&gt; 2016-10-27 17:28 +0100)
-<span style="font-weight:bold;"> # of certificates provided</span>   2
-<span style="font-weight:bold;"> Chain of trust</span> (experim.)    <span style="color:blue;">Ok   </span><span style="color:purple;"></span>
+<span style="font-weight:bold;"> Certificate Expiration       </span><span style="color:red;font-weight:bold;">expired!</span> (2014-07-12 00:10 --&gt; 2015-09-25 20:57 +0100)
+<span style="font-weight:bold;"> # of certificates provided</span>   1
+<span style="font-weight:bold;"> Chain of trust</span> (experim.)    <span style="color:red;font-weight:bold;">NOT ok</span> (chain incomplete)
 <span style="font-weight:bold;"> Certificate Revocation List  </span>http://crl.globalsign.com/gs/gsdomainvalsha2g2.crl
 <span style="font-weight:bold;"> OCSP URI                     </span>http://ocsp2.globalsign.com/gsdomainvalsha2g2
 <span style="font-weight:bold;"> OCSP stapling                </span><span style="color:olive;font-weight:bold;">--</span>
@@ -101,7 +102,7 @@ Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher
 <span style="font-weight:bold;"> FREAK</span> (CVE-2015-0204)                     <span style="color:blue;font-weight:bold;">not vulnerable (OK)</span> (tested with 4/9 ciphers)
 <span style="font-weight:bold;"> DROWN</span> (2016-0800, CVE-2016-0703), exper.  <span style="color:blue;font-weight:bold;">not vulnerable on this port (OK)</span>
                                            make sure you don't use this certificate elsewhere with SSLv2 enabled services
-                                           https://censys.io/ipv4?q=1ED3A3F0CD5129081E96FBD28A03E1CD68233DC7AB12EEBFD97EE90D9A3C38BF could help you to find out
+                                           https://censys.io/ipv4?q=B5EBA51F79953A019EFCA8494044049B4C40CA5F701A61C07066952DAA6949BD could help you to find out
 <span style="font-weight:bold;"> LOGJAM</span> (CVE-2015-4000), experimental      <span style="color:blue;font-weight:bold;">not vulnerable (OK)</span> (<span style="color:purple;">tested w/ 2/4 ciphers only!</span>), common primes not checked. See below for any DH ciphers + bit size
 
 <span style="font-weight:bold;"> BEAST</span> (CVE-2011-3389)                     <span style="color:blue;">no SSL3 or TLS1 (OK)</span>
@@ -113,6 +114,7 @@ Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher
 Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher Suite Name (RFC)
 --------------------------------------------------------------------------------------------------------------------------
  xc030   ECDHE-RSA-AES256-GCM-SHA384    ECDH <span style="color:blue;">256 </span>  AESGCM     256         TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384             
+ xc028   ECDHE-RSA-AES256-SHA384        ECDH <span style="color:blue;">256 </span>  AES        256         TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384             
  xc02f   ECDHE-RSA-AES128-GCM-SHA256    ECDH <span style="color:blue;">256 </span>  AESGCM     128         TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256             
  xc027   ECDHE-RSA-AES128-SHA256        ECDH <span style="color:blue;">256 </span>  AES        128         TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256             
 

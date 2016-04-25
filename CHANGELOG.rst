@@ -25,16 +25,37 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.0.12:
+
+2.0.12
+======
+
+- Fixed a TLS cipher listing issue.
+
+---------------
+Future releases
+---------------
+
+.. _2.0.13:
+
+2.0.13
+======
+
+- Fixed a misspelled TLS cipher. ``CDHE-ECDSA-AES128-GCM-SHA256`` should have
+  been written as ``ECDHE-ECDSA-AES128-GCM-SHA256``. This typo simply meant
+  that cipher was unavailable for use, the other nine strong ciphers will still
+  fully available.
+
+-------------
+Past releases
+-------------
+
 .. _2.0.11:
 
 2.0.11
 ======
 
 - Fixed bug with TLS context not being passed to the socket listener.
-
--------------
-Past releases
--------------
 
 .. _2.0.10:
 

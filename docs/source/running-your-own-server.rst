@@ -31,6 +31,7 @@ Getting started
     :maxdepth: 2
 
     command-line-options
+    configuration-options
     configuration-file-example
     delay-flag
     controlling-the-server-with-init-d
@@ -69,5 +70,8 @@ or `GitHub <https://github.com/kura/blackhole/tags>`_. Unpack and run:
 Configuration
 =============
 
-For more information on the command line arguments read :ref:`command-line-options`
-configuration file format read :ref:`configuration-file-example`.
+For more information on the command line arguments see the
+:ref:`command-line-options` document. For information on the configuration
+options, their default values and what each option does, please see the
+:ref:`configuration-options` document and, for an example
+configuration file see :ref:`configuration-file-example`.

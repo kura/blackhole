@@ -34,6 +34,7 @@ release:
 
 web:
 	make docs
+	make testssl
 	knock ego.kura.io && rsync -avhr -e "/usr/bin/ssh -p 2222" docs/build/ ego.kura.io:/var/www/blackhole.io/
 	rm -rf docs/build
 
