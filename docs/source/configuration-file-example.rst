@@ -19,6 +19,8 @@ You can download a copy of this example file from
     #
     # Listen for IPv4 and IPv6 connections.
     #
+    # https://blackhole.io/configuration-options.html#listen
+    #
     # Format:- HOST:PORT, HOST2:PORT2
     # Separate multiple listeners with commas.
     #
@@ -33,6 +35,8 @@ You can download a copy of this example file from
     #
     # Listen IPv4 and IPv6 SSL/TLS connections.
     #
+    # https://blackhole.io/configuration-options.html#tls_listen
+    #
     # Format:- HOST:PORT, HOST2:PORT2
     # Separate multiple listeners with commas.
     #
@@ -43,18 +47,27 @@ You can download a copy of this example file from
 
     #
     # User to run blackhole as.
+    #
+    # https://blackhole.io/configuration-options.html#user
+    #
     # Defaults to current user.
     #
     # user=blackhole
 
     #
     # Group to run blackhole as.
+    #
+    # https://blackhole.io/configuration-options.html#group
+    #
     # Defaults to current group.
     #
     # group=blackhole
 
     #
     # Timeout after no data has been received in seconds.
+    #
+    # https://blackhole.io/configuration-options.html#timeout
+    #
     # Defaults to 60 seconds. Cannot be more than 180 seconds for security
     # (denial of service).
     #
@@ -63,6 +76,9 @@ You can download a copy of this example file from
 
     #
     # TLS certificate location.
+    #
+    # https://blackhole.io/configuration-options.html#tls_cert
+    #
     # Certificate should be x509 format.
     #
     # tls_cert=/etc/ssl/blackhole.crt
@@ -70,10 +86,15 @@ You can download a copy of this example file from
     #
     # TLS key file for x509 certificate.
     #
+    # https://blackhole.io/configuration-options.html#tls_key
+    #
     # tls_key=/etc/ssl/blackhole.key
 
     #
     # Diffie Hellman ephemeral parameters.
+    #
+    # https://blackhole.io/configuration-options.html#tls_dhparams
+    #
     # openssl dhparam 4096
     #
     # tls_dhparams=/etc/ssl/blackhole.dhparams.pem
@@ -81,6 +102,8 @@ You can download a copy of this example file from
     #
     # Delay for X seconds after the DATA command before sending the final
     # response.
+    #
+    # https://blackhole.io/configuration-options.html#delay
     #
     # Must be less than timeout.
     # Time is in seconds and cannot be set above 60 seconds for security
@@ -91,6 +114,8 @@ You can download a copy of this example file from
 
     #
     # Response mode for the final response after the DATA command.
+    #
+    # https://blackhole.io/configuration-options.html#mode
     #
     # accept (default) - all emails are accepted with 250 code.
     # bounce - bounce all emails with a random code.
@@ -112,18 +137,27 @@ You can download a copy of this example file from
 
     #
     # Maximum message size in bytes.
+    #
+    # https://blackhole.io/configuration-options.html#max_message_size
+    #
     # Default 512000 bytes (512 KB).
     #
     # max_message_size=1024000
 
     #
     # Pid file location.
+    #
+    # https://blackhole.io/configuration-options.html#pidfile
+    #
     # Default: /tmp/blackhole.pid
     #
     # pidfile=/var/run/blackhole.io
 
     #
-    # Dynamic switches
+    # Dynamic switches.
+    #
+    # https://blackhole.io/configuration-options.html#dynamic_switch
+    #
     # Allows switching how blackhole responds to an email and delays responding
     # based on a header.
     #
