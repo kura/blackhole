@@ -244,6 +244,12 @@ Changelog
 
     changelog
 
+Frequently asked questions
+==========================
+
+You can find a list of questions and answers in the
+:ref:`frequently-asked-questions` section.
+
 Author
 ======
 

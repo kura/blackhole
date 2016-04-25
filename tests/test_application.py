@@ -133,7 +133,6 @@ def test_run_daemon_no_pid():
         cfile = create_config(('listen=127.0.0.1:9001', ))
         conf = Config(cfile).load()
     conf._pidfile = False
-    # This is fucking INSANE...
     with mock.patch('sys.argv', ['-c {}'.format(cfile), '-b']):
         conf.pidfile = False
         with pytest.raises(SystemExit) as err:
