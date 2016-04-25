@@ -31,10 +31,10 @@ listen
 :Syntax:
     **listen** = *[address]:port, [address]:port*
 :Default:
-    listen=:25
+    :25 -- 25 is the recognised SMTP port.
 
-`:25` is equivalent to listening on port 25 all IPv4 addresses and `:::25` is
-equivalent to listening on port 25 on all IPv6 addresses.
+`:25` is equivalent to listening on port 25 on all IPv4 addresses and `:::25`
+is equivalent to listening on port 25 on all IPv6 addresses.
 
 Multiple addresses and ports can be listed on a single line.
 
@@ -52,10 +52,10 @@ tls_listen
 :Syntax:
     **tls_listen** = *[address]:port, [address]:port*
 :Default:
-    Disabled
+    None -- 465 is the recognised SMTPS port.
 
-`:465` is equivalent to listening on port 465 all IPv4 addresses and `:::465` is
-equivalent to listening on port 465 on all IPv6 addresses.
+`:465` is equivalent to listening on port 465 on all IPv4 addresses and
+`:::465` is equivalent to listening on port 465 on all IPv6 addresses.
 
 Multiple addresses and ports can be listed on a single line.
 
@@ -131,7 +131,7 @@ timeout
 :Syntax:
     **timeout** = *secounds*
 :Default:
-    timeout=60. Maximum value of 180 seconds.
+    60 -- Maximum value of 180 seconds.
 
 This is the amount of time to wait for a client to send data. Once the timeout
 value has been reached with no data being sent by the client, the connection
@@ -207,7 +207,7 @@ delay
 :Syntax:
     **delay** = *secounds*
 :Default:
-    Disabled. Maximum value of 60 seconds.
+    None -- Maximum value of 60 seconds.
 
 Time to delay before returning a response to a completed DATA command. You can
 use this to delay testing or simulate lag.

@@ -126,8 +126,8 @@ received with no issue. That's because it has, it just never actually gets
 delivered to anyone.
 
 
-Via SMTP and SMTPS
-------------------
+SMTP & SMTPS in code
+--------------------
 
 This service can be configured as an SMTP server for an application. Any mail
 the application tries to send will hit the blackhole.io service and look as if
@@ -162,8 +162,8 @@ characters.
 
 .. _telnet:
 
-Test via telnet
----------------
+Testing with telnet
+-------------------
 
 ::
 
