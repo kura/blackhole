@@ -35,11 +35,11 @@ def mailname():
     """
     A fully qualified domain name for HELO and EHLO.
 
+    :returns: str -- fully qualified domain name.
+
     .. note::
 
        Prefers content of /etc/mailname, falls back on `socket.getfqdn`.
-
-    :returns: str -- fully qualified domain name.
     """
     mailname_file = '/etc/mailname'
     if os.path.exists(mailname_file):

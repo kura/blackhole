@@ -24,6 +24,8 @@ You can download a copy of this example file from
     # Format:- HOST:PORT, HOST2:PORT2
     # Separate multiple listeners with commas.
     #
+    # Default: 127.0.0.1:25
+    #
     # listen=:25  is equivalent to listening on all IPv4 addresses
     # listen=:::25  is equivalent to listen on all IPv6 addresses
     #

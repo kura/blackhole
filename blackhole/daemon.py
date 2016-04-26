@@ -43,7 +43,7 @@ class Singleton(type):
         A singleton for `blackhole.daemon.Daemon`.
 
         :param cls:
-        type cls: str
+        :type cls: `blackhole.daemon.Daemon`
         """
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
@@ -99,13 +99,13 @@ class Daemon(metaclass=Singleton):
         """
         The pid of the process, if it's been daemonised.
 
+        :raises: IOError if pid cannot be read from the filesystem.
+        :returns: int or None if no pid.
+
         .. note::
 
            The pid is retrieved from the filestem.
            If the pid does not exist in /proc, the pid is deleted.
-
-        :raises: IOError if pid cannot be read from the filesystem.
-        :returns: int or None if no pid.
         """
         if os.path.exists(self.pidfile):
             try:

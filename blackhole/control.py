@@ -53,6 +53,13 @@ ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
 
 
 def tls_context(use_tls=False):
+    """
+    Create a TLS context using the certificate, key and dhparams file.
+
+    :param use_tls:
+    :type use_tls: bool
+    :returns: `ssl.SSLContext` or None.
+    """
     if use_tls is False:
         return None
     logger = logging.getLogger('blackhole')
@@ -75,6 +82,21 @@ def tls_context(use_tls=False):
 
 
 def create_socket(addr, port, family):
+    """
+    Create a socket.
+
+    :param addr:
+    :type addr: str
+    :param port:
+    :type port: int
+    :param family:
+    :type family: int -- `socket.AF_INET` or `socket.AF_INET6`.
+    :returns: `socket.socket`
+
+    .. note::
+
+       Calls `sys.exit` when there is an error binding to the socket.
+    """
     sock = socket.socket(family, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
@@ -97,13 +119,13 @@ def create_server(addr, port, family, use_tls=False):
     """
     Create an instance of `socket.socket`, bind it and attach it to loop.
 
-    .. note::
-
-       Calls `sys.exit` when there is an error binding to the socket.
-       If `use_tls` is passed, the SSL/TLS context will be created with
-       `ssl.OP_NO_SSLv2` and `ssl.OP_NO_SSLv3`.
-
-    :param use_tls: default False.
+    :param addr:
+    :type addr: str
+    :param port:
+    :type port: int
+    :param family:
+    :type family: int -- `socket.AF_INET` or `socket.AF_INET6`.
+    :param use_tls:
     :type use_tls: bool
     """
     logger = logging.getLogger('blackhole')

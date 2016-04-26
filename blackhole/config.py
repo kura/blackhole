@@ -67,15 +67,15 @@ def config_test(args):
     """
     Test the validity of the configuration file content.
 
+    :param args: arguments parsed from `argparse`.
+    :type args: `argparse.Namespace`
+
     .. note::
 
        Problems with the configuration will be written to the console using
        the `logging` module.
 
        Calls `sys.exit` upon an error.
-
-    :param args: arguments parsed from `argparse`.
-    :type args: `argparse.Namespace`
     """
     logger = logging.getLogger('blackhole.config_test')
     logger.setLevel(logging.INFO)
@@ -111,6 +111,8 @@ class Config(metaclass=Singleton):
 
     Default values are provided as well as self-test functionality
     to sanity check configuration.
+
+    https://blackhole.io/configuration-options.html
     """
 
     config_file = None
@@ -144,10 +146,12 @@ class Config(metaclass=Singleton):
         """
         Load the configuration file and parse.
 
-        Spaces, single and double quotes will be stripped. Lines beginning in
-        # will be ignored.
-
         :returns: obj -- An instance of `blackhole.config.Config`
+
+        .. note::
+
+           Spaces, single and double quotes will be stripped. Lines beginning in
+           # will be ignored.
         """
         if self.config_file is None:
             return self
@@ -171,6 +175,8 @@ class Config(metaclass=Singleton):
     def listen(self):
         """
         Addresses and ports to listen on.
+
+        https://blackhole.io/configuration-options.html#listen
 
         .. note::
 
@@ -220,7 +226,9 @@ class Config(metaclass=Singleton):
     @property
     def tls_listen(self):
         """
-        Addresses and ports to listen on for SSL/TLS connections
+        Addresses and ports to listen on for SSL/TLS connections.
+
+        https://blackhole.io/configuration-options.html#tls_listen
         """
         return self._tls_listen or []
 
@@ -233,11 +241,13 @@ class Config(metaclass=Singleton):
         """
         A UNIX user.
 
+        https://blackhole.io/configuration-options.html#user
+
+        :returns: str -- A UNIX user.
+
         .. note::
 
            Defaults to the current user.
-
-        :returns: str -- A UNIX user.
         """
         return self._user
 
@@ -250,11 +260,13 @@ class Config(metaclass=Singleton):
         """
         A UNIX group.
 
+        https://blackhole.io/configuration-options.html#group
+
+        :returns: str -- A UNIX group.
+
         .. note::
 
            Defaults to the current group.
-
-        :returns: str -- A UNIX group.
         """
         return self._group
 
@@ -267,12 +279,14 @@ class Config(metaclass=Singleton):
         """
         A timeout in seconds.
 
+        https://blackhole.io/configuration-options.html#timeout
+
+        :returns: int -- A timeout in seconds.
+
         .. note::
 
            Defaults to 60 seconds.
            Cannot be more 180 seconds for security (denial of service).
-
-        :returns: int -- A timeout in seconds.
         """
         return int(self._timeout)
 
@@ -284,6 +298,8 @@ class Config(metaclass=Singleton):
     def tls_key(self):
         """
         A TLS key file.
+
+        https://blackhole.io/configuration-options.html#tls_key
 
         :returns: str
         """
@@ -298,6 +314,8 @@ class Config(metaclass=Singleton):
         """
         A TLS certificate file.
 
+        https://blackhole.io/configuration-options.html#tls_cert
+
         :returns: str
         """
         return self._tls_cert
@@ -310,6 +328,8 @@ class Config(metaclass=Singleton):
     def tls_dhparams(self):
         """
         Diffie Hellman ephemeral parameters.
+
+        https://blackhole.io/configuration-options.html#tls_dhparams
 
         :returns: str
         """
@@ -324,6 +344,8 @@ class Config(metaclass=Singleton):
         """
         A path to store the pid.
 
+        https://blackhole.io/configuration-options.html#pidfile
+
         :returns: str -- A filesystem path.
         """
         return self._pidfile
@@ -337,12 +359,14 @@ class Config(metaclass=Singleton):
         """
         A delay in seconds.
 
+        https://blackhole.io/configuration-options.html#delay
+
+        :returns: int or None -- A delay in seconds.
+
         .. note::
 
            Defaults to None.
            Cannot be higher than 60 seconds for security (denial of service).
-
-        :returns: int or None -- A delay in seconds.
         """
         if self._delay is not None:
             return int(self._delay)
@@ -357,12 +381,14 @@ class Config(metaclass=Singleton):
         """
         The mode with which to respond.
 
+        https://blackhole.io/configuration-options.html#mode
+
+        :returns: str -- The server response mode.
+
         .. note::
 
            Defaults to 'accept'.
            Options: 'accept', 'bounce' and 'random'.
-
-        :returns: str -- The server response mode.
         """
         return self._mode
 
@@ -375,10 +401,13 @@ class Config(metaclass=Singleton):
         """
         The maximum size, in bytes, of a message.
 
+        https://blackhole.io/configuration-options.html#max_message_size
+
+        :returns: int
+
         .. note::
 
            Default 512000 bytes (512 KB).
-        :returns: int
         """
         if self._max_message_size is not None:
             return int(self._max_message_size)
@@ -391,6 +420,8 @@ class Config(metaclass=Singleton):
     def dynamic_switch(self):
         """
         Enable or disable dynamic switches.
+
+        https://blackhole.io/configuration-options.html#dynamic_switch
 
         .. note::
 
@@ -415,12 +446,12 @@ class Config(metaclass=Singleton):
         """
         Test configuration validity.
 
+        :returns: obj -- An instance of `blackhole.config.Config`.
+
         .. note::
 
            Uses the magic of `inspect.getmembers` to introspect methods
            beginning with 'test_' and calling them.
-
-        :returns: obj -- An instance of `blackhole.config.Config`.
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         for name, _ in members:
@@ -429,6 +460,9 @@ class Config(metaclass=Singleton):
         return self
 
     def test_ipv6_support(self):
+        """
+        If an IPv6 listener is configured, confirm IPv6 is supported.
+        """
         for address, port, family in self.listen:
             if ':' in address:
                 if not socket.has_ipv6 and family == socket.AF_UNSPEC:
@@ -437,6 +471,9 @@ class Config(metaclass=Singleton):
                                           'platform')
 
     def test_tls_ipv6_support(self):
+        """
+        If an IPv6 listener is configured, confirm IPv6 is supported.
+        """
         for address, port, family in self.tls_listen:
             if ':' in address:
                 if not socket.has_ipv6 and family == socket.AF_UNSPEC:
@@ -567,14 +604,6 @@ class Config(metaclass=Singleton):
             raise ConfigException('Timeout must be 180 seconds or less for '
                                   'security (denial of service).')
 
-    def test_tls_ipv6(self):
-        for address, port, family in self.tls_listen:
-            if ':' in address:
-                if not socket.has_ipv6 and family == socket.AF_UNSPEC:
-                    raise('An IPv6 listener is configured but IPv6 is not '
-                          'available on this platform')
-
-
     def test_tls_port(self):
         """
         Validate TLS port number.
@@ -627,9 +656,11 @@ class Config(metaclass=Singleton):
         """
         Validate the delay period.
 
-        Delay must be lower than the timeout.
-
         :raises: `blackhole.config.ConfigException`
+
+        .. note::
+
+           Delay must be lower than the timeout.
         """
         if self.delay and self.delay >= self.timeout:
             raise ConfigException('Delay must be lower than timeout.')
@@ -641,9 +672,11 @@ class Config(metaclass=Singleton):
         """
         Validate the response mode.
 
-        Valid options are: 'accept', 'bounce' and 'random'.
-
         :raises: `blackhole.config.ConfigException`
+
+        .. note::
+
+           Valid options are: 'accept', 'bounce' and 'random'.
         """
         if self.mode not in ('accept', 'bounce', 'random'):
             raise ConfigException('Mode must be accept, bounce or random.')

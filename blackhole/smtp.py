@@ -64,7 +64,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     def __init__(self):
         """
-        Initialise the SMTP parotocol.
+        Initialise the SMTP protocol.
 
         .. note::
 
@@ -191,12 +191,12 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Wait for data from the client.
 
+        :returns: str
+
         .. note::
 
            Also handles client timeouts if they wait too long before sending
            data.
-
-        :returns: str
         """
         while not self.connection_closed:
             try:
@@ -518,6 +518,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         Delay after the DATA command completes.
 
         Value is in seconds, with a maximum value of 60 seconds.
+
+        :returns: int or None
         """
         if self._delay is not None:
             return self._delay
@@ -583,7 +585,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         Generate a delay from a value provided in an email header.
 
         :param value:
-        :type value: str -- 10
+        :type value: str -- time in seconds as a string.
 
         .. note:
 
@@ -617,6 +619,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         Reponse is configured in the configuration file or configured from
         email headers, if configured to allow that option.
+
+        :returns: str
         """
         if self._mode is not None:
             return self._mode
