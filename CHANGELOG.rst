@@ -25,17 +25,6 @@ the functionality yourself.
 Current release
 ---------------
 
-.. _2.0.12:
-
-2.0.12
-======
-
-- Fixed a TLS cipher listing issue.
-
----------------
-Future releases
----------------
-
 .. _2.0.13:
 
 2.0.13
@@ -70,6 +59,13 @@ Will be read as.
 -------------
 Past releases
 -------------
+
+.. _2.0.12:
+
+2.0.12
+======
+
+- Fixed a TLS cipher listing issue.
 
 .. _2.0.11:
 
