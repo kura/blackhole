@@ -113,7 +113,8 @@ possible, the STARTTLS verb returns a ``500 Not implemented`` response
 until it's possible to implement. -- `https://bugs.python.org/review/23749/ <https://bugs.python.org/review/23749/>`_
 
 While STARTTLS is disabled, you can still talk to blackhole over SMTPS on
-it's standard port `465` as well as unencrypted, on the standard port `25`.
+it's standard port ``465`` as well as unencrypted, on the standard ports ``25``
+and ``587``.
 
 MX
 --
