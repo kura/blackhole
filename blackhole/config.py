@@ -213,7 +213,7 @@ class Config(metaclass=Singleton):
         Convert listener lines from the configuration to usable values.
 
         :param addresses:
-        :type addresses: str -- e.g. '127.0.0.1:25, 10.0.0.1:25'
+        :type addresses: str -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25, :::25'
         :returns: list or None
         """
         addrs = []
