@@ -52,6 +52,7 @@ class Singleton(type):
 
 
 class Daemon(metaclass=Singleton):
+    """An object for handling daemonisation."""
 
     def __init__(self, pidfile):
         """

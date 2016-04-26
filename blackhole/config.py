@@ -182,13 +182,13 @@ class Config(metaclass=Singleton):
     @property
     def listen(self):
         """
-        Addresses and ports to listen on.
+        Addresses, ports and socket family to listen on.
 
         https://blackhole.io/configuration-options.html#listen
 
         .. note::
 
-            Default value is 127.0.0.1:25
+            Default value is [('127.0.0.1', 25, :any:`socket.AF_INET`)]
         """
         return self._listen or [('127.0.0.1', 25, socket.AF_INET)]
 
