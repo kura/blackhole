@@ -60,7 +60,7 @@ Will be read as.
     listen = :25, :::25
 
 - Large scale documentation updates. Pretty much everything should be fully
-  documented now, including all ``SystemExit`` calls including their return
+  documented now, including all :any:`SystemExit` calls including their return
   codes.
 
 -------------
@@ -79,11 +79,10 @@ Past releases
 2.0.10
 ======
 
-- Added error catching to
-  ``socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)`` -- on some
-  systems this is available while still triggering a `Protocol Error` and
-  causing blackhole to crash. The error catching will attempt to set this
-  option if it's available but silently ignore it if it errors.
+- Added error catching to :any:`socket.SO_REUSEPORT` -- on some systems this is
+  available while still triggering a `Protocol Error` and causing blackhole to
+  crash. The error catching will attempt to set this option if it's available
+  but silently ignore it if it errors.
 
 .. _2.0.9:
 
@@ -98,8 +97,8 @@ Past releases
 - Added warning for TLS being used with no Diffie Hellman ephemeral parameters
   being configured.
 - Added further security to TSL. The following options are now enforced.
-  ``ssl.OP_NO_COMPRESSION``, ``ssl.OP_SINGLE_DH_USE``,
-  ``ssl.OP_SINGLE_ECDH_USE`` and ``ssl.OP_CIPHER_SERVER_PREFERENCE``.
+  :any:`ssl.OP_NO_COMPRESSION`, :any:`ssl.OP_SINGLE_DH_USE`,
+  :any:`ssl.OP_SINGLE_ECDH_USE` and :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`.
   `See the Python documentation for more information on the flags
   <https://docs.python.org/3/library/ssl.html#ssl.OP_CIPHER_SERVER_PREFERENCE>`_.
 

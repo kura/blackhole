@@ -87,8 +87,8 @@ def config_test(args):
     logger.info('blackhole: %s syntax is OK', args.config_file)
     logger.info('blackhole: %s test was successful', args.config_file)
     if len(conf.tls_listen) > 0 and not conf.tls_dhparams:
-        logger.warn('TLS is enabled but no Diffie Hellman phemeral parameters '
-                    'file was provided.')
+        logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
+                    'parameters file was provided.')
     raise SystemExit(os.EX_OK)
 
 
