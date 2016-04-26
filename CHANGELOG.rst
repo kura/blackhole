@@ -45,11 +45,12 @@ Future releases
   been written as ``ECDHE-ECDSA-AES128-GCM-SHA256``. This typo simply meant
   that cipher was unavailable for use, the other nine strong ciphers were/are
   still fully available.
-- :ref:`configuration-options` document compiled.
+- :ref:`configuration-options` document compiled..
 - In-line comments in configuration files are now supported and the comment is
   ignored.
 - Large scale documentation updates. Pretty much everything should be fully
-  documented now, including all `SystemExit` calls including their return codes.
+  documented now, including all ``SystemExit`` calls including their return
+  codes.
 
 .. code-block:: ini
 
