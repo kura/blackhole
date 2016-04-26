@@ -92,7 +92,7 @@ class Daemon(metaclass=Singleton):
         """
         Fork off the process.
 
-        :raises: :any:`SystemExit` -- code :any:`os.EX_OK`
+        :raises: :any:`SystemExit` -- :any:`os.EX_OK`
         :raises: :any:`blackhole.exceptions.DaemonException`
         """
         try:
@@ -107,7 +107,8 @@ class Daemon(metaclass=Singleton):
         """
         The pid of the process, if it's been daemonised.
 
-        :raises: :any:`IOError` if pid cannot be read from the filesystem.
+        :raises: :any:`blackhole.exceptions.DaemonException` if pid cannot be
+                 read from the filesystem.
         :returns: :any:`int` or :any:`None` if no pid.
 
         .. note::

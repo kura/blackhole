@@ -70,7 +70,7 @@ def config_test(args):
 
     :param args: arguments parsed from :any:`argparse`.
     :type args: :any:`argparse.Namespace`
-    :raises: :any:`SystemExit` -- codes :any:`os.EX_USAGE` and :any:`os.EX_OK`
+    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` and :any:`os.EX_OK`
 
     .. note::
 

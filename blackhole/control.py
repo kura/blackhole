@@ -59,6 +59,16 @@ def tls_context(use_tls=False):
     :param use_tls:
     :type use_tls: :any:`bool`
     :returns: :any:`ssl.SSLContext` or :any:`None`.
+
+    .. note::
+
+       :any:`ssl.SSLContext` created with:
+       :any:`ssl.OP_NO_SSLv2`
+       :any:`ssl.OP_NO_SSLv3`
+       :any:`ssl.OP_NO_COMPRESSION`
+       :any:`ssl.OP_SINGLE_DH_USE`
+       :any:`ssl.OP_SINGLE_ECDH_USE`
+       :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`
     """
     if use_tls is False:
         return None
@@ -92,7 +102,7 @@ def create_socket(addr, port, family):
     :param family:
     :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
     :returns: :any:`socket.socket`
-    :raises: :any:`SystemExit` -- codes :any:`os.EX_NOPERM`
+    :raises: :any:`SystemExit` -- :any:`os.EX_NOPERM`
     """
     sock = socket.socket(family, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -174,8 +184,7 @@ def setgid():
 
     Drop from root privileges down to a less privileged group.
 
-    :raises: :any:`SystemExit` -- codes :any:`os.EX_USAGE` and
-             :any:`os.EX_NOPERM`
+    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` and :any:`os.EX_NOPERM`
 
     .. note::
 
@@ -202,8 +211,7 @@ def setuid():
 
     Drop from root privileges down to a less privileged user.
 
-    :raises: :any:`SystemExit` -- codes :any:`os.EX_USAGE` and
-             :any:`os.EX_NOPERM`
+    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` and :any:`os.EX_NOPERM`
 
     .. note::
 
