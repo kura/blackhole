@@ -514,7 +514,7 @@ class Config(metaclass=Singleton):
 
         :param port: The port.
         :type port: :any:`int`
-        :raises: :any:`blackhole.config.ConfigException`
+        :raises: :any:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -667,7 +667,7 @@ class Config(metaclass=Singleton):
         """
         Validate the delay period.
 
-        :raises: :any:`blackhole.config.ConfigException`
+        :raises: :any:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -683,7 +683,7 @@ class Config(metaclass=Singleton):
         """
         Validate the response mode.
 
-        :raises: :any:`blackhole.config.ConfigException`
+        :raises: :any:`blackhole.exceptions.ConfigException`
 
         .. note::
 
