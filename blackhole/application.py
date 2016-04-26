@@ -43,7 +43,7 @@ def run():
     """
     Create the asyncio loop and start the server.
 
-    :raises: :any:`SystemExit`
+    :raises: :any:`SystemExit` -- codes :any:`os.EX_USAGE` and :any:`os.EX_OK`
     """
     args = parse_cmd_args(sys.argv[1:])
     configure_logs(args)

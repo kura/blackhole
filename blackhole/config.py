@@ -70,13 +70,12 @@ def config_test(args):
 
     :param args: arguments parsed from :any:`argparse`.
     :type args: :any:`argparse.Namespace`
+    :raises: :any:`SystemExit` -- codes :any:`os.EX_USAGE` and :any:`os.EX_OK`
 
     .. note::
 
        Problems with the configuration will be written to the console using
        the :any:`logging` module.
-
-       Calls :any:`sys.exit` upon an error.
     """
     logger = logging.getLogger('blackhole.config_test')
     logger.setLevel(logging.INFO)

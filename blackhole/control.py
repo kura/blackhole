@@ -92,7 +92,7 @@ def create_socket(addr, port, family):
     :param family:
     :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
     :returns: :any:`socket.socket`
-    :raises: :any:`SystemExit`
+    :raises: :any:`SystemExit` -- codes :any:`os.EX_NOPERM`
     """
     sock = socket.socket(family, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -152,8 +152,6 @@ def start_servers():
 def stop_servers():
     """
     Stop the listeners.
-
-    :raises: :any:`SystemExit`
     """
     loop = asyncio.get_event_loop()
     conf = Config()
@@ -176,7 +174,8 @@ def setgid():
 
     Drop from root privileges down to a less privileged group.
 
-    :raises: :any:`SystemExit`
+    :raises: :any:`SystemExit` -- codes :any:`os.EX_USAGE` and
+             :any:`os.EX_NOPERM`
 
     .. note::
 
@@ -203,7 +202,8 @@ def setuid():
 
     Drop from root privileges down to a less privileged user.
 
-    :raises: :any:`SystemExit`
+    :raises: :any:`SystemExit` -- codes :any:`os.EX_USAGE` and
+             :any:`os.EX_NOPERM`
 
     .. note::
 

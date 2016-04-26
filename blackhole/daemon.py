@@ -91,7 +91,7 @@ class Daemon(metaclass=Singleton):
         """
         Fork off the process.
 
-        :raises: :any:`SystemExit`
+        :raises: :any:`SystemExit` -- code :any:`os.EX_OK`
         :raises: :any:`blackhole.exceptions.DaemonException`
         """
         try:
