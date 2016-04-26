@@ -100,7 +100,7 @@ group
 :Default:
     The primary group of the current Linux user
 
-Blackhole will set it's process to the value provided with this options.
+Blackhole will set it's process group to the value provided with this options.
 
 ::
 
