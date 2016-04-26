@@ -44,7 +44,7 @@ Multiple addresses and ports can be listed on a single line.
 
 ::
 
-    listen = 10.0.0.1:25, 10.0.0.2:25, :::25
+    listen = 10.0.0.1:25, 10.0.0.2:25, :25, :::25
 
 -----
 
@@ -56,7 +56,7 @@ tls_listen
 :Syntax:
     **tls_listen** = *[address]:port, [address]:port*
 :Default:
-    None -- 465 is the recognised SMTPS port.
+    None -- 465 is the recognised SMTPS port [*]_.
 
 `:465` is equivalent to listening on port 465 on all IPv4 addresses and
 `:::465` is equivalent to listening on port 465 on all IPv6 addresses.
@@ -65,7 +65,13 @@ Multiple addresses and ports can be listed on a single line.
 
 ::
 
-    tls_listen = 10.0.0.1:465, 10.0.0.2:465, :::465
+    tls_listen = 10.0.0.1:465, 10.0.0.2:465, :465, :::465
+
+.. [*] Port 465 -- while originally a recognised port for SMTP over
+   SSL/TLS -- is no longer advised for use. It's listed here because it's a
+   well known and well used port, but also because Blackhole currently does not
+   support ``STARTTLS`` over SMTP or SMTP Submission. --
+   `<https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt>`_
 
 -----
 

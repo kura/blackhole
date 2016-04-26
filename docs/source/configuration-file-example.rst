@@ -45,6 +45,12 @@ You can download a copy of this example file from
     # tls_listen=:465  is equivalent to listening on all IPv4 addresses
     # tls_listen=:::465  is equivalent to listen on all IPv6 addresses
     #
+    # Port 465 -- while originally a recognised port for SMTP over SSL/TLS --
+    # is no longer advised for use. It's listed here because it's a well known
+    # and well used port, but also because Blackhole currently does not support
+    # STARTTLS over SMTP or SMTP Submission. --
+    # https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt
+    #
     # tls_listen=0.0.0.0:465, fe80::a00:27ff:fe8c:9c6e:465
 
     #

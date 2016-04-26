@@ -6,11 +6,33 @@ Frequently asked questions
 
 Here are some of the questions most frequently asked.
 
+#. `Which ports should I open or use?`_
 #. `What are the default configuration values?`_
 #. `Is IPv6 supported?`_
 #. `What are the permissions required for running the server?`_
 #. `Why is SMTPS supported but STARTTLS is not?`_
 #. `What encryption, security methodologies and practices are in place?`_
+
+Which ports should I open or use?
+=================================
+
+Below is a list of the commonly used ports for SMTP
+
++------+--------------------+
+| Port |                    |
++======+====================+
+| 25   | SMTP               |
++------+--------------------+
+| 587  | SMTP Submission    |
++------+--------------------+
+| 465  | SMTP SSL/TLS [*]_  |
++------+--------------------+
+
+.. [*] Port 465 -- while originally a recognised port for SMTP over
+   SSL/TLS -- is no longer advised for use. It's listed here because it's a
+   well known and well used port, but also because Blackhole currently does not
+   support ``STARTTLS`` over SMTP or SMTP Submission. --
+   `<https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt>`_
 
 What are the default configuration values?
 ==========================================

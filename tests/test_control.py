@@ -60,15 +60,36 @@ def test_tls_context_no_config():
     assert ctx is None
 
 
+class Args(object):
+    pass
+
+
 @unittest.skipIf(ssl is None, 'No ssl module')
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
-def test_tls_context_dhparams():
+def test_tls_context_no_dhparams():
     tls_cert = create_file('cert.cert')
     tls_key = create_file('key.key')
     cfile = create_config(('listen=127.0.0.1:25', 'tls_listen=127.0.0.1:9000',
                            'tls_cert={}'.format(tls_cert),
                            'tls_key={}'.format(tls_key),))
-    Config(cfile).load()
+    conf = Config(cfile).load()
+    conf.args = Args()
+    conf.args.less_secure = False
+    with mock.patch('ssl.SSLContext.load_cert_chain'):
+        tls_context(use_tls=True)
+
+
+@unittest.skipIf(ssl is None, 'No ssl module')
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+def test_tls_context_less_secure():
+    tls_cert = create_file('cert.cert')
+    tls_key = create_file('key.key')
+    cfile = create_config(('listen=127.0.0.1:25', 'tls_listen=127.0.0.1:9000',
+                           'tls_cert={}'.format(tls_cert),
+                           'tls_key={}'.format(tls_key),))
+    conf = Config(cfile).load()
+    conf.args = Args()
+    conf.args.less_secure = True
     with mock.patch('ssl.SSLContext.load_cert_chain'):
         tls_context(use_tls=True)
 
@@ -83,7 +104,9 @@ def test_tls_context_dhparams():
                            'tls_cert={}'.format(tls_cert),
                            'tls_key={}'.format(tls_key),
                            'tls_dhparams={}'.format(tls_dhparams)))
-    Config(cfile).load()
+    conf = Config(cfile).load()
+    conf.args = Args()
+    conf.args.less_secure = False
     with mock.patch('ssl.SSLContext.load_cert_chain'):
         with mock.patch('ssl.SSLContext.load_dh_params') as dh:
             tls_context(use_tls=True)
@@ -223,7 +246,9 @@ def test_create_server_tls_ipv4_bind_works(mock_sock, mock_ssl):
     assert len(blackhole.control._servers) is 0
     cfile = create_config(('listen=127.0.0.1:25',
                            'tls_listen=127.0.0.1:9000',))
-    Config(cfile).load()
+    conf = Config(cfile).load()
+    conf.args = Args()
+    conf.args.less_secure = False
     create_server('127.0.0.1', 9000, socket.AF_INET, use_tls=True)
     assert len(blackhole.control._servers) is 1
     assert mock_sock.called is True
@@ -241,7 +266,9 @@ def test_create_server_tls_ipv6_bind_works(mock_sock, mock_ssl):
     assert len(blackhole.control._servers) is 0
     cfile = create_config(('listen=:::25',
                            'tls_listen=:::9000',))
-    Config(cfile).load()
+    conf = Config(cfile).load()
+    conf.args = Args()
+    conf.args.less_secure = False
     create_server('::', 9000, socket.AF_INET, use_tls=True)
     assert len(blackhole.control._servers) is 1
     assert mock_sock.called is True
@@ -271,7 +298,9 @@ def test_ipv4_start_servers_tls(_, __):
     cfile = create_config(('listen=127.0.0.1:25', 'tls_listen=127.0.0.1:9000',
                            'tls_cert={}'.format(tls_cert),
                            'tls_key={}'.format(tls_key)))
-    Config(cfile).load()
+    conf = Config(cfile).load()
+    conf.args = Args()
+    conf.args.less_secure = False
     start_servers()
     assert len(blackhole.control._servers) is 2
 
@@ -299,7 +328,9 @@ def test_ipv6_start_servers_tls(_, __):
     cfile = create_config(('listen=:::25', 'tls_listen=:::9000',
                            'tls_cert={}'.format(tls_cert),
                            'tls_key={}'.format(tls_key)))
-    Config(cfile).load()
+    conf = Config(cfile).load()
+    conf.args = Args()
+    conf.args.less_secure = False
     start_servers()
     assert len(blackhole.control._servers) is 2
 
@@ -328,7 +359,9 @@ def test_ipv4_and_ipv6_start_servers_tls(_, __):
                            'tls_listen=127.0.0.1:9000,:::9000',
                            'tls_cert={}'.format(tls_cert),
                            'tls_key={}'.format(tls_key)))
-    Config(cfile).load()
+    conf = Config(cfile).load()
+    conf.args = Args()
+    conf.args.less_secure = False
     start_servers()
     assert len(blackhole.control._servers) is 4
 

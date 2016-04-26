@@ -73,6 +73,12 @@ def tls_context(use_tls=False):
 
        Also responsible for loading Diffie Hellman ephemeral parameters if
        they're provided -- :any:`ssl.SSLContext.load_dh_params`
+
+       If the ``-ls`` or ``--less-secure`` option is provided,
+       :any:`ssl.OP_SINGLE_DH_USE` and :any:`ssl.OP_SINGLE_ECDH_USE` will be
+       omitted from the context. --
+       https://blackhole.io/command-line-options.html#command-line-options --
+       added in :ref:`2.0.13`
     """
     if use_tls is False:
         return None
@@ -83,9 +89,14 @@ def tls_context(use_tls=False):
     ctx.options |= ssl.OP_NO_SSLv2
     ctx.options |= ssl.OP_NO_SSLv3
     ctx.options |= ssl.OP_NO_COMPRESSION
-    ctx.options |= ssl.OP_SINGLE_DH_USE
-    ctx.options |= ssl.OP_SINGLE_ECDH_USE
     ctx.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
+    # import ipdb; ipdb.set_trace()
+    if not config.args.less_secure:
+        ctx.options |= ssl.OP_SINGLE_DH_USE
+        ctx.options |= ssl.OP_SINGLE_ECDH_USE
+    else:
+        logger.warn('Using -ls or --less-secure reduces security on SSL/TLS '
+                    'connections')
     ctx.set_ciphers(':'.join(ciphers))
     if config.tls_dhparams:
         ctx.load_dh_params(config.tls_dhparams)

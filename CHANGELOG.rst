@@ -45,7 +45,7 @@ Future releases
   been written as ``ECDHE-ECDSA-AES128-GCM-SHA256``. This typo simply meant
   that cipher was unavailable for use, the other nine strong ciphers were/are
   still fully available.
-- :ref:`configuration-options` document compiled..
+- :ref:`configuration-options` document compiled.
 - In-line comments in configuration files are now supported and the comment is
   ignored.
 
@@ -62,6 +62,10 @@ Will be read as.
 - Large scale documentation updates. Pretty much everything should be fully
   documented now, including all :any:`SystemExit` calls including their return
   codes.
+- Added an option to disable :any:`ssl.OP_SINGLE_DH_USE` and
+  :any:`ssl.OP_SINGLE_DH_USE`. Reduces CPU overhead at the expense
+  of security. Disabled by default, warns if used. Slightly better for high
+  load environments. -- `<https://blackhole.io/command-line-options.html>`_
 
 -------------
 Past releases
@@ -95,7 +99,8 @@ Past releases
 - Moved out functionality for creating sockets and TLS contexts to separate
   control functions.
 - Added warning for TLS being used with no Diffie Hellman ephemeral parameters
-  being configured.
+  being configured. --
+  `<https://blackhole.io/configuration-options.html#tls-dhparams>`_
 - Added further security to TSL. The following options are now enforced.
   :any:`ssl.OP_NO_COMPRESSION`, :any:`ssl.OP_SINGLE_DH_USE`,
   :any:`ssl.OP_SINGLE_ECDH_USE` and :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`.
@@ -138,7 +143,8 @@ Past releases
 - :ref:`dynamic-switches`.
 - Re-added the ability to configure max message size. Displays in `EHLO` and
   enforced in `DATA` command. Default is 512000 bytes (512 KB).
-- Added `tls_dhparams` options for loading Diffie Hellman ephemeral parameters.
+- Added :ref:`tls_dhparams` options for loading Diffie Hellman ephemeral
+  parameters.
 - Added SMTP AUTH mechanisms. Currently PLAIN, LOGIN and CRAM-MD5 are
   supported.
 - Added pidfile and related self tests to config_test command.
@@ -207,7 +213,7 @@ speficially for release to PyPI.
 - Debug flag no longer gives a warning.
 - Delay flag is no longer a blocking method, now non-blocking and
   asynchronous.
-- STARTTLS has been disabled, it's not available with `asyncio`. -
+- STARTTLS has been disabled, it's not available with :any:`asyncio`. -
   `https://bugs.python.org/review/23749/ <https://bugs.python.org/review/23749/>`_
 - A lot of status codes have been removed.
 

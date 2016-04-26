@@ -52,6 +52,7 @@ def run():
         config_test(args)
     try:
         config = Config(args.config_file).load().test()
+        config.args = args
     except ConfigException as err:
         logger.fatal(err)
         raise SystemExit(os.EX_USAGE)

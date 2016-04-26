@@ -58,7 +58,7 @@ as described below.
 
 By design, the blackhole server doesn't care about the order you send commands,
 whether they are capitalised or whether you send a valid, fully qualified
-domain name or email addresses.
+domain name or valid from and to email addresses.
 
 Dynamic delay and response mode switches
 ----------------------------------------

@@ -38,15 +38,35 @@ from blackhole.exceptions import ConfigException
 __version__ = __import__('blackhole').__version__
 
 
+ls_help = ('''Disable ssl.OP_SINGLE_DH_USE and ssl.OP_SINGLE_ECDH_USE. '''
+           '''Reduces CPU overhead at the expense of security -- Don't use '''
+           '''this option unless you really need to''')
+
+
+decription = ('Blackhole is an that (figuratively) pipes all mail to '
+              '/dev/null. Blackhole is built on top of asyncio and utilises '
+              'async def and await statements available in Python 3.5 and '
+              'above.')
+
+
+epilog = ('An explanation of all command line arguments is provided here -- '
+          'https://blackhole.io/command-line-options.html and all '
+          'configuration options here -- '
+          'https://blackhole.io/configuration-options.html')
+
+
 def parse_cmd_args(args):
     """
     Parse arguments from the command line.
+
+    https://blackhole.io/command-line-options.html
 
     :param args:
     :type args: :any:`list`
     :returns: :any:`argparse.Namespace`
     """
-    parser = argparse.ArgumentParser('blackhole')
+    parser = argparse.ArgumentParser('blackhole', description=decription,
+                                     epilog=epilog)
     parser.add_argument('-v', '--version', action='version',
                         version=__version__)
     parser.add_argument('-c', '--conf', type=str,
@@ -61,6 +81,8 @@ def parse_cmd_args(args):
     group.add_argument('-b', '--background', dest='background',
                        action='store_true',
                        help='run in the background')
+    parser.add_argument('-ls', '--less-secure', dest='less_secure',
+                        action='store_true', help=ls_help)
     return parser.parse_args(args)
 
 
@@ -79,6 +101,9 @@ def config_test(args):
     """
     logger = logging.getLogger('blackhole.config_test')
     logger.setLevel(logging.INFO)
+    if args.less_secure:
+        logger.warn('Using -ls or --less-secure reduces security on SSL/TLS '
+                    'connections')
     try:
         conf = Config(args.config_file).load().test()
     except ConfigException as err:
@@ -115,6 +140,7 @@ class Config(metaclass=Singleton):
     https://blackhole.io/configuration-options.html
     """
 
+    args = None
     config_file = None
     _listen = []
     _tls_listen = []

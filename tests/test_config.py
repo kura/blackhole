@@ -136,6 +136,7 @@ class TestConfigTest(unittest.TestCase):
         cfile = create_config(settings)
         args = self.Args()
         args.config_file = cfile
+        args.less_secure = True
         with pytest.raises(SystemExit) as exc:
             config_test(args)
         assert str(exc.value) == '0'
