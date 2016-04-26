@@ -16,7 +16,7 @@ Here are some of the questions most frequently asked.
 Which ports should I open or use?
 =================================
 
-Below is a list of the commonly used ports for SMTP
+Below is a list of the commonly used ports for SMTP.
 
 +------+--------------------+
 | Port |                    |

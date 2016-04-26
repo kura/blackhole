@@ -148,7 +148,8 @@ class TestListen(unittest.TestCase):
     def test_default(self):
         cfile = create_config(('',))
         conf = Config(cfile).load()
-        assert conf.listen == [('127.0.0.1', 25, socket.AF_INET)]
+        assert conf.listen == [('127.0.0.1', 25, socket.AF_INET),
+                               ('127.0.0.1', 587, socket.AF_INET)]
 
     def test_localhost(self):
         cfile = create_config(('listen=localhost:25',))

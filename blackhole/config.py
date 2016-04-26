@@ -214,9 +214,11 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-            Default value is [('127.0.0.1', 25, :any:`socket.AF_INET`)]
+            Default value is [('127.0.0.1', 25, :any:`socket.AF_INET`),
+                              ('127.0.0.1', 587, :any:`socket.AF_INET`)]
         """
-        return self._listen or [('127.0.0.1', 25, socket.AF_INET)]
+        return self._listen or [('127.0.0.1', 25, socket.AF_INET),
+                                ('127.0.0.1', 587, socket.AF_INET)]
 
     @listen.setter
     def listen(self, addrs):

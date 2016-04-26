@@ -35,7 +35,8 @@ listen
 :Syntax:
     **listen** = *[address]:port, [address]:port*
 :Default:
-    127.0.0.1:25 -- 25 is the recognised SMTP port.
+    127.0.0.1:25, 127.0.0.1:587 -- 25 is the recognised SMTP port, 587 is the
+    recognised SMTP Submission port.
 
 `:25` is equivalent to listening on port 25 on all IPv4 addresses and `:::25`
 is equivalent to listening on port 25 on all IPv6 addresses.
@@ -44,7 +45,7 @@ Multiple addresses and ports can be listed on a single line.
 
 ::
 
-    listen = 10.0.0.1:25, 10.0.0.2:25, :25, :::25
+    listen = 10.0.0.1:25, 10.0.0.2:25, :25, :::25, :587, :::587
 
 -----
 
