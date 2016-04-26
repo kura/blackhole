@@ -46,6 +46,18 @@ Future releases
   that cipher was unavailable for use, the other nine strong ciphers were/are
   still fully available.
 - :ref:`configuration-options` document compiled.
+- In-line comments in configuration files are now supported and the comment is
+  ignored.
+
+.. code-block:: ini
+
+    listen = :25, :::25  # IPv4 and IPv6
+
+Will be read as.
+
+.. code-block:: ini
+
+    listen = :25, :::25
 
 -------------
 Past releases

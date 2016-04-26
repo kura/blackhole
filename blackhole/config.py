@@ -150,8 +150,13 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-           Spaces, single and double quotes will be stripped. Lines beginning in
-           # will be ignored.
+           Spaces, single and double quotes will be stripped. Lines beginning
+           # will be ignored. # comments in-line will be stripped out and
+           ignored.
+
+           i.e.
+
+           listen = :25, :::25  # IPv4 & IPv6   ->   listen = :25, :::25
         """
         if self.config_file is None:
             return self
