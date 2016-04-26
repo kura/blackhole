@@ -264,13 +264,6 @@ API documentation
    api-smtp
    api-utils
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
 Author
 ======
 
@@ -282,6 +275,13 @@ Thanks & contributors
 =====================
 
 Thanks are here -- :ref:`thanks` and contributors here -- :ref:`contributors`.
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 
 .. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=flat-square&label=version

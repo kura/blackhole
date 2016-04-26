@@ -57,8 +57,8 @@ def tls_context(use_tls=False):
     Create a TLS context using the certificate, key and dhparams file.
 
     :param use_tls:
-    :type use_tls: bool
-    :returns: `ssl.SSLContext` or None.
+    :type use_tls: :any:`bool`
+    :returns: :any:`ssl.SSLContext` or :any:`None`.
     """
     if use_tls is False:
         return None
@@ -86,16 +86,13 @@ def create_socket(addr, port, family):
     Create a socket.
 
     :param addr:
-    :type addr: str
+    :type addr: :any:`str`
     :param port:
-    :type port: int
+    :type port: :any:`int`
     :param family:
-    :type family: int -- `socket.AF_INET` or `socket.AF_INET6`.
-    :returns: `socket.socket`
-
-    .. note::
-
-       Calls `sys.exit` when there is an error binding to the socket.
+    :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
+    :returns: :any:`socket.socket`
+    :raises: :any:`SystemExit`
     """
     sock = socket.socket(family, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -117,16 +114,16 @@ def create_socket(addr, port, family):
 
 def create_server(addr, port, family, use_tls=False):
     """
-    Create an instance of `socket.socket`, bind it and attach it to loop.
+    Create an instance of :any:`socket.socket`, bind it and attach it to loop.
 
     :param addr:
-    :type addr: str
+    :type addr: :any:`str`
     :param port:
-    :type port: int
+    :type port: :any:`int`
     :param family:
-    :type family: int -- `socket.AF_INET` or `socket.AF_INET6`.
+    :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
     :param use_tls:
-    :type use_tls: bool
+    :type use_tls: :any:`bool`
     """
     logger = logging.getLogger('blackhole')
     if use_tls:
@@ -156,7 +153,7 @@ def stop_servers():
     """
     Stop the listeners.
 
-    :raises: SystemExit
+    :raises: :any:`SystemExit`
     """
     loop = asyncio.get_event_loop()
     conf = Config()
@@ -178,6 +175,8 @@ def setgid():
     Change group.
 
     Drop from root privileges down to a less privileged group.
+
+    :raises: :any:`SystemExit`
 
     .. note::
 
@@ -203,6 +202,8 @@ def setuid():
     Change user.
 
     Drop from root privileges down to a less privileged user.
+
+    :raises: :any:`SystemExit`
 
     .. note::
 

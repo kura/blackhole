@@ -29,7 +29,6 @@ Exceptions for the blackhole server.
 
 class ConfigException(Exception):  # pragma: no cover
     """A configuration exception."""
-
     pass
 
 

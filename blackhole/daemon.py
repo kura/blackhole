@@ -34,16 +34,16 @@ from blackhole.exceptions import DaemonException
 
 
 class Singleton(type):
-    """A singleton for `blackhole.daemon.Daemon`."""
+    """A singleton for :any:`blackhole.daemon.Daemon`."""
 
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
         """
-        A singleton for `blackhole.daemon.Daemon`.
+        A singleton for :any:`blackhole.daemon.Daemon`.
 
         :param cls:
-        :type cls: `blackhole.daemon.Daemon`
+        :type cls: :any:`blackhole.daemon.Daemon`
         """
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
@@ -55,10 +55,10 @@ class Daemon(metaclass=Singleton):
 
     def __init__(self, pidfile):
         """
-        Create an instance of `blackhole.daemon.Daemon`.
+        Create an instance of :any:`blackhole.daemon.Daemon`.
 
         :param pidfile:
-        :type pidfile: str
+        :type pidfile: :any:`str`
         """
         self.pidfile = pidfile
 
@@ -68,7 +68,8 @@ class Daemon(metaclass=Singleton):
 
         .. note::
 
-           Registers an `atexit.register` signal to delete the pid on exit.
+           Registers an :any:`atexit.register` signal to delete the pid on
+           exit.
         """
         self.fork()
         os.chdir(os.path.sep)
@@ -80,13 +81,19 @@ class Daemon(metaclass=Singleton):
 
     def _delpid(self):
         """
-        A wrapper around `del self.pid` for use with `atexit.register`.
+        Wrapper around :any:`del self.pid` for use with :any:`atexit.register`.
 
         This is not a public method for API use.
         """
         del self.pid
 
     def fork(self):
+        """
+        Fork off the process.
+
+        :raises: :any:`SystemExit`
+        :raises: :any:`blackhole.exceptions.DaemonException`
+        """
         try:
             pid = os.fork()
             if pid > 0:
@@ -99,8 +106,8 @@ class Daemon(metaclass=Singleton):
         """
         The pid of the process, if it's been daemonised.
 
-        :raises: IOError if pid cannot be read from the filesystem.
-        :returns: int or None if no pid.
+        :raises: :any:`IOError` if pid cannot be read from the filesystem.
+        :returns: :any:`int` or :any:`None` if no pid.
 
         .. note::
 
@@ -122,10 +129,10 @@ class Daemon(metaclass=Singleton):
         """
         Write the pid to the filesystem.
 
-        :raises: `daemon.daemon.DaemonException` if writing to filesystem
+        :raises: :any:`daemon.daemon.DaemonException` if writing to filesystem
                  fails.
         :param pid: the process's pid.
-        :type pid: int
+        :type pid: :any:`int`
         """
         pid = str(pid)
         try:

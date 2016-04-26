@@ -85,7 +85,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         Tie a connection to blackhole to the SMTP protocol.
 
         :param transport:
-        :type transport: `asyncio.transport.Transport`
+        :type transport: :any:`asyncio.transport.Transport`
         """
         super().connection_made(transport)
         self.peer = transport.get_extra_info('peername')
@@ -99,15 +99,20 @@ class Smtp(asyncio.StreamReaderProtocol):
         Callback that binds a stream reader and writer to the SMTP Protocol.
 
         :param reader:
-        :type reader: `asyncio.streams.StreamReader`
+        :type reader: :any:`asyncio.streams.StreamReader`
         :param writer:
-        :type writer: `asyncio.streams.StreamWriter`
+        :type writer: :any:`asyncio.streams.StreamWriter`
         """
         self._reader = reader
         self._writer = writer
 
     def connection_lost(self, exc):
-        """Callback for when a connection is closed or lost."""
+        """
+        Callback for when a connection is closed or lost.
+
+        :param exc:
+        :type exc:
+        """
         logger.debug('Peer %s disconnected', repr(self.peer))
         super().connection_lost(exc)
         self._connection_closed = True
@@ -136,7 +141,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Get a list of available AUTH mechanisms.
 
-        :returns: list -- AUTH mechanisms.
+        :returns: :any:`list` -- AUTH mechanisms.
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
@@ -151,8 +156,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         Look up a handler for the received AUTH mechanism.
 
         :param line:
-        :type line: str
-        :returns: `blackhole.smtp.Smtp.auth_MECHANISM`.
+        :type line: :any:`str`
+        :returns: :any:`blackhole.smtp.Smtp.auth_MECHANISM`.
         """
         parts = line.split(' ')
         if len(parts) < 2:
@@ -191,7 +196,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Wait for data from the client.
 
-        :returns: str
+        :returns: :any:`str`
 
         .. note::
 
@@ -241,10 +246,10 @@ class Smtp(asyncio.StreamReaderProtocol):
         Look up the SMTP VERB against a handler.
 
         :param line:
-        :type line: str -- e.g. HELO blackhole.io
-        :returns: `blackhole.smtp..Smtp.do_VERB`,
-                  `blackhole.smtp.Smtp.auth_MECHANISM` or
-                  `blackhole.smtp..Smtp.help_VERB`.
+        :type line: :any:`str` -- e.g. HELO blackhole.io
+        :returns: :any:`blackhole.smtp..Smtp.do_VERB`,
+                  :any:`blackhole.smtp.Smtp.auth_MECHANISM` or
+                  :any:`blackhole.smtp..Smtp.help_VERB`.
         """
         parts = line.split(None, 1)
         if parts:
@@ -261,8 +266,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         Look up a help handler for the SMTP VERB.
 
         :param parts:
-        :type parts: list
-        :returns: `blackhole.smtp.Smtp.help_VERB`.
+        :type parts: :any:`list`
+        :returns: :any:`blackhole.smtp.Smtp.help_VERB`.
         """
         if len(parts) > 1:
             cmd = 'help_{}'.format(parts[1].upper())
@@ -275,8 +280,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         Look up a handler for the SMTP VERB.
 
         :param verb:
-        :type verb: str
-        :returns: `blackhole.smtp.Smtp.do_VERB`.
+        :type verb: :any:`str`
+        :returns: :any:`blackhole.smtp.Smtp.do_VERB`.
         """
         return getattr(self, 'do_{}'.format(verb.upper()), self.do_UNKNOWN)
 
@@ -285,9 +290,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         Write a response code and message to the client.
 
         :param code:
-        :type int: SMTP code, i.e. 250.
+        :type code: :any:`int` -- SMTP code, i.e. 250.
         :param msg:
-        :type msg: The message for the SMTP code.
+        :type msg: :any:`str` -- The message for the SMTP code.
         """
         response = "{} {}\r\n".format(code, msg).encode('utf-8')
         logger.debug('SEND %s', response)
@@ -302,7 +307,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Get a list of HELP handlers for verbs.
 
-        :returns: list -- help handler names.
+        :returns: :any:`list` -- help handler names.
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
@@ -372,7 +377,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         on-the-fly how the email is handled based on these headers.
 
         :param line:
-        :type line: str -- an email header
+        :type line: :any:`str` -- an email header
         """
         logger.debug('HEADER RECV: %s', line)
         if self.config.dynamic_switch is False:
@@ -519,7 +524,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         Value is in seconds, with a maximum value of 60 seconds.
 
-        :returns: int or None
+        :returns: :any:`int` or :any:`None`
         """
         if self._delay is not None:
             return self._delay
@@ -544,8 +549,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         Generate a delay from a range provided in the email header.
 
         :param value:
-        :type value: str  -- a list of minimum and maximum values as a string.
-                     i.e. (10, 20).
+        :type value: :any:`str`  -- a list of minimum and maximum values as a
+                     string. i.e. (10, 20).
 
         .. note::
 
@@ -585,7 +590,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         Generate a delay from a value provided in an email header.
 
         :param value:
-        :type value: str -- time in seconds as a string.
+        :type value: :any:`str` -- time in seconds as a string.
 
         .. note:
 
@@ -620,7 +625,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         Reponse is configured in the configuration file or configured from
         email headers, if configured to allow that option.
 
-        :returns: str
+        :returns: :any:`str`
         """
         if self._mode is not None:
             return self._mode

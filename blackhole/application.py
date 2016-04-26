@@ -40,7 +40,11 @@ from blackhole.logs import configure_logs
 
 
 def run():
-    """Create the asyncio loop and start the server."""
+    """
+    Create the asyncio loop and start the server.
+
+    :raises: :any:`SystemExit`
+    """
     args = parse_cmd_args(sys.argv[1:])
     configure_logs(args)
     logger = logging.getLogger('blackhole')
