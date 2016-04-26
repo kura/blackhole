@@ -62,13 +62,17 @@ def tls_context(use_tls=False):
 
     .. note::
 
-       :any:`ssl.SSLContext` created with:
-       :any:`ssl.OP_NO_SSLv2`
-       :any:`ssl.OP_NO_SSLv3`
-       :any:`ssl.OP_NO_COMPRESSION`
-       :any:`ssl.OP_SINGLE_DH_USE`
-       :any:`ssl.OP_SINGLE_ECDH_USE`
-       :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`
+       Created with:
+
+       - :any:`ssl.OP_NO_SSLv2`
+       - :any:`ssl.OP_NO_SSLv3`
+       - :any:`ssl.OP_NO_COMPRESSION`
+       - :any:`ssl.OP_SINGLE_DH_USE`
+       - :any:`ssl.OP_SINGLE_ECDH_USE`
+       - :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`
+
+       Also responsible for loading Diffie Hellman ephemeral parameters if
+       they're provided -- :any:`ssl.SSLContext.load_dh_params`
     """
     if use_tls is False:
         return None
