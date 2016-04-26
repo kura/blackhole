@@ -90,7 +90,6 @@ def tls_context(use_tls=False):
     ctx.options |= ssl.OP_NO_SSLv3
     ctx.options |= ssl.OP_NO_COMPRESSION
     ctx.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
-    # import ipdb; ipdb.set_trace()
     if not config.args.less_secure:
         ctx.options |= ssl.OP_SINGLE_DH_USE
         ctx.options |= ssl.OP_SINGLE_ECDH_USE

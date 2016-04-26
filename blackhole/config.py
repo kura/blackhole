@@ -101,9 +101,6 @@ def config_test(args):
     """
     logger = logging.getLogger('blackhole.config_test')
     logger.setLevel(logging.INFO)
-    if args.less_secure:
-        logger.warn('Using -ls or --less-secure reduces security on SSL/TLS '
-                    'connections')
     try:
         conf = Config(args.config_file).load().test()
     except ConfigException as err:
@@ -114,6 +111,9 @@ def config_test(args):
     if len(conf.tls_listen) > 0 and not conf.tls_dhparams:
         logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
                     'parameters file was provided.')
+    if args.less_secure:
+        logger.warn('Using -ls or --less-secure reduces security on SSL/TLS '
+                    'connections')
     raise SystemExit(os.EX_OK)
 
 
