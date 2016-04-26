@@ -162,6 +162,8 @@ class Config(metaclass=Singleton):
             line = line.strip()
             if line.startswith('#'):
                 continue
+            if '#' in line:
+                line = line.split('#')[0]
             try:
                 key, value = line.split('=')
             except ValueError:

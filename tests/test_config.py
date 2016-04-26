@@ -62,12 +62,14 @@ def test_no_access(mock_os_access):
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_load():
     cfile = create_config(('#not=thisline', 'listen=10.0.0.1:1025',
-                           '''this won't be added'''))
+                           '''this won't be added''',
+                           'mode=bounce   #default accept'))
     conf = Config(cfile).load()
     assert conf.listen == [('10.0.0.1', 1025, socket.AF_INET)]
     assert conf.tls_listen == []
     assert getattr(conf, 'not', None) is None
     assert getattr(conf, 'this', None) is None
+    assert getattr(conf, 'default', None) is None
 
 
 @pytest.mark.usefixtures('reset_conf')
