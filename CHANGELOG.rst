@@ -48,9 +48,6 @@ Future releases
 - :ref:`configuration-options` document compiled..
 - In-line comments in configuration files are now supported and the comment is
   ignored.
-- Large scale documentation updates. Pretty much everything should be fully
-  documented now, including all ``SystemExit`` calls including their return
-  codes.
 
 .. code-block:: ini
 
@@ -61,6 +58,10 @@ Will be read as.
 .. code-block:: ini
 
     listen = :25, :::25
+
+- Large scale documentation updates. Pretty much everything should be fully
+  documented now, including all ``SystemExit`` calls including their return
+  codes.
 
 -------------
 Past releases
