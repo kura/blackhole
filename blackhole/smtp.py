@@ -59,7 +59,10 @@ class Smtp(asyncio.StreamReaderProtocol):
     """A dictionary of response codes and messages for bouncing mail."""
 
     _delay = None
+
     _max_delay = 60
+    """This is the maximum delay, to mitigate DoS risks."""
+
     _mode = None
 
     def __init__(self):
@@ -119,12 +122,10 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def _handle_client(self):
         """
-        Handle a connection to the server.
+        Handle a client connection.
 
         This method greets the client and then accepts and handles each line
         the client sends, passing off to the currect verb handler.
-
-        Client timeout is also managed and handled here.
         """
         await self.greet()
         while not self.connection_closed:
@@ -173,7 +174,11 @@ class Smtp(asyncio.StreamReaderProtocol):
                        self.do_UNKNOWN)
 
     async def help_AUTH(self):
-        """Send help for AUTH mechanisms."""
+        """
+        Send help for AUTH mechanisms.
+
+        https://blackhole.io/index.html#help-verb
+        """
         mechanisms = ' '.join(self.get_auth_members())
         await self.push(250, 'Syntax: AUTH {}'.format(mechanisms))
 
@@ -201,7 +206,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         .. note::
 
            Also handles client timeouts if they wait too long before sending
-           data.
+           data. -- https://blackhole.io/configuration-options.html#timeout
         """
         while not self.connection_closed:
             try:
@@ -228,6 +233,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         Timeout a client connection.
 
         Sends the 421 timeout message to the client and closes the connection.
+
+        https://blackhole.io/configuration-options.html#timeout
         """
         logger.debug('%s timed out, no data received for %d seconds',
                      repr(self.peer), self.config.timeout)
@@ -264,6 +271,8 @@ class Smtp(asyncio.StreamReaderProtocol):
     def lookup_help_handler(self, parts):
         """
         Look up a help handler for the SMTP VERB.
+
+        https://blackhole.io/index.html#help-verb
 
         :param parts:
         :type parts: :any:`list`
@@ -307,6 +316,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Get a list of HELP handlers for verbs.
 
+        https://blackhole.io/index.html#help-verb
+
         :returns: :any:`list` -- help handler names.
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
@@ -317,12 +328,20 @@ class Smtp(asyncio.StreamReaderProtocol):
         return cmds
 
     async def do_HELP(self):
-        """Send a response to the HELP verb."""
+        """
+        Send a response to the HELP verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         msg = ' '.join(self.get_help_members())
         await self.push(250, 'Supported commands: {}'.format(msg))
 
     async def help_HELO(self):
-        """Send help for HELO verb."""
+        """
+        Send help for HELO verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: HELO domain.tld')
 
     async def do_HELO(self):
@@ -330,7 +349,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, 'OK')
 
     async def help_EHLO(self):
-        """Send help for the EHLO verb."""
+        """
+        Send help for the EHLO verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: EHLO domain.tld')
 
     async def do_EHLO(self):
@@ -350,7 +373,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self._writer.drain()
 
     async def help_MAIL(self):
-        """Send help for the MAIL TO verb."""
+        """
+        Send help for the MAIL TO verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: MAIL FROM: <address>')
 
     async def do_MAIL(self):
@@ -358,7 +385,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, '2.1.0 OK')
 
     async def help_RCPT(self):
-        """Send response to the RCPT TO verb."""
+        """
+        Send response to the RCPT TO verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: RCPT TO: <address>')
 
     async def do_RCPT(self):
@@ -366,7 +397,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, '2.1.5 OK')
 
     async def help_DATA(self):
-        """Send help for the DATA verb."""
+        """
+        Send help for the DATA verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: DATA')
 
     def process_header(self, line):
@@ -375,6 +410,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         Reads x-blackhole-delay and x-blackhole-mode headers and re-configures
         on-the-fly how the email is handled based on these headers.
+
+        https://blackhole.io/dynamic-switches.html
 
         :param line:
         :type line: :any:`str` -- an email header
@@ -393,6 +430,10 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def response_from_mode(self):
         """
         Send a response based on the configured response mode.
+
+        https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
+        https://blackhole.io/configuration-options.html#mode
+        https://blackhole.io/modes.html
 
         Response mode is configured in configuration file and can be overridden
         by email headers, if enabled.
@@ -417,11 +458,13 @@ class Smtp(asyncio.StreamReaderProtocol):
         This method will also implement timeout management and handling after
         receiving the DATA command and no new data is received.
 
-        This method also implements they delay functionality, delaying a
-        response after the final '\r\n.\r\n' line.
+        This method also implements the delay functionality, delaying a
+        response after the final '\r\n.\r\n' line. --
+        https://blackhole.io/configuration-options.html#delay
+        https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
 
-        This method is also responsible handling the mode with which to
-        respond to the client.
+        This method implements restrictions on message sizes. --
+        https://blackhole.io/configuration-options.html#max-message-size
         """
         await self.push(354, 'End data with <CR><LF>.<CR><LF>')
         on_body = False
@@ -452,7 +495,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.do_NOT_IMPLEMENTED()
 
     async def help_NOOP(self):
-        """Send help for the NOOP verb."""
+        """
+        Send help for the NOOP verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: NOOP')
 
     async def do_NOOP(self):
@@ -460,7 +507,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, '2.0.0 OK')
 
     async def help_RSET(self):
-        """Send help for the RSET verb."""
+        """
+        Send help for the RSET verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: RSET')
 
     async def do_RSET(self):
@@ -475,7 +526,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, '2.0.0 OK')
 
     async def help_VRFY(self):
-        """Send help for the VRFY verb."""
+        """
+        Send help for the VRFY verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: VRFY <address>')
 
     async def do_VRFY(self):
@@ -483,7 +538,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(252, '2.0.0 OK')
 
     async def help_ETRN(self):
-        """Send help for the ETRN verb."""
+        """
+        Send help for the ETRN verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: ETRN')
 
     async def do_ETRN(self):
@@ -491,7 +550,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, 'Queueing started')
 
     async def help_QUIT(self):
-        """Send help for the QUIT verb."""
+        """
+        Send help for the QUIT verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
         await self.push(250, 'Syntax: QUIT')
 
     async def do_QUIT(self):
@@ -524,6 +587,9 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         Value is in seconds, with a maximum value of 60 seconds.
 
+        https://blackhole.io/configuration-options.html#delay
+        https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
+
         :returns: :any:`int` or :any:`None`
         """
         if self._delay is not None:
@@ -547,6 +613,9 @@ class Smtp(asyncio.StreamReaderProtocol):
     def _delay_range(self, value):
         """
         Generate a delay from a range provided in the email header.
+
+        https://blackhole.io/configuration-options.html#delay
+        https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
 
         :param value:
         :type value: :any:`str`  -- a list of minimum and maximum values as a
@@ -589,6 +658,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Generate a delay from a value provided in an email header.
 
+        https://blackhole.io/configuration-options.html#delay
+        https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
+
         :param value:
         :type value: :any:`str` -- time in seconds as a string.
 
@@ -624,6 +696,9 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         Reponse is configured in the configuration file or configured from
         email headers, if configured to allow that option.
+
+        https://blackhole.io/configuration-options.html#mode
+        https://blackhole.io/dynamic-switches.html#dynamic-mode-switches
 
         :returns: :any:`str`
         """

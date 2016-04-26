@@ -36,6 +36,11 @@ over due to the stess -- thus blackhole was born.
 Using the blackhole.io service
 ==============================
 
+.. _help-verb:
+
+HELP verb
+---------
+
 Blackhole has support for the ``HELP`` verb, allowing you to quickly and easily
 see which commands are and are not implemented. You can use this command verb
 as described below.
