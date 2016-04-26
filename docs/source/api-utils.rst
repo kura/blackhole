@@ -10,5 +10,3 @@
 Provides utility functions to blackhole.
 
 .. autofunction:: mailname
-
-.. autofunction:: message_id

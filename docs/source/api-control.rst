@@ -9,6 +9,10 @@
 
 Command and control functionality for blackhole.
 
+.. autofunction:: tls_context
+
+.. autofunction:: create_socket
+
 .. autofunction:: create_server
 
 .. autofunction:: start_servers
