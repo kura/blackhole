@@ -21,6 +21,20 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
+--------------
+Future release
+--------------
+
+.. _2.0.14:
+
+2.0.14
+======
+
+- SMTP Submission (port 587) is automatically used as a listener alongside port
+  25.
+- Added ``SIZE=`` checks in ``MAIL FROM`` command, rather than waiting until
+  ``DATA``.
+
 ---------------
 Current release
 ---------------
@@ -52,7 +66,7 @@ Will be read as.
   documented now, including all :any:`SystemExit` calls including their return
   codes.
 - Added an option to disable :any:`ssl.OP_SINGLE_DH_USE` and
-  :any:`ssl.OP_SINGLE_DH_USE`. Reduces CPU overhead at the expense
+  :any:`ssl.OP_SINGLE_ECDH_USE`. Reduces CPU overhead at the expense
   of security. Disabled by default, warns if used. Slightly better for high
   load environments. -- `<https://blackhole.io/command-line-options.html>`_
 
