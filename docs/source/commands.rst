@@ -10,7 +10,7 @@ The following commands and parameters are supported by Blackhole.
 - :ref:`ehlo`
 - :ref:`help`
 - :ref:`auth`
-- :ref:`mail`
+- :ref:`mail` **BODY=** :ref:`7bit`, :ref:`8bitmime`, :ref:`smtputf8` **SIZE=** :ref:`size`
 - :ref:`rcpt`
 - :ref:`data`
 - :ref:`quit`
@@ -58,7 +58,8 @@ HELP
 .. code-block:: none
 
     >>> HELP
-    250 Supported commands: AUTH DATA EHLO ETRN HELO MAIL NOOP QUIT RCPT RSET VRFY
+    250 Supported commands: AUTH DATA EHLO ETRN HELO MAIL NOOP QUIT RCPT RSET
+                            VRFY
 
 .. _auth:
 
@@ -88,28 +89,45 @@ MAIL
     >>> MAIL FROM: <test@domain.tld>
     250 2.1.0 OK
 
+BODY=
+-----
+
 You can specify the mime type using the ``BODY=`` parameter.
 
-``7BIT``
+.. _7bit:
+
+7BIT
+~~~~
 
 .. code-block:: none
 
     >>> MAIL FROM: <test@domain.tld> BODY=7BIT
     250 2.1.0 OK
 
-``8BITMIME``
+.. _8bitmime:
+
+8BITMIME
+~~~~~~~~
 
 .. code-block:: none
 
     >>> MAIL FROM: <test@domain.tld> BODY=8BITMIME
     250 2.1.0 OK
 
-``SMTPUTF8``
+.. _smtputf8:
+
+SMTPUTF8
+~~~~~~~~
 
 .. code-block:: none
 
     >>> MAIL FROM: <test@domain.tld> SMTPUTF8
     250 2.1.0 OK
+
+.. _size:
+
+SIZE=
+-----
 
 You can also specify the size using the ``SIZE=`` parameter.
 
