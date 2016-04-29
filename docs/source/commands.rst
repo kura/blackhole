@@ -42,7 +42,7 @@ EHLO
     250-HELP
     250-PIPELINING
     250-AUTH CRAM-MD5 LOGIN PLAIN
-    250-SIZE 512000
+    250-SIZE
     250-VRFY
     250-ETRN
     250-ENHANCEDSTATUSCODES
@@ -80,18 +80,48 @@ in the `auth <command-auth.html>`_ section.
 
 .. _mail:
 
-MAIL FROM
-=========
+MAIL
+====
 
 .. code-block:: none
 
     >>> MAIL FROM: <test@domain.tld>
     250 2.1.0 OK
 
+You can specify the mime type using the ``BODY=`` parameter.
+
+``7BIT``
+
+.. code-block:: none
+
+    >>> MAIL FROM: <test@domain.tld> BODY=7BIT
+    250 2.1.0 OK
+
+``8BITMIME``
+
+.. code-block:: none
+
+    >>> MAIL FROM: <test@domain.tld> BODY=8BITMIME
+    250 2.1.0 OK
+
+``SMTPUTF8``
+
+.. code-block:: none
+
+    >>> MAIL FROM: <test@domain.tld> SMTPUTF8
+    250 2.1.0 OK
+
+You can also specify the size using the ``SIZE=`` parameter.
+
+.. code-block:: none
+
+    >>> MAIL FROM: <test@domain.tld> SIZE=82000
+    250 2.1.0 OK
+
 .. _rcpt:
 
-RCPT TO
-=======
+RCPT
+====
 
 .. code-block:: none
 
