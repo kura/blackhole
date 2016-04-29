@@ -559,17 +559,49 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         .. note::
 
-           Address beginning `pass=`, the VRFY will return code 250.
-           Address beginning `fail=`, the VRFY will return code 550.
-           Any other address will return 252.
+           If the request contains 'pass=', the server will respond with code
+           250. If the request contains 'fail=', the server will respond with
+           code 550. And finally, if neither flag is found, the server will
+           respond with code 252.
         """
         _, addr = self._line.split(' ')
-        if addr.startswith('pass='):
+        if 'pass=' in self._line:
             await self.push(250, '2.0.0 {} OK'.format(addr))
-        elif addr.startswith('fail='):
+        elif 'fail=' in self._line:
             await self.push(550, '5.7.1 {} unknown'.format(addr))
         else:
             await self.push(252, '2.0.0 Will attempt delivery')
+
+    async def help_EXPN(self):
+        """
+        Send help for the EXPN verb.
+
+        https://blackhole.io/index.html#help-verb
+        """
+        await self.push(250, 'Syntax: EXPN <list>')
+
+    async def do_EXPN(self):
+        """
+        Handle the EXPN verb.
+
+        .. note::
+
+           If EXPN contains 'fail=', command will return 550, otherwise command
+           will return several addresses.
+        """
+        if 'fail=' in self._line:
+            await self.push(550, 'Not authorised')
+            return
+        responses = ('250-Jim Holden <jim.holden@{}>',
+                     '250-Naomi Nagata <naomi.nagata@{}>',
+                     '250-Alex Kamal <alex.kamal@{}>',
+                     '250 Amos Burton <amos.burton@{}>')
+        for response in responses:
+            response = response.format(self.fqdn)
+            response = "{}\r\n".format(response).encode('utf-8')
+            logger.debug("SENT %s", response)
+            self._writer.write(response)
+        await self._writer.drain()
 
     async def help_ETRN(self):
         """
