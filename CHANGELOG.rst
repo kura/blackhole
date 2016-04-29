@@ -25,6 +25,14 @@ the functionality yourself.
 Future release
 --------------
 
+.. _2.0.15:
+
+- Fix ``SIZE=`` being passed in the ``MAIL`` verb.
+
+---------------
+Current release
+---------------
+
 .. _2.0.14:
 
 2.0.14
@@ -39,9 +47,9 @@ Future release
   :ref:`dynamic-responses`
 - Added a list of :ref:`commands`
 
----------------
-Current release
----------------
+-------------
+Past releases
+-------------
 
 .. _2.0.13:
 
@@ -73,10 +81,6 @@ Will be read as.
   :any:`ssl.OP_SINGLE_ECDH_USE`. Reduces CPU overhead at the expense
   of security. Disabled by default, warns if used. Slightly better for high
   load environments. -- `<https://blackhole.io/command-line-options.html>`_
-
--------------
-Past releases
--------------
 
 .. _2.0.12:
 

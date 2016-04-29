@@ -31,7 +31,7 @@ import logging
 from logging.config import dictConfig
 
 
-DEBUG_FORMAT = ('[%(asctime)s] [%(levelname)s] blackhole.%(module)s:'
+DEBUG_FORMAT = ('[%(asctime)s] [%(levelname)s] blackhole.%(module)s: '
                 '%(message)s')
 
 LOG_CONFIG = {
