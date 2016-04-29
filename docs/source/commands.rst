@@ -1,8 +1,8 @@
 .. _commands:
 
-========================
-Supported commands/verbs
-========================
+=====================================
+Supported commands/verbs & parameters
+=====================================
 
 The following commands and parameters are supported by Blackhole.
 
@@ -75,7 +75,7 @@ in the `auth <command-auth.html>`_ section.
     ...
     >>> AUTH LOGIN
     ...
-    >> AUTH CRAM-MD5
+    >>> AUTH CRAM-MD5
     ...
 
 .. _mail:
