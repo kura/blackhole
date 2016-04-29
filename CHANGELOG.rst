@@ -27,7 +27,10 @@ Future release
 
 .. _2.0.15:
 
-- Fix ``SIZE=`` being passed in the ``MAIL`` verb.
+2.0.15
+======
+
+- Fix ``SIZE=`` being parsed in the ``MAIL`` verb.
 
 ---------------
 Current release
@@ -234,53 +237,3 @@ speficially for release to PyPI.
 - STARTTLS has been disabled, it's not available with :any:`asyncio`. -
   `https://bugs.python.org/review/23749/ <https://bugs.python.org/review/23749/>`_
 - A lot of status codes have been removed.
-
-.. _1.8.1:
-
-1.8.1
-=====
-
-- Added message_size_limit configuration flag to modify the EHLO 205-SIZE
-  output. Some clients read this value and evaluate the message they're
-  sending to the server and refuse to send it due to the message size being
-  larger than the default limit.
-  This limit is not enforced by the server itself.
-
-.. _1.8.0:
-
-1.8.0
-=====
-
-- Removed bin/blackhole and replaced it with a Python entry point
-- Cleaned up the source code and modified error checking
-- Major refactoring of tests
-- Added a requirement of the mock libary to run tests
-- Added a wealth of tests for many new methods and some old ones that were
-  absent
-- Changed get_mailname method to use `__builtin__.open` instead of
-  `__builtin__.file`
-
-.. _1.7.0:
-
-1.7.0
-=====
-
-- Added STARTTLS
-
-.. _1.6.4:
-
-1.6.4
-=====
-
-- Added delay flag
-- Fixed daemonisation issue on PyPy
-- Added FQDN to HELO/EHLO
-- Removed SMTP 251-253 from responses
-
-.. _1.6.0:
-
-1.6.0
-=====
-
-- Python 3
-- Deprecate ssl_ca_certs_dir
