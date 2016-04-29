@@ -554,8 +554,22 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, 'Syntax: VRFY <address>')
 
     async def do_VRFY(self):
-        """Send response to the VRFY verb."""
-        await self.push(252, '2.0.0 OK')
+        """
+        Send response to the VRFY verb.
+
+        .. note::
+
+           Address beginning `pass=`, the VRFY will return code 250.
+           Address beginning `fail=`, the VRFY will return code 550.
+           Any other address will return 252.
+        """
+        _, addr = self._line.split(' ')
+        if addr.startswith('pass='):
+            await self.push(250, '2.0.0 {} OK'.format(addr))
+        elif addr.startswith('fail='):
+            await self.push(550, '5.7.1 {} unknown'.format(addr))
+        else:
+            await self.push(252, '2.0.0 Will attempt delivery')
 
     async def help_ETRN(self):
         """
