@@ -160,19 +160,30 @@ class Smtp(asyncio.StreamReaderProtocol):
         :param line:
         :type line: :any:`str`
         :returns: :any:`blackhole.smtp.Smtp.auth_MECHANISM`.
+
+        .. note::
+
+           Using ``pass=`` as part of the auth data will trigger an
+           authentication pass, using ``fail=`` will trigger an authentication
+           failure.
         """
         parts = line.split(' ')
         if len(parts) < 2:
-            return None
+            return self.auth_UNKNOWN
         mechanism = parts[1].upper()
         if mechanism == 'CRAM-MD5':
             return self.auth_CRAM_MD5
         if mechanism not in self.get_auth_members():
-            return self.do_UNKNOWN
+            return self.auth_UNKNOWN
         if len(parts) == 3 and mechanism == 'PLAIN':
+            if 'fail=' in line:
+                return self._auth_failure
             return self._auth_success
         return getattr(self, 'auth_{}'.format(mechanism.upper()),
-                       self.do_UNKNOWN)
+                       self.auth_UNKNOWN)
+
+    async def auth_UNKNOWN(self):
+        await self.push(501, '5.5.4 Syntax: AUTH mechanism')
 
     async def help_AUTH(self):
         """
@@ -184,19 +195,102 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.push(250, 'Syntax: AUTH {}'.format(mechanisms))
 
     async def auth_LOGIN(self):
-        """Handle an AUTH LOGIN request."""
+        """
+        Handle an AUTH LOGIN request.
+
+            C: AUTH LOGIN:
+            S: 334 VXNlcm5hbWU6
+            C: pass=letmein
+            S: 235 2.7.0 Authentication successful
+
+            C: AUTH LOGIN:
+            S: 334 VXNlcm5hbWU6
+            C: fail=letmein
+            S: 535 5.7.8 Authentication failed
+
+        .. note::
+
+           Using ``pass=`` as part of the auth data will trigger an
+           authentication pass, using ``fail=`` will trigger an authentication
+           failure.
+        """
         await self.push(334, 'VXNlcm5hbWU6')
         line = await self.wait()
         logger.debug('RECV %s', line)
-        await self._auth_success()
+        if b'fail=' in line.lower():
+            await self._auth_failure()
+        else:
+            await self._auth_success()
 
     async def auth_CRAM_MD5(self):
-        """Handle an AUTH CRAM-MD5 request."""
+        """
+        Handle an AUTH CRAM-MD5 request.
+
+            C: AUTH CRAM-MD5
+            S: 334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2MzQ1OTc4MDEwNzM1QGt1cmEtdmJveD4=
+            C: pass=letmein
+            S: 235 2.7.0 Authentication successful
+
+            C: AUTH CRAM-MD5
+            S: 334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2MzQ1OTc4MDEwNzM1QGt1cmEtdmJveD4=
+            C: fail=letmein
+            S: 535 5.7.8 Authentication failed
+
+        .. note::
+
+           Using ``pass=`` as part of the auth data will trigger an
+           authentication pass, using ``fail=`` will trigger an authentication
+           failure.
+        """
         message_id = base64.b64encode(self.message_id.encode('utf-8'), b'==')
-        await self.push(334, message_id)
+        await self.push(334, message_id.decode('utf-8'))
         line = await self.wait()
         logger.debug('RECV %s', line)
-        await self._auth_success()
+        if b'fail=' in line.lower():
+            await self._auth_failure()
+        else:
+            await self._auth_success()
+
+    async def auth_PLAIN(self):
+        """Handle an AUTH PLAIN request.
+
+            C: AUTH PLAIN
+            S: 334
+            C: pass=letmein
+            S: 235 2.7.0 Authentication successful
+
+            C: AUTH PLAIN
+            S: 334
+            C: fail=letmein
+            S: 535 5.7.8 Authentication failed
+
+            C: AUTH PLAIN pass=letmein
+            S: 235 2.7.0 Authentication successful
+
+            C: AUTH PLAIN fail=letmein
+            S: 535 5.7.8 Authentication failed
+
+        .. note::
+
+           Using ``pass=`` as part of the auth data will trigger an
+           authentication pass, using ``fail=`` will trigger an authentication
+           failure.
+        """
+        await self.push(334, ' ')
+        line = await self.wait()
+        logger.debug('RECV %s', line)
+        if b'fail=' in line.lower():
+            await self._auth_failure()
+        else:
+            await self._auth_success()
+
+    async def _auth_success(self):
+        """Send an authentication successful response."""
+        await self.push(235, '2.7.0 Authentication successful')
+
+    async def _auth_failure(self):
+        """Send an authentication failure response."""
+        await self.push(535, '5.7.8 Authentication failed')
 
     async def wait(self):
         """
@@ -217,17 +311,6 @@ class Smtp(asyncio.StreamReaderProtocol):
             except asyncio.TimeoutError:
                 await self.timeout()
             return line
-
-    async def auth_PLAIN(self):
-        """Handle an AUTH PLAIN request."""
-        await self.push(334, ' ')
-        line = await self.wait()
-        logger.debug('RECV %s', line)
-        await self._auth_success()
-
-    async def _auth_success(self):
-        """Send an authentication successful response."""
-        await self.push(235, '2.7.0 Authentication successful')
 
     async def timeout(self):
         """
@@ -557,14 +640,14 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Send response to the VRFY verb.
 
-            >>> VRFY pass=user@domain.tld
-            250 2.0.0 <pass=user@domain.tld> OK
+            C: VRFY pass=user@domain.tld
+            S: 250 2.0.0 <pass=user@domain.tld> OK
 
-            >>> VRFY fail=user@domain.tld
-            550 5.7.1 <fail=user@domain.tld> unknown
+            C: VRFY fail=user@domain.tld
+            S: 550 5.7.1 <fail=user@domain.tld> unknown
 
-            >>> VRFY user@domain.tld
-            252 2.0.0 Will attempt delivery
+            C: VRFY user@domain.tld
+            S: 252 2.0.0 Will attempt delivery
 
         .. note::
 
@@ -587,35 +670,112 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         https://blackhole.io/index.html#help-verb
         """
-        await self.push(250, 'Syntax: EXPN <list>')
+        await self.push(250, 'Syntax: EXPN <list1 | list2 | list3 | all>')
+
+    async def _expn_value_to_list(self):
+        """
+        Look up and return a mailing list or generate one for EXPN all.
+
+        :returns: :any:``list``
+        """
+        expn = self._line.lower().split(' ').replace('<', '').replace('>', '')
+        lists = {
+            'list1': ('Shadow', 'Wednesday', 'Low-key Liesmith'),
+            'list2': ('Jim Holden', 'Naomi Nagata', 'Alex Kamal',
+                      'Amos Burton'),
+            'list3': ('Takeshi Kovacs', 'Laurens Bancroft', 'Kristin Ortega',
+                      'Quellcrist Falconer', 'Virginia Vidaura',
+                      'Reileen Kawahara')
+        }
+        if expn == 'all':
+            iterator = []
+            for key in lists.keys():
+                iterator.extend(lists[key])
+            return iterator
+        else:
+            return lists[expn]
+
+    async def _expn_response(self):
+        """
+        Generate response for an EXPN query.
+
+        :returns: :any:``list``
+        """
+        iterator = await self._expn_value_to_list()
+        i, resp = 1, []
+        for item in iterator:
+            start = '250-'
+            if len(iterator) == i:
+                start = '250 '
+            user = item.lower().replace(' ', '.')
+            resp.append('{}{} <{}@{}>'.format(start, item, user, self.fqdn))
+            i += 1
+        return resp
 
     async def do_EXPN(self):
         """
         Handle the EXPN verb.
 
-            >>> EXPN fail=test-list
-            550 Not authorised
+            C: EXPN fail=test-list
+            S: 550 Not authorised
 
-            C: EXPN test-list
+            C: EXPN list1
+            S: 250-Shadow <shadow@blackhole.io>
+               250-Wednesday <wednesday@blackhole.io>
+               250 Low-key Liesmith <low-key.liesmith@blackhole.io>
+
+            C: EXPN list2
             S: 250-Jim Holden <jim.holden@blackhole.io>
                250-Naomi Nagata <naomi.nagata@blackhole.io>
                250-Alex Kamal <alex.kamal@blackhole.io>
                250 Amos Burton <amos.burton@blackhole.io>
 
+            C: EXPN list3
+            S: 250-Takeshi Kovacs <takeshi.kovacs@blackhole.io>
+               250-Laurens Bancroft <laurens.bancroft@blackhole.io>
+               250-Kristin Ortega <kristin.ortega@blackhole.io>
+               250-Quellcrist Falconer <quellcrist.falconer@blackhole.io>
+               250-Virginia Vidaura <virginia.vidaura@blackhole.io>
+               250 Reileen Kawahara <reileen.kawahara@blackhole.io>
+
+            C: EXPN all
+            S: 250-Shadow <shadow@blackhole.io>
+               250-Wednesday <wednesday@blackhole.io>
+               250-Low-key Liesmith <low-key.liesmith@blackhole.io>
+               250-Takeshi Kovacs <takeshi.kovacs@blackhole.io>
+               250-Laurens Bancroft <laurens.bancroft@blackhole.io>
+               250-Kristin Ortega <kristin.ortega@blackhole.io>
+               250-Quellcrist Falconer <quellcrist.falconer@blackhole.io>
+               250-Virginia Vidaura <virginia.vidaura@blackhole.io>
+               250-Reileen Kawahara <reileen.kawahara@blackhole.io>
+               250-Jim Holden <jim.holden@blackhole.io>
+               250-Naomi Nagata <naomi.nagata@blackhole.io>
+               250-Alex Kamal <alex.kamal@blackhole.io>
+               250 Amos Burton <amos.burton@blackhole.io>
+
+            C: EXPN list-does-not-exist
+            S: 550 Not authorised
+
         .. note::
 
-           If EXPN contains 'fail=', command will return 550, otherwise command
-           will return several addresses.
+           If EXPN contains 'fail=' or does not specify a mailing list the
+           command will return a 550 code.
+           Valid lists are: `list1`, `list2`, `list3` and `all`.
         """
+
         if 'fail=' in self._line:
             await self.push(550, 'Not authorised')
             return
-        responses = ('250-Jim Holden <jim.holden@{}>',
-                     '250-Naomi Nagata <naomi.nagata@{}>',
-                     '250-Alex Kamal <alex.kamal@{}>',
-                     '250 Amos Burton <amos.burton@{}>')
-        for response in responses:
-            response = response.format(self.fqdn)
+        try:
+            _, expn = self._line.lower().split(' ')
+            expn = expn.replace('<', '').replace('>', '')
+        except ValueError:
+            await self.push(550, 'Not authorised')
+            return
+        if expn not in ('list1', 'list2', 'list3'):
+            await self.push(550, 'Not authorised')
+            return
+        for response in await self._expn_response():
             response = "{}\r\n".format(response).encode('utf-8')
             logger.debug("SENT %s", response)
             self._writer.write(response)

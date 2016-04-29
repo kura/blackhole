@@ -24,8 +24,9 @@ Things on the todo list, in no particular order.
 - POP & IMAP -- started, progress available at
   `<https://github.com/kura/blackhole/tree/imap4>`_
 - :strikethrough:`Add SMTP Submission to default interfaces` -- :ref:`2.0.14`
-- Add more lists to EXPN and combine for EXPN all
-- Add ``pass=`` and ``fail=`` to more verbs
+- :strikethrough:`Add more lists to EXPN and combine for EXPN all` --
+  :ref:`2.0.14`
+- :strikethrough:`Add pass= and fail= to more verbs` -- :ref:`2.0.14`
 - Properly implement ``PIPELINING`` -- build responses in a list and return in
   order after ``.\r\n``
 

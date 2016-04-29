@@ -47,14 +47,14 @@ as described below.
 
 .. code-block:: none
 
-    C: HELP
-    S: 250 Supported commands: DATA EHLO ETRN HELO...
-    C: HELP HELO
-    S: 250 Syntax: HELO domain.tld
-    C: HELO kura.io
-    S: 250 OK
-    C: HELP INVALID
-    S: 501 Supported commands: DATA EHLO ETRN HELO...
+    >>> HELP
+    250 Supported commands: DATA EHLO ETRN HELO...
+    >>> HELP HELO
+    250 Syntax: HELO domain.tld
+    >>> HELO kura.io
+    250 OK
+    >>> HELP INVALID
+    501 Supported commands: DATA EHLO ETRN HELO...
 
 By design, the blackhole server doesn't care about the order you send commands,
 whether they are capitalised or whether you send a valid, fully qualified
@@ -70,6 +70,16 @@ You can also configure these settings on-the-fly per email, using headers.
 
 Please read the :ref:`dynamic-switches` section for more information on dynamic
 switches.
+
+Dynamic responses
+-----------------
+
+Some commands allow you to define how they respond. For instance, telling an
+``AUTH`` command to fail authentication.
+
+You can find a full list of commands/verbs who's behaviour can be modified
+on-the-fly, including how they can be modified and what values they will return
+in the :ref:`dynamic-responses` section.
 
 SSL/TLS configuration
 ---------------------
