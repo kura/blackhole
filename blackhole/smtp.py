@@ -464,28 +464,33 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: MAIL FROM: <address>')
 
-    async def _size_in_from(self):
+    async def _size_in_mail(self):
         """
-        Look for the SIZE= parameter in MAIL FROM.
+        Handle ``SIZE=`` being passed in ``MAIL`` verb.
 
-        If a SIZE= parameter is found, we'll send a 552 response is the
-        size provided is larger than max_message_size.
-
-        :returns: :any:`bool`
+        Send a 552 response if the size provided is larger than
+        max_message_size.
         """
-        if 'size=' in self._line.lower():
-            size = self._line.split('size=')[1]
-            if size.isdigit() and int(size) > self.config.max_message_size:
-                await self.push(552, 'Message size exceeds fixed maximum '
-                                     'message size')
-            return False
-        return True
-
-    async def do_MAIL(self):
-        """Send response to MAIL TO verb."""
-        if self._size_in_from() is False:
+        size = self._line.split('size=')[1]
+        if size.isdigit() and int(size) > self.config.max_message_size:
+            await self.push(552, 'Message size exceeds fixed maximum '
+                                 'message size')
             return
         await self.push(250, '2.1.0 OK')
+
+    async def do_MAIL(self):
+        """
+        Send response to MAIL TO verb.
+
+        .. note::
+
+           Checks to see if ``SIZE=`` is passed, pass function off to have it's
+           size handled.
+        """
+        if 'size=' in self._line.lower():
+            await self._size_in_mail()
+        else:
+            await self.push(250, '2.1.0 OK')
 
     async def help_RCPT(self):
         """
