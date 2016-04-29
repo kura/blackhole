@@ -34,6 +34,28 @@ Future release
   25.
 - Added ``SIZE=`` checks in ``MAIL FROM`` command, rather than waiting until
   ``DATA``.
+- Added EXPN verb.
+- Updated many verbs to allow on-the-fly modification of return codes.
+
+.. code-block:: none
+
+    C: EXPN fail=test-list
+    S: 550 Not authorised
+
+    C: EXPN test-list
+    S: 250-Jim Holden <jim.holden@blackhole.io>
+       250-Naomi Nagata <naomi.nagata@blackhole.io>
+       250-Alex Kamal <alex.kamal@blackhole.io>
+       250 Amos Burton <amos.burton@blackhole.io>
+
+    C: VRFY pass=user@domain.tld
+    S: 250 2.0.0 <pass=user@domain.tld> OK
+
+    C: VRFY fail=user@domain.tld
+    S: 550 5.7.1 <fail=user@domain.tld> unknown
+
+    C: VRFY user@domain.tld
+    S: 252 2.0.0 Will attempt delivery
 
 ---------------
 Current release

@@ -557,6 +557,15 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Send response to the VRFY verb.
 
+            >>> VRFY pass=user@domain.tld
+            250 2.0.0 <pass=user@domain.tld> OK
+
+            >>> VRFY fail=user@domain.tld
+            550 5.7.1 <fail=user@domain.tld> unknown
+
+            >>> VRFY user@domain.tld
+            252 2.0.0 Will attempt delivery
+
         .. note::
 
            If the request contains 'pass=', the server will respond with code
@@ -566,9 +575,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         _, addr = self._line.split(' ')
         if 'pass=' in self._line:
-            await self.push(250, '2.0.0 {} OK'.format(addr))
+            await self.push(250, '2.0.0 <{}> OK'.format(addr))
         elif 'fail=' in self._line:
-            await self.push(550, '5.7.1 {} unknown'.format(addr))
+            await self.push(550, '5.7.1 <{}> unknown'.format(addr))
         else:
             await self.push(252, '2.0.0 Will attempt delivery')
 
@@ -583,6 +592,15 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def do_EXPN(self):
         """
         Handle the EXPN verb.
+
+            >>> EXPN fail=test-list
+            550 Not authorised
+
+            C: EXPN test-list
+            S: 250-Jim Holden <jim.holden@blackhole.io>
+               250-Naomi Nagata <naomi.nagata@blackhole.io>
+               250-Alex Kamal <alex.kamal@blackhole.io>
+               250 Amos Burton <amos.burton@blackhole.io>
 
         .. note::
 
