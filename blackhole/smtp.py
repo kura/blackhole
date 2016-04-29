@@ -148,7 +148,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
         for cmd, _ in members:
-            if cmd.startswith('auth_'):
+            if cmd.startswith('auth_') and cmd != 'auth_UNKNOWN':
                 cmd = cmd.replace('auth_', '').replace('_', '-')
                 cmds.append(cmd)
         return cmds
