@@ -36,10 +36,23 @@ over due to the stess -- thus blackhole was born.
 Using the blackhole.io service
 ==============================
 
+Supported commands/verbs and dynamic responses
+----------------------------------------------
+
+You can find a list of all supported commands/verbs and their parameters in
+the :ref:`commands` section.
+
+Some commands allow you to define how they respond. For instance, telling an
+``AUTH`` command to fail authentication.
+
+You can find a full list of commands/verbs who's behaviour can be modified
+on-the-fly, including how they can be modified and what values they will return
+in the :ref:`dynamic-responses` section.
+
 .. _help-verb:
 
-HELP verb
----------
+HELP command/verb
+-----------------
 
 Blackhole has support for the ``HELP`` verb, allowing you to quickly and easily
 see which commands are and are not implemented. You can use this command verb
@@ -70,16 +83,6 @@ You can also configure these settings on-the-fly per email, using headers.
 
 Please read the :ref:`dynamic-switches` section for more information on dynamic
 switches.
-
-Dynamic responses
------------------
-
-Some commands allow you to define how they respond. For instance, telling an
-``AUTH`` command to fail authentication.
-
-You can find a full list of commands/verbs who's behaviour can be modified
-on-the-fly, including how they can be modified and what values they will return
-in the :ref:`dynamic-responses` section.
 
 SSL/TLS configuration
 ---------------------

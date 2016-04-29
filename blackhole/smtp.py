@@ -449,7 +449,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         responses = ('250-HELP', '250-PIPELINING', '250-AUTH {}'.format(auth),
                      '250-SIZE {}'.format(self.config.max_message_size),
                      '250-VRFY', '250-ETRN', '250-ENHANCEDSTATUSCODES',
-                     '250-8BITMIME', '250-SMTPUTF8', '250 DSN', )
+                     '250-8BITMIME', '250-SMTPUTF8', '250-EXPN', '250 DSN', )
         for response in responses:
             response = "{}\r\n".format(response).encode('utf-8')
             logger.debug("SENT %s", response)
@@ -678,7 +678,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :returns: :any:``list``
         """
-        expn = self._line.lower().split(' ').replace('<', '').replace('>', '')
+        _, expn = self._line.lower().split(' ')
+        expn = expn.replace('<', '').replace('>', '')
         lists = {
             'list1': ('Shadow', 'Wednesday', 'Low-key Liesmith'),
             'list2': ('Jim Holden', 'Naomi Nagata', 'Alex Kamal',
@@ -772,7 +773,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         except ValueError:
             await self.push(550, 'Not authorised')
             return
-        if expn not in ('list1', 'list2', 'list3'):
+        if expn not in ('list1', 'list2', 'list3', 'all'):
             await self.push(550, 'Not authorised')
             return
         for response in await self._expn_response():
