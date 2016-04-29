@@ -37,6 +37,7 @@ Future release
 - Added EXPN verb. -- :ref:`expn`
 - Updated many verbs to allow on-the-fly modification of return codes. --
   :ref:`dynamic-responses`
+- Added a list of :ref:`commands`
 
 ---------------
 Current release

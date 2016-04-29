@@ -61,24 +61,6 @@ HELP
     250 Supported commands: AUTH DATA EHLO ETRN HELO MAIL NOOP QUIT RCPT RSET
                             VRFY
 
-.. _auth:
-
-AUTH
-====
-
-Three authentication mechanisms are supported by Blackhole -- ``LOGIN``,
-``PLAIN`` and ``CRAM-MD5``. More information on these mechanisms is available
-in the `auth <command-auth.html>`_ section.
-
-.. code-block:: none
-
-    >>> AUTH PLAIN
-    ...
-    >>> AUTH LOGIN
-    ...
-    >>> AUTH CRAM-MD5
-    ...
-
 .. _mail:
 
 MAIL
@@ -178,20 +160,6 @@ RSET
     >>> RSET
     250 2.0.0 OK
 
-.. _vrfy:
-
-VRFY
-====
-
-Please see the `VRFY <command-vrfy.html>`_ section for information on the
-``VRFY`` command, it's arguments and parameters and dynamically modifying it's
-responses.
-
-.. code-block:: none
-
-    >>> VRFY test@domain.tld
-    252 2.0.0 OK
-
 .. _noop:
 
 NOOP
@@ -211,19 +179,3 @@ ETRN
 
     >>> ETRN
     250 Queueing started
-
-.. _expn:
-
-EXPN
-====
-
-Please see the `EXPN <command-expn.html>`_ section for information on the
-``EXPN`` command, it's arguments and parameters and dynamically modifying it's
-responses.
-
-.. code-block:: none
-
-    >>> EXPN list1
-    250-Shadow <shadow@blackhole.io>
-    250-Wednesday <wednesday@blackhole.io>
-    250 Low-key Liesmith <low-key.liesmith@blackhole.io>
