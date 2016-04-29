@@ -9,6 +9,9 @@ The EXPN command/verb can be asked to respond in several ways.
 EXPN without an argument
 ========================
 
+:Syntax:
+    **EXPN**
+
 Calling the ``EXPN`` command with no arguments or an invalid mailing list name
 will cause it to return an error.
 
@@ -32,6 +35,9 @@ the mailing list name.
 
 EXPN <list>
 ===========
+
+:Syntax:
+    **EXPN** *[mailing-list]*
 
 Three lists are built-in to Blackhole for use.
 
@@ -73,6 +79,9 @@ list3
 
 EXPN all
 ========
+
+:Syntax:
+    **EXPN** *[all]*
 
 The ``all`` argument combines all three lists and returns them.
 

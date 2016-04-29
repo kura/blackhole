@@ -7,6 +7,9 @@ AUTH
 AUTH PLAIN
 ==========
 
+:Syntax:
+    **AUTH PLAIN** *[additional]*
+
 By default, ``AUTH PLAIN`` will succeed unless you ask it not to.
 
 Succeed
@@ -43,6 +46,9 @@ Fail
 AUTH LOGIN
 ==========
 
+:Syntax:
+    **AUTH LOGIN**
+
 By default, ``AUTH PLAIN`` will succeed unless you ask it not to.
 
 Succeed
@@ -67,6 +73,9 @@ Fail
 
 AUTH CRAM-MD5
 =============
+
+:Syntax:
+    **AUTH CRAM-MD5**
 
 By default, ``AUTH PLAIN`` will succeed unless you ask it not to.
 

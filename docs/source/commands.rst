@@ -6,34 +6,44 @@ Supported commands/verbs & parameters
 
 The following commands and parameters are supported by Blackhole.
 
-- :ref:`helo`
-- :ref:`ehlo`
-- :ref:`help`
+- `HELO`_
+- `EHLO`_
+- `HELP`_
 - :ref:`auth`
-- :ref:`mail` **BODY=** :ref:`7bit`, :ref:`8bitmime`, :ref:`smtputf8` **SIZE=** :ref:`size`
-- :ref:`rcpt`
-- :ref:`data`
-- :ref:`quit`
-- :ref:`rset`
+- `MAIL`_ **BODY=** `7BIT`_, `8BITMIME`_, `SMTPUTF8`_ **SIZE=** `SIZE`_
+- `RCPT`_
+- `DATA`_
+- `QUIT`_
+- `RSET`_
 - :ref:`vrfy`
-- :ref:`noop`
-- :ref:`etrn`
+- `NOOP`_
+- `ETRN`_
 - :ref:`expn`
 
-.. _helo:
+-----
+
+.. _HELO:
 
 HELO
 ====
+
+:Syntax:
+    **HELO** *domain.tld*
 
 .. code-block:: none
 
     >>> HELO domain.tld
     250 OK
 
-.. _ehlo:
+-----
+
+.. _EHLO:
 
 EHLO
 ====
+
+:Syntax:
+    **EHLO** *domain.tld*
 
 .. code-block:: none
 
@@ -50,10 +60,15 @@ EHLO
     250-SMTPUTF8
     250 DSN
 
-.. _help:
+-----
+
+.. _HELP:
 
 HELP
 ====
+
+:Syntax:
+    **HELP** *[command]*
 
 .. code-block:: none
 
@@ -61,10 +76,18 @@ HELP
     250 Supported commands: AUTH DATA EHLO ETRN HELO MAIL NOOP QUIT RCPT RSET
                             VRFY
 
-.. _mail:
+-----
+
+.. _MAIL:
+.. _7BIT:
+.. _8BITMIME:
+.. _SMTPUTF8:
 
 MAIL
 ====
+
+:Syntax:
+    **MAIL FROM:** *<user@domain.tld>*  *[BODY= <7BIT>, <8BITMIME> | <SMTPUTF8>]  [SIZE= <SIZE>]*
 
 .. code-block:: none
 
@@ -74,39 +97,22 @@ MAIL
 BODY=
 -----
 
-You can specify the mime type using the ``BODY=`` parameter.
-
-.. _7bit:
-
-7BIT
-~~~~
-
 .. code-block:: none
 
     >>> MAIL FROM: <test@domain.tld> BODY=7BIT
     250 2.1.0 OK
-
-.. _8bitmime:
-
-8BITMIME
-~~~~~~~~
 
 .. code-block:: none
 
     >>> MAIL FROM: <test@domain.tld> BODY=8BITMIME
     250 2.1.0 OK
 
-.. _smtputf8:
-
-SMTPUTF8
-~~~~~~~~
-
 .. code-block:: none
 
     >>> MAIL FROM: <test@domain.tld> SMTPUTF8
     250 2.1.0 OK
 
-.. _size:
+.. _SIZE:
 
 SIZE=
 -----
@@ -118,20 +124,30 @@ You can also specify the size using the ``SIZE=`` parameter.
     >>> MAIL FROM: <test@domain.tld> SIZE=82000
     250 2.1.0 OK
 
-.. _rcpt:
+-----
+
+.. _RCPT:
 
 RCPT
 ====
+
+:Syntax:
+    **RCPT TO:** *<user@domain.tld>*
 
 .. code-block:: none
 
     >>> RCPT TO: <test@domain.tld>
     250 2.1.0 OK
 
-.. _data:
+-----
+
+.. _DATA:
 
 DATA
 ====
+
+:Syntax:
+    **DATA**
 
 .. code-block:: none
 
@@ -140,40 +156,60 @@ DATA
     >>> some email content
     >>> .
 
-.. _quit:
+-----
+
+.. _QUIT:
 
 QUIT
 ====
+
+:Syntax:
+    **QUIT**
 
 .. code-block:: none
 
     >>> QUIT
     221 2.0.0 Goodbye
 
-.. _rset:
+-----
+
+.. _RSET:
 
 RSET
 ====
+
+:Syntax:
+    **RSET**
 
 .. code-block:: none
 
     >>> RSET
     250 2.0.0 OK
 
-.. _noop:
+-----
+
+.. _NOOP:
 
 NOOP
 ====
+
+:Syntax:
+    **NOOP**
 
 .. code-block:: none
 
     >>> NOOP
     250 2.0.0 OK
 
-.. _etrn:
+-----
+
+.. _ETRN:
 
 ETRN
 ====
+
+:Syntax:
+    **ETRN**
 
 .. code-block:: none
 
