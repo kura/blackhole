@@ -26,7 +26,7 @@
 _blackhole_complete_options() {
     local cur_word=$1
     local options="-h --help -v --version -c --conf -t --test -d --debug -b
-                  --background"
+                  --background -ls --less-secure"
     COMPREPLY=( $( compgen -W "$options" -- "$cur_word" ) )
 }
 

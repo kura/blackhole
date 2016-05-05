@@ -6,34 +6,36 @@ Supported commands/verbs & parameters
 
 The following commands and parameters are supported by Blackhole.
 
-- `HELO`_
-- `EHLO`_
-- `HELP`_
 - :ref:`auth`
-- `MAIL`_ **BODY=** `7BIT`_, `8BITMIME`_, `SMTPUTF8`_ **SIZE=** `SIZE`_
-- `RCPT`_
 - `DATA`_
-- `QUIT`_
-- `RSET`_
-- :ref:`vrfy`
-- `NOOP`_
+- `EHLO`_
 - `ETRN`_
 - :ref:`expn`
+- `HELO`_
+- `HELP`_
+- `MAIL`_ **BODY=** `7BIT`_, `8BITMIME`_, `SMTPUTF8`_ **SIZE=** `SIZE`_
+- `NOOP`_
+- `QUIT`_
+- `RCPT`_
+- `RSET`_
+- :ref:`vrfy`
 
 -----
 
-.. _HELO:
+.. _DATA:
 
-HELO
+DATA
 ====
 
 :Syntax:
-    **HELO** *domain.tld*
+    **DATA**
 
 .. code-block:: none
 
-    >>> HELO domain.tld
-    250 OK
+    >>> DATA
+    354 End data with <CR><LF>.<CR><LF>
+    >>> some email content
+    >>> .
 
 -----
 
@@ -62,13 +64,45 @@ EHLO
 
 -----
 
+.. _ETRN:
+
+ETRN
+====
+
+:Syntax:
+    **ETRN**
+
+.. code-block:: none
+
+    >>> ETRN
+    250 Queueing started
+
+-----
+
+.. _HELO:
+
+HELO
+====
+
+:Syntax:
+    **HELO** *domain.tld*
+
+.. code-block:: none
+
+    >>> HELO domain.tld
+    250 OK
+
+-----
+
 .. _HELP:
 
 HELP
 ====
 
 :Syntax:
-    **HELP** *[command]*
+    **HELP**
+:Optional:
+    *COMMAND*
 
 .. code-block:: none
 
@@ -87,7 +121,13 @@ MAIL
 ====
 
 :Syntax:
-    **MAIL FROM:** *<user@domain.tld>*  *[BODY= <7BIT>, <8BITMIME> | <SMTPUTF8>]  [SIZE= <SIZE>]*
+    **MAIL FROM:** *<user@domain.tld>*
+:Optional:
+    BODY= *7BIT, 8BITMIME*
+:Optional:
+    *SMTPUTF8*
+:Optional:
+    SIZE= *SIZE*
 
 .. code-block:: none
 
@@ -126,35 +166,18 @@ You can also specify the size using the ``SIZE=`` parameter.
 
 -----
 
-.. _RCPT:
+.. _NOOP:
 
-RCPT
+NOOP
 ====
 
 :Syntax:
-    **RCPT TO:** *<user@domain.tld>*
+    **NOOP**
 
 .. code-block:: none
 
-    >>> RCPT TO: <test@domain.tld>
-    250 2.1.0 OK
-
------
-
-.. _DATA:
-
-DATA
-====
-
-:Syntax:
-    **DATA**
-
-.. code-block:: none
-
-    >>> DATA
-    354 End data with <CR><LF>.<CR><LF>
-    >>> some email content
-    >>> .
+    >>> NOOP
+    250 2.0.0 OK
 
 -----
 
@@ -173,6 +196,21 @@ QUIT
 
 -----
 
+.. _RCPT:
+
+RCPT
+====
+
+:Syntax:
+    **RCPT TO:** *<user@domain.tld>*
+
+.. code-block:: none
+
+    >>> RCPT TO: <test@domain.tld>
+    250 2.1.0 OK
+
+-----
+
 .. _RSET:
 
 RSET
@@ -185,33 +223,3 @@ RSET
 
     >>> RSET
     250 2.0.0 OK
-
------
-
-.. _NOOP:
-
-NOOP
-====
-
-:Syntax:
-    **NOOP**
-
-.. code-block:: none
-
-    >>> NOOP
-    250 2.0.0 OK
-
------
-
-.. _ETRN:
-
-ETRN
-====
-
-:Syntax:
-    **ETRN**
-
-.. code-block:: none
-
-    >>> ETRN
-    250 Queueing started

@@ -8,7 +8,9 @@ AUTH PLAIN
 ==========
 
 :Syntax:
-    **AUTH PLAIN** *[additional]*
+    **AUTH PLAIN**
+:Optional:
+    *auth data*
 
 By default, ``AUTH PLAIN`` will succeed unless you ask it not to.
 

@@ -5,7 +5,7 @@ VRFY
 ====
 
 :Syntax:
-    **VRFY** *[user@domain.tld]*
+    **VRFY** *user@domain.tld*
 
 By default, VRFY will respond with a ``252`` response.
 

@@ -37,7 +37,7 @@ EXPN <list>
 ===========
 
 :Syntax:
-    **EXPN** *[mailing-list]*
+    **EXPN** *mailing-list*
 
 Three lists are built-in to Blackhole for use.
 
@@ -81,7 +81,7 @@ EXPN all
 ========
 
 :Syntax:
-    **EXPN** *[all]*
+    **EXPN** *all*
 
 The ``all`` argument combines all three lists and returns them.
 

@@ -27,7 +27,7 @@ Current release
 
 .. _2.1.3:
 
-2.1.2
+2.1.3
 =====
 
 - Squashed a bug that caused children to not properly apply their TLS context.
