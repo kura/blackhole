@@ -112,7 +112,6 @@ def test_unknown_handlers():
             assert f in auths
 
 
-# I may have lifted this from another library. <3
 class Controller:
 
     def __init__(self, loop=None):
