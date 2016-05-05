@@ -35,7 +35,7 @@ def mailname():
     """
     A fully qualified domain name for HELO and EHLO.
 
-    :returns: :any:`str` -- fully qualified domain name.
+    :returns: :any:`str`
 
     .. note::
 

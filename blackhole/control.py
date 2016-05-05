@@ -51,7 +51,7 @@ def _context(use_tls=False):
     """
     Create a TLS context using the certificate, key and dhparams file.
 
-    :param use_tls:
+    :param use_tls: Whether to create a TLS context or not.
     :type use_tls: :any:`bool`
     :returns: :any:`ssl.SSLContext` or :any:`None`.
 
@@ -97,11 +97,11 @@ def _socket(addr, port, family):
     """
     Create a socket.
 
-    :param addr:
+    :param addr: The address to use.
     :type addr: :any:`str`
-    :param port:
+    :param port: The port to use.
     :type port: :any:`int`
-    :param family:
+    :param family: The type of socket to use.
     :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
     :returns: :any:`socket.socket`
     :raises: :any:`SystemExit` -- :any:`os.EX_NOPERM`
@@ -130,13 +130,13 @@ def _server(addr, port, family, use_tls=False):
     """
     Create an instance of :any:`socket.socket`, bind it and attach it to loop.
 
-    :param addr:
+    :param addr: The address to use.
     :type addr: :any:`str`
-    :param port:
+    :param port: The port to use.
     :type port: :any:`int`
-    :param family:
+    :param family: The type of socket to use.
     :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
-    :param use_tls:
+    :param use_tls: Whether to create a TLS context or not.
     :type use_tls: :any:`bool`
     """
     sock = _socket(addr, port, family)
@@ -173,7 +173,7 @@ def setgid(silent=False):
 
     :param silent: Don't write to log. Used to silence children.
     :type silent: :any:`bool`
-    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` and :any:`os.EX_NOPERM`
+    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` or :any:`os.EX_NOPERM`
 
     .. note::
 
@@ -205,7 +205,7 @@ def setuid(silent=False):
 
     :param silent: Don't write to log. Used to silence children.
     :type silent: :any:`bool`
-    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` and :any:`os.EX_NOPERM`
+    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` or :any:`os.EX_NOPERM`
 
     .. note::
 

@@ -58,36 +58,35 @@ class Daemon(metaclass=Singleton):
         """
         Create an instance of :any:`blackhole.daemon.Daemon`.
 
-        :param pidfile:
-        :type pidfile: :any:`str` -- a path to store the pid
-        """
-        self.pidfile = pidfile
-        self.pid = os.getpid()
-        atexit.register(self.exit)
-
-    def daemonize(self):
-        """
-        Daemonize the process, using the UNIX double fork method.
+        :param pidfile: A path to store the pid
+        :type pidfile: :any:`str`
 
         .. note::
 
            Registers an :any:`atexit.register` signal to delete the pid on
            exit.
         """
+        self.pidfile = pidfile
+        self.pid = os.getpid()
+        atexit.register(self._exit)
+
+    def daemonize(self):
+        """Daemonize the process."""
         self.fork()
         os.chdir(os.path.sep)
         os.setsid()
         os.umask(0)
         self.pid = os.getpid()
 
-    def exit(self, signum=None, frame=None):
+    def _exit(self, signum=None, frame=None):
+        """Called on exit using :any:`atexit.register` or via a signal."""
         del self.pid
 
     def fork(self):
         """
         Fork off the process.
 
-        :raises: :any:`SystemExit` -- :any:`os.EX_OK`
+        :raises: :any:`os._exit` -- :any:`os.EX_OK`
         :raises: :any:`blackhole.exceptions.DaemonException`
         """
         try:
@@ -104,7 +103,7 @@ class Daemon(metaclass=Singleton):
 
         :raises: :any:`blackhole.exceptions.DaemonException` if pid cannot be
                  read from the filesystem.
-        :returns: :any:`int` or :any:`None` if no pid.
+        :returns: :any:`int` or :any:`None`
 
         .. note::
 

@@ -58,6 +58,10 @@ class Supervisor(metaclass=Singleton):
         Initialise the supervisor.
 
         Loads the configuration and event loop.
+
+        :param loop: The event loop to use.
+        :type loop: :any:`None` or
+                    :any:`syncio.unix_events._UnixSelectorEventLoop`
         """
         self.config = Config()
         self.loop = loop if loop is not None else asyncio.get_event_loop()
@@ -68,7 +72,7 @@ class Supervisor(metaclass=Singleton):
         """
         Spawn all of the required sockets and TLS context.
 
-        :returns: :any:`list` -- a list of sockets and TLS context.
+        :returns: :any:`list`
         """
         socks = []
         logger.debug('Starting workers')
@@ -93,7 +97,13 @@ class Supervisor(metaclass=Singleton):
         self.loop.run_forever()
 
     def stop(self, signum=None, frame=None):
-        """Terminate all of the workers."""
+        """
+        Terminate all of the workers.
+
+        Generally should be called by a signal, nothing else.
+
+        :raises: :any:`SystemExit` -- :any:`os.EX_OK`
+        """
         logger.debug('Stopping workers')
         worker_num = 1
         for worker in self.workers:

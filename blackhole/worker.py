@@ -50,9 +50,9 @@ class Worker:
         """
         Initialise the worker.
 
-        :param loop:
+        :param loop: The event loop to use.
         :type loop: :any:`asyncio.unix_events._UnixSelectorEventLoop`
-        :param socks: a list of sockets.
+        :param socks: Sockets to listen for connections on.
         :type socks: :any:`list`
         """
         self.loop = loop if loop is not None else asyncio.get_event_loop()
@@ -87,7 +87,7 @@ class Worker:
         """
         Handle heartbeat between a worker and child.
 
-        :param writer:
+        :param writer: An object for writing data to the pipe.
         :type writer: :any:`asyncio.StreamWriter`
         """
         while True:
@@ -105,7 +105,7 @@ class Worker:
 
         If the worker fails to read it'll kill and restart itself.
 
-        :param reader:
+        :param reader: An object for reading data from the pipe.
         :type reader: :any:`asyncio.StreamReader`
         """
         while True:
@@ -122,12 +122,12 @@ class Worker:
         """
         Connect the child and worker so they can communicate.
 
-        :param pid: a process identifier
-        :type pid:
+        :param pid: A process identifier
+        :type pid: :any:`int`
         :param up_write: a file descriptor
-        :type up_write:
+        :type up_write: :any:`io.TextIOWrapper`
         :param down_read: a file descriptor
-        :type down_read:
+        :type down_read: :any:`io.TextIOWrapper`
         """
         r_trans, r_proto = await self.loop.connect_read_pipe(
             StreamProtocol, os.fdopen(down_read, 'rb'))

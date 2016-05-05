@@ -60,8 +60,8 @@ def configure_logs(args):
     """
     Configure the logging module.
 
-    :param args:
-    :type args: Parameters parsed from :any:`argparse`.
+    :param args: Parameters parsed from :any:`argparse`.
+    :type args: :any:`argparse.Namespace`
     """
     logger_handlers = LOG_CONFIG['loggers']['blackhole']['handlers']
     if args.debug and not args.test:

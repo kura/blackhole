@@ -44,7 +44,7 @@ logger = logging.getLogger('blackhole.smtp')
 class Smtp(asyncio.StreamReaderProtocol):
     """The class responsible for handling SMTP/SMTPS commands."""
 
-    bounce_responses = {
+    _bounce_responses = {
         450: 'Requested mail action not taken: mailbox unavailable',
         451: 'Requested action aborted: local error in processing',
         452: 'Requested action not taken: insufficient system storage',
@@ -56,18 +56,21 @@ class Smtp(asyncio.StreamReaderProtocol):
         553: 'Requested action not taken: mailbox name not allowed',
         571: 'Blocked',
     }
-    """A dictionary of response codes and messages for bouncing mail."""
-
     _delay = None
-
     _max_delay = 60
-    """This is the maximum delay, to mitigate DoS risks."""
-
     _mode = None
 
     def __init__(self, parent, clients, loop=None):
         """
         Initialise the SMTP protocol.
+
+        :param parent: The parent worker.
+        :type parent: :any:`blackhole.child.Child`
+        :param clients: A list of connected clients.
+        :type clients: :any:`list`
+        :param loop: The event loop to use.
+        :type loop: :any:`None` or
+                    :any:`syncio.unix_events._UnixSelectorEventLoop`
 
         .. note::
 
@@ -89,7 +92,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Tie a connection to blackhole to the SMTP protocol.
 
-        :param transport:
+        :param transport: The transport to use.
         :type transport: :any:`asyncio.transport.Transport`
         """
         super().connection_made(transport)
@@ -102,9 +105,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Callback that binds a stream reader and writer to the SMTP Protocol.
 
-        :param reader:
+        :param reader: An object for reading incoming data.
         :type reader: :any:`asyncio.streams.StreamReader`
-        :param writer:
+        :param writer: An object for writing outgoing data.
         :type writer: :any:`asyncio.streams.StreamWriter`
         """
         self._reader = reader
@@ -148,7 +151,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Get a list of available AUTH mechanisms.
 
-        :returns: :any:`list` -- AUTH mechanisms.
+        :returns: :any:`list`
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
@@ -162,9 +165,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Look up a handler for the received AUTH mechanism.
 
-        :param line:
+        :param line: A line of data from a client.
         :type line: :any:`str`
-        :returns: :any:`blackhole.smtp.Smtp.auth_MECHANISM`.
+        :returns: :any:`blackhole.smtp.Smtp.auth_MECHANISM`
 
         .. note::
 
@@ -204,15 +207,15 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Handle an AUTH LOGIN request.
 
-            C: AUTH LOGIN
-            S: 334 VXNlcm5hbWU6
-            C: pass=letmein
-            S: 235 2.7.0 Authentication successful
+            >>> AUTH LOGIN
+            334 VXNlcm5hbWU6
+            >>> pass=letmein
+            235 2.7.0 Authentication successful
 
-            C: AUTH LOGIN
-            S: 334 VXNlcm5hbWU6
-            C: fail=letmein
-            S: 535 5.7.8 Authentication failed
+            >>> AUTH LOGIN
+            334 VXNlcm5hbWU6
+            >>> fail=letmein
+            535 5.7.8 Authentication failed
 
         .. note::
 
@@ -232,15 +235,15 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Handle an AUTH CRAM-MD5 request.
 
-            C: AUTH CRAM-MD5
-            S: 334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...
-            C: pass=letmein
-            S: 235 2.7.0 Authentication successful
+            >>> AUTH CRAM-MD5
+            334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...
+            >>> pass=letmein
+            235 2.7.0 Authentication successful
 
-            C: AUTH CRAM-MD5
-            S: 334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...
-            C: fail=letmein
-            S: 535 5.7.8 Authentication failed
+            >>> AUTH CRAM-MD5
+            334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...
+            >>> fail=letmein
+            535 5.7.8 Authentication failed
 
         .. note::
 
@@ -260,21 +263,21 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def auth_PLAIN(self):
         """Handle an AUTH PLAIN request.
 
-            C: AUTH PLAIN
-            S: 334
-            C: pass=letmein
-            S: 235 2.7.0 Authentication successful
+            >>> AUTH PLAIN
+            334
+            >>> pass=letmein
+            235 2.7.0 Authentication successful
 
-            C: AUTH PLAIN
-            S: 334
-            C: fail=letmein
-            S: 535 5.7.8 Authentication failed
+            >>> AUTH PLAIN
+            334
+            >>> fail=letmein
+            535 5.7.8 Authentication failed
 
-            C: AUTH PLAIN pass=letmein
-            S: 235 2.7.0 Authentication successful
+            >>> AUTH PLAIN pass=letmein
+            235 2.7.0 Authentication successful
 
-            C: AUTH PLAIN fail=letmein
-            S: 535 5.7.8 Authentication failed
+            >>> AUTH PLAIN fail=letmein
+            535 5.7.8 Authentication failed
 
         .. note::
 
@@ -343,11 +346,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Look up the SMTP VERB against a handler.
 
-        :param line:
-        :type line: :any:`str` -- e.g. HELO blackhole.io
+        :param line: Look up the command handler to use from the data provided.
+        :type line: :any:`str`
         :returns: :any:`blackhole.smtp..Smtp.do_VERB`,
-                  :any:`blackhole.smtp.Smtp.auth_MECHANISM` or
-                  :any:`blackhole.smtp..Smtp.help_VERB`.
+                  :any:`blackhole.smtp.Smtp.auth_MECHANISM`,
+                  :any:`blackhole.smtp..Smtp.help_VERB`
         """
         parts = line.split(None, 1)
         if parts:
@@ -365,9 +368,9 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         https://blackhole.io/index.html#help-verb
 
-        :param parts:
+        :param parts: A list of command data, split on spaces.
         :type parts: :any:`list`
-        :returns: :any:`blackhole.smtp.Smtp.help_VERB`.
+        :returns: :any:`blackhole.smtp.Smtp.help_VERB`
         """
         if len(parts) > 1:
             cmd = 'help_{}'.format(parts[1].upper())
@@ -381,7 +384,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param verb:
         :type verb: :any:`str`
-        :returns: :any:`blackhole.smtp.Smtp.do_VERB`.
+        :returns: :any:`blackhole.smtp.Smtp.do_VERB`
         """
         return getattr(self, 'do_{}'.format(verb.upper()), self.do_UNKNOWN)
 
@@ -389,10 +392,10 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Write a response code and message to the client.
 
-        :param code:
-        :type code: :any:`int` -- SMTP code, i.e. 250.
-        :param msg:
-        :type msg: :any:`str` -- The message for the SMTP code.
+        :param code: SMTP code, i.e. 250.
+        :type code: :any:`int`
+        :param msg: The message for the SMTP code
+        :type msg: :any:`str`
         """
         response = "{} {}\r\n".format(code, msg).encode('utf-8')
         logger.debug('SEND %s', response)
@@ -409,7 +412,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         https://blackhole.io/index.html#help-verb
 
-        :returns: :any:`list` -- help handler names.
+        :returns: :any:`list`
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
@@ -533,8 +536,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         https://blackhole.io/dynamic-switches.html
 
-        :param line:
-        :type line: :any:`str` -- an email header
+        :param line: An email header.
+        :type line: :any:`str`
         """
         logger.debug('HEADER RECV: %s', line)
         if self.config.dynamic_switch is False:
@@ -560,11 +563,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         logger.debug('MODE: %s', self.mode)
         if self.mode == 'bounce':
-            key = random.choice(list(self.bounce_responses.keys()))
-            await self.push(key, self.bounce_responses[key])
+            key = random.choice(list(self._bounce_responses.keys()))
+            await self.push(key, self._bounce_responses[key])
         elif self.mode == 'random':
             resps = {250: '2.0.0 OK: queued as {}'.format(self.message_id), }
-            resps.update(self.bounce_responses)
+            resps.update(self._bounce_responses)
             key = random.choice(list(resps.keys()))
             await self.push(key, resps[key])
         else:
@@ -657,14 +660,14 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Send response to the VRFY verb.
 
-            C: VRFY pass=user@domain.tld
-            S: 250 2.0.0 <pass=user@domain.tld> OK
+            >>> VRFY pass=user@domain.tld
+            250 2.0.0 <pass=user@domain.tld> OK
 
-            C: VRFY fail=user@domain.tld
-            S: 550 5.7.1 <fail=user@domain.tld> unknown
+            >>> VRFY fail=user@domain.tld
+            550 5.7.1 <fail=user@domain.tld> unknown
 
-            C: VRFY user@domain.tld
-            S: 252 2.0.0 Will attempt delivery
+            >>> VRFY user@domain.tld
+            252 2.0.0 Will attempt delivery
 
         .. note::
 
@@ -734,45 +737,45 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Handle the EXPN verb.
 
-            C: EXPN fail=test-list
-            S: 550 Not authorised
+            >>> EXPN fail=test-list
+            550 Not authorised
 
-            C: EXPN list1
-            S: 250-Shadow <shadow@blackhole.io>
-               250-Wednesday <wednesday@blackhole.io>
-               250 Low-key Liesmith <low-key.liesmith@blackhole.io>
+            >>> EXPN list1
+            250-Shadow <shadow@blackhole.io>
+            250-Wednesday <wednesday@blackhole.io>
+            250 Low-key Liesmith <low-key.liesmith@blackhole.io>
 
-            C: EXPN list2
-            S: 250-Jim Holden <jim.holden@blackhole.io>
-               250-Naomi Nagata <naomi.nagata@blackhole.io>
-               250-Alex Kamal <alex.kamal@blackhole.io>
-               250 Amos Burton <amos.burton@blackhole.io>
+            >>> EXPN list2
+            250-Jim Holden <jim.holden@blackhole.io>
+            250-Naomi Nagata <naomi.nagata@blackhole.io>
+            250-Alex Kamal <alex.kamal@blackhole.io>
+            250 Amos Burton <amos.burton@blackhole.io>
 
-            C: EXPN list3
-            S: 250-Takeshi Kovacs <takeshi.kovacs@blackhole.io>
-               250-Laurens Bancroft <laurens.bancroft@blackhole.io>
-               250-Kristin Ortega <kristin.ortega@blackhole.io>
-               250-Quellcrist Falconer <quellcrist.falconer@blackhole.io>
-               250-Virginia Vidaura <virginia.vidaura@blackhole.io>
-               250 Reileen Kawahara <reileen.kawahara@blackhole.io>
+            >>> EXPN list3
+            250-Takeshi Kovacs <takeshi.kovacs@blackhole.io>
+            250-Laurens Bancroft <laurens.bancroft@blackhole.io>
+            250-Kristin Ortega <kristin.ortega@blackhole.io>
+            250-Quellcrist Falconer <quellcrist.falconer@blackhole.io>
+            250-Virginia Vidaura <virginia.vidaura@blackhole.io>
+            250 Reileen Kawahara <reileen.kawahara@blackhole.io>
 
-            C: EXPN all
-            S: 250-Shadow <shadow@blackhole.io>
-               250-Wednesday <wednesday@blackhole.io>
-               250-Low-key Liesmith <low-key.liesmith@blackhole.io>
-               250-Takeshi Kovacs <takeshi.kovacs@blackhole.io>
-               250-Laurens Bancroft <laurens.bancroft@blackhole.io>
-               250-Kristin Ortega <kristin.ortega@blackhole.io>
-               250-Quellcrist Falconer <quellcrist.falconer@blackhole.io>
-               250-Virginia Vidaura <virginia.vidaura@blackhole.io>
-               250-Reileen Kawahara <reileen.kawahara@blackhole.io>
-               250-Jim Holden <jim.holden@blackhole.io>
-               250-Naomi Nagata <naomi.nagata@blackhole.io>
-               250-Alex Kamal <alex.kamal@blackhole.io>
-               250 Amos Burton <amos.burton@blackhole.io>
+            >>> EXPN all
+            250-Shadow <shadow@blackhole.io>
+            250-Wednesday <wednesday@blackhole.io>
+            250-Low-key Liesmith <low-key.liesmith@blackhole.io>
+            250-Takeshi Kovacs <takeshi.kovacs@blackhole.io>
+            250-Laurens Bancroft <laurens.bancroft@blackhole.io>
+            250-Kristin Ortega <kristin.ortega@blackhole.io>
+            250-Quellcrist Falconer <quellcrist.falconer@blackhole.io>
+            250-Virginia Vidaura <virginia.vidaura@blackhole.io>
+            250-Reileen Kawahara <reileen.kawahara@blackhole.io>
+            250-Jim Holden <jim.holden@blackhole.io>
+            250-Naomi Nagata <naomi.nagata@blackhole.io>
+            250-Alex Kamal <alex.kamal@blackhole.io>
+            250 Amos Burton <amos.burton@blackhole.io>
 
-            C: EXPN list-does-not-exist
-            S: 550 Not authorised
+            >>> EXPN list-does-not-exist
+            550 Not authorised
 
         .. note::
 
@@ -878,9 +881,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/configuration-options.html#delay
         https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
 
-        :param value:
-        :type value: :any:`str`  -- a list of minimum and maximum values as a
-                     string. i.e. (10, 20).
+        :param value: A list of minimum and maximum values as a string. i.e.
+                      (10, 20).
+        :type value: :any:`str`
 
         .. note::
 
@@ -922,8 +925,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/configuration-options.html#delay
         https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
 
-        :param value:
-        :type value: :any:`str` -- time in seconds as a string.
+        :param value: Time in seconds as a string.
+        :type value: :any:`str`
 
         .. note:
 

@@ -62,7 +62,7 @@ def parse_cmd_args(args):
 
     https://blackhole.io/command-line-options.html
 
-    :param args:
+    :param args: A list of option command line arguments.
     :type args: :any:`list`
     :returns: :any:`argparse.Namespace`
     """
@@ -250,7 +250,7 @@ class Config(metaclass=Singleton):
         """
         Convert a port from the configuration files' string to an integer.
 
-        :param port:
+        :param port: A port number.
         :type port: :any:`str`
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
@@ -265,9 +265,9 @@ class Config(metaclass=Singleton):
         """
         Convert listener lines from the configuration to usable values.
 
-        :param addresses:
-        :type addresses: :any:`str` -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25,
-                                             :::25'
+        :param addresses: A list of addresses and ports, separated by commas.
+                          -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25, :::25'
+        :type addresses: :any:`str`
         :returns: :any:`list` or :any:`None`
         """
         addrs = []
@@ -304,7 +304,7 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#user
 
-        :returns: :any:`str` -- A UNIX user.
+        :returns: :any:`str`
 
         .. note::
 
@@ -323,7 +323,7 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#group
 
-        :returns: :any:`str` -- A UNIX group.
+        :returns: :any:`str`
 
         .. note::
 
@@ -342,7 +342,7 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#timeout
 
-        :returns: :any:`int` -- A timeout in seconds.
+        :returns: :any:`int`
 
         .. note::
 
@@ -407,7 +407,7 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#pidfile
 
-        :returns: :any:`str` -- A filesystem path.
+        :returns: :any:`str`
         """
         return self._pidfile
 
@@ -422,7 +422,7 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#delay
 
-        :returns: :any:`int` or :any:`None` -- A delay in seconds.
+        :returns: :any:`int` or :any:`None`
 
         .. note::
 
@@ -444,7 +444,7 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#mode
 
-        :returns: :any:`str` -- The server response mode.
+        :returns: :any:`str`
 
         .. note::
 
@@ -578,7 +578,7 @@ class Config(metaclass=Singleton):
         """
         The minimum and maximum allowed port.
 
-        :param port: The port.
+        :param port: The port to test for validity.
         :type port: :any:`int`
         :raises: :any:`blackhole.exceptions.ConfigException`
 
@@ -607,15 +607,15 @@ class Config(metaclass=Singleton):
         for host, port, family in self.listen:
             self._port_permissions(host, port, family)
 
-    def _port_permissions(self, host, port, family):
+    def _port_permissions(self, address, port, family):
         """
         Validate that we have permission to use the port and it's not in use.
 
-        :param host:
-        :type host: :any:`str`
-        :param port:
+        :param address: The address to use.
+        :type address: :any:`str`
+        :param port: The port to use.
         :type port: :any:`int`
-        :param family:
+        :param family: The type of socket to use.
         :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
@@ -625,7 +625,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
         sock = socket.socket(family, socket.SOCK_STREAM)
         try:
-            sock.bind((host, port))
+            sock.bind((address, port))
         except OSError as err:
             errmsg = err.strerror.lower()
             msg = 'Could not use port {}, {}'.format(port, errmsg)

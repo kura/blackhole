@@ -46,11 +46,11 @@ class Child:
         """
         Initialise a child process.
 
-        :param up_read:
+        :param up_read: A pipe to the worker process for heartbeats.
         :type up_read: :any:`os.pipe`
-        :param down_write:
+        :param down_write: A pipe to the worker process for heartbeats.
         :type down_write: :any:`os.pipe`
-        :param socks: a list of sockets
+        :param socks: A list of sockets to get data from.
         :type socks: :any:`list`
         """
         self.up_read = up_read
@@ -75,17 +75,17 @@ class Child:
         asyncio.get_event_loop().run_forever()
         os._exit(0)
 
-    async def _start(self, writer):
+    async def _start(self, parent):
         """
         Spawn each asyncio 'server' for each socket.
 
-        :param writer:
-        :type writer: :any:`asyncio.StreamWriter`
+        :param parent: The parent worker process.
+        :type parent: :any:`asyncio.StreamWriter`
         """
         for sock in self.socks:
             ctx = sock['context'] if 'context' in sock else None
             sock = sock['sock']
-            await self.loop.create_server(lambda: Smtp(writer, self.clients),
+            await self.loop.create_server(lambda: Smtp(parent, self.clients),
                                           sock=sock, ssl=ctx)
 
     async def heartbeat(self):
