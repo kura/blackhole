@@ -68,7 +68,7 @@ class Child:
         loop.add_signal_handler(signal.SIGINT, stop)
 
         for sock in self.socks:
-            ctx = sock['ctx'] if 'ctx' in sock else None
+            ctx = sock['context'] if 'context' in sock else None
             sock = sock['sock']
             f = loop.create_server(lambda: Smtp(), sock=sock, ssl=ctx)
             loop.run_until_complete(f)
