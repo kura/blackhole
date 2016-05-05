@@ -77,6 +77,7 @@ def test_handler_lookup():
     assert smtp.lookup_handler('VRFY') == smtp.do_VRFY
     assert smtp.lookup_handler('STARTTLS') == smtp.do_STARTTLS
     assert smtp.lookup_handler('KURA') == smtp.do_UNKNOWN
+    assert smtp.lookup_handler('') == smtp.do_UNKNOWN
     assert smtp.lookup_handler('STARTTLS') == smtp.do_STARTTLS
     assert smtp.lookup_handler('HELP DATA') == smtp.help_DATA
     assert smtp.lookup_handler('HELP EHLO') == smtp.help_EHLO
@@ -239,7 +240,7 @@ class TestSmtp(unittest.TestCase):
 
     @pytest.mark.usefixtures('reset_conf', 'cleandir')
     def setUp(self):
-        cfile = create_config(('timeout=5', ))
+        cfile = create_config(('timeout=5', 'max_message_size=102400'))
         Config(cfile).load()
         controller = Controller()
         controller.start()
@@ -258,7 +259,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 250
             # resps = resp.decode('utf-8').split('\n')
             eresp = ('blackhole.io', 'HELP', 'PIPELINING',
-                     'AUTH CRAM-MD5 LOGIN PLAIN', 'SIZE 512000', 'VRFY',
+                     'AUTH CRAM-MD5 LOGIN PLAIN', 'SIZE 102400', 'VRFY',
                      'ETRN', 'ENHANCEDSTATUSCODES', '8BITMIME', 'SMTPUTF8',
                      'EXPN', 'DSN')
             assert resp == '\n'.join(eresp).encode('utf-8')
@@ -269,9 +270,47 @@ class TestSmtp(unittest.TestCase):
             assert code == 250
             assert resp == b'2.1.0 OK'
 
+    def test_mail_size_ok(self):
+        with SMTP(self.host, self.port) as client:
+            code, resp = client.mail('kura@example.com SIZE=1')
+            assert code == 250
+            assert resp == b'2.1.0 OK'
+
+    def test_mail_size_ok_and_mime(self):
+        with SMTP(self.host, self.port) as client:
+            code, resp = client.mail('kura@example.com SMTPUTF8 SIZE=1024')
+            assert code == 250
+            assert resp == b'2.1.0 OK'
+        with SMTP(self.host, self.port) as client:
+            code, resp = client.mail('kura@example.com BODY=7BIT SIZE=1024')
+            assert code == 250
+            assert resp == b'2.1.0 OK'
+        with SMTP(self.host, self.port) as client:
+            code, resp = client.mail('kura@example.com BODY=8BITMIME '
+                                     'SIZE=1024')
+            assert code == 250
+            assert resp == b'2.1.0 OK'
+
     def test_mail_size_too_large(self):
         with SMTP(self.host, self.port) as client:
-            msg = 'MAIL FROM: kura@example.com SIZE=10240000000000000000000'
+            msg = 'MAIL FROM: kura@example.com SIZE=10240000000'
+            code, resp = client.docmd(msg)
+            assert code == 552
+            assert resp == b'Message size exceeds fixed maximum message size'
+
+    def test_mail_size_too_large_and_mime(self):
+        with SMTP(self.host, self.port) as client:
+            msg = 'MAIL FROM: kura@example.com SMTPUTF8 SIZE=10240000000'
+            code, resp = client.docmd(msg)
+            assert code == 552
+            assert resp == b'Message size exceeds fixed maximum message size'
+        with SMTP(self.host, self.port) as client:
+            msg = 'MAIL FROM: kura@example.com BODY=7BIT SIZE=10240000000'
+            code, resp = client.docmd(msg)
+            assert code == 552
+            assert resp == b'Message size exceeds fixed maximum message size'
+        with SMTP(self.host, self.port) as client:
+            msg = 'MAIL FROM: kura@example.com BODY=8BITMIME SIZE=10240000000'
             code, resp = client.docmd(msg)
             assert code == 552
             assert resp == b'Message size exceeds fixed maximum message size'
@@ -368,7 +407,7 @@ class TestSmtp(unittest.TestCase):
 
     def test_expn_no_list(self):
         with SMTP(self.host, self.port) as client:
-            code, resp = client.expn('kura@example.com')
+            code, resp = client.expn('')
             assert code == 550
             assert resp == b'Not authorised'
 
@@ -429,6 +468,12 @@ class TestSmtp(unittest.TestCase):
             resps = resp.decode('utf-8').split('\n')
             assert sorted(resps) == sorted(eresp)
 
+    def test_etrn(self):
+        with SMTP(self.host, self.port) as client:
+            code, resp = client.docmd('ETRN')
+            assert code == 250
+            assert resp == b'Queueing started'
+
     def test_quit(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.quit()
@@ -439,6 +484,9 @@ class TestSmtp(unittest.TestCase):
         with SMTP(self.host, self.port) as client:
             with pytest.raises(SMTPNotSupportedError):
                 code, resp = client.starttls()
+            code, resp = client.docmd('STARTTLS')
+            assert code == 500
+            assert resp == b'Not implemented'
 
     def test_unknown(self):
         with SMTP(self.host, self.port) as client:

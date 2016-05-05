@@ -72,6 +72,13 @@ def test_load():
     assert getattr(conf, 'default', None) is None
 
 
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+def test_load_none():
+    conf = Config(None).load()
+    assert conf.mode == 'accept'
+    assert conf.workers is 1
+
+
 @pytest.mark.usefixtures('reset_conf')
 class TestCmdParser(unittest.TestCase):
 
@@ -569,6 +576,7 @@ class TestDelay(unittest.TestCase):
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_delay()
+        assert conf.delay is 70
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
@@ -660,4 +668,30 @@ class TestDynamicSwitch(unittest.TestCase):
     def test_dynamic_switch_invalid(self):
         cfile = create_config(('dynamic_switch=abc', ))
         with pytest.raises(ConfigException):
-            Config(cfile).load()
+            conf = Config(cfile).load()
+        cfile = create_config(('', ))
+        conf = Config(cfile).load()
+        conf._dynamic_switch = 'abc'
+        with pytest.raises(ConfigException):
+            conf.test_dynamic_switch()
+
+
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+class TestWorkers(unittest.TestCase):
+
+    def test_default(self):
+        conf = Config(None).load()
+        assert conf.workers == 1
+
+    def test_more_than_cpus(self):
+        conf = Config(None).load()
+        with mock.patch('multiprocessing.cpu_count', return_value=0), \
+                pytest.raises(ConfigException):
+            conf.test_workers()
+
+    def test_ok(self):
+        cfile = create_config(('workers=4', ))
+        conf = Config(cfile).load()
+        with mock.patch('multiprocessing.cpu_count', return_value=4):
+            conf.test_workers()
+        assert conf.workers is 4
