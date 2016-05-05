@@ -25,6 +25,22 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.2:
+
+2.1.2
+=====
+
+- Squashed a bug that caused workers to be spawned with their old privileges
+  when combined with the ``-d`` or ``--daemon`` flags and a reduced privilege
+  user and group.
+- Squashed a bug that caused the pid file to retain old privileges when given
+  a reduced privilege user and group and the ``-d`` or ``--daemon`` flags.
+
+
+-------------
+Past releases
+-------------
+
 .. _2.1.1:
 
 2.1.1
@@ -38,9 +54,6 @@ that version number)*
   tested.
 - Added worker processes.
 
--------------
-Past releases
--------------
 
 .. _2.0.14:
 
