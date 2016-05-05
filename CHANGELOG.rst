@@ -25,15 +25,22 @@ the functionality yourself.
 Current release
 ---------------
 
-.. _2.1.0:
+.. _2.1.1:
 
-2.1.0
+2.1.1
 =====
+
+*(This is actually the planned 2.1.0 release, but PyPI refused to let me use
+that version number)*
 
 - Fix ``SIZE=`` being parsed in the ``MAIL`` verb.
 - Huge overhaul of testing, finally almost all of :any:`blackhole.smtp.Smtp` is
   tested.
 - Added worker processes.
+
+-------------
+Past releases
+-------------
 
 .. _2.0.14:
 
@@ -48,10 +55,6 @@ Current release
 - Updated many verbs to allow on-the-fly modification of return codes. --
   :ref:`dynamic-responses`
 - Added a list of :ref:`commands`
-
--------------
-Past releases
--------------
 
 .. _2.0.13:
 
