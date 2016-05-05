@@ -38,6 +38,8 @@ listen
 :Default:
     127.0.0.1:25, 127.0.0.1:587 -- 25 is the recognised SMTP port, 587 is the
     recognised SMTP Submission port.
+:Added:
+    :ref:`2.0.8` -- introduced the new IPv6 aware syntax
 
 `:25` is equivalent to listening on port 25 on all IPv4 addresses and `:::25`
 is equivalent to listening on port 25 on all IPv6 addresses.
@@ -59,6 +61,8 @@ tls_listen
     **tls_listen** = *[address]:port, [address]:port*
 :Default:
     None -- 465 is the recognised SMTPS port [*]_.
+:Added:
+    :ref:`2.0.8` -- introduced the new IPv6 aware syntax
 
 `:465` is equivalent to listening on port 465 on all IPv4 addresses and
 `:::465` is equivalent to listening on port 465 on all IPv6 addresses.
@@ -125,6 +129,8 @@ pidfile
     **pidfile** = */path/to/file.pid*
 :Default:
     /tmp/blackhole.pid
+:Added:
+    :ref:`2.0.4`
 
 Blackhole will write it's Process ID to this file, allowing you to easily track
 the process and send signals to it.
@@ -141,7 +147,7 @@ timeout
 -------
 
 :Syntax:
-    **timeout** = *secounds*
+    **timeout** = *seconds*
 :Default:
     60 -- Maximum value of 180 seconds.
 
@@ -202,6 +208,9 @@ tls_dhparams
     **tls_dhparams** = */path/to/dhparams.pem*
 :Default:
     None
+:Added:
+    :ref:`2.0.4`
+
 
 File containing Diffie Hellman ephemeral parameters for ECDH ciphers.
 
@@ -217,7 +226,7 @@ delay
 -----
 
 :Syntax:
-    **delay** = *secounds*
+    **delay** = *seconds*
 :Default:
     None -- Maximum value of 60 seconds.
 
@@ -255,6 +264,8 @@ max_message_size
     **max_message_size** = *bytes*
 :Default:
     512000 Bytes (512 KB)
+:Added:
+    :ref:`2.0.4`
 
 The maximum message size for a message. This includes headers and helps
 mitigate a DoS risk.
@@ -274,6 +285,8 @@ dynamic_switch
     **dynamic_switch** = *true | false*
 :Default:
     true -- valid options are:- true, false.
+:Added:
+    :ref:`2.0.6`
 
 The dynamic switch option allows you to enable or disable parsing of dynamic
 switches from email headers -- :ref:`dynamic-switches`

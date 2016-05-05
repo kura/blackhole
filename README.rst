@@ -6,13 +6,17 @@ Blackhole
     :target: https://pypi.python.org/pypi/blackhole
     :alt: Latest version released on PyPi
 
-.. image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
-    :target: https://codecov.io/github/kura/blackhole/
-    :alt: Test coverage
-
 .. image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=flat-square&label=build
     :target: http://travis-ci.org/kura/blackhole
     :alt: Build status of the master branch
+
+.. image:: https://requires.io/github/kura/blackhole/requirements.svg?branch=master
+     :target: https://requires.io/github/kura/blackhole/requirements/?branch=master
+     :alt: Requirements Status
+
+.. image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
+     :target: https://codecov.io/github/kura/blackhole/
+     :alt: Test coverage
 
 .. image:: https://img.shields.io/gitter/room/kura/blackhole.svg?style=flat-square
     :target: https://gitter.im/kura/blackhole

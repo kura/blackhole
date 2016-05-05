@@ -5,7 +5,7 @@ install:
   - make install
 script:
   - make test
-  - coverage xml
+after_success:
   - codecov
 notifications:
   webhooks:

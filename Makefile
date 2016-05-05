@@ -14,7 +14,7 @@ tox:
 
 test:
 	pip install pytest pytest-cov pytest-asyncio codecov sphinx
-	py.test --cov ./blackhole --cov ./tests --doctest-modules --verbose ./blackhole ./tests
+	py.test --cov ./blackhole --cov ./tests --doctest-modules --verbose ./blackhole ./tests --cov-report xml --cov-report term-missing
 	sphinx-build -b html docs/source/ docs/build/
 
 lint:
