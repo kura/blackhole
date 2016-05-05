@@ -13,3 +13,4 @@ dist/*
 .cache/*
 .coverage
 test.conf
+.coverage.*

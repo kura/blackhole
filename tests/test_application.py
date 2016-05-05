@@ -5,7 +5,8 @@ from unittest import mock
 import pytest
 
 from blackhole.application import run
-from blackhole.config import Config, Singleton
+from blackhole.config import Config, Singleton as CSingleton
+from blackhole.daemon import Singleton as DSingleton
 from blackhole.exceptions import ConfigException, DaemonException
 
 
@@ -17,7 +18,12 @@ def cleandir():
 
 @pytest.fixture()
 def reset_conf():
-    Singleton._instances = {}
+    CSingleton._instances = {}
+
+
+@pytest.fixture()
+def reset_daemon():
+    DSingleton._instances = {}
 
 
 @pytest.mark.usefixtures('reset_conf')
@@ -32,29 +38,30 @@ def create_config(data):
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_run_test():
     cfile = create_config(('', ))
-    with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]):
-        with mock.patch('blackhole.config.Config.test_port', return_value=True):
-            with pytest.raises(SystemExit) as err:
-                run()
+    with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
+        mock.patch('blackhole.config.Config.test_port', return_value=True), \
+            pytest.raises(SystemExit) as err:
+        run()
     assert str(err.value) == '0'
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_run_test_fails():
     cfile = create_config(('listen=127.0.0.1:0', ))
-    with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]):
-        with pytest.raises(SystemExit) as err:
-            run()
+    with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
+            pytest.raises(SystemExit) as err:
+        run()
     assert str(err.value) == '64'
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_run_load_test_fails():
     cfile = create_config(('listen=127.0.0.1:0', ))
-    with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]):
-        with mock.patch('blackhole.config.Config.test', side_effect=ConfigException()):
-            with pytest.raises(SystemExit) as err:
-                run()
+    with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
+        mock.patch('blackhole.config.Config.test',
+                   side_effect=ConfigException()), \
+            pytest.raises(SystemExit) as err:
+        run()
     assert str(err.value) == '64'
 
 
@@ -62,88 +69,83 @@ class Args(object):
     pass
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_daemon', 'reset_conf', 'cleandir')
 def test_run_foreground():
     cfile = create_config(('listen=127.0.0.1:9000',))
     Config(cfile).load()
     args = Args()
 
-    # This is fucking INSANE...
-    with mock.patch('sys.argv', ['-c {}'.format(cfile)]):
-        with mock.patch('blackhole.config.parse_cmd_args', args):
-            with mock.patch('blackhole.config.Config.test'):
-                with mock.patch('asyncio.get_event_loop'):
-                    with mock.patch('blackhole.control.start_servers'):
-                        with mock.patch('blackhole.control.setgid'):
-                            with mock.patch('blackhole.control.setuid'):
-                                with mock.patch('blackhole.control.stop_servers'):
-                                    with mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever'):
-                                        with pytest.raises(SystemExit) as err:
-                                            run()
+    with mock.patch('sys.argv', ['-c {}'.format(cfile)]), \
+        mock.patch('blackhole.config.parse_cmd_args', args), \
+        mock.patch('blackhole.config.Config.test'), \
+        mock.patch('blackhole.config._compare_uid_and_gid'), \
+        mock.patch('blackhole.daemon.Daemon'), \
+        mock.patch('atexit.register'), \
+        mock.patch('blackhole.supervisor.Supervisor.create'), \
+        mock.patch('blackhole.control.setgid'), \
+        mock.patch('blackhole.control.setuid'), \
+        mock.patch('blackhole.supervisor.Supervisor.run'), \
+            pytest.raises(SystemExit) as err:
+        run()
     assert str(err.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
-def test_run_foreground_interrupt():
+@pytest.mark.usefixtures('reset_daemon', 'reset_conf', 'cleandir')
+def test_run_background():
     cfile = create_config(('listen=127.0.0.1:9000',))
     Config(cfile).load()
     args = Args()
 
-    # This is fucking INSANE...
-    with mock.patch('sys.argv', ['-c {}'.format(cfile)]):
-        with mock.patch('blackhole.config.parse_cmd_args', args):
-            with mock.patch('blackhole.config.Config.test'):
-                with mock.patch('asyncio.get_event_loop'):
-                    with mock.patch('blackhole.control.start_servers'):
-                        with mock.patch('blackhole.control.setgid'):
-                            with mock.patch('blackhole.control.setuid'):
-                                with mock.patch('blackhole.control.stop_servers'):
-                                    with mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever', side_effect=KeyboardInterrupt):
-                                        with pytest.raises(SystemExit) as err:
-                                            run()
+    with mock.patch('sys.argv', ['-c {}'.format(cfile), '-b']), \
+        mock.patch('blackhole.config.parse_cmd_args', args), \
+        mock.patch('blackhole.config.Config.test'), \
+        mock.patch('blackhole.config._compare_uid_and_gid'), \
+        mock.patch('blackhole.daemon.Daemon'), \
+        mock.patch('atexit.register'), \
+        mock.patch('blackhole.supervisor.Supervisor.create'), \
+        mock.patch('blackhole.control.setgid'), \
+        mock.patch('blackhole.control.setuid'), \
+        mock.patch('blackhole.supervisor.Supervisor.run'), \
+            pytest.raises(SystemExit) as err:
+        run()
     assert str(err.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
-def test_run_background():
-    pid = '{}/backhole.pid'.format(os.getcwd())
-    cfile = create_config(('listen=127.0.0.1:9000', 'pidfile={}'.format(pid)))
+@pytest.mark.usefixtures('reset_daemon', 'reset_conf', 'cleandir')
+def test_run_daemon_create_error():
+    cfile = create_config(('listen=127.0.0.1:9000',))
     Config(cfile).load()
     args = Args()
 
-    # This is fucking INSANE...
-    with mock.patch('sys.argv', ['-c {}'.format(cfile), '-b']):
-        with mock.patch('blackhole.config.parse_cmd_args', args):
-            with mock.patch('blackhole.config.Config.test'):
-                with mock.patch('asyncio.get_event_loop'):
-                    with mock.patch('blackhole.control.start_servers'):
-                        with mock.patch('blackhole.control.setgid'):
-                            with mock.patch('blackhole.control.setuid'):
-                                with mock.patch('blackhole.daemon.Daemon.daemonize') as daemon:
-                                    with mock.patch('blackhole.control.stop_servers'):
-                                        with mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever'):
-                                            with pytest.raises(SystemExit) as err:
-                                                run()
-    assert str(err.value) == '0'
-    assert daemon.called is True
+    with mock.patch('sys.argv', ['-c {}'.format(cfile), '-b']), \
+        mock.patch('blackhole.config.parse_cmd_args', args), \
+        mock.patch('blackhole.config.Config.test'), \
+        mock.patch('blackhole.config._compare_uid_and_gid'), \
+        mock.patch('atexit.register', side_effect=DaemonException), \
+            pytest.raises(SystemExit) as err:
+                            run()
+    assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
-def test_run_daemon_error():
-    pid = '{}/backhole.pid'.format(os.getcwd())
-    cfile = create_config(('listen=127.0.0.1:9000', 'pidfile={}'.format(pid)))
+@pytest.mark.usefixtures('reset_daemon', 'reset_conf', 'cleandir')
+def test_run_daemon_daemonize_error():
+    pidfile = os.path.join(os.getcwd(), 'nothing.pid')
+    cfile = create_config(('listen=127.0.0.1:9000',
+                           'pidfile={}'.format(pidfile)))
     Config(cfile).load()
     args = Args()
 
-    # This is fucking INSANE...
-    with mock.patch('sys.argv', ['-c {}'.format(cfile), '-b']):
-        with mock.patch('blackhole.config.parse_cmd_args', args):
-            with mock.patch('blackhole.config.Config.test'):
-                with mock.patch('asyncio.get_event_loop'):
-                    with mock.patch('blackhole.control.start_servers'):
-                        with mock.patch('blackhole.control.setgid'):
-                            with mock.patch('blackhole.control.setuid'):
-                                with mock.patch('blackhole.daemon.Daemon.daemonize', side_effect=DaemonException):
-                                    with pytest.raises(SystemExit) as err:
-                                        run()
+    with mock.patch('sys.argv', ['-c {}'.format(cfile), '-b']), \
+        mock.patch('blackhole.config.parse_cmd_args', args), \
+        mock.patch('blackhole.config.Config.test'), \
+        mock.patch('blackhole.config._compare_uid_and_gid'), \
+        mock.patch('atexit.register'), \
+        mock.patch('blackhole.supervisor.Supervisor.create'), \
+        mock.patch('blackhole.control.setgid'), \
+        mock.patch('blackhole.control.setuid'), \
+        mock.patch('blackhole.daemon.Daemon.daemonize',
+                   side_effect=DaemonException), \
+        mock.patch('blackhole.supervisor.Supervisor.stop'), \
+            pytest.raises(SystemExit) as err:
+        run()
     assert str(err.value) == '64'

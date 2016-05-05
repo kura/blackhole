@@ -65,7 +65,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     _mode = None
 
-    def __init__(self):
+    def __init__(self, loop=None):
         """
         Initialise the SMTP protocol.
 
@@ -74,7 +74,7 @@ class Smtp(asyncio.StreamReaderProtocol):
            Loads the configuration, defines the server's FQDN and generates
            an RFC 2822 Message-ID.
         """
-        self.loop = asyncio.get_event_loop()
+        self.loop = loop if loop is not None else asyncio.get_event_loop()
         super().__init__(
             asyncio.StreamReader(loop=self.loop),
             client_connected_cb=self._client_connected_cb,
@@ -91,8 +91,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         :type transport: :any:`asyncio.transport.Transport`
         """
         super().connection_made(transport)
-        self.peer = transport.get_extra_info('peername')
-        logger.debug('Peer %s connected', repr(self.peer))
+        logger.debug('Peer connected')
         self.transport = transport
         self.connection_closed = False
         self._handler_coroutine = self.loop.create_task(self._handle_client())
@@ -116,7 +115,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         :param exc:
         :type exc:
         """
-        logger.debug('Peer %s disconnected', repr(self.peer))
+        logger.debug('Peer disconnected')
         super().connection_lost(exc)
         self._connection_closed = True
 
@@ -130,6 +129,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         await self.greet()
         while not self.connection_closed:
             line = await self.wait()
+            if line is None:
+                await self.close()
+                return
             logger.debug('RECV %s', line)
             line = line.decode('utf-8').rstrip('\r\n')
             self._line = line
@@ -183,6 +185,7 @@ class Smtp(asyncio.StreamReaderProtocol):
                        self.auth_UNKNOWN)
 
     async def auth_UNKNOWN(self):
+        """Response to an unknown auth mechamism."""
         await self.push(501, '5.5.4 Syntax: AUTH mechanism')
 
     async def help_AUTH(self):
@@ -198,12 +201,12 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Handle an AUTH LOGIN request.
 
-            C: AUTH LOGIN:
+            C: AUTH LOGIN
             S: 334 VXNlcm5hbWU6
             C: pass=letmein
             S: 235 2.7.0 Authentication successful
 
-            C: AUTH LOGIN:
+            C: AUTH LOGIN
             S: 334 VXNlcm5hbWU6
             C: fail=letmein
             S: 535 5.7.8 Authentication failed
@@ -227,12 +230,12 @@ class Smtp(asyncio.StreamReaderProtocol):
         Handle an AUTH CRAM-MD5 request.
 
             C: AUTH CRAM-MD5
-            S: 334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2MzQ1OTc4MDEwNzM1QGt1cmEtdmJveD4=
+            S: 334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...
             C: pass=letmein
             S: 235 2.7.0 Authentication successful
 
             C: AUTH CRAM-MD5
-            S: 334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2MzQ1OTc4MDEwNzM1QGt1cmEtdmJveD4=
+            S: 334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...
             C: fail=letmein
             S: 535 5.7.8 Authentication failed
 
@@ -310,6 +313,7 @@ class Smtp(asyncio.StreamReaderProtocol):
                                               loop=self.loop)
             except asyncio.TimeoutError:
                 await self.timeout()
+                return None
             return line
 
     async def timeout(self):
@@ -320,14 +324,14 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         https://blackhole.io/configuration-options.html#timeout
         """
-        logger.debug('%s timed out, no data received for %d seconds',
-                     repr(self.peer), self.config.timeout)
+        logger.debug('Peer timed out, no data received for %d seconds',
+                     self.config.timeout)
         await self.push(421, 'Timeout')
         await self.close()
 
     async def close(self):
         """Close the connection from the client."""
-        logger.debug('Closing connection: %s', repr(self.peer))
+        logger.debug('Closing connection')
         if self._writer:
             self._writer.close()
         self._connection_closed = True
@@ -471,12 +475,17 @@ class Smtp(asyncio.StreamReaderProtocol):
         Send a 552 response if the size provided is larger than
         max_message_size.
         """
-        size = self._line.split('size=')[1]
-        if size.isdigit() and int(size) > self.config.max_message_size:
+        parts = self._line.lower().split(' ')
+        size = None
+        for part in parts:
+            if part.startswith('size='):
+                size = part.split('=')[1]
+        if (size is not None and size.isdigit() and
+                int(size) > self.config.max_message_size):
             await self.push(552, 'Message size exceeds fixed maximum '
                                  'message size')
-            return
-        await self.push(250, '2.1.0 OK')
+        else:
+            await self.push(250, '2.1.0 OK')
 
     async def do_MAIL(self):
         """
@@ -768,7 +777,6 @@ class Smtp(asyncio.StreamReaderProtocol):
            command will return a 550 code.
            Valid lists are: `list1`, `list2`, `list3` and `all`.
         """
-
         if 'fail=' in self._line:
             await self.push(550, 'Not authorised')
             return

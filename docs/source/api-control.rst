@@ -9,15 +9,11 @@
 
 Command and control functionality for blackhole.
 
-.. autofunction:: tls_context
+.. autofunction:: _context
 
-.. autofunction:: create_socket
+.. autofunction:: _socket
 
-.. autofunction:: create_server
-
-.. autofunction:: start_servers
-
-.. autofunction:: stop_servers
+.. autofunction:: _server
 
 .. autofunction:: setgid
 

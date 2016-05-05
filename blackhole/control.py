@@ -26,8 +26,6 @@ blackhole.control.
 Command and control functionality for blackhole.
 """
 
-import asyncio
-import functools
 import getpass
 import grp
 import logging
@@ -39,12 +37,9 @@ try:
 except ImportError:
     ssl = None
 from blackhole.config import Config
-from blackhole.daemon import Daemon
-from blackhole.smtp import Smtp
 
 
 logger = logging.getLogger('blackhole.control')
-_servers = []
 ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
            'ECDHE-ECDSA-CHACHA20-POLY1305', 'ECDHE-RSA-CHACHA20-POLY1305',
            'ECDHE-ECDSA-AES128-GCM-SHA256', 'ECDHE-RSA-AES128-GCM-SHA256',
@@ -52,7 +47,7 @@ ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
            'ECDHE-ECDSA-AES128-SHA256', 'ECDHE-RSA-AES128-SHA256']
 
 
-def tls_context(use_tls=False):
+def _context(use_tls=False):
     """
     Create a TLS context using the certificate, key and dhparams file.
 
@@ -82,7 +77,6 @@ def tls_context(use_tls=False):
     """
     if use_tls is False:
         return None
-    logger = logging.getLogger('blackhole')
     config = Config()
     ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     ctx.load_cert_chain(config.tls_cert, config.tls_key)
@@ -93,19 +87,13 @@ def tls_context(use_tls=False):
     if not config.args.less_secure:
         ctx.options |= ssl.OP_SINGLE_DH_USE
         ctx.options |= ssl.OP_SINGLE_ECDH_USE
-    else:
-        logger.warn('Using -ls or --less-secure reduces security on SSL/TLS '
-                    'connections')
     ctx.set_ciphers(':'.join(ciphers))
     if config.tls_dhparams:
         ctx.load_dh_params(config.tls_dhparams)
-    else:
-        logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
-                    'parameters file was provided')
     return ctx
 
 
-def create_socket(addr, port, family):
+def _socket(addr, port, family):
     """
     Create a socket.
 
@@ -133,10 +121,12 @@ def create_socket(addr, port, family):
         logger.fatal("Cannot bind to  %s:%s.", addr, port)
         sock.close()
         raise SystemExit(os.EX_NOPERM)
+    sock.listen(1024)
+    sock.setblocking(0)
     return sock
 
 
-def create_server(addr, port, family, use_tls=False):
+def _server(addr, port, family, use_tls=False):
     """
     Create an instance of :any:`socket.socket`, bind it and attach it to loop.
 
@@ -149,47 +139,9 @@ def create_server(addr, port, family, use_tls=False):
     :param use_tls:
     :type use_tls: :any:`bool`
     """
-    logger = logging.getLogger('blackhole')
-    if use_tls:
-        logger.debug('Creating TLS listener %s:%s', addr, port)
-    else:
-        logger.debug('Creating listener %s:%s', addr, port)
-    loop = asyncio.get_event_loop()
-    factory = functools.partial(Smtp)
-    sock = create_socket(addr, port, family)
-    ctx = tls_context(use_tls=use_tls)
-    server = loop.create_server(factory, sock=sock, ssl=ctx)
-    _servers.append(loop.run_until_complete(server))
-
-
-def start_servers():
-    """Create each server listener and bind to the socket."""
-    config = Config()
-    logger.debug('Starting...')
-    for host, port, family in config.listen:
-        create_server(host, port, family)
-    if len(config.tls_listen) > 0 and config.tls_cert and config.tls_key:
-        for host, port, family in config.tls_listen:
-            create_server(host, port, family, use_tls=True)
-
-
-def stop_servers():
-    """
-    Stop the listeners.
-    """
-    loop = asyncio.get_event_loop()
-    conf = Config()
-    logger.debug('Stopping...')
-    for _ in range(len(_servers)):
-        server = _servers.pop()
-        server.close()
-        loop.run_until_complete(server.wait_closed())
-    for task in asyncio.Task.all_tasks():
-        task.cancel()
-    loop.close()
-    daemon = Daemon(conf.pidfile)
-    if daemon.pid:
-        del daemon.pid
+    sock = _socket(addr, port, family)
+    ctx = _context(use_tls=use_tls)
+    return {'sock': sock, 'context': ctx}
 
 
 def setgid():

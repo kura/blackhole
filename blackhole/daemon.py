@@ -27,8 +27,8 @@ Provides daemon functional to blackhole.
 """
 
 
-import os
 import atexit
+import os
 
 from blackhole.exceptions import DaemonException
 
@@ -62,6 +62,8 @@ class Daemon(metaclass=Singleton):
         :type pidfile: :any:`str`
         """
         self.pidfile = pidfile
+        self.pid = os.getpid()
+        atexit.register(self.exit)
 
     def daemonize(self):
         """
@@ -76,16 +78,9 @@ class Daemon(metaclass=Singleton):
         os.chdir(os.path.sep)
         os.setsid()
         os.umask(0)
-        self.fork()
-        atexit.register(self._delpid)
         self.pid = os.getpid()
 
-    def _delpid(self):
-        """
-        Wrapper around :any:`del self.pid` for use with :any:`atexit.register`.
-
-        This is not a public method for API use.
-        """
+    def exit(self, signum=None, frame=None):
         del self.pid
 
     def fork(self):
@@ -98,7 +93,7 @@ class Daemon(metaclass=Singleton):
         try:
             pid = os.fork()
             if pid > 0:
-                raise SystemExit(os.EX_OK)
+                os._exit(os.EX_OK)
         except OSError as err:
             raise DaemonException(err.strerror)
 

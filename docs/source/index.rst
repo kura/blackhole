@@ -276,12 +276,15 @@ API documentation
    :maxdepth: 2
 
    api-application
+   api-child
    api-config
    api-control
    api-daemon
    api-exceptions
    api-smtp
+   api-supervisor
    api-utils
+   api-worker
 
 Author
 ======

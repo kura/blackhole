@@ -26,17 +26,19 @@ blackhole.application.
 This module houses methods and functionality to start the server.
 """
 
-import asyncio
+
 import logging
 import signal
 import os
 import sys
 
-from blackhole.config import Config, config_test, parse_cmd_args
-from blackhole.control import stop_servers, start_servers, setgid, setuid
+from blackhole.config import (Config, config_test, parse_cmd_args,
+                              _compare_uid_and_gid)
+from blackhole.control import setgid, setuid
 from blackhole.daemon import Daemon
 from blackhole.exceptions import ConfigException, DaemonException
 from blackhole.logs import configure_logs
+from blackhole.supervisor import Supervisor
 
 
 def run():
@@ -56,21 +58,30 @@ def run():
     except ConfigException as err:
         logger.fatal(err)
         raise SystemExit(os.EX_USAGE)
-    loop = asyncio.get_event_loop()
-    loop.add_signal_handler(signal.SIGINT, loop.stop)
-    start_servers()
+    if args.less_secure:
+        logger.warn('Using -ls or --less-secure reduces security on '
+                    'SSL/TLS connections')
+    if not config.tls_dhparams and len(config.tls_listen) > 0:
+        logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
+                    'parameters file was provided')
+    _compare_uid_and_gid()
+    try:
+        daemon = Daemon(config.pidfile)
+    except DaemonException as err:
+        logger.fatal(err)
+        raise SystemExit(os.EX_USAGE)
+    supervisor = Supervisor()
+    supervisor.create()
     setgid()
     setuid()
+    signal.signal(signal.SIGTERM, supervisor.stop)
+    signal.signal(signal.SIGINT, supervisor.stop)
     if args.background:
         try:
-            Daemon(config.pidfile).daemonize()
+            daemon.daemonize()
         except DaemonException as err:
-            stop_servers()
+            supervisor.stop()
             logger.fatal(err)
             raise SystemExit(os.EX_USAGE)
-    try:
-        loop.run_forever()
-    except KeyboardInterrupt:
-        pass
-    stop_servers()
+    supervisor.run()
     raise SystemExit(os.EX_OK)

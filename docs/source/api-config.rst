@@ -13,6 +13,8 @@ Configuration structure.
 
 .. autofunction:: config_test
 
+.. autofunction:: _compare_uid_and_gid
+
 .. autoclass:: Config
    :inherited-members:
    :member-order: bysource

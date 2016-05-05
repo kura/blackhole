@@ -28,6 +28,7 @@ import getpass
 import grp
 import inspect
 import logging
+import multiprocessing
 import os
 import pwd
 import socket
@@ -114,7 +115,19 @@ def config_test(args):
     if args.less_secure:
         logger.warn('Using -ls or --less-secure reduces security on SSL/TLS '
                     'connections')
+    _compare_uid_and_gid()
     raise SystemExit(os.EX_OK)
+
+
+def _compare_uid_and_gid():
+    """Compare the current user and group and conf settings."""
+    conf = Config()
+    logger = logging.getLogger('blackhole')
+    uid, gid = os.getuid(), os.getgid()
+    user, group = conf.user, conf.group
+    if (uid == 0 and gid == 0) and (user == 'root' and group == 'root'):
+        logger.warn('''It is unsafe to run Blackhole as root without '''
+                    '''setting a user and group for privilege revocation''')
 
 
 class Singleton(type):
@@ -142,6 +155,7 @@ class Config(metaclass=Singleton):
 
     args = None
     config_file = None
+    _workers = 1
     _listen = []
     _tls_listen = []
     _user = None
@@ -204,6 +218,14 @@ class Config(metaclass=Singleton):
             value = value.replace('"', '').replace("'", '')
             setattr(self, key, value)
         return self
+
+    @property
+    def workers(self):
+        return int(self._workers)
+
+    @workers.setter
+    def workers(self, workers):
+        self._workers = workers
 
     @property
     def listen(self):
@@ -497,6 +519,22 @@ class Config(metaclass=Singleton):
             if name.startswith('test_'):
                 getattr(self, name)()
         return self
+
+    def test_workers(self):
+        """
+        Validate the number of workers.
+
+        :raises: :any:`blackhole.exceptions.ConfigException`
+
+        .. note::
+
+           Cannot have more workers than number of processors or cores.
+        """
+        cpus = multiprocessing.cpu_count()
+        if self.workers > cpus:
+            msg = ('Cannot have more workers than number of processors or '
+                   'cores. {} workers > {} processors/cores')
+            raise ConfigException(msg.format(self.workers, cpus))
 
     def test_ipv6_support(self):
         """If an IPv6 listener is configured, confirm IPv6 is supported."""
