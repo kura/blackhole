@@ -25,6 +25,17 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.3:
+
+2.1.2
+=====
+
+- Squashed a bug that caused children to not properly apply their TLS context.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.2:
 
 2.1.2
@@ -35,11 +46,6 @@ Current release
   user and group.
 - Squashed a bug that caused the pid file to retain old privileges when given
   a reduced privilege user and group and the ``-d`` or ``--daemon`` flags.
-
-
--------------
-Past releases
--------------
 
 .. _2.1.1:
 
