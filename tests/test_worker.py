@@ -42,6 +42,10 @@ def test_kill():
     with mock.patch('blackhole.worker.Worker.start') as mock_start, \
             mock.patch('os.kill') as mock_kill:
         w = Worker([], [])
+        w.chat_task = mock.Mock()
+        w.heartbeat_task = mock.Mock()
+        w.rtransport = mock.Mock()
+        w.wtransport = mock.Mock()
         w.pid = 123
         w.kill()
     assert mock_start.called is True
@@ -52,7 +56,7 @@ def test_parent_start():
     with mock.patch('os.pipe', return_value=('', '')) as mock_pipe, \
         mock.patch('os.fork', return_value=123) as mock_fork, \
         mock.patch('os.close') as mock_close, \
-        mock.patch('asyncio.async') as mock_async, \
+        mock.patch('asyncio.ensure_future') as mock_async, \
             mock.patch('blackhole.worker.Worker.connect') as mock_connect:
         w = Worker([], [])
         w.pid = 123

@@ -35,6 +35,7 @@ import os
 
 from blackhole.child import Child
 from blackhole.control import setgid, setuid
+from blackhole.streams import StreamProtocol
 
 
 logger = logging.getLogger('blackhole.worker')
@@ -59,7 +60,7 @@ class Worker:
         self.start()
 
     def start(self):
-        """Create and fork off child procresses."""
+        """Create and fork off child process."""
         assert not self._started
         self._started = True
 
@@ -71,20 +72,55 @@ class Worker:
         if self.pid:  # Parent
             os.close(up_read)
             os.close(down_write)
-            asyncio.async(self.connect(self.pid, up_write, down_read))
+            asyncio.ensure_future(self.connect(self.pid, up_write, down_read))
         else:  # Child
             os.close(up_write)
             os.close(down_read)
             # Make sure we change our permissions if required.
-            setgid()
-            setuid()
+            setgid(True)
+            setuid(True)
             asyncio.set_event_loop(None)
             process = Child(up_read, down_write, self.socks)
             process.start()
 
+    async def heartbeat(self, writer):
+        """
+        Handle heartbeat between a worker and child.
+
+        :param writer:
+        :type writer: :any:`asyncio.StreamWriter`
+        """
+        while True:
+            await asyncio.sleep(15)
+            if (time.monotonic() - self.ping) < 30:
+                await writer.write(b'0x1\n')
+            else:
+                self.kill()
+                self.start()
+                return
+
+    async def chat(self, reader):
+        """
+        Communicate between a worker and child.
+
+        If the worker fails to read it'll kill and restart itself.
+
+        :param reader:
+        :type reader: :any:`asyncio.StreamReader`
+        """
+        while True:
+            try:
+                msg = await reader.readline()
+            except:
+                self.kill()
+                self.start()
+                return
+            if msg == b'0x2\n':
+                self.ping = time.monotonic()
+
     async def connect(self, pid, up_write, down_read):
         """
-        Connect the children and supervisor so they can communicate.
+        Connect the child and worker so they can communicate.
 
         :param pid: a process identifier
         :type pid:
@@ -94,15 +130,25 @@ class Worker:
         :type down_read:
         """
         r_trans, r_proto = await self.loop.connect_read_pipe(
-            asyncio.StreamReaderProtocol, os.fdopen(down_read, 'rb'))
+            StreamProtocol, os.fdopen(down_read, 'rb'))
         w_trans, w_proto = await self.loop.connect_write_pipe(
-            asyncio.StreamReaderProtocol, os.fdopen(up_write, 'wb'))
+            StreamProtocol, os.fdopen(up_write, 'wb'))
+
+        reader = r_proto.reader
+        writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)
 
         self.pid = pid
         self.ping = time.monotonic()
         self.rtransport = r_trans
         self.wtransport = w_trans
+        self.chat_task = asyncio.ensure_future(self.chat(reader))
+        self.heartbeat_task = asyncio.ensure_future(self.heartbeat(writer))
 
     def kill(self):
-        """Terminate a child process."""
+        """Terminate a the worker process."""
+        self._started = False
+        self.chat_task.cancel()
+        self.heartbeat_task.cancel()
+        self.rtransport.close()
+        self.wtransport.close()
         os.kill(self.pid, signal.SIGTERM)

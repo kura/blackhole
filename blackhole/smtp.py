@@ -65,7 +65,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     _mode = None
 
-    def __init__(self, loop=None):
+    def __init__(self, parent, clients, loop=None):
         """
         Initialise the SMTP protocol.
 
@@ -79,6 +79,8 @@ class Smtp(asyncio.StreamReaderProtocol):
             asyncio.StreamReader(loop=self.loop),
             client_connected_cb=self._client_connected_cb,
             loop=self.loop)
+        self.parent = parent
+        self.clients = clients
         self.config = Config()
         self.fqdn = mailname()
         self.message_id = message_id()
@@ -107,6 +109,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         self._reader = reader
         self._writer = writer
+        self.clients.append(writer)
 
     def connection_lost(self, exc):
         """

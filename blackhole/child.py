@@ -33,6 +33,7 @@ import os
 import signal
 
 from blackhole.smtp import Smtp
+from blackhole.streams import StreamProtocol
 
 
 logger = logging.getLogger('blackhole.child')
@@ -55,6 +56,7 @@ class Child:
         self.up_read = up_read
         self.down_write = down_write
         self.socks = socks
+        self.clients = []
 
     def start(self):
         """Start the child process."""
@@ -63,14 +65,51 @@ class Child:
 
         def stop():
             """Stop the child process."""
+            for client in self.clients:
+                client.close()
             self.loop.stop()
             os._exit(0)
         loop.add_signal_handler(signal.SIGINT, stop)
 
+        asyncio.Task(self.heartbeat())
+        asyncio.get_event_loop().run_forever()
+        os._exit(0)
+
+    async def _start(self, writer):
+        """
+        Spawn each asyncio 'server' for each socket.
+
+        :param writer:
+        :type writer: :any:`asyncio.StreamWriter`
+        """
         for sock in self.socks:
             ctx = sock['context'] if 'context' in sock else None
             sock = sock['sock']
-            f = loop.create_server(lambda: Smtp(), sock=sock, ssl=ctx)
-            loop.run_until_complete(f)
-        asyncio.get_event_loop().run_forever()
-        os._exit(0)
+            await self.loop.create_server(lambda: Smtp(writer, self.clients),
+                                          sock=sock, ssl=ctx)
+
+    async def heartbeat(self):
+        """Handle heartbeat between a worker and child."""
+        r_trans, r_proto = await self.loop.connect_read_pipe(
+            StreamProtocol, os.fdopen(self.up_read, 'rb'))
+        w_trans, w_proto = await self.loop.connect_write_pipe(
+            StreamProtocol, os.fdopen(self.down_write, 'wb'))
+
+        reader = r_proto.reader
+        writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)
+        asyncio.Task(self._start(writer))
+
+        while True:
+            try:
+                msg = await reader.readline()
+            except:
+                self.loop.stop()
+                break
+            if msg == b'0x1\n':
+                await writer.write(b'0x2\n')
+            elif msg == b'0x0\n':
+                for client in self.clients:
+                    client.close()
+                break
+        r_trans.close()
+        w_trans.close()

@@ -86,7 +86,7 @@ class Supervisor(metaclass=Singleton):
         for idx in range(self.config.workers):
             logger.debug('Creating worker: %s', idx + 1)
             self.workers.append(Worker(socks, self.loop))
-        self.loop.add_signal_handler(signal.SIGINT, lambda: self.loop.stop())
+        self.loop.add_signal_handler(signal.SIGINT, lambda: self.stop)
 
     def run(self):
         """Run event loop forever."""
@@ -100,4 +100,5 @@ class Supervisor(metaclass=Singleton):
             logger.debug('Stopping worker: %s', worker_num)
             worker.kill()
             worker_num += 1
+        self.loop.stop()
         raise SystemExit(os.EX_OK)

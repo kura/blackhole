@@ -1,8 +1,8 @@
-=========
-Blackhole
-=========
+=============================================
+Blackhole |pypi| |travis| |coverage| |gitter|
+=============================================
 
-|pypi| |travis| |requires| |coverage| |gitter|
+
 
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
@@ -124,7 +124,8 @@ STARTTLS
 
 Currently `asyncio` does not have the code in place to make STARTTLS
 possible, the STARTTLS verb returns a ``500 Not implemented`` response
-until it's possible to implement. -- `https://bugs.python.org/review/23749/ <https://bugs.python.org/review/23749/>`_
+until it's possible to implement. --`https://bugs.python.org/review/23749/
+<https://bugs.python.org/review/23749/>`_
 
 While STARTTLS is disabled, you can still talk to blackhole over SMTPS on
 it's standard port ``465`` as well as unencrypted, on the standard ports ``25``
@@ -310,10 +311,6 @@ Indices and tables
 .. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=flat-square&label=version
     :target: https://pypi.python.org/pypi/blackhole
     :alt: Latest version released on PyPi
-
-.. |requires| image:: https://requires.io/github/kura/blackhole/requirements.svg?branch=master
-    :target: https://requires.io/github/kura/blackhole/requirements/?branch=master
-    :alt: Requirements Status
 
 .. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=flat-square&label=build
     :target: http://travis-ci.org/kura/blackhole

@@ -122,7 +122,7 @@ def _socket(addr, port, family):
         sock.close()
         raise SystemExit(os.EX_NOPERM)
     sock.listen(1024)
-    sock.setblocking(0)
+    sock.setblocking(False)
     return sock
 
 
@@ -150,7 +150,7 @@ def pid_permissions():
 
     Called before :any:`blackhole.control.setgid` and
     :any:`blackhole.control.setuid` are called to stop
-    :any:`blackhole.daemon.Daemon` losing permissions to modify the file.
+    :any:`blackhole.daemon.Daemon` losing permissions to modify the pid file.
 
     :raises: :any:`SystemExit` -- :any:`os.EX_USAGE`
     """
@@ -164,12 +164,15 @@ def pid_permissions():
         raise SystemExit(os.EX_USAGE)
 
 
-def setgid():
+def setgid(silent=False):
     """
     Change group.
 
-    Drop from root privileges down to a less privileged group.
+    Change to a less privileged group. Unless you're using it wrongly -- in
+    which case, don't use it.
 
+    :param silent: Don't write to log. Used to silence children.
+    :type silent: :any:`bool`
     :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` and :any:`os.EX_NOPERM`
 
     .. note::
@@ -177,7 +180,8 @@ def setgid():
        MUST be called BEFORE setuid, not after.
     """
     config = Config()
-    if config.group == grp.getgrgid(os.getgid()).gr_name:
+    if all((config.group == grp.getgrgid(os.getgid()).gr_name,
+            silent is False)):
         logger.debug('Group in config is the same as current group, skipping.')
         return
     try:
@@ -192,12 +196,15 @@ def setgid():
         raise SystemExit(os.EX_NOPERM)
 
 
-def setuid():
+def setuid(silent=False):
     """
     Change user.
 
-    Drop from root privileges down to a less privileged user.
+    Change to a less privileged user.Unless you're using it wrongly -- in
+    which case, don't use it.
 
+    :param silent: Don't write to log. Used to silence children.
+    :type silent: :any:`bool`
     :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` and :any:`os.EX_NOPERM`
 
     .. note::
@@ -205,7 +212,7 @@ def setuid():
        MUST be called AFTER setgid, not before.
     """
     config = Config()
-    if config.user == getpass.getuser():
+    if all((config.user == getpass.getuser(), silent is False)):
         logger.debug('User in config is the same as current user, skipping.')
         return
     try:

@@ -1,5 +1,4 @@
 import asyncio
-import functools
 import inspect
 import logging
 import os
@@ -47,17 +46,17 @@ def test_initiation(mock_exists):
     cfile = create_config(('', ))
     Config(cfile).load()
     with mock.patch('socket.getfqdn', return_value='a.blackhole.io'):
-        smtp = Smtp()
+        smtp = Smtp(None, [])
     assert smtp.fqdn == 'a.blackhole.io'
 
 
 def test_auth_mechanisms():
-    smtp = Smtp()
+    smtp = Smtp(None, [])
     assert smtp.get_auth_members() == ['CRAM-MD5', 'LOGIN', 'PLAIN']
 
 
 def test_handler_lookup():
-    smtp = Smtp()
+    smtp = Smtp(None, [])
     assert smtp.lookup_handler('AUTH CRAM-MD5') == smtp.auth_CRAM_MD5
     assert smtp.lookup_handler('AUTH LOGIN') == smtp.auth_LOGIN
     assert smtp.lookup_handler('AUTH PLAIN') == smtp.auth_PLAIN
@@ -102,7 +101,7 @@ def test_unknown_handlers():
              'help_HELO', 'help_MAIL', 'help_NOOP', 'help_QUIT', 'help_RCPT',
              'help_RSET', 'help_UNKNOWN', 'help_VRFY']
     auths = ['auth_CRAM_MD5', 'auth_LOGIN', 'auth_PLAIN', 'auth_UNKNOWN']
-    smtp = Smtp()
+    smtp = Smtp(None, [])
     for mem in inspect.getmembers(smtp, inspect.ismethod):
         f, _ = mem
         if f.startswith('do_'):
@@ -133,8 +132,8 @@ class Controller:
     def _run(self, ready_event):
         self.sock = _socket('127.0.0.1', 0, socket.AF_INET)
         asyncio.set_event_loop(self.loop)
-        factory = functools.partial(Smtp)
-        _server = self.loop.create_server(factory, sock=self.sock)
+        _server = self.loop.create_server(lambda: Smtp(None, []),
+                                          sock=self.sock)
         self.server = self.loop.run_until_complete(_server)
         self.loop.call_soon(ready_event.set)
         self.loop.run_forever()
