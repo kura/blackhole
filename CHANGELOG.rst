@@ -25,12 +25,15 @@ the functionality yourself.
 Future release
 --------------
 
-.. _2.0.15:
+.. _2.1.0:
 
-2.0.15
-======
+2.1.0
+=====
 
 - Fix ``SIZE=`` being parsed in the ``MAIL`` verb.
+- Huge overhaul of testing, finally almost all of :any:`blackhole.smtp.Smtp` is
+  tested.
+- Added worker processes.
 
 ---------------
 Current release

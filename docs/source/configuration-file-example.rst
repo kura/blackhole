@@ -174,3 +174,15 @@ You can download a copy of this example file from
     # Default: true
     #
     # dynamic_switch=false
+
+    #
+    # workers  -- added in 2.1.0
+    #
+    # Allows you to define how many worker processes to spawn to handle
+    # incoming mail. The absolute minimum is actually 2. Even by setting the
+    # workers value to 1, a supervisor process will always exist meaning
+    # that you would have 1 worker and a supervisor.
+    #
+    # Default: 1
+    #
+    # workers=10

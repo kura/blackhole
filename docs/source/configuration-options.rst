@@ -24,6 +24,7 @@ see :ref:`configuration-file-example`.
 - `mode`_
 - `max_message_size`_
 - `dynamic_switch`_
+- `workers`_
 
 -----
 
@@ -280,3 +281,20 @@ switches from email headers -- :ref:`dynamic-switches`
 ::
 
     dynamic_switch = false
+
+.. _workers:
+
+workers
+-------
+
+:Syntax:
+    **workers** = *number*
+:Default:
+    1
+:Added:
+    :ref:`2.1.0`
+
+The workers option allows you to define how many worker processes to spawn to
+handle incoming mail. The absolute minimum is actually 2. Even by setting the
+``workers`` value to 1, a supervisor process will always exist meaning that you
+would have 1 worker and a supervisor.
