@@ -82,6 +82,7 @@ def test_run_foreground():
         mock.patch('blackhole.daemon.Daemon'), \
         mock.patch('atexit.register'), \
         mock.patch('blackhole.supervisor.Supervisor.create'), \
+        mock.patch('blackhole.control.pid_permissions'), \
         mock.patch('blackhole.control.setgid'), \
         mock.patch('blackhole.control.setuid'), \
         mock.patch('blackhole.supervisor.Supervisor.run'), \
@@ -103,6 +104,7 @@ def test_run_background():
         mock.patch('blackhole.daemon.Daemon'), \
         mock.patch('atexit.register'), \
         mock.patch('blackhole.supervisor.Supervisor.create'), \
+        mock.patch('blackhole.control.pid_permissions'), \
         mock.patch('blackhole.control.setgid'), \
         mock.patch('blackhole.control.setuid'), \
         mock.patch('blackhole.supervisor.Supervisor.run'), \
@@ -141,6 +143,7 @@ def test_run_daemon_daemonize_error():
         mock.patch('blackhole.config._compare_uid_and_gid'), \
         mock.patch('atexit.register'), \
         mock.patch('blackhole.supervisor.Supervisor.create'), \
+        mock.patch('os.chown'), \
         mock.patch('blackhole.control.setgid'), \
         mock.patch('blackhole.control.setuid'), \
         mock.patch('blackhole.daemon.Daemon.daemonize',

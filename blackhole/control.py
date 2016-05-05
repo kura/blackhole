@@ -144,6 +144,26 @@ def _server(addr, port, family, use_tls=False):
     return {'sock': sock, 'context': ctx}
 
 
+def pid_permissions():
+    """
+    Change the pid file ownership.
+
+    Called before :any:`blackhole.control.setgid` and
+    :any:`blackhole.control.setuid` are called to stop
+    :any:`blackhole.daemon.Daemon` losing permissions to modify the file.
+
+    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE`
+    """
+    config = Config()
+    try:
+        user = pwd.getpwnam(config.user)
+        group = grp.getgrnam(config.group)
+        os.chown(config.pidfile, user.pw_uid, group.gr_gid)
+    except (KeyError, PermissionError):
+        logger.error('Unable to update pidfile ownership permissions')
+        raise SystemExit(os.EX_USAGE)
+
+
 def setgid():
     """
     Change group.
@@ -161,7 +181,8 @@ def setgid():
         logger.debug('Group in config is the same as current group, skipping.')
         return
     try:
-        os.setgid(grp.getgrnam(config.group).gr_gid)
+        gid = grp.getgrnam(config.group).gr_gid
+        os.setgid(gid)
     except KeyError:
         logger.error("Group '%s' does not exist", config.group)
         raise SystemExit(os.EX_USAGE)
@@ -188,7 +209,8 @@ def setuid():
         logger.debug('User in config is the same as current user, skipping.')
         return
     try:
-        os.setuid(pwd.getpwnam(config.user).pw_uid)
+        uid = pwd.getpwnam(config.user).pw_uid
+        os.setuid(uid)
     except KeyError:
         logger.error("User '%s' does not exist", config.user)
         raise SystemExit(os.EX_USAGE)

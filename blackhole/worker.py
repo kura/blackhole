@@ -34,6 +34,7 @@ import time
 import os
 
 from blackhole.child import Child
+from blackhole.control import setgid, setuid
 
 
 logger = logging.getLogger('blackhole.worker')
@@ -74,6 +75,9 @@ class Worker:
         else:  # Child
             os.close(up_write)
             os.close(down_read)
+            # Make sure we change our permissions if required.
+            setgid()
+            setuid()
             asyncio.set_event_loop(None)
             process = Child(up_read, down_write, self.socks)
             process.start()

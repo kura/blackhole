@@ -15,6 +15,8 @@ Command and control functionality for blackhole.
 
 .. autofunction:: _server
 
+.. autofunction:: pid_permissions
+
 .. autofunction:: setgid
 
 .. autofunction:: setuid

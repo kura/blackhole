@@ -12,7 +12,8 @@ from unittest import mock
 import pytest
 
 from blackhole.config import Singleton, Config
-from blackhole.control import (_context, _socket, _server, setuid, setgid)
+from blackhole.control import (_context, _socket, _server, setuid, setgid,
+                               pid_permissions)
 
 
 logging.getLogger('blackhole').addHandler(logging.NullHandler())
@@ -340,3 +341,23 @@ def test_setuid_no_perms():
         Config(cfile).load()
         setuid()
     assert str(err.value) == '77'
+
+
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
+def test_set_pid_permissions():
+    pidfile = os.path.join(os.getcwd(), 'pid.pid')
+    cfile = create_config(('user=testuser', 'group=testgroup',
+                           'pidfile={}'.format(pidfile)))
+    Config(cfile).load()
+    with mock.patch('pwd.getpwnam', side_effect=KeyError), \
+            pytest.raises(SystemExit) as err:
+        pid_permissions()
+    assert str(err.value) == '64'
+    with mock.patch('grp.getgrgid', side_effect=KeyError), \
+            pytest.raises(SystemExit) as err:
+        pid_permissions()
+    assert str(err.value) == '64'
+    with mock.patch('os.chown', side_effect=PermissionError), \
+            pytest.raises(SystemExit) as err:
+        pid_permissions()
+    assert str(err.value) == '64'

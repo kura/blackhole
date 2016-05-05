@@ -34,7 +34,7 @@ import sys
 
 from blackhole.config import (Config, config_test, parse_cmd_args,
                               _compare_uid_and_gid)
-from blackhole.control import setgid, setuid
+from blackhole.control import setgid, setuid, pid_permissions
 from blackhole.daemon import Daemon
 from blackhole.exceptions import ConfigException, DaemonException
 from blackhole.logs import configure_logs
@@ -72,6 +72,7 @@ def run():
         raise SystemExit(os.EX_USAGE)
     supervisor = Supervisor()
     supervisor.create()
+    pid_permissions()
     setgid()
     setuid()
     signal.signal(signal.SIGTERM, supervisor.stop)

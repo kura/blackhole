@@ -59,7 +59,7 @@ class Daemon(metaclass=Singleton):
         Create an instance of :any:`blackhole.daemon.Daemon`.
 
         :param pidfile:
-        :type pidfile: :any:`str`
+        :type pidfile: :any:`str` -- a path to store the pid
         """
         self.pidfile = pidfile
         self.pid = os.getpid()
