@@ -21,9 +21,9 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
---------------
-Future release
---------------
+---------------
+Current release
+---------------
 
 .. _2.1.0:
 
@@ -34,10 +34,6 @@ Future release
 - Huge overhaul of testing, finally almost all of :any:`blackhole.smtp.Smtp` is
   tested.
 - Added worker processes.
-
----------------
-Current release
----------------
 
 .. _2.0.14:
 

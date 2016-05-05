@@ -1,7 +1,8 @@
-========================================================
-Blackhole |pypi| |travis| |requires| |coverage| |gitter|
-========================================================
+=========
+Blackhole
+=========
 
+|pypi| |travis| |requires| |coverage| |gitter|
 
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)

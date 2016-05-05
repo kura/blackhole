@@ -29,6 +29,14 @@ Things on the todo list, in no particular order.
 - :strikethrough:`Add pass= and fail= to more verbs` -- :ref:`2.0.14`
 - Properly implement ``PIPELINING`` -- build responses in a list and return in
   order after ``.\r\n``
+- Added base level server that can be extended, i.e. ``NOT IMPLEMENTED`` most
+  features.
+- Strip out :any:`blackhole.config.Config` context and make it loadable on
+  creation -- allowing any config context to be passed.
+- Command injection -- move HELO, EHLO etc to separate modules, allowing them
+  to be injected and that injection to be overriden by a user-defined method.
+- Add auth mechanisms as injectables, special injectables that, unlike the
+  command inections, these are injected specially in to the auth system.
 
 Possible future features
 ========================
