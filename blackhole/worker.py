@@ -93,8 +93,9 @@ class Worker:
         while True:
             await asyncio.sleep(15)
             if (time.monotonic() - self.ping) < 30:
-                await writer.write(b'0x1\n')
+                writer.write(b'0x1\n')
             else:
+                logger.debug('Communication failed. Restarting worker')
                 self.kill()
                 self.start()
                 return
@@ -112,9 +113,11 @@ class Worker:
             try:
                 msg = await reader.readline()
             except:
+                logger.debug('Communication failed. Restarting worker')
                 self.kill()
                 self.start()
                 return
+            logger.debug(msg)
             if msg == b'0x2\n':
                 self.ping = time.monotonic()
 

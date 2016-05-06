@@ -105,8 +105,9 @@ class Child:
             except:
                 self.loop.stop()
                 break
+            logger.debug(msg)
             if msg == b'0x1\n':
-                await writer.write(b'0x2\n')
+                writer.write(b'0x2\n')
             elif msg == b'0x0\n':
                 for client in self.clients:
                     client.close()
