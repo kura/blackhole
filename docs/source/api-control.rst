@@ -4,16 +4,16 @@
 
 .. module:: blackhole.control
     :platform: Unix
-    :synopsis: Command and control functionality for blackhole.
+    :synopsis: Provides control functionality, including socket wrappers.
 .. moduleauthor:: Kura <kura@kura.io>
 
-Command and control functionality for blackhole.
+Provides control functionality, including socket wrappers.
 
 .. autofunction:: _context
 
 .. autofunction:: _socket
 
-.. autofunction:: _server
+.. autofunction:: server
 
 .. autofunction:: pid_permissions
 

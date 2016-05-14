@@ -4,10 +4,10 @@
 
 .. module:: blackhole.daemon
     :platform: Unix
-    :synopsis: Provides daemon functional to blackhole.
+    :synopsis: Provides daemonisation functionality.
 .. moduleauthor:: Kura <kura@kura.io>
 
-Provides daemon functional to blackhole.
+Provides daemonisation functionality.
 
 .. autoclass:: Daemon
    :inherited-members:

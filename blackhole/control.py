@@ -20,13 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-blackhole.control.
+"""Provides control functionality, including socket wrappers."""
 
-Command and control functionality for blackhole.
-"""
-
-import getpass
 import grp
 import logging
 import os
@@ -36,7 +31,12 @@ try:
     import ssl
 except ImportError:
     ssl = None
-from blackhole.config import Config
+
+from .config import Config
+from .exceptions import BlackholeRuntimeException
+
+
+__all__ = ('pid_permissions', 'server', 'setgid', 'setuid')
 
 
 logger = logging.getLogger('blackhole.control')
@@ -62,8 +62,6 @@ def _context(use_tls=False):
        - :any:`ssl.OP_NO_SSLv2`
        - :any:`ssl.OP_NO_SSLv3`
        - :any:`ssl.OP_NO_COMPRESSION`
-       - :any:`ssl.OP_SINGLE_DH_USE`
-       - :any:`ssl.OP_SINGLE_ECDH_USE`
        - :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`
 
        Also responsible for loading Diffie Hellman ephemeral parameters if
@@ -95,7 +93,7 @@ def _context(use_tls=False):
 
 def _socket(addr, port, family):
     """
-    Create a socket.
+    Create a socket, bind and listen.
 
     :param addr: The address to use.
     :type addr: :any:`str`
@@ -104,31 +102,34 @@ def _socket(addr, port, family):
     :param family: The type of socket to use.
     :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
     :returns: :any:`socket.socket`
-    :raises: :any:`SystemExit` -- :any:`os.EX_NOPERM`
+    :raises: :any:`blackhole.exceptions.BlackholeRuntimeException`
     """
     sock = socket.socket(family, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
-        if hasattr(socket, 'SO_REUSEPORT'):
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-    except socket.error:
-        logger.debug('socket.SO_REUSEPORT failed')
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+    except AttributeError:
+        pass
     if family == socket.AF_INET6:
         sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
     try:
         sock.bind((addr, port))
     except OSError:
-        logger.fatal("Cannot bind to  %s:%s.", addr, port)
+        msg = 'Cannot bind to {}:{}.'.format(addr, port)
+        logger.fatal(msg)
         sock.close()
-        raise SystemExit(os.EX_NOPERM)
+        raise BlackholeRuntimeException(msg)
     sock.listen(1024)
     sock.setblocking(False)
     return sock
 
 
-def _server(addr, port, family, use_tls=False):
+def server(addr, port, family, use_tls=False):
     """
-    Create an instance of :any:`socket.socket`, bind it and attach it to loop.
+    A socket and possibly a TLS context.
+
+    Create an instance of :any:`socket.socket`, bind it and return a dictionary
+    containing the socket object and a TLS context if configured.
 
     :param addr: The address to use.
     :type addr: :any:`str`
@@ -138,10 +139,11 @@ def _server(addr, port, family, use_tls=False):
     :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
     :param use_tls: Whether to create a TLS context or not.
     :type use_tls: :any:`bool`
+    :returns: :any:`dict`
     """
     sock = _socket(addr, port, family)
     ctx = _context(use_tls=use_tls)
-    return {'sock': sock, 'context': ctx}
+    return {'sock': sock, 'ssl': ctx}
 
 
 def pid_permissions():
@@ -160,19 +162,16 @@ def pid_permissions():
         group = grp.getgrnam(config.group)
         os.chown(config.pidfile, user.pw_uid, group.gr_gid)
     except (KeyError, PermissionError):
-        logger.error('Unable to update pidfile ownership permissions')
+        logger.error('Unable to change pidfile ownership permissions.')
         raise SystemExit(os.EX_USAGE)
 
 
-def setgid(silent=False):
+def setgid():
     """
     Change group.
 
-    Change to a less privileged group. Unless you're using it wrongly -- in
-    which case, don't use it.
-
-    :param silent: Don't write to log. Used to silence children.
-    :type silent: :any:`bool`
+    Change to a less privileged group. Unless you're using it incorrectly --
+    in which case, don't use it.
     :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` or :any:`os.EX_NOPERM`
 
     .. note::
@@ -180,31 +179,24 @@ def setgid(silent=False):
        MUST be called BEFORE setuid, not after.
     """
     config = Config()
-    if all((config.group == grp.getgrgid(os.getgid()).gr_name,
-            silent is False)):
-        logger.debug('Group in config is the same as current group, skipping.')
-        return
     try:
         gid = grp.getgrnam(config.group).gr_gid
         os.setgid(gid)
     except KeyError:
-        logger.error("Group '%s' does not exist", config.group)
+        logger.error('Group \'%s\' does not exist.', config.group)
         raise SystemExit(os.EX_USAGE)
     except PermissionError:
-        logger.error("You do not have permission to switch to group '%s'",
+        logger.error('You do not have permission to switch to group \'%s\'.',
                      config.group)
         raise SystemExit(os.EX_NOPERM)
 
 
-def setuid(silent=False):
+def setuid():
     """
     Change user.
 
-    Change to a less privileged user.Unless you're using it wrongly -- in
-    which case, don't use it.
-
-    :param silent: Don't write to log. Used to silence children.
-    :type silent: :any:`bool`
+    Change to a less privileged user.Unless you're using it incorrectly --
+    inwhich case, don't use it.
     :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` or :any:`os.EX_NOPERM`
 
     .. note::
@@ -212,16 +204,13 @@ def setuid(silent=False):
        MUST be called AFTER setgid, not before.
     """
     config = Config()
-    if all((config.user == getpass.getuser(), silent is False)):
-        logger.debug('User in config is the same as current user, skipping.')
-        return
     try:
         uid = pwd.getpwnam(config.user).pw_uid
         os.setuid(uid)
     except KeyError:
-        logger.error("User '%s' does not exist", config.user)
+        logger.error('User \'%s\' does not exist.', config.user)
         raise SystemExit(os.EX_USAGE)
     except PermissionError:
-        logger.error("You do not have permission to switch to user '%s'",
+        logger.error('You do not have permission to switch to user \'%s\'.',
                      config.user)
         raise SystemExit(os.EX_NOPERM)

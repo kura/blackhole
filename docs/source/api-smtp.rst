@@ -4,10 +4,10 @@
 
 .. module:: blackhole.smtp
     :platform: Unix
-    :synopsis: This module contains the Smtp protocol.
+    :synopsis: Provides the Smtp protocol wrapper.
 .. moduleauthor:: Kura <kura@kura.io>
 
-This module contains the Smtp protocol.
+Provides the Smtp protocol wrapper.
 
 .. autoclass:: Smtp
    :inherited-members:

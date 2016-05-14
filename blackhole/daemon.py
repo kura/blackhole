@@ -20,17 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-blackhole.daemon.
-
-Provides daemon functional to blackhole.
-"""
+"""Provides daemonisation functionality."""
 
 
 import atexit
 import os
 
-from blackhole.exceptions import DaemonException
+from .exceptions import DaemonException
+
+
+__all__ = ('Daemon', )
 
 
 class Singleton(type):

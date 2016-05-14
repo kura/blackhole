@@ -4,15 +4,19 @@
 
 .. module:: blackhole.exceptions
     :platform: Unix
-    :synopsis: Exceptions for the blackhole server.
+    :synopsis: Exceptions...
 .. moduleauthor:: Kura <kura@kura.io>
 
-Exceptions for the blackhole server.
+Exceptions...
 
-.. autoclass:: ConfigException
+.. autoexception:: ConfigException
    :inherited-members:
    :member-order: bysource
 
-.. autoclass:: DaemonException
+.. autoexception:: DaemonException
+   :inherited-members:
+   :member-order: bysource
+
+.. autoexception:: BlackholeRuntimeException
    :inherited-members:
    :member-order: bysource

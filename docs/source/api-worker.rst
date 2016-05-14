@@ -4,10 +4,11 @@
 
 .. module:: blackhole.worker
     :platform: Unix
-    :synopsis: This module houses functionality to control child processes.
+    :synopsis: Provides functionality to manage child processes from the
+               supervisor.
 .. moduleauthor:: Kura <kura@kura.io>
 
-This module houses functionality to control child processes.
+Provides functionality to manage child processes from the supervisor.
 
 .. autoclass:: Worker
    :inherited-members:

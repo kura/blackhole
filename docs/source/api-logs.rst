@@ -4,9 +4,9 @@
 
 .. module:: blackhole.logs
     :platform: Unix
-    :synopsis: Configure logging for blackhole.
+    :synopsis: Configure logging.
 .. moduleauthor:: Kura <kura@kura.io>
 
-Configure logging for blackhole.
+Configure logging.
 
 .. autofunction:: configure_logs

@@ -20,11 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-blackhole.exceptions.
+"""Exceptions..."""
 
-Exceptions for the blackhole server.
-"""
+
+__all__ = ('ConfigException', 'DaemonException', 'BlackholeRuntimeException')
 
 
 class ConfigException(Exception):  # pragma: no cover
@@ -34,4 +33,9 @@ class ConfigException(Exception):  # pragma: no cover
 
 class DaemonException(Exception):  # pragma: no cover
     """A daemon exception."""
+    pass
+
+
+class BlackholeRuntimeException(Exception):  # param: no cover
+    """A Blackhole runtime exception."""
     pass

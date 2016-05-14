@@ -14,7 +14,12 @@ tox:
 
 test:
 	pip install pytest pytest-cov pytest-asyncio codecov sphinx
-	py.test --cov ./blackhole --cov ./tests --doctest-modules --verbose ./blackhole ./tests --cov-report xml --cov-report term-missing
+	py.test --cov ./blackhole \
+	        --cov ./tests \
+			--verbose \
+			./blackhole ./tests \
+			--cov-report xml \
+			--cov-report term-missing
 	bash codecov.sh
 	sphinx-build -b html docs/source/ docs/build/
 
@@ -29,9 +34,7 @@ docs:
 	sphinx-build -b html docs/source/ docs/build/
 
 release:
-	pip install wheel
-	python setup.py sdist bdist_wheel upload
-	rm -rf dist/ build/
+	bash release.sh
 
 web:
 	make docs

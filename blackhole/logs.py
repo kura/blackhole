@@ -20,15 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-blackhole.logs.
-
-Configure logging for blackhole.
-"""
+"""Configure logging."""
 
 
 import logging
 from logging.config import dictConfig
+
+
+__all__ = ('configure_logs', )
 
 
 DEBUG_FORMAT = ('[%(asctime)s] [%(levelname)s] blackhole.%(module)s: '
@@ -64,10 +63,13 @@ def configure_logs(args):
     :type args: :any:`argparse.Namespace`
     """
     logger_handlers = LOG_CONFIG['loggers']['blackhole']['handlers']
-    if args.debug and not args.test:
+    if args.debug:
         LOG_CONFIG['loggers']['blackhole']['level'] = logging.DEBUG
         LOG_CONFIG['handlers']['default_handler'] = DEBUG_HANDLER
         logger_handlers.append('default_handler')
+    elif args.quiet:
+        LOG_CONFIG['loggers']['blackhole']['level'] = logging.ERROR
+        LOG_CONFIG['handlers']['default_handler']['level'] = logging.ERROR
     else:
         LOG_CONFIG['loggers']['blackhole']['level'] = logging.INFO
         LOG_CONFIG['handlers']['default_handler'] = DEFAULT_HANDLER

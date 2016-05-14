@@ -2,8 +2,6 @@
 Blackhole |pypi| |travis| |coverage| |gitter|
 =============================================
 
-
-
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
 pipes all mail to /dev/null.
@@ -26,6 +24,7 @@ appears to have been delivered or bounced.
 Think of blackhole sort of like a honeypot in terms of how it handles mail,
 but it's specifically designed with testing in mind.
 
+
 Why?
 ====
 
@@ -33,6 +32,7 @@ Blackhole was first built when I was working on a project that required me to
 be able to send/receive millions of emails per minute. As the sender was being
 prototyped, I quickly realised that any mail server I pointed it at would fall
 over due to the stess -- thus blackhole was born.
+
 
 Using the blackhole.io service
 ==============================
@@ -49,6 +49,7 @@ Some commands allow you to define how they respond. For instance, telling an
 You can find a full list of commands/verbs who's behaviour can be modified
 on-the-fly, including how they can be modified and what values they will return
 in the :ref:`dynamic-responses` section.
+
 
 .. _help-verb:
 
@@ -74,6 +75,7 @@ By design, the blackhole server doesn't care about the order you send commands,
 whether they are capitalised or whether you send a valid, fully qualified
 domain name or valid from and to email addresses.
 
+
 Dynamic delay and response mode switches
 ----------------------------------------
 
@@ -84,6 +86,7 @@ You can also configure these settings on-the-fly per email, using headers.
 
 Please read the :ref:`dynamic-switches` section for more information on dynamic
 switches.
+
 
 SSL/TLS configuration
 ---------------------
@@ -181,6 +184,7 @@ This example is written in Python but, any language can be used to communicate
 with the blackhole server. Blackhole is capable of receiving non-ASCII
 characters.
 
+
 .. _telnet:
 
 Testing with telnet
@@ -220,12 +224,14 @@ Testing with telnet
 
 You can talk to the SSL/TLS endpoint using ``openssl s_client``.
 
+
 Running your own server
 =======================
 
 For those of you that want to run your own copy of this service, the
 :ref:`running-your-own-server` document should have all of the information
 you'll need, and a little more.
+
 
 Running the test framework
 ==========================
@@ -240,6 +246,7 @@ Contributing
 Please see the :ref:`contributing` section for information on how to
 contribute. The :ref:`api` section also has a wealth of information on how
 the server works and how you can modify it or use parts of it.
+
 
 Upcoming/planned features
 =========================
@@ -257,6 +264,7 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
+
 Changelog
 =========
 
@@ -265,11 +273,13 @@ Changelog
 
     changelog
 
+
 Frequently asked questions
 ==========================
 
 You can find a list of questions and answers in the
 :ref:`frequently-asked-questions` section.
+
 
 API documentation
 =================
@@ -283,10 +293,14 @@ API documentation
    api-control
    api-daemon
    api-exceptions
+   api-logs
+   api-protocols
    api-smtp
+   api-streams
    api-supervisor
    api-utils
    api-worker
+
 
 Author
 ======
@@ -295,10 +309,12 @@ Written and maintained by `Kura <https://kura.io/>`_. You can stalk Kura on
 `Twitter <https://twitter.com/kuramanga>`_ and laugh at his code on `GitHub
 <https://github.com/kura>`_.
 
+
 Thanks & contributors
 =====================
 
 Thanks are here -- :ref:`thanks` and contributors here -- :ref:`contributors`.
+
 
 Indices and tables
 ==================

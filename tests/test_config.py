@@ -56,7 +56,7 @@ def test_no_access(mock_os_access):
     with pytest.raises(ConfigException):
         conf.load()
     assert mock_os_access.called is True
-    assert mock_os_access.call_count is 1
+    assert mock_os_access.call_count is 2
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')

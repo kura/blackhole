@@ -12,6 +12,7 @@ from unittest import mock
 import pytest
 
 from blackhole.config import Singleton as CSingleton, Config
+from blackhole.exceptions import BlackholeRuntimeException
 from blackhole.supervisor import Supervisor, Singleton as SSingleton
 
 
@@ -30,7 +31,6 @@ def reset():
     SSingleton._instances = {}
 
 
-@pytest.mark.usefixtures('reset')
 def create_config(data):
     cwd = os.getcwd()
     path = os.path.join(cwd, 'test.conf')
@@ -60,10 +60,9 @@ class Args:
 def test_spawn_ipv4():
     cfile = create_config(('listen=127.0.0.1:9999',))
     Config(cfile).load()
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind'):
-        socks = supervisor.spawn()
-    assert len(socks) == 1
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 1
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
@@ -77,11 +76,10 @@ def test_spawn_ipv4_tls():
                            'tls_key={}'.format(key)))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', True), ))
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind'), \
             mock.patch('ssl.create_default_context'):
-        socks = supervisor.spawn()
-    assert len(socks) == 2
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 2
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
@@ -95,11 +93,10 @@ def test_spawn_ipv6_tls():
                            'tls_key={}'.format(key)))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', True), ))
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind'), \
             mock.patch('ssl.create_default_context'):
-        socks = supervisor.spawn()
-    assert len(socks) == 2
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 2
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
@@ -113,11 +110,10 @@ def test_spawn_ipv4_tls_less_secure():
                            'tls_key={}'.format(key)))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', False), ))
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind'), \
             mock.patch('ssl.create_default_context'):
-        socks = supervisor.spawn()
-    assert len(socks) == 2
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 2
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
@@ -131,11 +127,10 @@ def test_spawn_ipv6_tls_less_secure():
                            'tls_key={}'.format(key)))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', False), ))
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind'), \
             mock.patch('ssl.create_default_context'):
-        socks = supervisor.spawn()
-    assert len(socks) == 2
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 2
 
 
 key_data = """-----BEGIN RSA PRIVATE KEY-----
@@ -199,10 +194,9 @@ def test_spawn_ipv4_tls_dhparams():
                            'tls_dhparams={}'.format(dhparams)))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', False), ))
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind'):
-        socks = supervisor.spawn()
-    assert len(socks) == 2
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 2
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
@@ -218,21 +212,19 @@ def test_spawn_ipv6_tls_dhparams():
                            'tls_dhparams={}'.format(dhparams)))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', False), ))
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind'):
-        socks = supervisor.spawn()
-    assert len(socks) == 2
-    assert socks[1]['context'] is not None
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 2
+    assert supervisor.socks[1]['ssl'] is not None
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_spawn_ipv6():
     cfile = create_config(('listen=:::9999',))
     Config(cfile).load()
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind'):
-        socks = supervisor.spawn()
-    assert len(socks) == 1
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 1
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
@@ -241,41 +233,35 @@ def test_spawn_ipv4_and_ipv6():
     Config(cfile).load()
     supervisor = Supervisor()
     with mock.patch('socket.socket.bind'):
-        socks = supervisor.spawn()
-    assert len(socks) == 2
+        supervisor = Supervisor()
+    assert len(supervisor.socks) == 2
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_spawn_ipv4_fail():
     cfile = create_config(('listen=:9999',))
     Config(cfile).load()
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind', side_effect=OSError), \
-            pytest.raises(SystemExit) as err:
-        supervisor.spawn()
-    assert str(err.value) == '77'
+            pytest.raises(BlackholeRuntimeException):
+        Supervisor()
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_spawn_ipv6_fail():
     cfile = create_config((':::9999',))
     Config(cfile).load()
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind', side_effect=OSError), \
-            pytest.raises(SystemExit) as err:
-        supervisor.spawn()
-    assert str(err.value) == '77'
+            pytest.raises(BlackholeRuntimeException):
+        Supervisor()
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_spawn_ipv4_and_ipv6_fail():
     cfile = create_config(('listen=:9999, :::9999',))
     Config(cfile).load()
-    supervisor = Supervisor()
     with mock.patch('socket.socket.bind', side_effect=OSError), \
-            pytest.raises(SystemExit) as err:
-        supervisor.spawn()
-    assert str(err.value) == '77'
+            pytest.raises(BlackholeRuntimeException):
+        Supervisor()
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
@@ -284,10 +270,10 @@ def test_create():
     Config(cfile).load()
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    supervisor = Supervisor(loop)
     with mock.patch('socket.socket.bind'), \
             mock.patch('blackhole.worker.Worker.start'):
-        supervisor.create()
+        supervisor = Supervisor(loop=loop)
+        supervisor.start_workers()
         assert len(supervisor.workers) == 2
     loop.stop()
 
@@ -298,10 +284,9 @@ def test_run():
     Config(cfile).load()
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    supervisor = Supervisor(loop)
     with mock.patch('socket.socket.bind'), \
             mock.patch('blackhole.worker.Worker.start'):
-        supervisor.create()
+        supervisor = Supervisor(loop)
         with mock.patch('asyncio.unix_events._UnixSelectorEventLoop.'
                         'run_forever'):
             supervisor.run()
@@ -315,14 +300,14 @@ def test_stop():
     Config(cfile).load()
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    supervisor = Supervisor(loop)
     with mock.patch('socket.socket.bind'), \
             mock.patch('blackhole.worker.Worker.start'):
-        supervisor.create()
+        supervisor = Supervisor(loop)
+        supervisor.start_workers()
         assert len(supervisor.workers) == 2
-        with mock.patch('blackhole.worker.Worker.kill') as mock_kill, \
+        with mock.patch('blackhole.worker.Worker.stop') as mock_stop, \
                 pytest.raises(SystemExit) as err:
             supervisor.stop()
-    assert mock_kill.call_count == 2
+    assert mock_stop.call_count == 2
     assert str(err.value) == '0'
     supervisor.loop.stop()

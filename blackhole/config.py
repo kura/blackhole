@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Configuration structure."""
+"""Configuration structure and functionality for testing config validity."""
 
 
 import argparse
@@ -33,27 +33,11 @@ import os
 import pwd
 import socket
 
-from blackhole.exceptions import ConfigException
+from .exceptions import ConfigException
+from .utils import mailname
 
 
-__version__ = __import__('blackhole').__version__
-
-
-ls_help = ('''Disable ssl.OP_SINGLE_DH_USE and ssl.OP_SINGLE_ECDH_USE. '''
-           '''Reduces CPU overhead at the expense of security -- Don't use '''
-           '''this option unless you really need to''')
-
-
-decription = ('Blackhole is an that (figuratively) pipes all mail to '
-              '/dev/null. Blackhole is built on top of asyncio and utilises '
-              'async def and await statements available in Python 3.5 and '
-              'above.')
-
-
-epilog = ('An explanation of all command line arguments is provided here -- '
-          'https://blackhole.io/command-line-options.html and all '
-          'configuration options here -- '
-          'https://blackhole.io/configuration-options.html')
+__all__ = ('parse_cmd_args', 'warn_options', 'config_test', 'Config')
 
 
 def parse_cmd_args(args):
@@ -66,6 +50,22 @@ def parse_cmd_args(args):
     :type args: :any:`list`
     :returns: :any:`argparse.Namespace`
     """
+    __version__ = __import__('blackhole').__version__
+
+    ls_help = ('Disable ssl.OP_SINGLE_DH_USE and ssl.OP_SINGLE_ECDH_USE. '
+               'Reduces CPU overhead at the expense of security -- Don\'t '
+               'use this option unless you really need to.')
+
+    decription = ('Blackhole is an MTA (mail transfer agent) that '
+                  '(figuratively) pipes all mail to /dev/null. Blackhole is '
+                  'built on top of asyncio and utilises async def and await '
+                  'statements available in Python 3.5 and above.')
+
+    epilog = ('An explanation of all command line arguments is provided here '
+              '-- https://blackhole.io/command-line-options.html and all '
+              'configuration options here -- '
+              'https://blackhole.io/configuration-options.html.')
+
     parser = argparse.ArgumentParser('blackhole', description=decription,
                                      epilog=epilog)
     parser.add_argument('-v', '--version', action='version',
@@ -82,9 +82,28 @@ def parse_cmd_args(args):
     group.add_argument('-b', '--background', dest='background',
                        action='store_true',
                        help='run in the background')
+    group.add_argument('-q', '--quiet', dest='quiet', action='store_true',
+                       help='Supress warnings')
     parser.add_argument('-ls', '--less-secure', dest='less_secure',
                         action='store_true', help=ls_help)
     return parser.parse_args(args)
+
+
+def warn_options(config):
+    """
+    Warn the user when using certain options.
+
+    :param config: The configuration.
+    :type config: :any:`blackhole.config.Config`
+    """
+    logger = logging.getLogger('blackhole.warnings')
+    if config.args.less_secure:
+        logger.warn('Using -ls or --less-secure reduces security on '
+                    'SSL/TLS connections.')
+    if not config.tls_dhparams and len(config.tls_listen) > 0:
+        logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
+                    'parameters file was provided.')
+    _compare_uid_and_gid(config)
 
 
 def config_test(args):
@@ -100,34 +119,33 @@ def config_test(args):
        Problems with the configuration will be written to the console using
        the :any:`logging` module.
     """
-    logger = logging.getLogger('blackhole.config_test')
+    logger = logging.getLogger('blackhole.config.test')
     logger.setLevel(logging.INFO)
     try:
         conf = Config(args.config_file).load().test()
+        conf.args = args
     except ConfigException as err:
         logger.fatal(err)
         raise SystemExit(os.EX_USAGE)
-    logger.info('blackhole: %s syntax is OK', args.config_file)
-    logger.info('blackhole: %s test was successful', args.config_file)
-    if len(conf.tls_listen) > 0 and not conf.tls_dhparams:
-        logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
-                    'parameters file was provided.')
-    if args.less_secure:
-        logger.warn('Using -ls or --less-secure reduces security on SSL/TLS '
-                    'connections')
-    _compare_uid_and_gid()
+    logger.info('blackhole: %s syntax is OK.', args.config_file)
+    logger.info('blackhole: %s test was successful.', args.config_file)
+    warn_options(conf)
     raise SystemExit(os.EX_OK)
 
 
-def _compare_uid_and_gid():
-    """Compare the current user and group and conf settings."""
-    conf = Config()
-    logger = logging.getLogger('blackhole')
+def _compare_uid_and_gid(config):
+    """
+    Compare the current user and group and conf settings.
+
+    :param config: The configuration.
+    :type config: :any:`blackhole.config.Config`
+    """
+    logger = logging.getLogger('blackhole.warnings')
     uid, gid = os.getuid(), os.getgid()
-    user, group = conf.user, conf.group
+    user, group = config.user, config.group
     if (uid == 0 and gid == 0) and (user == 'root' and group == 'root'):
-        logger.warn('''It is unsafe to run Blackhole as root without '''
-                    '''setting a user and group for privilege revocation''')
+        logger.warn('It is unsafe to run Blackhole as root without setting a '
+                    'user and group for privilege revocation.')
 
 
 class Singleton(type):
@@ -154,7 +172,11 @@ class Config(metaclass=Singleton):
     """
 
     args = None
+    """Arguments parsed from the command line."""
+
     config_file = None
+    """A file containing configuration values."""
+
     _workers = 1
     _listen = []
     _tls_listen = []
@@ -181,6 +203,9 @@ class Config(metaclass=Singleton):
         self.config_file = config_file
         self.user = getpass.getuser()
         self.group = grp.getgrgid(os.getgid()).gr_name
+        # this has to be cached here due to the socket.getfqdn call failing
+        # in os.fork
+        self.mailname = mailname()
 
     def load(self):
         """
@@ -221,6 +246,17 @@ class Config(metaclass=Singleton):
 
     @property
     def workers(self):
+        """
+        Number of workers to spawn to handle incoming connections.
+
+        https://blackhole.io/configuration-options.html#workers
+
+        .. note::
+
+           Default value is 1.
+
+           A supervisor process will always exist separately from the workers.
+        """
         return int(self._workers)
 
     @workers.setter
@@ -245,44 +281,6 @@ class Config(metaclass=Singleton):
     @listen.setter
     def listen(self, addrs):
         self._listen = self._listeners(addrs)
-
-    def _convert_port(self, port):
-        """
-        Convert a port from the configuration files' string to an integer.
-
-        :param port: A port number.
-        :type port: :any:`str`
-        :raises: :any:`blackhole.exceptions.ConfigException`
-        """
-        try:
-            _ = int(port)
-        except ValueError:
-            raise ConfigException('Cannot convert {} to an '
-                                  'integer'.format(port))
-        return int(port)
-
-    def _listeners(self, addresses):
-        """
-        Convert listener lines from the configuration to usable values.
-
-        :param addresses: A list of addresses and ports, separated by commas.
-                          -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25, :::25'
-        :type addresses: :any:`str`
-        :returns: :any:`list` or :any:`None`
-        """
-        addrs = []
-        _addrs = addresses.split(',')
-        if len(_addrs) == 0:
-            return
-        for addr in _addrs:
-            port = addr.split(':')[-1].strip()
-            name = addr.replace(':{}'.format(port), '').strip()
-            family = socket.AF_INET
-            if ':' in name:
-                family = socket.AF_INET6
-            host = (name, self._convert_port(port), family)
-            addrs.append(host)
-        return addrs
 
     @property
     def tls_listen(self):
@@ -500,8 +498,45 @@ class Config(metaclass=Singleton):
         elif switch.lower() == 'true':
             self._dynamic_switch = True
         else:
-            raise ConfigException(''''{}' is not valid. Options are true or '''
-                                  '''false'''.format(switch))
+            msg = '{} is not valid. Options are true or false.'.format(switch)
+            raise ConfigException(msg)
+
+    def _convert_port(self, port):
+        """
+        Convert a port from the configuration files' string to an integer.
+
+        :param port: A port number.
+        :type port: :any:`str`
+        :raises: :any:`blackhole.exceptions.ConfigException`
+        """
+        try:
+            return int(port)
+        except ValueError:
+            msg = '{} is not a valid port number.'.format(port)
+            raise ConfigException(msg)
+
+    def _listeners(self, addresses):
+        """
+        Convert listener lines from the configuration to usable values.
+
+        :param addresses: A list of addresses and ports, separated by commas.
+                          -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25, :::25'
+        :type addresses: :any:`str`
+        :returns: :any:`list` or :any:`None`
+        """
+        addrs = []
+        _addrs = addresses.split(',')
+        if len(_addrs) == 0:
+            return
+        for addr in _addrs:
+            port = addr.split(':')[-1].strip()
+            name = addr.replace(':{}'.format(port), '').strip()
+            family = socket.AF_INET
+            if ':' in name:
+                family = socket.AF_INET6
+            host = (name, self._convert_port(port), family)
+            addrs.append(host)
+        return addrs
 
     def test(self):
         """
@@ -533,30 +568,41 @@ class Config(metaclass=Singleton):
         cpus = multiprocessing.cpu_count()
         if self.workers > cpus:
             msg = ('Cannot have more workers than number of processors or '
-                   'cores. {} workers > {} processors/cores')
-            raise ConfigException(msg.format(self.workers, cpus))
+                   'cores. {} workers > {} processors/cores.')
+            msg.format(self.workers, cpus)
+            raise ConfigException(msg)
 
     def test_ipv6_support(self):
-        """If an IPv6 listener is configured, confirm IPv6 is supported."""
+        """
+        If an IPv6 listener is configured, confirm IPv6 is supported.
+
+        :raises: :any:`blackhole.exceptions.ConfigException`
+        """
         for address, port, family in self.listen:
             if ':' in address:
                 if not socket.has_ipv6 and family == socket.AF_UNSPEC:
-                    raise ConfigException('An IPv6 listener is configured but '
-                                          'IPv6 is not available on this'
-                                          'platform')
+                    msg = ('An IPv6 listener is configured but IPv6 is not '
+                           'available on this platform.')
+                    raise ConfigException(msg)
 
     def test_tls_ipv6_support(self):
-        """If an IPv6 listener is configured, confirm IPv6 is supported."""
+        """
+        If an IPv6 listener is configured, confirm IPv6 is supported.
+
+        :raises: :any:`blackhole.exceptions.ConfigException`
+        """
         for address, port, family in self.tls_listen:
             if ':' in address:
                 if not socket.has_ipv6 and family == socket.AF_UNSPEC:
-                    raise ConfigException('An IPv6 listener is configured but '
-                                          'IPv6 is not available on this'
-                                          'platform')
+                    msg = ('An IPv6 listener is configured but IPv6 is not '
+                           'available on this platform.')
+                    raise ConfigException(msg)
 
     def test_same_listeners(self):
         """
         Test that multiple listeners are not configured on the same port.
+
+        :raises: :any:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -566,13 +612,19 @@ class Config(metaclass=Singleton):
         if len(self.listen) == 0 and len(self.tls_listen) == 0:
             return
         if set(self.listen).intersection(self.tls_listen):
-            raise ConfigException('Cannot have multiple listeners on the same'
-                                  'host and port')
+            msg = ('Cannot have multiple listeners on the same address and '
+                   'port.')
+            raise ConfigException(msg)
 
     def test_no_listeners(self):
-        """Test that at least one listener is configured."""
+        """
+        Test that at least one listener is configured.
+
+        :raises: :any:`blackhole.exceptions.ConfigException`
+        """
         if not len(self.listen) > 0 and not len(self.tls_listen) > 0:
-            raise ConfigException('You need to define at least one listener')
+            msg = 'You need to define at least one listener.'
+            raise ConfigException(msg)
 
     def _min_max_port(self, port):
         """
@@ -589,13 +641,13 @@ class Config(metaclass=Singleton):
         min_port, max_port = 1, 65535
         if port < min_port:
             msg = ('Port number {} is not usable because it is less than '
-                   '{} which is the lowest available port.').format(port,
-                                                                    min_port)
+                   '{} which is the lowest available port.')
+            msg.format(port, min_port)
             raise ConfigException(msg)
         if port > max_port:
             msg = ('Port number {} is not usable because it is less than '
-                   '{} which is the highest available port').format(port,
-                                                                    max_port)
+                   '{} which is the highest available port.')
+            msg.format(port, max_port)
             raise ConfigException(msg)
 
     def test_port(self):
@@ -624,6 +676,13 @@ class Config(metaclass=Singleton):
             msg = 'You do not have permission to use port {}'.format(port)
             raise ConfigException(msg)
         sock = socket.socket(family, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        except AttributeError:
+            pass
+        if family == socket.AF_INET6:
+            sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)
         try:
             sock.bind((address, port))
         except OSError as err:
@@ -678,8 +737,9 @@ class Config(metaclass=Singleton):
             msg = '{} is not a valid number of seconds.'.format(self._timeout)
             raise ConfigException(msg)
         if self.timeout and self.timeout > 180:
-            raise ConfigException('Timeout must be 180 seconds or less for '
-                                  'security (denial of service).')
+            msg = ('Timeout must be 180 seconds or less for security (denial '
+                   'of service).')
+            raise ConfigException(msg)
 
     def test_tls_port(self):
         """
@@ -740,10 +800,12 @@ class Config(metaclass=Singleton):
            Delay must be lower than the timeout.
         """
         if self.delay and self.delay >= self.timeout:
-            raise ConfigException('Delay must be lower than timeout.')
+            msg = 'Delay must be lower than timeout.'
+            raise ConfigException(msg)
         if self.delay and self.delay > 60:
-            raise ConfigException('Delay must be 60 seconds or less for '
-                                  'security (denial of service).')
+            msg = ('Delay must be 60 seconds or less for security (denial of '
+                   'service).')
+            raise ConfigException(msg)
 
     def test_mode(self):
         """
@@ -756,7 +818,8 @@ class Config(metaclass=Singleton):
            Valid options are: 'accept', 'bounce' and 'random'.
         """
         if self.mode not in ('accept', 'bounce', 'random'):
-            raise ConfigException('Mode must be accept, bounce or random.')
+            msg = 'Mode must be accept, bounce or random.'
+            raise ConfigException(msg)
 
     def test_max_message_size(self):
         """
@@ -782,10 +845,10 @@ class Config(metaclass=Singleton):
         try:
             open(self.pidfile, 'w+')
         except PermissionError:
-            msg = ('You do not have permission to write to the pidfile.')
+            msg = 'You do not have permission to write to the pidfile.'
             raise ConfigException(msg)
         except FileNotFoundError:
-            msg = ('The path to the pidfile does not exist.')
+            msg = 'The path to the pidfile does not exist.'
             raise ConfigException(msg)
 
     def test_dynamic_switch(self):
@@ -797,5 +860,5 @@ class Config(metaclass=Singleton):
         if self._dynamic_switch is None:
             return
         if self._dynamic_switch not in ('true', 'false'):
-            raise ConfigException('Allowed dynamic_switch values are true and '
-                                  'false.')
+            msg = 'Allowed dynamic_switch values are true and false.'
+            raise ConfigException(msg)

@@ -4,9 +4,11 @@
 
 .. module:: blackhole.utils
     :platform: Unix
-    :synopsis: Provides utility functions to blackhole.
+    :synopsis: Provides utility functionality.
 .. moduleauthor:: Kura <kura@kura.io>
 
-Provides utility functions to blackhole.
+Provides utility functionality.
 
 .. autofunction:: mailname
+
+.. autofunction:: message_id

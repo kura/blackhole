@@ -4,9 +4,9 @@
 
 .. module:: blackhole.application
     :platform: Unix
-    :synopsis: This module houses methods and functionality to start the server.
+    :synopsis: Provides functionality to run the server.
 .. moduleauthor:: Kura <kura@kura.io>
 
-This module houses methods and functionality to start the server.
+Provides functionality to run the server.
 
 .. autofunction:: run

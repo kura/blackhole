@@ -20,11 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-blackhole.child.
-
-This module houses the functionality to spawn child processes.
-"""
+"""Provides functionality to spawn and control child processes."""
 
 
 import asyncio
@@ -32,17 +28,34 @@ import logging
 import os
 import signal
 
-from blackhole.smtp import Smtp
-from blackhole.streams import StreamProtocol
+from . import protocols
+from .smtp import Smtp
+from .streams import StreamProtocol
+
+
+__all__ = ('Child', )
 
 
 logger = logging.getLogger('blackhole.child')
 
 
 class Child:
-    """A child process."""
+    """
+    A child process.
 
-    def __init__(self, up_read, down_write, socks):
+    Each child process maintains a list of the internal
+    :any:`asyncio.create_server` instances it utilises. Each child also
+    maintains a list of all connections being managed by the child.
+    """
+
+    _started = False
+    servers = []
+    """List of :any:`asyncio.create_server` instances."""
+
+    clients = []
+    """List of clients connected to this process."""
+
+    def __init__(self, up_read, down_write, socks, idx):
         """
         Initialise a child process.
 
@@ -56,61 +69,95 @@ class Child:
         self.up_read = up_read
         self.down_write = down_write
         self.socks = socks
-        self.clients = []
+        self.idx = idx
 
     def start(self):
         """Start the child process."""
-        self.loop = loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+        logger.debug('Starting child %s', self.idx)
+        self._started = True
+        self.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self.loop)
+        signal.signal(signal.SIGTERM, self.stop)
+        self.heartbeat_task = asyncio.Task(self.heartbeat())
+        self.loop.run_forever()
+        os._exit(os.EX_OK)
 
-        def stop():
-            """Stop the child process."""
-            for client in self.clients:
-                client.close()
-            self.loop.stop()
-            os._exit(0)
-        loop.add_signal_handler(signal.SIGINT, stop)
-
-        asyncio.Task(self.heartbeat())
-        asyncio.get_event_loop().run_forever()
-        os._exit(0)
-
-    async def _start(self, parent):
-        """
-        Spawn each asyncio 'server' for each socket.
-
-        :param parent: The parent worker process.
-        :type parent: :any:`asyncio.StreamWriter`
-        """
+    async def _start(self):
+        """Create an asyncio 'server' for each socket."""
         for sock in self.socks:
-            ctx = sock['context'] if 'context' in sock else None
-            sock = sock['sock']
-            await self.loop.create_server(lambda: Smtp(parent, self.clients),
-                                          sock=sock, ssl=ctx)
+            server = await self.loop.create_server(lambda: Smtp(self.clients),
+                                                   **sock)
+            self.servers.append(server)
+
+    def stop(self, signum=None, frame=None):
+        """
+        Stop the child process.
+
+        Mark the process as being stopped, closes each client connected via
+        this child, cancels internal communication with the supervisor and
+        finally stops the process and exits.
+
+        :param signum: A signal number.
+        :type signum: :any:`int`
+        :param frame: Interrupted stack frame.
+        :type frame: :any:`frame`
+        :returns: :any:`os._exit` -- :any:`os.EX_OK`
+        """
+        for _ in range(len(self.clients)):
+            client = self.clients.pop()
+            client.close()
+            self.loop.run_until_complete(client.wait_closed())
+        for _ in range(len(self.servers)):
+            server = self.servers.pop()
+            server.close()
+            self.loop.run_until_complete(server.wait_closed())
+        self.heartbeat_task.cancel()
+        self.server_task.cancel()
+        self._started = False
+        try:
+            self.loop.stop()
+        except RuntimeError:
+            pass
+        os._exit(os.EX_OK)
 
     async def heartbeat(self):
-        """Handle heartbeat between a worker and child."""
-        r_trans, r_proto = await self.loop.connect_read_pipe(
-            StreamProtocol, os.fdopen(self.up_read, 'rb'))
-        w_trans, w_proto = await self.loop.connect_write_pipe(
-            StreamProtocol, os.fdopen(self.down_write, 'wb'))
+        """
+        Handle heartbeat between a worker and child.
 
+        If a child process stops communicating with it's worker, it will be
+        killed, the worker managing it will also be removed and a new worker
+        and child will be spawned.
+
+        .. note::
+
+           3 bytes are used in the communication channel.
+
+           - b'x01' -- :any:`blackhole.protocols.PING`
+           - b'x02' -- :any:`blackhole.protocols.PONG`
+
+           These message values are defined in the :any:`blackhole.proto`
+           schema. Documentation is available at --
+           https://blackhole.io/api-protocols.html#blackhole.proto
+        """
+        read_fd = os.fdopen(self.up_read, 'rb')
+        r_trans, r_proto = await self.loop.connect_read_pipe(StreamProtocol,
+                                                             read_fd)
+        write_fd = os.fdopen(self.down_write, 'wb')
+        w_trans, w_proto = await self.loop.connect_write_pipe(StreamProtocol,
+                                                              write_fd)
         reader = r_proto.reader
         writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)
-        asyncio.Task(self._start(writer))
+        self.server_task = asyncio.Task(self._start())
 
-        while True:
+        while self._started:
             try:
-                msg = await reader.readline()
+                msg = await reader.read(3)
             except:
-                self.loop.stop()
                 break
-            logger.debug(msg)
-            if msg == b'0x1\n':
-                writer.write(b'0x2\n')
-            elif msg == b'0x0\n':
-                for client in self.clients:
-                    client.close()
-                break
+            if msg == protocols.PING:
+                logger.debug('child.%s.heartbeat: Ping request received from '
+                             'parent', self.idx)
+                writer.write(protocols.PONG)
         r_trans.close()
         w_trans.close()
+        self.stop()

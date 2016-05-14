@@ -104,7 +104,7 @@ def test_delete_pid_exit():
     with mock.patch('os.getpid', return_value=123):
         daemon = Daemon(pfile)
         assert daemon.pid is 123
-        daemon.exit()
+        daemon._exit()
         assert daemon.pid is None
 
 

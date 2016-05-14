@@ -20,32 +20,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-blackhole.application.
-
-This module houses methods and functionality to start the server.
-"""
+"""Provides functionality to run the server."""
 
 
 import logging
-import signal
 import os
 import sys
 
-from blackhole.config import (Config, config_test, parse_cmd_args,
-                              _compare_uid_and_gid)
-from blackhole.control import setgid, setuid, pid_permissions
-from blackhole.daemon import Daemon
-from blackhole.exceptions import ConfigException, DaemonException
-from blackhole.logs import configure_logs
-from blackhole.supervisor import Supervisor
+from .config import (Config, config_test, parse_cmd_args,
+                     warn_options)
+from .control import setgid, setuid, pid_permissions
+from .daemon import Daemon
+from .exceptions import (ConfigException, DaemonException,
+                         BlackholeRuntimeException)
+from .logs import configure_logs
+from .supervisor import Supervisor
+
+
+__all__ = ('run', )
 
 
 def run():
     """
     Create the asyncio loop and start the server.
 
-    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` or :any:`os.EX_OK`
+    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE`, :any:`os.EX_OK` or
+             :any:`os.EX_NOPERM`
     """
     args = parse_cmd_args(sys.argv[1:])
     configure_logs(args)
@@ -55,34 +55,27 @@ def run():
     try:
         config = Config(args.config_file).load().test()
         config.args = args
-    except ConfigException as err:
-        logger.fatal(err)
-        raise SystemExit(os.EX_USAGE)
-    if args.less_secure:
-        logger.warn('Using -ls or --less-secure reduces security on '
-                    'SSL/TLS connections')
-    if not config.tls_dhparams and len(config.tls_listen) > 0:
-        logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
-                    'parameters file was provided')
-    _compare_uid_and_gid()
-    try:
+        warn_options(config)
         daemon = Daemon(config.pidfile)
-    except DaemonException as err:
+        supervisor = Supervisor()
+        pid_permissions()
+        setgid()
+        setuid()
+    except (ConfigException, DaemonException) as err:
         logger.fatal(err)
         raise SystemExit(os.EX_USAGE)
-    supervisor = Supervisor()
-    supervisor.create()
-    pid_permissions()
-    setgid()
-    setuid()
-    signal.signal(signal.SIGTERM, supervisor.stop)
-    signal.signal(signal.SIGINT, supervisor.stop)
+    except BlackholeRuntimeException as err:
+        logger.fatal(err)
+        raise SystemExit(os.EX_NOPERM)
     if args.background:
         try:
             daemon.daemonize()
         except DaemonException as err:
-            supervisor.stop()
+            supervisor.close_socks()
             logger.fatal(err)
-            raise SystemExit(os.EX_USAGE)
-    supervisor.run()
+            raise SystemExit(os.EX_NOPERM)
+    try:
+        supervisor.run()
+    except KeyboardInterrupt:
+        pass
     raise SystemExit(os.EX_OK)

@@ -3,7 +3,7 @@ import inspect
 import logging
 import os
 import socket
-from smtplib import SMTP, SMTPNotSupportedError
+from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
 import tempfile
 import threading
 import time
@@ -31,7 +31,6 @@ def reset_conf():
     Singleton._instances = {}
 
 
-@pytest.mark.usefixtures('reset_conf')
 def create_config(data):
     cwd = os.getcwd()
     path = os.path.join(cwd, 'test.conf')
@@ -41,22 +40,23 @@ def create_config(data):
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
-@mock.patch('os.path.exists', return_value=False)
-def test_initiation(mock_exists):
+def test_initiation():
     cfile = create_config(('', ))
-    Config(cfile).load()
-    with mock.patch('socket.getfqdn', return_value='a.blackhole.io'):
-        smtp = Smtp(None, [])
+    with mock.patch('os.access', return_value=False), \
+            mock.patch('socket.getfqdn', return_value='a.blackhole.io'):
+        conf = Config(cfile)
+    conf.load()
+    smtp = Smtp([])
     assert smtp.fqdn == 'a.blackhole.io'
 
 
 def test_auth_mechanisms():
-    smtp = Smtp(None, [])
+    smtp = Smtp([])
     assert smtp.get_auth_members() == ['CRAM-MD5', 'LOGIN', 'PLAIN']
 
 
 def test_handler_lookup():
-    smtp = Smtp(None, [])
+    smtp = Smtp([])
     assert smtp.lookup_handler('AUTH CRAM-MD5') == smtp.auth_CRAM_MD5
     assert smtp.lookup_handler('AUTH LOGIN') == smtp.auth_LOGIN
     assert smtp.lookup_handler('AUTH PLAIN') == smtp.auth_PLAIN
@@ -101,7 +101,7 @@ def test_unknown_handlers():
              'help_HELO', 'help_MAIL', 'help_NOOP', 'help_QUIT', 'help_RCPT',
              'help_RSET', 'help_UNKNOWN', 'help_VRFY']
     auths = ['auth_CRAM_MD5', 'auth_LOGIN', 'auth_PLAIN', 'auth_UNKNOWN']
-    smtp = Smtp(None, [])
+    smtp = Smtp([])
     for mem in inspect.getmembers(smtp, inspect.ismethod):
         f, _ = mem
         if f.startswith('do_'):
@@ -112,6 +112,7 @@ def test_unknown_handlers():
             assert f in auths
 
 
+@pytest.mark.usefixtures('reset_conf', 'cleandir')
 class Controller:
 
     def __init__(self, loop=None):
@@ -132,7 +133,9 @@ class Controller:
     def _run(self, ready_event):
         self.sock = _socket('127.0.0.1', 0, socket.AF_INET)
         asyncio.set_event_loop(self.loop)
-        _server = self.loop.create_server(lambda: Smtp(None, []),
+        conf = Config(None)
+        conf.mailname = 'blackhole.io'
+        _server = self.loop.create_server(lambda: Smtp([]),
                                           sock=self.sock)
         self.server = self.loop.run_until_complete(_server)
         self.loop.call_soon(ready_event.set)
@@ -661,3 +664,11 @@ class TestSmtp(unittest.TestCase):
             code, resp = client.docmd('AUTH', 'KURA')
             assert code == 501
             assert resp == b'5.5.4 Syntax: AUTH mechanism'
+
+    def test_too_many_unknown_commands(self):
+        with SMTP(self.host, self.port) as client, \
+                pytest.raises(SMTPServerDisconnected):
+            for _ in range(11):
+                code, resp = client.docmd('KURA')
+            assert code == 502
+            assert resp == b'5.5.3 Too many unknown commands'

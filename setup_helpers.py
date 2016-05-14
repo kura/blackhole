@@ -17,18 +17,17 @@
 """setup.py helper functions."""
 
 
-__all__ = [
-    'description',
-    'find_doctests',
-    'get_version',
-    'long_description',
-    'require_python',
-    ]
-
-
 import os
 import re
 import sys
+
+
+__all__ = [
+    'contents',
+    'find_doctests',
+    'get_version',
+    'require_python',
+    ]
 
 
 DEFAULT_VERSION_RE = re.compile(
@@ -120,7 +119,7 @@ def find_doctests(start='.', extension='.rst'):
     return doctests
 
 
-def long_description(*filenames):
+def file_contents(*filenames):
     """Provide a long description."""
     res = ['']
     for filename in filenames:
@@ -130,19 +129,3 @@ def long_description(*filenames):
             res.append('')
         res.append('\n')
     return EMPTYSTRING.join(res)
-
-
-def description(filename):
-    """Provide a short description."""
-    # This ends up in the Summary header for PKG-INFO and it should be a
-    # one-liner.  It will get rendered on the package page just below the
-    # package version header but above the long_description, which ironically
-    # gets stuff into the Description header.  It should not include reST, so
-    # pick out the first single line after the double header.
-    with open(filename) as fp:
-        for lineno, line in enumerate(fp):
-            if lineno < 3:
-                continue
-            line = line.strip()
-            if len(line) > 0:
-                return line

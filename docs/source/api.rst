@@ -13,7 +13,10 @@ API
    api-control
    api-daemon
    api-exceptions
+   api-logs
+   api-protocols
    api-smtp
+   api-streams
    api-supervisor
    api-utils
    api-worker

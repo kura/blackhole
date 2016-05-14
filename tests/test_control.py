@@ -12,8 +12,9 @@ from unittest import mock
 import pytest
 
 from blackhole.config import Singleton, Config
-from blackhole.control import (_context, _socket, _server, setuid, setgid,
+from blackhole.control import (_context, _socket, server, setuid, setgid,
                                pid_permissions)
+from blackhole.exceptions import BlackholeRuntimeException
 
 
 logging.getLogger('blackhole').addHandler(logging.NullHandler())
@@ -30,7 +31,6 @@ def reset_conf():
     Singleton._instances = {}
 
 
-@pytest.mark.usefixtures('reset_conf')
 def create_config(data):
     cwd = os.getcwd()
     path = os.path.join(cwd, 'test.conf')
@@ -108,51 +108,24 @@ def test_tls_context_dhparams():
 @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
 def test_create_ipv6_socket_fails():
     with mock.patch('socket.socket.bind', side_effect=OSError), \
-            pytest.raises(SystemExit) as err:
+            pytest.raises(BlackholeRuntimeException):
         _socket('::', 25, socket.AF_INET)
-    assert str(err.value) == '77'
-
-
-@unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
-def test_create_ipv6_socket_without_reuseport():
-    SO_REUSEPORT = True
-    if hasattr(socket, 'SO_REUSEPORT'):
-        orig = socket.SO_REUSEPORT
-        del socket.SO_REUSEPORT
-        SO_REUSEPORT = False
-    with mock.patch('socket.socket.bind'):
-        _socket('::', 25, socket.AF_INET)
-    if SO_REUSEPORT is False:
-        socket.SO_REUSEPORT = orig
 
 
 def test_create_ipv4_socket_fails():
     with mock.patch('socket.socket.bind', side_effect=OSError), \
-            pytest.raises(SystemExit) as err:
+            pytest.raises(BlackholeRuntimeException):
         _socket('127.0.0.1', 25, socket.AF_INET)
-    assert str(err.value) == '77'
-
-
-def test_create_ipv4_socket_without_reuseport():
-    SO_REUSEPORT = True
-    if hasattr(socket, 'SO_REUSEPORT'):
-        orig = socket.SO_REUSEPORT
-        del socket.SO_REUSEPORT
-        SO_REUSEPORT = False
-    with mock.patch('socket.socket.bind'):
-        _socket('127.0.0.1', 25, socket.AF_INET)
-    if SO_REUSEPORT is False:
-        socket.SO_REUSEPORT = orig
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_create_server_ipv4_bind_fails():
     cfile = create_config(('listen=127.0.0.1:9000',))
     Config(cfile).load()
-    with mock.patch('socket.socket.bind', side_effect=OSError) as mock_sock, \
-            pytest.raises(SystemExit) as err:
-        _server('127.0.0.1', 9000, socket.AF_INET)
-    assert str(err.value) == '77'
+    with mock.patch('socket.socket.bind',
+                    side_effect=OSError) as mock_sock, \
+            pytest.raises(BlackholeRuntimeException):
+        server('127.0.0.1', 9000, socket.AF_INET)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -162,10 +135,10 @@ def test_create_server_ipv4_bind_fails():
 def test_create_server_ipv6_bind_fails():
     cfile = create_config(('listen=:::9000',))
     Config(cfile).load()
-    with mock.patch('socket.socket.bind', side_effect=OSError) as mock_sock, \
-            pytest.raises(SystemExit) as err:
-        _server('::', 9000, socket.AF_INET6)
-    assert str(err.value) == '77'
+    with mock.patch('socket.socket.bind',
+                    side_effect=OSError) as mock_sock, \
+            pytest.raises(BlackholeRuntimeException):
+        server('::', 9000, socket.AF_INET6)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -175,7 +148,7 @@ def test_create_server_ipv6_bind_fails():
 def test_create_server_ipv4_bind_works(mock_sock):
     cfile = create_config(('listen=127.0.0.1:9000',))
     Config(cfile).load()
-    _server('127.0.0.1', 9000, socket.AF_INET)
+    server('127.0.0.1', 9000, socket.AF_INET)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -186,7 +159,7 @@ def test_create_server_ipv6_bind_works():
     cfile = create_config(('listen=:::9000',))
     Config(cfile).load()
     with mock.patch('socket.socket.bind') as mock_sock:
-        _server('::', 9000, socket.AF_INET6)
+        server('::', 9000, socket.AF_INET6)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -196,10 +169,10 @@ def test_create_server_ipv6_bind_works():
 def test_create_server_ipv4_tls_bind_fails():
     cfile = create_config(('tls_listen=127.0.0.1:9000',))
     Config(cfile).load()
-    with mock.patch('socket.socket.bind', side_effect=OSError) as mock_sock, \
-            pytest.raises(SystemExit) as err:
-        _server('127.0.0.1', 9000, socket.AF_INET)
-    assert str(err.value) == '77'
+    with mock.patch('socket.socket.bind',
+                    side_effect=OSError) as mock_sock, \
+            pytest.raises(BlackholeRuntimeException):
+        server('127.0.0.1', 9000, socket.AF_INET)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -210,10 +183,10 @@ def test_create_server_ipv4_tls_bind_fails():
 def test_create_server_ipv6_tls_bind_fails():
     cfile = create_config(('tls_listen=:::9000',))
     Config(cfile).load()
-    with mock.patch('socket.socket.bind', side_effect=OSError) as mock_sock, \
-            pytest.raises(SystemExit) as err:
-        _server('::', 9000, socket.AF_INET6)
-    assert str(err.value) == '77'
+    with mock.patch('socket.socket.bind',
+                    side_effect=OSError) as mock_sock, \
+            pytest.raises(BlackholeRuntimeException):
+        server('::', 9000, socket.AF_INET6)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -228,7 +201,7 @@ def test_create_server_tls_ipv4_bind_works():
     conf.args.less_secure = False
     with mock.patch('socket.socket.bind') as mock_sock, \
             mock.patch('ssl.create_default_context') as mock_ssl:
-        _server('127.0.0.1', 9000, socket.AF_INET, use_tls=True)
+        server('127.0.0.1', 9000, socket.AF_INET, use_tls=True)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
     assert mock_ssl.called is True
@@ -246,7 +219,7 @@ def test_create_server_tls_ipv6_bind_works():
     conf.args.less_secure = False
     with mock.patch('socket.socket.bind') as mock_sock, \
             mock.patch('ssl.create_default_context') as mock_ssl:
-        _server('::', 9000, socket.AF_INET6, use_tls=True)
+        server('::', 9000, socket.AF_INET6, use_tls=True)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
     assert mock_ssl.called is True
@@ -271,11 +244,10 @@ def test_setgid():
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_setgid_same_group():
-    cfile = create_config(('group=testgroup',))
-    with mock.patch('grp.getgrgid', return_value=Grp()) as mock_getgrnam:
+    cfile = create_config(('', ))
+    with mock.patch('os.setgid'):
         Config(cfile).load()
         assert setgid() is None
-    assert mock_getgrnam.called is True
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
@@ -315,12 +287,10 @@ def test_setuid():
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')
 def test_setuid_same_user():
-    cfile = create_config(('user=testuser',))
-    with mock.patch('getpass.getuser',
-                    return_value='testuser') as mock_getuser:
-                    Config(cfile).load()
-                    assert setuid() is None
-    assert mock_getuser.called is True
+    cfile = create_config(('', ))
+    with mock.patch('os.setuid'):
+        Config(cfile).load()
+        assert setuid() is None
 
 
 @pytest.mark.usefixtures('reset_conf', 'cleandir')

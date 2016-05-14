@@ -20,22 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-blackhole.smtp.
-
-This module contains the Smtp protocol.
-"""
+"""Provides the Smtp protocol wrapper."""
 
 
 import asyncio
 import base64
-from email.utils import make_msgid as message_id
 import inspect
 import logging
 import random
 
-from blackhole.config import Config
-from blackhole.utils import mailname
+from .config import Config
+from .utils import message_id
+
+
+__all__ = ('Smtp', )
 
 
 logger = logging.getLogger('blackhole.smtp')
@@ -60,7 +58,7 @@ class Smtp(asyncio.StreamReaderProtocol):
     _max_delay = 60
     _mode = None
 
-    def __init__(self, parent, clients, loop=None):
+    def __init__(self, clients, loop=None):
         """
         Initialise the SMTP protocol.
 
@@ -78,15 +76,16 @@ class Smtp(asyncio.StreamReaderProtocol):
            an RFC 2822 Message-ID.
         """
         self.loop = loop if loop is not None else asyncio.get_event_loop()
-        super().__init__(
-            asyncio.StreamReader(loop=self.loop),
-            client_connected_cb=self._client_connected_cb,
-            loop=self.loop)
-        self.parent = parent
+        super().__init__(asyncio.StreamReader(loop=self.loop),
+                         client_connected_cb=self._client_connected_cb,
+                         loop=self.loop)
         self.clients = clients
         self.config = Config()
-        self.fqdn = mailname()
-        self.message_id = message_id()
+        # This is not a nice way to do this but, socket.getfqdn silently fails
+        # and craches inbound connections when called after os.fork
+        self.fqdn = self.config.mailname
+        self.message_id = message_id(self.fqdn)
+        self.failed_commands = 0  # An internal counter to stop command spam
 
     def connection_made(self, transport):
         """
@@ -122,6 +121,10 @@ class Smtp(asyncio.StreamReaderProtocol):
         :type exc:
         """
         logger.debug('Peer disconnected')
+        try:
+            self.clients.remove(self._writer)
+        except ValueError:
+            pass
         super().connection_lost(exc)
         self._connection_closed = True
 
@@ -339,7 +342,12 @@ class Smtp(asyncio.StreamReaderProtocol):
         """Close the connection from the client."""
         logger.debug('Closing connection')
         if self._writer:
+            try:
+                self.clients.remove(self._writer)
+            except ValueError:
+                pass
             self._writer.close()
+            await self._writer.drain()
         self._connection_closed = True
 
     def lookup_handler(self, line):
@@ -600,7 +608,7 @@ class Smtp(asyncio.StreamReaderProtocol):
                 self.process_header(line.decode('utf-8').rstrip('\n'))
             if len(b''.join(msg)) > self.config.max_message_size:
                 await self.push(552, 'Message size exceeds fixed maximum '
-                                'message size')
+                                     'message size')
                 return
             if line == b'\n':
                 on_body = True
@@ -644,7 +652,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         A new message id is generated and assigned.
         """
         old_msg_id = self.message_id
-        self.message_id = message_id()
+        self.message_id = message_id(self.fqdn)
         logger.debug('%s is now %s', old_msg_id, self.message_id)
         await self.push(250, '2.0.0 OK')
 
@@ -842,7 +850,12 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def do_UNKNOWN(self):
         """Send response to unknown verb."""
-        await self.push(502, '5.5.2 Command not recognised')
+        self.failed_commands += 1
+        if self.failed_commands > 9:
+            await self.push(502, '5.5.3 Too many unknown commands')
+            await self.close()
+        else:
+            await self.push(502, '5.5.2 Command not recognised')
 
     @property
     def delay(self):
@@ -972,7 +985,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     @mode.setter
     def mode(self, value):
-        if value not in ['accept', 'bounce', 'random']:
+        if value not in ('accept', 'bounce', 'random'):
             logger.debug('MODE: %s is an invalid. Allowed modes: (accept, '
                          'bounce, random)', value)
             self._mode = None

@@ -72,6 +72,10 @@ to it.
 The test suite relies on `py.test <http://pytest.org/latest/>`_ and is
 installed via the `Makefile` target and the `setup.py test` target.
 
+The test suite takes a while to run, there are a lot of parts that require
+communication and also use calls :any:`asyncio.sleep`, which cause the test
+suite to pause until the sleep is done.
+
 .. code-block:: bash
 
     make test
