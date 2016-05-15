@@ -25,23 +25,18 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.4:
 .. _2.1.5:
 
 2.1.5
 =====
 
+The 2.1.5 release is actually a tiny bug fix release that I'm combining with
+the large 2.1.4 release.
+
 - Bugfix for :any:`socket.SO_REUSEPORT`.
-
--------------
-Past releases
--------------
-
-.. _2.1.4:
-
-2.1.4
-=====
-
 - Squashed bugs related to :any:`socket.socket` failing in child processes.
+  These squashed bugs fix IPv6 which had a tendency of not working as expected.
 - Added communication between supervisor and children, allow children to be
   restarted if they fail to communicate to the supervisor.
 - Added ``mode=`` and ``delay=`` optionals to the :ref:`listen` and
@@ -61,11 +56,15 @@ Past releases
   :ref:`tls_dhparams` option.
 - Added a warning when running the server as the root user without specifing
   a reduced privilege :ref:`user` and :ref:`group`.
-- Improved shutdown proceedure, now does a much better job of disconnecting
+- Improved shutdown procedure, now does a much better job of disconnecting
   clients and closing everything before exiting.
 - Added an internal counter of invalid SMTP commands. Mitigate DoS attacks,
   maximum failed commands per connection is 10. Clients that violate this rule
   get disconnected.
+
+-------------
+Past releases
+-------------
 
 .. _2.1.3:
 
