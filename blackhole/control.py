@@ -110,7 +110,7 @@ def _socket(addr, port, family):
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-    except AttributeError:
+    except (AttributeError, OSError):
         pass
     if family == socket.AF_INET6:
         sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 1)

@@ -25,6 +25,17 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.5:
+
+2.1.5
+=====
+
+- Bugfix for :any:`socket.SO_REUSEPORT`.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.4:
 
 2.1.4
@@ -55,10 +66,6 @@ Current release
 - Added an internal counter of invalid SMTP commands. Mitigate DoS attacks,
   maximum failed commands per connection is 10. Clients that violate this rule
   get disconnected.
-
--------------
-Past releases
--------------
 
 .. _2.1.3:
 
