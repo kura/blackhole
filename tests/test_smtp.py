@@ -100,7 +100,11 @@ def test_unknown_handlers():
                          'cleandir')
 class Controller:
 
-    def __init__(self, loop=None):
+    def __init__(self, sock=None, loop=None):
+        if sock is not None:
+            self.sock = sock
+        else:
+            self.sock = _socket('127.0.0.1', 0, socket.AF_INET)
         self.server = None
         self.loop = asyncio.new_event_loop() if loop is None else loop
         self.thread = None
@@ -116,7 +120,6 @@ class Controller:
         self._wsock.close()
 
     def _run(self, ready_event):
-        self.sock = _socket('127.0.0.1', 0, socket.AF_INET)
         asyncio.set_event_loop(self.loop)
         conf = Config(None)
         conf.mailname = 'blackhole.io'
@@ -127,6 +130,7 @@ class Controller:
         self.loop.run_forever()
         self.server.close()
         self.loop.run_until_complete(self.server.wait_closed())
+        self.sock.close()
         self.loop.close()
 
     def start(self):
@@ -139,6 +143,78 @@ class Controller:
     def stop(self):
         self._wsock.send(b'x')
         self.thread.join()
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+@pytest.mark.asyncio
+async def test_mode_directive(event_loop, unused_tcp_port):
+    cfile = create_config(('listen=:{} mode=bounce'.format(unused_tcp_port), ))
+    conf = Config(cfile).load()
+    sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
+    controller = Controller(sock)
+    controller.start()
+    conf.flags_from_listener('127.0.0.1', unused_tcp_port)
+    host, port = sock.getsockname()
+    with SMTP(host, port) as client:
+        msg = ['From: kura@example.com', 'To: kura@example.com',
+               'Subject: Test', 'X-Blackhole-Mode: accept',
+               'X-Blackhole-Delay: 5', '', 'Testing 1, 2, 3']
+        msg = '\n'.join(msg)
+        start = time.time()
+        code, resp = client.data(msg.encode('utf-8'))
+        stop = time.time()
+        assert code in [450, 451, 452, 458, 521, 550, 551, 552, 553, 571]
+        assert round(stop - start) in (0, 1)
+    controller.stop()
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+@pytest.mark.asyncio
+async def test_delay_directive(event_loop, unused_tcp_port):
+    cfile = create_config(('listen=:{} delay=5'.format(unused_tcp_port), ))
+    conf = Config(cfile).load()
+    sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
+    controller = Controller(sock)
+    controller.start()
+    conf.flags_from_listener('127.0.0.1', unused_tcp_port)
+    host, port = sock.getsockname()
+    with SMTP(host, port) as client:
+        msg = ['From: kura@example.com', 'To: kura@example.com',
+               'Subject: Test', 'X-Blackhole-Mode: bounce',
+               'X-Blackhole-Delay: 30', '', 'Testing 1, 2, 3']
+        msg = '\n'.join(msg)
+        start = time.time()
+        code, resp = client.data(msg.encode('utf-8'))
+        stop = time.time()
+        assert code == 250
+        assert round(stop - start) in (4, 5, 6)
+    controller.stop()
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+@pytest.mark.asyncio
+async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
+    cfile = create_config(('listen=:{} delay=5 mode=bounce'.format(unused_tcp_port), ))
+    conf = Config(cfile).load()
+    sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
+    controller = Controller(sock)
+    controller.start()
+    conf.flags_from_listener('127.0.0.1', unused_tcp_port)
+    host, port = sock.getsockname()
+    with SMTP(host, port) as client:
+        msg = ['From: kura@example.com', 'To: kura@example.com',
+               'Subject: Test', 'X-Blackhole-Mode: accept',
+               'X-Blackhole-Delay: 30', '', 'Testing 1, 2, 3']
+        msg = '\n'.join(msg)
+        start = time.time()
+        code, resp = client.data(msg.encode('utf-8'))
+        stop = time.time()
+        assert code in [450, 451, 452, 458, 521, 550, 551, 552, 553, 571]
+        assert round(stop - start) in (4, 5, 6)
+    controller.stop()
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

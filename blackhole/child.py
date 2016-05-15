@@ -114,6 +114,8 @@ class Child:
             self.loop.run_until_complete(server.wait_closed())
         self.heartbeat_task.cancel()
         self.server_task.cancel()
+        for task in asyncio.Task.all_tasks(self.loop):
+            task.cancel()
         self._started = False
         try:
             self.loop.stop()

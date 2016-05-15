@@ -605,11 +605,11 @@ class Config(metaclass=Singleton):
         """
         if addr in ('127.0.0.1', '0.0.0.0'):
             addr = ''
-        if addr in ('::1'):
+        elif addr in ('::1', ):
             addr = '::'
         listeners = self.listen + self.tls_listen
         for laddr, lport, lfam, lflags in listeners:
-            if laddr == addr and lport:
+            if laddr == addr and lport == port:
                 return lflags
         return {}
 

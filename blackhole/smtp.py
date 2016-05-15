@@ -123,7 +123,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         if len(flags.keys()) > 0:
             self._flags = flags
             self._disable_dynamic_switching = True
-        logger.debug('Flags for this connection: %s', self.flags)
+            logger.debug('Flags enabled, disabling dynamic switching')
+            logger.debug('Flags for this connection: %s', self._flags)
 
     def connection_made(self, transport):
         """
@@ -924,8 +925,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         if 'delay' in self._flags.keys():
             delay = self._flags['delay']
             if isinstance(delay, list):
-                return self._delay_range(delay)
-            return delay
+                self._delay_range(delay)
+                return self._delay
+            return int(delay)
         if self._delay is not None:
             return self._delay
         if self.config.delay is not None:

@@ -1,6 +1,5 @@
 import getpass
 import grp
-import logging
 import os
 import pytest
 import socket
@@ -150,6 +149,44 @@ class TestListen(unittest.TestCase):
         cfile = create_config(('listen=:::25',))
         conf = Config(cfile).load()
         assert conf.listen == [('::', 25, socket.AF_INET6, {})]
+
+    def test_no_flags(self):
+        cfile = create_config(('listen=:25',))
+        conf = Config(cfile).load()
+        assert conf.listen == [('', 25, socket.AF_INET, {})]
+
+    def test_mode_flag(self):
+        cfile = create_config(('listen=:25 mode=bounce',))
+        conf = Config(cfile).load()
+        assert conf.listen == [('', 25, socket.AF_INET, {'mode': 'bounce'})]
+
+    def test_delay_flag(self):
+        cfile = create_config(('listen=:25 delay=30',))
+        conf = Config(cfile).load()
+        assert conf.listen == [('', 25, socket.AF_INET, {'delay': '30'})]
+
+    def test_delay_range_flag(self):
+        cfile = create_config(('listen=:25 delay=30-50',))
+        conf = Config(cfile).load()
+        assert conf.listen == [('', 25, socket.AF_INET,
+                               {'delay': ('30', '50')})]
+
+    def test_mode_and_delay_range_flag(self):
+        cfile = create_config(('listen=:25 delay=15-20 mode=bounce',))
+        conf = Config(cfile).load()
+        assert conf.listen == [('', 25, socket.AF_INET, {'delay': ('15', '20'),
+                                                         'mode': 'bounce'})]
+
+    def test_listen_flags_special_ipv4(self):
+        cfile = create_config(('listen=:25 mode=bounce',))
+        conf = Config(cfile).load()
+        assert conf.flags_from_listener('127.0.0.1', 25) == {'mode': 'bounce'}
+        assert conf.flags_from_listener('0.0.0.0', 25) == {'mode': 'bounce'}
+
+    def test_listen_flags_special_ipv6(self):
+        cfile = create_config(('listen=:::25 mode=bounce',))
+        conf = Config(cfile).load()
+        assert conf.flags_from_listener('::1', 25) == {'mode': 'bounce'}
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
@@ -519,6 +556,65 @@ class TestTls(unittest.TestCase):
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_tls_dhparams()
+
+    def test_no_flags(self):
+        key = create_file('key.key')
+        cert = create_file('crt.crt')
+        settings = ('tls_listen=:123', 'tls_cert={}'.format(cert),
+                    'tls_key={}'.format(key))
+        cfile = create_config(settings)
+        conf = Config(cfile).load()
+        assert conf.tls_listen == [('', 123, socket.AF_INET, {})]
+
+    def test_mode_flag(self):
+        key = create_file('key.key')
+        cert = create_file('crt.crt')
+        settings = ('tls_listen=:123 mode=bounce', 'tls_cert={}'.format(cert),
+                    'tls_key={}'.format(key))
+        cfile = create_config(settings)
+        conf = Config(cfile).load()
+        assert conf.tls_listen == [('', 123, socket.AF_INET,
+                                   {'mode': 'bounce'})]
+
+    def test_delay_flag(self):
+        key = create_file('key.key')
+        cert = create_file('crt.crt')
+        settings = ('tls_listen=:123 delay=30', 'tls_cert={}'.format(cert),
+                    'tls_key={}'.format(key))
+        cfile = create_config(settings)
+        conf = Config(cfile).load()
+        assert conf.tls_listen == [('', 123, socket.AF_INET, {'delay': '30'})]
+
+    def test_delay_range_flag(self):
+        key = create_file('key.key')
+        cert = create_file('crt.crt')
+        settings = ('tls_listen=:123 delay=30-50', 'tls_cert={}'.format(cert),
+                    'tls_key={}'.format(key))
+        cfile = create_config(settings)
+        conf = Config(cfile).load()
+        assert conf.tls_listen == [('', 123, socket.AF_INET,
+                                   {'delay': ('30', '50')})]
+
+    def test_mode_and_delay_range_flag(self):
+        key = create_file('key.key')
+        cert = create_file('crt.crt')
+        settings = ('tls_listen=:123 mode=bounce delay=15-20',
+                    'tls_cert={}'.format(cert), 'tls_key={}'.format(key))
+        cfile = create_config(settings)
+        conf = Config(cfile).load()
+        assert conf.tls_listen == [('', 123, socket.AF_INET,
+                                   {'delay': ('15', '20'), 'mode': 'bounce'})]
+
+    def test_tls_listen_flags_special_ipv4(self):
+        cfile = create_config(('tls_listen=:465 mode=bounce',))
+        conf = Config(cfile).load()
+        assert conf.flags_from_listener('127.0.0.1', 465) == {'mode': 'bounce'}
+        assert conf.flags_from_listener('0.0.0.0', 465) == {'mode': 'bounce'}
+
+    def test_tls_listen_flags_special_ipv6(self):
+        cfile = create_config(('listen=:::465 mode=bounce',))
+        conf = Config(cfile).load()
+        assert conf.flags_from_listener('::1', 465) == {'mode': 'bounce'}
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
