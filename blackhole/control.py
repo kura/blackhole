@@ -53,7 +53,8 @@ def _context(use_tls=False):
 
     :param use_tls: Whether to create a TLS context or not.
     :type use_tls: :any:`bool`
-    :returns: :any:`ssl.SSLContext` or :any:`None`.
+    :returns: A TLS context or none.
+    :rtype: :any:`ssl.SSLContext` or :any:`None`.
 
     .. note::
 
@@ -101,7 +102,8 @@ def _socket(addr, port, family):
     :type port: :any:`int`
     :param family: The type of socket to use.
     :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
-    :returns: :any:`socket.socket`
+    :returns: A bound socket.
+    :rtype: :any:`socket.socket`
     :raises: :any:`blackhole.exceptions.BlackholeRuntimeException`
     """
     sock = socket.socket(family, socket.SOCK_STREAM)
@@ -142,7 +144,9 @@ def server(addr, port, family, flags={}, use_tls=False):
     :type flags: :any:`dict`. Default: {}
     :param use_tls: Whether to create a TLS context or not.
     :type use_tls: :any:`bool`
-    :returns: :any:`dict`
+    :returns: A bound socket, a TLS context if configured and any configured
+              flags.
+    :rtype: :any:`dict`
     """
     sock = _socket(addr, port, family)
     ctx = _context(use_tls=use_tls)

@@ -65,7 +65,7 @@ class Smtp(asyncio.StreamReaderProtocol):
     _mode = None
     """The response mode to use."""
 
-    flags = {}
+    _flags = {}
     """Flags defined in each listen directive."""
 
     _disable_dynamic_switching = False
@@ -78,6 +78,9 @@ class Smtp(asyncio.StreamReaderProtocol):
     https://blackhole.io/configuration-options.html#listen
     https://blackhole.io/configuration-options.html#tls_listen
     """
+
+    _failed_commands = 0
+    """An internal counter of failed commands for a client."""
 
     def __init__(self, clients, loop=None):
         """
@@ -106,7 +109,6 @@ class Smtp(asyncio.StreamReaderProtocol):
         # and craches inbound connections when called after os.fork
         self.fqdn = self.config.mailname
         self.message_id = message_id(self.fqdn)
-        self.failed_commands = 0  # An internal counter to stop command spam
 
     def flags_from_transport(self):
         """Adapt internal flags for the transport in use."""
@@ -119,8 +121,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         sock_name = sock.getsockname()
         flags = self.config.flags_from_listener(sock_name[0], sock_name[1])
         if len(flags.keys()) > 0:
-            self.flags = flags
-            self.disable_dynamic_switching = True
+            self._flags = flags
+            self._disable_dynamic_switching = True
         logger.debug('Flags for this connection: %s', self.flags)
 
     def connection_made(self, transport):
@@ -191,7 +193,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Get a list of available AUTH mechanisms.
 
-        :returns: :any:`list`
+        :returns: A list of available authentication mechanisms.
+        :rtype: :any:`list`
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
@@ -207,7 +210,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param line: A line of data from a client.
         :type line: :any:`str`
-        :returns: :any:`blackhole.smtp.Smtp.auth_MECHANISM`
+        :returns: A callable authentication mechanism.
+        :rtype: :any:`blackhole.smtp.Smtp.auth_MECHANISM`
 
         .. note::
 
@@ -345,7 +349,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Wait for data from the client.
 
-        :returns: :any:`str`
+        :returns: A line of received data.
+        :rtype: :any:`str`
 
         .. note::
 
@@ -393,7 +398,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param line: Look up the command handler to use from the data provided.
         :type line: :any:`str`
-        :returns: :any:`blackhole.smtp..Smtp.do_VERB`,
+        :returns: A callable command handler.
+        :rtype: :any:`blackhole.smtp..Smtp.do_VERB`,
                   :any:`blackhole.smtp.Smtp.auth_MECHANISM`,
                   :any:`blackhole.smtp..Smtp.help_VERB`
         """
@@ -415,7 +421,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param parts: A list of command data, split on spaces.
         :type parts: :any:`list`
-        :returns: :any:`blackhole.smtp.Smtp.help_VERB`
+        :returns: A callable help handler.
+        :rtype: :any:`blackhole.smtp.Smtp.help_VERB`
         """
         if len(parts) > 1:
             cmd = 'help_{}'.format(parts[1].upper())
@@ -429,7 +436,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :param verb:
         :type verb: :any:`str`
-        :returns: :any:`blackhole.smtp.Smtp.do_VERB`
+        :returns: A callable command handler.
+        :rtype: :any:`blackhole.smtp.Smtp.do_VERB`
         """
         return getattr(self, 'do_{}'.format(verb.upper()), self.do_UNKNOWN)
 
@@ -457,7 +465,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         https://blackhole.io/index.html#help-verb
 
-        :returns: :any:`list`
+        :returns: A list of available help handlers.
+        :rtype: :any:`list`
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
@@ -588,7 +597,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         if self.config.dynamic_switch is False:
             logger.debug('Dynamic switches disabled, ignoring')
             return
-        if self.disable_dynamic_switching is True:
+        if self._disable_dynamic_switching is True:
             logger.debug('Dynamic switches are disabled by flags option.')
             return
         key, value = line.split(':')
@@ -744,7 +753,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Look up and return a mailing list or generate one for EXPN all.
 
-        :returns: :any:``list``
+        :returns: A list of members for a mailing list.
+        :rtype: :any:``list``
         """
         _, expn = self._line.lower().split(' ')
         expn = expn.replace('<', '').replace('>', '')
@@ -768,7 +778,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Generate response for an EXPN query.
 
-        :returns: :any:``list``
+        :returns: A list of responses.
+        :rtype: :any:``list``
         """
         iterator = await self._expn_value_to_list()
         i, resp = 1, []
@@ -890,8 +901,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def do_UNKNOWN(self):
         """Send response to unknown verb."""
-        self.failed_commands += 1
-        if self.failed_commands > 9:
+        self._failed_commands += 1
+        if self._failed_commands > 9:
             await self.push(502, '5.5.3 Too many unknown commands')
             await self.close()
         else:
@@ -907,13 +918,14 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/configuration-options.html#delay
         https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
 
-        :returns: :any:`int` or :any:`None`
+        :returns: A delay time in seconds.
+        :rtype: :any:`int` or :any:`None`
         """
-        if 'delay' in self.flags.keys():
-            delay = self.flags['delay']
+        if 'delay' in self._flags.keys():
+            delay = self._flags['delay']
             if isinstance(delay, list):
                 return self._delay_range(delay)
-            return self.flags['delay']
+            return delay
         if self._delay is not None:
             return self._delay
         if self.config.delay is not None:
@@ -1022,10 +1034,11 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/configuration-options.html#mode
         https://blackhole.io/dynamic-switches.html#dynamic-mode-switches
 
-        :returns: :any:`str`
+        :returns: A response mode.
+        :rtype: :any:`str`
         """
-        if 'mode' in self.flags.keys():
-            return self.flags['mode']
+        if 'mode' in self._flags.keys():
+            return self._flags['mode']
         if self._mode is not None:
             return self._mode
         return self.config.mode

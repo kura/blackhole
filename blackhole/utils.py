@@ -24,6 +24,7 @@
 
 import os
 import random
+import re
 import socket
 import time
 
@@ -37,7 +38,8 @@ def mailname(mailname_file='/etc/mailname'):
 
     :param mailname_file: A path to the mailname file.
     :type mailname_file: :any:`str`
-    :returns: :any:`str`
+    :returns: A domain name.
+    :rtype: :any:`str`
 
     .. note::
 
@@ -60,9 +62,30 @@ def message_id(domain):
 
     :param domain: A fully qualified domain.
     :type domain :any:`str`
-    :returns: :any:`str`
+    :returns: An RFC 2822 compliant Message-ID.
+    :rtype: :any:`str`
     """
     timeval = int(time.time() * 100)
     pid = os.getpid()
     randint = random.getrandbits(64)
     return '<{}.{}.{}@{}>'.format(timeval, pid, randint, domain)
+
+
+def get_version():
+    """
+    Extract the __version__ from a file without importing it.
+
+    :return: The version that was extracted.
+    :rtype: :any:`str`
+    :raises: :any:`AssertionError`
+    """
+    path = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(path, '__init__.py')
+    pattern = re.compile(r'(?P<version>\d+\.\d+(?:\.\d+)?(?:(?:a|b|rc)\d+)?)')
+    with open(filepath) as fp:
+        for line in fp:
+            if line.startswith('__version__'):
+                mo = pattern.search(line)
+                assert mo, 'No valid __version__ string found'
+                return mo.group('version')
+    raise AssertionError('No __version__ assignment found')

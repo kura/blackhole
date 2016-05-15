@@ -78,7 +78,14 @@ class Daemon(metaclass=Singleton):
         self.pid = os.getpid()
 
     def _exit(self, signum=None, frame=None):
-        """Called on exit using :any:`atexit.register` or via a signal."""
+        """
+        Called on exit using :any:`atexit.register` or via a signal.
+
+        :param signum: The signal number.
+        :type: signum: :any:`int`
+        :param frame: The stack frame when interrupted.
+        :type frame: :any:`frame`
+        """
         del self.pid
 
     def fork(self):
@@ -102,7 +109,8 @@ class Daemon(metaclass=Singleton):
 
         :raises: :any:`blackhole.exceptions.DaemonException` if pid cannot be
                  read from the filesystem.
-        :returns: :any:`int` or :any:`None`
+        :returns: The current pid.
+        :rtype: :any:`int` or :any:`None`
 
         .. note::
 

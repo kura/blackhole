@@ -101,7 +101,8 @@ class Child:
         :type signum: :any:`int`
         :param frame: Interrupted stack frame.
         :type frame: :any:`frame`
-        :returns: :any:`os._exit` -- :any:`os.EX_OK`
+        :returns: Exit the process.
+        :rtype: :any:`os._exit` -- :any:`os.EX_OK`
         """
         for _ in range(len(self.clients)):
             client = self.clients.pop()

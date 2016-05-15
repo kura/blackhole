@@ -34,7 +34,7 @@ import pwd
 import socket
 
 from .exceptions import ConfigException
-from .utils import mailname
+from .utils import mailname, get_version
 
 
 __all__ = ('parse_cmd_args', 'warn_options', 'config_test', 'Config')
@@ -48,10 +48,9 @@ def parse_cmd_args(args):
 
     :param args: A list of option command line arguments.
     :type args: :any:`list`
-    :returns: :any:`argparse.Namespace`
+    :returns: Parsed command line arguments.
+    :rtype: :any:`argparse.Namespace`
     """
-    __version__ = __import__('blackhole').__version__
-
     ls_help = ('Disable ssl.OP_SINGLE_DH_USE and ssl.OP_SINGLE_ECDH_USE. '
                'Reduces CPU overhead at the expense of security -- Don\'t '
                'use this option unless you really need to.')
@@ -69,7 +68,7 @@ def parse_cmd_args(args):
     parser = argparse.ArgumentParser('blackhole', description=decription,
                                      epilog=epilog)
     parser.add_argument('-v', '--version', action='version',
-                        version=__version__)
+                        version=get_version())
     parser.add_argument('-c', '--conf', type=str,
                         default='/etc/blackhole.conf',
                         dest='config_file', metavar='/etc/blackhole.conf',
@@ -212,7 +211,8 @@ class Config(metaclass=Singleton):
         Load the configuration file and parse.
 
         :raises: :any:`blackhole.exceptions.ConfigException`
-        :returns: An instance of :any:`blackhole.config.Config` or :any:`None`
+        :returns: An instance of :any:`blackhole.config.Config`
+        :rtype: :any:`blackhole.config.Config`
 
         .. note::
 
@@ -249,6 +249,9 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#workers
 
+        :returns: Number of workers.
+        :rtype: :any:`int`
+
         .. note::
 
            Default value is 1.
@@ -264,9 +267,12 @@ class Config(metaclass=Singleton):
     @property
     def listen(self):
         """
-        Addresses, ports and socket family to listen on.
+        Address, port and socket family.
 
         https://blackhole.io/configuration-options.html#listen
+
+        :returns: Sockets to listen on.
+        :rtype: :any:`list`
 
         .. note::
 
@@ -283,9 +289,12 @@ class Config(metaclass=Singleton):
     @property
     def tls_listen(self):
         """
-        Addresses and ports to listen on for SSL/TLS connections.
+        Address and port and socket family for SSL/TLS connections.
 
         https://blackhole.io/configuration-options.html#tls_listen
+
+        :returns: Sockets to listen on.
+        :rtype: :any:`list`
         """
         return self._tls_listen or []
 
@@ -300,7 +309,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#user
 
-        :returns: :any:`str`
+        :returns: A user name.
+        :rtype: :any:`str`
 
         .. note::
 
@@ -319,7 +329,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#group
 
-        :returns: :any:`str`
+        :returns: A group name.
+        :rtype: :any:`str`
 
         .. note::
 
@@ -338,7 +349,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#timeout
 
-        :returns: :any:`int`
+        :returns: A timeout in seconds.
+        :rtype: :any:`int`
 
         .. note::
 
@@ -358,7 +370,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#tls_key
 
-        :returns: :any:`str`
+        :returns: A path to a TLS key file.
+        :rtype: :any:`str`
         """
         return self._tls_key
 
@@ -373,7 +386,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#tls_cert
 
-        :returns: :any:`str`
+        :returns: A path to a TLS certificate.
+        :rtype: :any:`str`
         """
         return self._tls_cert
 
@@ -388,7 +402,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#tls_dhparams
 
-        :returns: :any:`str`
+        :returns: A path to a file containing dhparams.
+        :rtype: :any:`str`
         """
         return self._tls_dhparams
 
@@ -403,7 +418,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#pidfile
 
-        :returns: :any:`str`
+        :returns: A path to a pid file.
+        :rtype: :any:`str`
         """
         return self._pidfile
 
@@ -418,7 +434,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#delay
 
-        :returns: :any:`int` or :any:`None`
+        :returns: A delay in seconds or none if not configured.
+        :rtype: :any:`int` or :any:`None`
 
         .. note::
 
@@ -440,7 +457,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#mode
 
-        :returns: :any:`str`
+        :returns: A response mode.
+        :rtype: :any:`str`
 
         .. note::
 
@@ -460,7 +478,8 @@ class Config(metaclass=Singleton):
 
         https://blackhole.io/configuration-options.html#max_message_size
 
-        :returns: :any:`int`
+        :returns: Maximum message size in bytes.
+        :rtype: :any:`int`
 
         .. note::
 
@@ -479,6 +498,9 @@ class Config(metaclass=Singleton):
         Enable or disable dynamic switches.
 
         https://blackhole.io/configuration-options.html#dynamic_switch
+
+        :returns: Whether dynamic switches are enabled or not.
+        :rtype: :any:`bool` - :any:`True` or :any:`False`
 
         .. note::
 
@@ -506,6 +528,8 @@ class Config(metaclass=Singleton):
         :param port: A port number.
         :type port: :any:`str`
         :raises: :any:`blackhole.exceptions.ConfigException`
+        :returns: A port number.
+        :rtype: :any:`int`
         """
         try:
             return int(port)
@@ -520,7 +544,8 @@ class Config(metaclass=Singleton):
         :param listeners: A list of addresses and ports, separated by commas.
                          -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25, :::25'
         :type listeners: :any:`str`
-        :returns: :any:`list` or :any:`None`
+        :returns: A list of addresses and sockets to listen on.
+        :rtype: :any:`list` or :any:`None`
         """
         clisteners = []
         _listeners = listeners.split(',')
@@ -552,7 +577,8 @@ class Config(metaclass=Singleton):
         :type addr: :any:`str`
         :param port: The listener port.
         :type port: :any:`int`
-        :returns: :any:`dict`
+        :returns: Flags defined for this socket.
+        :rtype: :any:`dict`
 
         .. note::
 
@@ -593,7 +619,8 @@ class Config(metaclass=Singleton):
 
         :param parts: Parts of the listener definition.
         :type parts: :any:`list`
-        :returns: :any:`dict`
+        :returns: Flags for a listener.
+        :rtype: :any:`dict`
         """
         flags = {}
         for part in parts:
@@ -615,7 +642,8 @@ class Config(metaclass=Singleton):
         :type flag: :any:`str`
         :param value: The value of the flag.
         :type value: :any:`str`
-        :returns: :any:`dict`
+        :returns: Mode flag for a listener.
+        :rtype: :any:`dict`
         :raises: :any:`blackhole.exception.ConfigException`
         """
         if value in ('accept', 'bounce', 'random'):
@@ -633,7 +661,8 @@ class Config(metaclass=Singleton):
         :type flag: :any:`str`
         :param value: The value of the flag.
         :type value: :any:`str`
-        :returns: :any:`dict`
+        :returns: Delay flag for a listener.
+        :rtype: :any:`dict`
         :raises: :any:`blackhole.exception.ConfigException`
         """
         if value.count('-') == 0:
@@ -658,6 +687,7 @@ class Config(metaclass=Singleton):
         Test configuration validity.
 
         :returns: An instance of :any:`blackhole.config.Config`.
+        :rtype: :any:`blackhole.config.Config`
 
         .. note::
 

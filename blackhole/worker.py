@@ -103,7 +103,6 @@ class Worker:
 
         :param writer: An object for writing data to the pipe.
         :type writer: :any:`asyncio.StreamWriter`
-        :returns: :any:`None`
 
         .. note::
 
@@ -142,7 +141,6 @@ class Worker:
 
         :param reader: An object for reading data from the pipe.
         :type reader: :any:`asyncio.StreamReader`
-        :returns: :any:`None`
 
         .. note::
 
@@ -200,11 +198,7 @@ class Worker:
         self.heartbeat_task = asyncio.ensure_future(self.heartbeat(writer))
 
     def stop(self):
-        """
-        Terminate the worker and it's respective child process.
-
-        :returns: :any:`os._exit` -- :any:`os.EX_OK`
-        """
+        """Terminate the worker and it's respective child process."""
         self._started = False
         self.chat_task.cancel()
         self.heartbeat_task.cancel()
