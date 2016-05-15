@@ -34,12 +34,16 @@ listen
 ------
 
 :Syntax:
-    **listen** = *[address]:port, [address]:port*
+    **listen** = *[address]:port [mode=MODE] [delay=DELAY]*
 :Default:
     127.0.0.1:25, 127.0.0.1:587 -- 25 is the recognised SMTP port, 587 is the
     recognised SMTP Submission port.
+:Optional:
+    *mode=* and *delay=* -- allows setting a response mode and delay per
+    listener.
 :Added:
     :ref:`2.0.8` -- introduced the new IPv6 aware syntax
+    :ref:`2.1.4` -- added optional mode and delay flags
 
 `:25` is equivalent to listening on port 25 on all IPv4 addresses and `:::25`
 is equivalent to listening on port 25 on all IPv6 addresses.
@@ -50,6 +54,23 @@ Multiple addresses and ports can be listed on a single line.
 
     listen = 10.0.0.1:25, 10.0.0.2:25, :25, :::25, :587, :::587
 
+The ``mode=`` and ``delay=`` flags allow specific ports to act in specific
+ways. i.e. you could accept all mail on 10.0.0.1:25 and bounce it all on
+10.0.0.2:25, as below.
+
+::
+
+    listen = 10.0.0.1:25 mode=accept, 10.0.0.2:25 mode=bounce
+
+The ``mode=`` and ``delay=`` flags may also be specified together, as required.
+
+::
+
+    listen = 10.0.0.1:25 mode=accept delay=5, 10.0.0.2:25 mode=bounce delay=10
+
+The flags accept the same options as :ref:`dynamic-switches`, including setting
+a delay range.
+
 -----
 
 .. _tls_listen:
@@ -58,11 +79,15 @@ tls_listen
 ----------
 
 :Syntax:
-    **tls_listen** = *[address]:port, [address]:port*
+    **tls_listen** = *[address]:port [mode=MODE] [delay=DELAY]*
 :Default:
     None -- 465 is the recognised SMTPS port [*]_.
+:Optional:
+    *mode=* and *delay=* -- allows setting a response mode and delay per
+    listener.
 :Added:
     :ref:`2.0.8` -- introduced the new IPv6 aware syntax
+    :ref:`2.1.4` -- added optional mode and delay flags
 
 `:465` is equivalent to listening on port 465 on all IPv4 addresses and
 `:::465` is equivalent to listening on port 465 on all IPv6 addresses.
@@ -72,6 +97,23 @@ Multiple addresses and ports can be listed on a single line.
 ::
 
     tls_listen = 10.0.0.1:465, 10.0.0.2:465, :465, :::465
+
+The ``mode=`` and ``delay=`` flags allow specific ports to act in specific
+ways. i.e. you could accept all mail on 10.0.0.1:465 and bounce it all on
+10.0.0.2:465, as below.
+
+::
+
+    tls_listen = 10.0.0.1:465 mode=accept, 10.0.0.2:465 mode=bounce
+
+The ``mode=`` and ``delay=`` flags may also be specified together, as required.
+
+::
+
+    tls_listen = 10.0.0.1:465 mode=accept delay=5, 10.0.0.2:465 mode=bounce delay=10
+
+The flags accept the same options as :ref:`dynamic-switches`, including setting
+a delay range.
 
 .. [*] Port 465 -- while originally a recognised port for SMTP over
    SSL/TLS -- is no longer advised for use. It's listed here because it's a

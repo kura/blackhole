@@ -1,35 +1,16 @@
 import os
-import tempfile
 import unittest
-from unittest import mock
 
 import pytest
 
-from blackhole.config import Config, Singleton
+from blackhole.config import Config
 from blackhole.smtp import Smtp
 
-
-@pytest.fixture()
-def cleandir():
-    newpath = tempfile.mkdtemp()
-    os.chdir(newpath)
+from ._utils import *
 
 
-@pytest.fixture()
-def reset_conf():
-    Singleton._instances = {}
-
-
-@pytest.mark.usefixtures('reset_conf')
-def create_config(data):
-    cwd = os.getcwd()
-    path = os.path.join(cwd, 'test.conf')
-    with open(path, 'w') as cfile:
-        cfile.write('\n'.join(data))
-    return path
-
-
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestHeadersSwitchDisabled(unittest.TestCase):
 
     def test_headers_disabled(self):
@@ -57,7 +38,8 @@ class TestHeadersSwitchDisabled(unittest.TestCase):
         assert smtp.mode == 'bounce'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestProcessHeaders(unittest.TestCase):
 
     def test_valid_mode_header(self):
@@ -103,7 +85,8 @@ class TestProcessHeaders(unittest.TestCase):
         assert smtp.delay is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestModeSwitch(unittest.TestCase):
 
     def test_mode_default(self):
@@ -135,7 +118,8 @@ class TestModeSwitch(unittest.TestCase):
         assert smtp.mode == 'accept'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestDelaySwitch(unittest.TestCase):
 
     def test_delay_not_enabled_or_set(self):

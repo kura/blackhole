@@ -3,7 +3,11 @@ from unittest import mock
 
 from blackhole.utils import mailname
 
+from ._utils import *
 
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_mail_name_file():
     check_value = 'file.blackhole.io'
     with mock.patch('os.access', return_value=True), \
@@ -12,6 +16,8 @@ def test_mail_name_file():
         assert mn == check_value
 
 
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_mail_name_socket():
     check_value = 'socket.blackhole.io'
     with mock.patch('os.access', return_value=False), \

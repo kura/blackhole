@@ -6,4 +6,6 @@
     :platform: Unix
 .. moduleauthor:: Kura <kura@kura.io>
 
-.. autodata:: proto
+.. autodata:: PING
+
+.. autodata:: PONG

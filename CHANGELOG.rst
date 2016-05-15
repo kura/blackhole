@@ -21,6 +21,42 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
+--------------
+Future release
+--------------
+
+.. _2.1.4:
+
+2.1.4
+=====
+
+- Squashed bugs related to :any:`socket.socket` failing in child processes.
+- Added communication between supervisor and children, allow children to be
+  restarted if they fail to communicate to the supervisor.
+- Added ``mode=`` and ``delay=`` optionals to the :ref:`listen` and
+  :ref:`tls_listen` directives. Allowing listeners to spawn on specific ports
+  and act in different ways.
+
+  When ``mode`` and ``delay`` are configured in a listener directive, that
+  listener will ignore the global mode and delay options for that listener.
+  Setting :ref:`mode` and :ref:`delay` on a listener will also disable
+  :ref:`dynamic-switches` for that listener, automatically.
+- Internal module loading changes
+- Added test utilities to the test suite.
+- The blackhole environment will be reset for each test.
+- Added a lot of testing to supervisor, worker and child functionality.
+- Added a ``--quiet`` mode to suppress warnings when using
+  ``-ls/--less-secure``, running as the root user or not using the
+  :ref:`tls_dhparams` option.
+- Added a warning when running the server as the root user without specifing
+  a reduced privilege :ref:`user` and :ref:`group`.
+- Improved shutdown proceedure, now does a much better job of disconnecting
+  clients and closing everything before exiting.
+- Added an internal counter of invalid SMTP commands. Mitigate DoS attacks,
+  maximum failed commands per connection is 10. Clients that violate this rule
+  get disconnected.
+
+
 ---------------
 Current release
 ---------------

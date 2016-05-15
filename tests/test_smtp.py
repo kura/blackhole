@@ -1,10 +1,7 @@
 import asyncio
 import inspect
-import logging
-import os
 import socket
 from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
-import tempfile
 import threading
 import time
 import unittest
@@ -12,34 +9,15 @@ from unittest import mock
 
 import pytest
 
-from blackhole.config import Singleton, Config
+from blackhole.config import Config
 from blackhole.control import _socket
 from blackhole.smtp import Smtp
 
-
-logging.getLogger('blackhole').addHandler(logging.NullHandler())
-
-
-@pytest.fixture()
-def cleandir():
-    newpath = tempfile.mkdtemp()
-    os.chdir(newpath)
+from ._utils import *
 
 
-@pytest.fixture()
-def reset_conf():
-    Singleton._instances = {}
-
-
-def create_config(data):
-    cwd = os.getcwd()
-    path = os.path.join(cwd, 'test.conf')
-    with open(path, 'w') as cfile:
-        cfile.write('\n'.join(data))
-    return path
-
-
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_initiation():
     cfile = create_config(('', ))
     with mock.patch('os.access', return_value=False), \
@@ -50,11 +28,15 @@ def test_initiation():
     assert smtp.fqdn == 'a.blackhole.io'
 
 
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_auth_mechanisms():
     smtp = Smtp([])
     assert smtp.get_auth_members() == ['CRAM-MD5', 'LOGIN', 'PLAIN']
 
 
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_handler_lookup():
     smtp = Smtp([])
     assert smtp.lookup_handler('AUTH CRAM-MD5') == smtp.auth_CRAM_MD5
@@ -92,6 +74,8 @@ def test_handler_lookup():
     assert smtp.lookup_handler('HELP KURA') == smtp.help_UNKNOWN
 
 
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_unknown_handlers():
     # Protection against adding/removing without updating tests
     verbs = ['do_DATA', 'do_EHLO', 'do_ETRN', 'do_EXPN', 'do_HELO', 'do_HELP',
@@ -112,7 +96,8 @@ def test_unknown_handlers():
             assert f in auths
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class Controller:
 
     def __init__(self, loop=None):
@@ -156,9 +141,10 @@ class Controller:
         self.thread.join()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_timeout():
+async def test_timeout(event_loop):
     cfile = create_config(('timeout=5', ))
     Config(cfile).load()
     controller = Controller()
@@ -172,9 +158,10 @@ async def test_timeout():
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_delay():
+async def test_delay(event_loop):
     cfile = create_config(('timeout=10', ))
     Config(cfile).load()
     controller = Controller()
@@ -194,9 +181,10 @@ async def test_delay():
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_delayed_bounce():
+async def test_delayed_bounce(event_loop):
     cfile = create_config(('timeout=10', ))
     Config(cfile).load()
     controller = Controller()
@@ -215,9 +203,10 @@ async def test_delayed_bounce():
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_delay_range():
+async def test_delay_range(event_loop):
     cfile = create_config(('timeout=10', ))
     Config(cfile).load()
     controller = Controller()
@@ -237,10 +226,10 @@ async def test_delay_range():
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestSmtp(unittest.TestCase):
 
-    @pytest.mark.usefixtures('reset_conf', 'cleandir')
     def setUp(self):
         cfile = create_config(('timeout=5', 'max_message_size=102400'))
         Config(cfile).load()

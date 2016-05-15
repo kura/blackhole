@@ -1,35 +1,26 @@
 import asyncio
 import os
 import socket
-import tempfile
 from unittest import mock
 
 import pytest
 
 from blackhole import protocols
 from blackhole.child import Child
-from blackhole.config import Singleton
 from blackhole.control import _socket
 from blackhole.streams import StreamProtocol
 
-
-@pytest.fixture()
-def cleandir():
-    newpath = tempfile.mkdtemp()
-    os.chdir(newpath)
+from ._utils import *
 
 
-@pytest.fixture()
-def reset_conf():
-    Singleton._instances = {}
-
-
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_initiation():
     Child('', '', [], '1')
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_start():
     socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
     child = Child('', '', socks, '1')
@@ -41,7 +32,8 @@ def test_start():
     assert mock_exit.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_stop():
     socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
     child = Child('', '', socks, '1')
@@ -58,7 +50,8 @@ def test_stop():
     assert mock_exit.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_stop_runtime_exception():
     socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
     child = Child('', '', socks, '1')
@@ -75,7 +68,8 @@ def test_stop_runtime_exception():
     assert mock_exit.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
 async def test__start():
     sock = _socket('127.0.0.1', 0, socket.AF_INET)
@@ -89,15 +83,16 @@ async def test__start():
         loop.run_until_complete(server.wait_closed())
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_child_heartbeat_not_started():
+async def test_child_heartbeat_not_started(event_loop):
     up_read, up_write = os.pipe()
     down_read, down_write = os.pipe()
     os.close(up_write)
     os.close(down_read)
     child = Child(up_read, down_write, [], '1')
-    child.loop = asyncio.get_event_loop()
+    child.loop = event_loop
     child._started = False
     with mock.patch('asyncio.Task') as mock_task, \
         mock.patch('blackhole.child.Child._start') as mock_start, \
@@ -108,15 +103,16 @@ async def test_child_heartbeat_not_started():
     assert mock_stop.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_child_heartbeat_started():
+async def test_child_heartbeat_started(event_loop):
     up_read, up_write = os.pipe()
     down_read, down_write = os.pipe()
     os.close(up_write)
     os.close(down_read)
     child = Child(up_read, down_write, [], '1')
-    child.loop = asyncio.get_event_loop()
+    child.loop = event_loop
     child._started = True
     sp = StreamProtocol()
     sp.reader = asyncio.StreamReader()

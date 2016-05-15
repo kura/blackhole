@@ -13,10 +13,12 @@ as below:
 -t			perform a configuration test and exit
 -d			enable debugging mode
 -b			run in the background
--ls         Disable :any:`ssl.OP_SINGLE_DH_USE` and
-            :any:`ssl.OP_SINGLE_ECDH_USE`. Reduces CPU overhead at the expense
-            of security. Don't use this option unless you really need to. --
-            added in :ref:`2.0.13`
+-ls			Disable :any:`ssl.OP_SINGLE_DH_USE` and
+			:any:`ssl.OP_SINGLE_ECDH_USE`. Reduces CPU overhead at the expense
+			of security. Don't use this option unless you really need to. --
+			added in :ref:`2.0.13`
+-q			Suppress warnings when using -ls/--less-secure, running as root or
+			not using :ref:`tls_dhparams` option.
 
 For information on the configuration options, their default values and what
 each option does, please see the :ref:`configuration-options` document and,

@@ -4,43 +4,21 @@ import logging
 import os
 import pytest
 import socket
-import tempfile
 import unittest
 from unittest import mock
 
-from blackhole.config import Config, Singleton, config_test, parse_cmd_args
+from blackhole.config import Config, config_test, parse_cmd_args
 from blackhole.exceptions import ConfigException
 
-
-logging.getLogger('blackhole').addHandler(logging.NullHandler())
-logging.getLogger('blackhole.config_test').addHandler(logging.NullHandler())
+from ._utils import *
 
 
-@pytest.fixture()
-def cleandir():
-    newpath = tempfile.mkdtemp()
-    os.chdir(newpath)
-
-
-@pytest.fixture()
-def reset_conf():
-    Singleton._instances = {}
-
-
-@pytest.mark.usefixtures('reset_conf')
-def create_config(data):
-    cwd = os.getcwd()
-    path = os.path.join(cwd, 'test.conf')
-    with open(path, 'w') as cfile:
-        cfile.write('\n'.join(data))
-    return path
-
-
-@mock.patch('getpass.getuser')
-@mock.patch('grp.getgrgid')
-@pytest.mark.usefixtures('reset_conf')
-def test_default(mock_getuser, mock_getgrgid):
-    conf = Config()
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+def test_default():
+    with mock.patch('getpass.getuser') as mock_getuser, \
+            mock.patch('grp.getgrgid') as mock_getgrgid:
+        conf = Config()
     assert conf.config_file == '/etc/blackhole.conf'
     assert mock_getuser.called is True
     assert mock_getuser.call_count is 1
@@ -48,38 +26,42 @@ def test_default(mock_getuser, mock_getgrgid):
     assert mock_getgrgid.call_count is 1
 
 
-@pytest.mark.usefixtures('reset_conf')
-@mock.patch('os.access', return_value=False)
-def test_no_access(mock_os_access):
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+def test_no_access():
     conf = Config()
     conf.config_file = '/fake/file.conf'
-    with pytest.raises(ConfigException):
+    with mock.patch('os.access', return_value=False) as mock_os_access, \
+            pytest.raises(ConfigException):
         conf.load()
     assert mock_os_access.called is True
-    assert mock_os_access.call_count is 2
+    assert mock_os_access.call_count is 1
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_load():
     cfile = create_config(('#not=thisline', 'listen=10.0.0.1:1025',
                            '''this won't be added''',
                            'mode=bounce   #default accept'))
     conf = Config(cfile).load()
-    assert conf.listen == [('10.0.0.1', 1025, socket.AF_INET)]
+    assert conf.listen == [('10.0.0.1', 1025, socket.AF_INET, {})]
     assert conf.tls_listen == []
     assert getattr(conf, 'not', None) is None
     assert getattr(conf, 'this', None) is None
     assert getattr(conf, 'default', None) is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_load_none():
     conf = Config(None).load()
     assert conf.mode == 'accept'
     assert conf.workers is 1
 
 
-@pytest.mark.usefixtures('reset_conf')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestCmdParser(unittest.TestCase):
 
     def test_default_conf(self):
@@ -115,33 +97,22 @@ class TestCmdParser(unittest.TestCase):
         assert parser.background is True
 
 
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestConfigTest(unittest.TestCase):
 
-    class Args(object):
-        pass
-
-    def create_file(self, name):
-        cwd = os.getcwd()
-        path = os.path.join(cwd, name)
-        with open(path, 'w') as ffile:
-            ffile.write('nothing')
-        return path
-
-    @pytest.mark.usefixtures('reset_conf', 'cleandir')
     def test_config_test(self):
-        key = self.create_file('key.key')
-        cert = self.create_file('crt.crt')
+        key = create_file('key.key')
+        cert = create_file('crt.crt')
         user = getpass.getuser()
         group = grp.getgrgid(os.getgid()).gr_name
         settings = ('listen=0.0.0.0:1205', 'user={}'.format(user),
                     'group={}'.format(group), 'timeout=180',
                     'tls_listen=0.0.0.0:1465',
                     'tls_cert={}'.format(cert), 'tls_key={}'.format(key),
-                    'delay=10', 'mode=bounce')
+                    'delay=10', 'mode=bounce', 'workers=2')
         cfile = create_config(settings)
-        args = self.Args()
-        args.config_file = cfile
-        args.less_secure = True
+        args = Args((('less_secure', True), ('config_file', cfile)))
         with mock.patch('blackhole.config.Config.test_port',
                         return_value=True), \
             mock.patch('blackhole.config.Config.test_tls_port',
@@ -151,36 +122,38 @@ class TestConfigTest(unittest.TestCase):
         assert str(exc.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestListen(unittest.TestCase):
 
     def test_default(self):
         cfile = create_config(('',))
         conf = Config(cfile).load()
-        assert conf.listen == [('127.0.0.1', 25, socket.AF_INET),
-                               ('127.0.0.1', 587, socket.AF_INET)]
+        assert conf.listen == [('127.0.0.1', 25, socket.AF_INET, {}),
+                               ('127.0.0.1', 587, socket.AF_INET, {})]
 
     def test_localhost(self):
         cfile = create_config(('listen=localhost:25',))
         conf = Config(cfile).load()
-        assert conf.listen == [('localhost', 25, socket.AF_INET)]
+        assert conf.listen == [('localhost', 25, socket.AF_INET, {})]
 
     def test_ipv6_disabled(self):
         cfile = create_config(('listen=:::25',))
         conf = Config(cfile).load()
-        conf._listen = [('::', 25, socket.AF_UNSPEC)]
-        with pytest.raises(ConfigException):
-            with mock.patch('socket.has_ipv6', False):
-                conf.test_ipv6_support()
+        conf._listen = [('::', 25, socket.AF_UNSPEC, {})]
+        with pytest.raises(ConfigException), \
+                mock.patch('socket.has_ipv6', False):
+            conf.test_ipv6_support()
 
     @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
     def test_ipv6(self):
         cfile = create_config(('listen=:::25',))
         conf = Config(cfile).load()
-        assert conf.listen == [('::', 25, socket.AF_INET6)]
+        assert conf.listen == [('::', 25, socket.AF_INET6, {})]
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestPort(unittest.TestCase):
 
     def test_str_port(self):
@@ -222,15 +195,15 @@ class TestPort(unittest.TestCase):
     def test_ipv4_and_ipv6_same_port(self):
         cfile = create_config(('listen=127.0.0.1:9000,:::9000', ))
         conf = Config(cfile).load()
-        assert conf.listen == [('127.0.0.1', 9000, socket.AF_INET),
-                               ('::', 9000, socket.AF_INET6)]
+        assert conf.listen == [('127.0.0.1', 9000, socket.AF_INET, {}),
+                               ('::', 9000, socket.AF_INET6, {})]
 
     @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
     def test_ipv4_and_ipv6_diff_port(self):
         cfile = create_config(('listen=127.0.0.1:9000,:::9001', ))
         conf = Config(cfile).load()
-        assert conf.listen == [('127.0.0.1', 9000, socket.AF_INET),
-                               ('::', 9001, socket.AF_INET6)]
+        assert conf.listen == [('127.0.0.1', 9000, socket.AF_INET, {}),
+                               ('::', 9001, socket.AF_INET6, {})]
 
     def test_port_under_1024_with_perms_unavailable(self):
         cfile = create_config(('listen=127.0.0.1:1023',))
@@ -268,7 +241,8 @@ class TestPort(unittest.TestCase):
         assert mock_socket.call_count is 1
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestUser(unittest.TestCase):
 
     def test_invalid_user(self):
@@ -283,7 +257,8 @@ class TestUser(unittest.TestCase):
         assert conf.user == getpass.getuser()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestGroup(unittest.TestCase):
 
     def test_invalid_group(self):
@@ -299,7 +274,8 @@ class TestGroup(unittest.TestCase):
         assert conf.group == grp.getgrgid(os.getgid()).gr_name
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestTimeout(unittest.TestCase):
 
     def test_default_timeout(self):
@@ -325,7 +301,8 @@ class TestTimeout(unittest.TestCase):
             conf.test_timeout()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestTlsPort(unittest.TestCase):
 
     def test_default_tls_port(self):
@@ -348,7 +325,7 @@ class TestTlsPort(unittest.TestCase):
     def test_valid_tls_port(self):
         cfile = create_config(('tls_listen=127.0.0.1:19',))
         conf = Config(cfile).load()
-        assert conf.tls_listen == [('127.0.0.1', 19, socket.AF_INET)]
+        assert conf.tls_listen == [('127.0.0.1', 19, socket.AF_INET, {})]
 
     def test_tls_lower_than_min(self):
         cfile = create_config(('tls_listen=127.0.0.1:0',))
@@ -419,26 +396,20 @@ class TestTlsPort(unittest.TestCase):
     def test_ipv4_and_ipv6_same_port(self):
         cfile = create_config(('tls_listen=127.0.0.1:9000,:::9000', ))
         conf = Config(cfile).load()
-        assert conf.tls_listen == [('127.0.0.1', 9000, socket.AF_INET),
-                                   ('::', 9000, socket.AF_INET6)]
+        assert conf.tls_listen == [('127.0.0.1', 9000, socket.AF_INET, {}),
+                                   ('::', 9000, socket.AF_INET6, {})]
 
     @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
     def test_ipv4_and_ipv6_diff_port(self):
         cfile = create_config(('tls_listen=127.0.0.1:9000,:::9001', ))
         conf = Config(cfile).load()
-        assert conf.tls_listen == [('127.0.0.1', 9000, socket.AF_INET),
-                                   ('::', 9001, socket.AF_INET6)]
+        assert conf.tls_listen == [('127.0.0.1', 9000, socket.AF_INET, {}),
+                                   ('::', 9001, socket.AF_INET6, {})]
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestTls(unittest.TestCase):
-
-    def create_file(self, name):
-        cwd = os.getcwd()
-        path = os.path.join(cwd, name)
-        with open(path, 'w') as ffile:
-            ffile.write('nothing')
-        return path
 
     def test_disabled(self):
         cfile = create_config(('',))
@@ -448,7 +419,7 @@ class TestTls(unittest.TestCase):
     def test_ipv6_disabled(self):
         cfile = create_config(('tls_listen=:::465',))
         conf = Config(cfile).load()
-        conf._tls_listen = [('::', 465, socket.AF_UNSPEC)]
+        conf._tls_listen = [('::', 465, socket.AF_UNSPEC, {})]
         with pytest.raises(ConfigException), \
                 mock.patch('socket.has_ipv6', False):
             conf.test_tls_ipv6_support()
@@ -459,12 +430,12 @@ class TestTls(unittest.TestCase):
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_tls_settings()
-        assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET)]
+        assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
         assert conf.tls_cert is None
         assert conf.tls_key is None
 
     def test_cert_no_port_key(self):
-        cert = self.create_file('crt.crt')
+        cert = create_file('crt.crt')
         settings = ('tls_cert={}'.format(cert),)
         cfile = create_config(settings)
         conf = Config(cfile).load()
@@ -475,7 +446,7 @@ class TestTls(unittest.TestCase):
         assert conf.tls_key is None
 
     def test_key_no_port_cert(self):
-        key = self.create_file('key.key')
+        key = create_file('key.key')
         settings = ('tls_key={}'.format(key),)
         cfile = create_config(settings)
         conf = Config(cfile).load()
@@ -486,8 +457,8 @@ class TestTls(unittest.TestCase):
         assert conf.tls_key == key
 
     def test_cert_key_no_port(self):
-        cert = self.create_file('crt.crt')
-        key = self.create_file('key.key')
+        cert = create_file('crt.crt')
+        key = create_file('key.key')
         settings = ('tls_cert={}'.format(cert),
                     'tls_key={}'.format(key))
         cfile = create_config(settings)
@@ -499,36 +470,36 @@ class TestTls(unittest.TestCase):
         assert conf.tls_key == key
 
     def test_port_cert_no_key(self):
-        cert = self.create_file('crt.crt')
+        cert = create_file('crt.crt')
         settings = ('tls_listen=127.0.0.1:123', 'tls_cert={}'.format(cert),)
         cfile = create_config(settings)
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_tls_settings()
-        assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET)]
+        assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
         assert conf.tls_cert == cert
         assert conf.tls_key is None
 
     def test_port_key_no_cert(self):
-        key = self.create_file('key.key')
+        key = create_file('key.key')
         settings = ('tls_listen=127.0.0.1:123', 'tls_key={}'.format(key))
         cfile = create_config(settings)
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_tls_settings()
-        assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET)]
+        assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
         assert conf.tls_cert is None
         assert conf.tls_key == key
 
     def test_port_cert_key(self):
-        key = self.create_file('key.key')
-        cert = self.create_file('crt.crt')
+        key = create_file('key.key')
+        cert = create_file('crt.crt')
         settings = ('tls_listen=127.0.0.1:123', 'tls_cert={}'.format(cert),
                     'tls_key={}'.format(key))
         cfile = create_config(settings)
         conf = Config(cfile).load()
         conf.test_tls_settings()
-        assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET)]
+        assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
         assert conf.tls_cert == cert
         assert conf.tls_key == key
 
@@ -538,7 +509,7 @@ class TestTls(unittest.TestCase):
         assert conf.tls_dhparams is None
 
     def test_dhparam_works(self):
-        dhparams = self.create_file('dhparams.pem')
+        dhparams = create_file('dhparams.pem')
         cfile = create_config(('tls_dhparams={}'.format(dhparams), ))
         conf = Config(cfile).load()
         assert conf.tls_dhparams == dhparams
@@ -550,7 +521,8 @@ class TestTls(unittest.TestCase):
             conf.test_tls_dhparams()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestDelay(unittest.TestCase):
 
     def test_no_delay(self):
@@ -579,7 +551,8 @@ class TestDelay(unittest.TestCase):
         assert conf.delay is 70
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestMode(unittest.TestCase):
 
     def test_default(self):
@@ -610,7 +583,8 @@ class TestMode(unittest.TestCase):
         assert conf.mode == 'random'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestMaxMessageSize(unittest.TestCase):
 
     def test_no_size(self):
@@ -631,7 +605,8 @@ class TestMaxMessageSize(unittest.TestCase):
         assert conf.test_max_message_size() is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestPidfile(unittest.TestCase):
 
     def test_pidfile_default(self):
@@ -652,7 +627,8 @@ class TestPidfile(unittest.TestCase):
             conf.test_pidfile()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestDynamicSwitch(unittest.TestCase):
 
     def test_dynamic_switch_default(self):
@@ -676,7 +652,8 @@ class TestDynamicSwitch(unittest.TestCase):
             conf.test_dynamic_switch()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestWorkers(unittest.TestCase):
 
     def test_default(self):

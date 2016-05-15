@@ -119,12 +119,13 @@ def _socket(addr, port, family):
         logger.fatal(msg)
         sock.close()
         raise BlackholeRuntimeException(msg)
+    os.set_inheritable(sock.fileno(), True)
     sock.listen(1024)
     sock.setblocking(False)
     return sock
 
 
-def server(addr, port, family, use_tls=False):
+def server(addr, port, family, flags={}, use_tls=False):
     """
     A socket and possibly a TLS context.
 
@@ -137,13 +138,15 @@ def server(addr, port, family, use_tls=False):
     :type port: :any:`int`
     :param family: The type of socket to use.
     :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
+    :param flags: Flags to use.
+    :type flags: :any:`dict`. Default: {}
     :param use_tls: Whether to create a TLS context or not.
     :type use_tls: :any:`bool`
     :returns: :any:`dict`
     """
     sock = _socket(addr, port, family)
     ctx = _context(use_tls=use_tls)
-    return {'sock': sock, 'ssl': ctx}
+    return {'sock': sock, 'ssl': ctx, 'flags': flags}
 
 
 def pid_permissions():

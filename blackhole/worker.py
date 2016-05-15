@@ -210,6 +210,8 @@ class Worker:
         self.heartbeat_task.cancel()
         self.rtransport.close()
         self.wtransport.close()
+        for task in asyncio.Task.all_tasks(self.loop):
+            task.cancel()
         try:
             os.kill(self.pid, signal.SIGTERM)
         except ProcessLookupError:

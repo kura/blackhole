@@ -1,62 +1,22 @@
 import asyncio
-import logging
-import os
 try:
     import ssl
 except ImportError:
     ssl = None
-import tempfile
 import unittest
 from unittest import mock
 
 import pytest
 
-from blackhole.config import Singleton as CSingleton, Config
+from blackhole.config import Config
 from blackhole.exceptions import BlackholeRuntimeException
-from blackhole.supervisor import Supervisor, Singleton as SSingleton
+from blackhole.supervisor import Supervisor
+
+from ._utils import *
 
 
-logging.getLogger('blackhole').addHandler(logging.NullHandler())
-
-
-@pytest.fixture()
-def cleandir():
-    newpath = tempfile.mkdtemp()
-    os.chdir(newpath)
-
-
-@pytest.fixture()
-def reset():
-    CSingleton._instances = {}
-    SSingleton._instances = {}
-
-
-def create_config(data):
-    cwd = os.getcwd()
-    path = os.path.join(cwd, 'test.conf')
-    with open(path, 'w') as cfile:
-        cfile.write('\n'.join(data))
-    return path
-
-
-def create_file(name, data=None):
-    if data is None:
-        data = 'nothing'
-    cwd = os.getcwd()
-    path = os.path.join(cwd, name)
-    with open(path, 'w') as ffile:
-        ffile.write(data)
-    return path
-
-
-class Args:
-    def __init__(self, vals):
-        for val in vals:
-            k, v = val
-            setattr(self, k, v)
-
-
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv4():
     cfile = create_config(('listen=127.0.0.1:9999',))
     Config(cfile).load()
@@ -66,7 +26,8 @@ def test_spawn_ipv4():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv4_tls():
     cert = create_file('cert.pem')
     key = create_file('key.key')
@@ -83,7 +44,8 @@ def test_spawn_ipv4_tls():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv6_tls():
     cert = create_file('cert.pem')
     key = create_file('key.key')
@@ -100,7 +62,8 @@ def test_spawn_ipv6_tls():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv4_tls_less_secure():
     cert = create_file('cert.pem')
     key = create_file('key.key')
@@ -117,7 +80,8 @@ def test_spawn_ipv4_tls_less_secure():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv6_tls_less_secure():
     cert = create_file('cert.pem')
     key = create_file('key.key')
@@ -179,14 +143,19 @@ tG2AOVmjWihvNmd21SLOJoQDn+8C04j5sTWVfLxRbfwFyP/frhAYN4EfHVHLjHf/
 n3ZYIxa8EMbZyJNQfipZeBUrAyYtjgHCRfgM2t5TscMfB1ewrQ/iDSNE5a65vYOC
 VMr7S68leXh3Aw==
 -----END CERTIFICATE-----"""
+dhparams_data = """-----BEGIN DH PARAMETERS-----
+MEYCQQDkC0FDza65yPJj8HeXOpoR315XGC+/5uaJpw5CevVwAmRns3TEuFwTal5H
+MWsNrHaep9EbyJ00JW/cSoaECAYLAgEC
+-----END DH PARAMETERS-----"""
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv4_tls_dhparams():
     cert = create_file('test.pem', cert_data)
     key = create_file('test.key', key_data)
-    dhparams = create_file('tls_dhparams=params.pem')
+    dhparams = create_file('dhparams.pem', dhparams_data)
     cfile = create_config(('listen=127.0.0.1:9998',
                            'tls_listen=127.0.0.1:9999',
                            'tls_cert={}'.format(cert),
@@ -200,11 +169,12 @@ def test_spawn_ipv4_tls_dhparams():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv6_tls_dhparams():
     cert = create_file('test.pem', cert_data)
     key = create_file('test.key', key_data)
-    dhparams = create_file('tls_dhparams=params.pem')
+    dhparams = create_file('dhparams.pem', dhparams_data)
     cfile = create_config(('listen=:::9998',
                            'tls_listen=:::9999',
                            'tls_cert={}'.format(cert),
@@ -218,7 +188,8 @@ def test_spawn_ipv6_tls_dhparams():
     assert supervisor.socks[1]['ssl'] is not None
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv6():
     cfile = create_config(('listen=:::9999',))
     Config(cfile).load()
@@ -227,7 +198,8 @@ def test_spawn_ipv6():
     assert len(supervisor.socks) == 1
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv4_and_ipv6():
     cfile = create_config(('listen=:9999, :::9999',))
     Config(cfile).load()
@@ -237,7 +209,8 @@ def test_spawn_ipv4_and_ipv6():
     assert len(supervisor.socks) == 2
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv4_fail():
     cfile = create_config(('listen=:9999',))
     Config(cfile).load()
@@ -246,7 +219,8 @@ def test_spawn_ipv4_fail():
         Supervisor()
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv6_fail():
     cfile = create_config((':::9999',))
     Config(cfile).load()
@@ -255,7 +229,8 @@ def test_spawn_ipv6_fail():
         Supervisor()
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_spawn_ipv4_and_ipv6_fail():
     cfile = create_config(('listen=:9999, :::9999',))
     Config(cfile).load()
@@ -264,7 +239,8 @@ def test_spawn_ipv4_and_ipv6_fail():
         Supervisor()
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_create():
     cfile = create_config(('listen=:9999, :::9999', 'workers=2', ))
     Config(cfile).load()
@@ -278,7 +254,8 @@ def test_create():
     loop.stop()
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_run():
     cfile = create_config(('listen=:9999, :::9999', 'workers=2', ))
     Config(cfile).load()
@@ -294,7 +271,8 @@ def test_run():
     supervisor.loop.stop()
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_stop():
     cfile = create_config(('listen=:9999, :::9999', 'workers=2', ))
     Config(cfile).load()

@@ -235,13 +235,11 @@ class Config(metaclass=Singleton):
                 continue
             if '#' in line:
                 line = line.split('#')[0]
-            try:
-                key, value = line.split('=')
-            except ValueError:
-                continue
-            key, value = key.strip(), value.strip()
-            value = value.replace('"', '').replace("'", '')
-            setattr(self, key, value)
+            if line.count('=') >= 1:
+                key, value = line.split('=', 1)
+                key, value = key.strip(), value.strip()
+                value = value.replace('"', '').replace("'", '')
+                setattr(self, key, value)
         return self
 
     @property
@@ -275,8 +273,8 @@ class Config(metaclass=Singleton):
             Default value is [('127.0.0.1', 25, :any:`socket.AF_INET`),
                               ('127.0.0.1', 587, :any:`socket.AF_INET`)]
         """
-        return self._listen or [('127.0.0.1', 25, socket.AF_INET),
-                                ('127.0.0.1', 587, socket.AF_INET)]
+        return self._listen or [('127.0.0.1', 25, socket.AF_INET, {}),
+                                ('127.0.0.1', 587, socket.AF_INET, {})]
 
     @listen.setter
     def listen(self, addrs):
@@ -515,28 +513,145 @@ class Config(metaclass=Singleton):
             msg = '{} is not a valid port number.'.format(port)
             raise ConfigException(msg)
 
-    def _listeners(self, addresses):
+    def _listeners(self, listeners):
         """
-        Convert listener lines from the configuration to usable values.
+        Convert listeners lines from the configuration to usable values.
 
-        :param addresses: A list of addresses and ports, separated by commas.
-                          -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25, :::25'
-        :type addresses: :any:`str`
+        :param listeners: A list of addresses and ports, separated by commas.
+                         -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25, :::25'
+        :type listeners: :any:`str`
         :returns: :any:`list` or :any:`None`
         """
-        addrs = []
-        _addrs = addresses.split(',')
-        if len(_addrs) == 0:
+        clisteners = []
+        _listeners = listeners.split(',')
+        if len(_listeners) == 0:
             return
-        for addr in _addrs:
-            port = addr.split(':')[-1].strip()
-            name = addr.replace(':{}'.format(port), '').strip()
+        for listener in _listeners:
+            listener = listener.strip()
+            parts = listener.split(' ')
+            addr_port = parts[0]
+            port = addr_port.split(':')[-1].strip()
+            addr = addr_port.replace(':{}'.format(port), '').strip()
             family = socket.AF_INET
-            if ':' in name:
+            if ':' in addr:
                 family = socket.AF_INET6
-            host = (name, self._convert_port(port), family)
-            addrs.append(host)
-        return addrs
+            flags = {}
+            if len(parts) > 1:
+                flags = self.create_flags(parts[1:])
+            host = (addr, self._convert_port(port), family, flags)
+            clisteners.append(host)
+        return clisteners
+
+    def flags_from_listener(self, addr, port):
+        """
+        Get a list of flags defined for the provided listener.
+
+        Scope: ``listen``, ``tls_listen``.
+
+        :param addr: The listener host address.
+        :type addr: :any:`str`
+        :param port: The listener port.
+        :type port: :any:`int`
+        :returns: :any:`dict`
+
+        .. note::
+
+           If multiple modes or delays are listed in a single listener, the
+           last definition will be used:
+
+           ``listen = :25 mode=bounce mode=random``  ->  ``mode=random``
+
+           A mode and delay can be used in tandum:
+
+           ``listen = :25 mode=bounce delay=10``
+
+           The delay can also be specified as a range:
+
+           ``listen = :25 delay=5-10``
+
+           Using a delay range will cause the server to choose a random value
+           within that range per connection.
+
+           Mode and delay can be defined for each address/port in a listen
+           directive:
+
+           ``listen = :25 mode=bounce, :::25 delay=10, :587 mode=random``
+        """
+        if addr in ('127.0.0.1', '0.0.0.0'):
+            addr = ''
+        if addr in ('::1'):
+            addr = '::'
+        listeners = self.listen + self.tls_listen
+        for laddr, lport, lfam, lflags in listeners:
+            if laddr == addr and lport:
+                return lflags
+        return {}
+
+    def create_flags(self, parts):
+        """
+        Create a set of flags from a listener directive.
+
+        :param parts: Parts of the listener definition.
+        :type parts: :any:`list`
+        :returns: :any:`dict`
+        """
+        flags = {}
+        for part in parts:
+            if part.count('=') == 1:
+                flag, value = part.split('=')
+                flag, value = flag.strip(), value.strip()
+                if flag in ('mode', 'delay'):
+                    if flag == 'mode':
+                        flags.update(self._flag_mode(flag, value))
+                    elif flag == 'delay':
+                        flags.update(self._flag_delay(flag, value))
+        return flags
+
+    def _flag_mode(self, flag, value):
+        """
+        Create a flag for the mode directive.
+
+        :param flag: The flag name.
+        :type flag: :any:`str`
+        :param value: The value of the flag.
+        :type value: :any:`str`
+        :returns: :any:`dict`
+        :raises: :any:`blackhole.exception.ConfigException`
+        """
+        if value in ('accept', 'bounce', 'random'):
+            return {flag: value}
+        else:
+            raise ConfigException('\'{}\' is not a valid mode. Valid options '
+                                  'are: \'accept\', \'bounce\' and '
+                                  '\'random\'.'.format(value))
+
+    def _flag_delay(self, flag, value):
+        """
+        Create a delay flag, delay can be an int or a range.
+
+        :param flag: The flag name.
+        :type flag: :any:`str`
+        :param value: The value of the flag.
+        :type value: :any:`str`
+        :returns: :any:`dict`
+        :raises: :any:`blackhole.exception.ConfigException`
+        """
+        if value.count('-') == 0:
+            if value.isdigit() and int(value) < 60:
+                return {flag: value}
+            else:
+                raise ConfigException('\'{}\' is not a valid delay. Delay is '
+                                      'in seconds and must be below '
+                                      '60.'.format(value))
+        if value.count('-') == 1:
+            start, end = value.split('-')
+            start, end = start.strip(), end.strip()
+            if start.isdigit() and end.isdigit() and int(start) < 60 and \
+                    int(end) < 60 and int(end) > int(start):
+                return {flag: (start, end)}
+        raise ConfigException('\'{}\' is not a valid delay value. It must be '
+                              'either a single value or a range i.e. 5-10 and '
+                              'must be less than 60.'.format(value))
 
     def test(self):
         """
@@ -578,7 +693,7 @@ class Config(metaclass=Singleton):
 
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
-        for address, port, family in self.listen:
+        for address, port, family, flags in self.listen:
             if ':' in address:
                 if not socket.has_ipv6 and family == socket.AF_UNSPEC:
                     msg = ('An IPv6 listener is configured but IPv6 is not '
@@ -591,7 +706,7 @@ class Config(metaclass=Singleton):
 
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
-        for address, port, family in self.tls_listen:
+        for address, port, family, flags in self.tls_listen:
             if ':' in address:
                 if not socket.has_ipv6 and family == socket.AF_UNSPEC:
                     msg = ('An IPv6 listener is configured but IPv6 is not '
@@ -611,7 +726,14 @@ class Config(metaclass=Singleton):
         """
         if len(self.listen) == 0 and len(self.tls_listen) == 0:
             return
-        if set(self.listen).intersection(self.tls_listen):
+        listen, tls_listen = [], []
+        for llisten in self.listen:
+            addr, port, family, flags = llisten
+            listen.append((addr, port, family))
+        for llisten in self.tls_listen:
+            addr, port, family, flags = llisten
+            tls_listen.append((addr, port, family))
+        if set(listen).intersection(tls_listen):
             msg = ('Cannot have multiple listeners on the same address and '
                    'port.')
             raise ConfigException(msg)
@@ -656,7 +778,7 @@ class Config(metaclass=Singleton):
 
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
-        for host, port, family in self.listen:
+        for host, port, family, flags in self.listen:
             self._port_permissions(host, port, family)
 
     def _port_permissions(self, address, port, family):
@@ -749,7 +871,7 @@ class Config(metaclass=Singleton):
         """
         if len(self.tls_listen) == 0:
             return
-        for host, port, af in self.tls_listen:
+        for host, port, af, flags in self.tls_listen:
             self._port_permissions(host, port, af)
 
     def test_tls_settings(self):

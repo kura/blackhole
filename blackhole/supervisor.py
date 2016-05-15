@@ -84,15 +84,18 @@ class Supervisor(metaclass=Singleton):
     def generate_servers(self):
         """Spawn all of the required sockets and TLS contexts."""
         logger.debug('Attaching sockets to the supervisor')
-        for host, port, family in self.config.listen:
-            self.socks.append(server(host, port, family))
-            logger.debug('Attaching %s:%s', host, port)
+        for host, port, family, flags in self.config.listen:
+            aserver = server(host, port, family, flags)
+            self.socks.append(aserver)
+            logger.debug('Attaching %s:%s with flags %s', host, port, flags)
 
         tls_conf = (self.config.tls_cert, self.config.tls_key)
         if len(self.config.tls_listen) > 0 and all(tls_conf):
-            for host, port, family in self.config.tls_listen:
-                self.socks.append(server(host, port, family, use_tls=True))
-                logger.debug('Attaching %s:%s (TLS)', host, port)
+            for host, port, family, flags in self.config.tls_listen:
+                aserver = server(host, port, family, flags, use_tls=True)
+                self.socks.append(aserver)
+                logger.debug('Attaching %s:%s (TLS) with flags %s',
+                             host, port, flags)
 
     def run(self):
         """

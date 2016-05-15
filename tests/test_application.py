@@ -1,47 +1,18 @@
 import os
-import tempfile
 from unittest import mock
 
 import pytest
 
 from blackhole.application import run
-from blackhole.config import Config, Singleton as CSingleton
-from blackhole.daemon import Singleton as DSingleton
+from blackhole.config import Config
 from blackhole.exceptions import (ConfigException, DaemonException,
                                   BlackholeRuntimeException)
-from blackhole.supervisor import Singleton as SSingleton
+
+from ._utils import *
 
 
-@pytest.fixture()
-def cleandir():
-    newpath = tempfile.mkdtemp()
-    os.chdir(newpath)
-
-
-@pytest.fixture()
-def reset_conf():
-    CSingleton._instances = {}
-
-
-@pytest.fixture()
-def reset_daemon():
-    DSingleton._instances = {}
-
-
-@pytest.fixture()
-def reset_supervisor():
-    SSingleton._instances = {}
-
-
-def create_config(data):
-    cwd = os.getcwd()
-    path = os.path.join(cwd, 'test.conf')
-    with open(path, 'w') as cfile:
-        cfile.write('\n'.join(data))
-    return path
-
-
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_run_test():
     cfile = create_config(('', ))
     with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
@@ -51,7 +22,8 @@ def test_run_test():
     assert str(err.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_run_test_fails():
     cfile = create_config(('listen=127.0.0.1:0', ))
     with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
@@ -60,7 +32,8 @@ def test_run_test_fails():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_run_load_test_fails():
     cfile = create_config(('listen=127.0.0.1:0', ))
     with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
@@ -71,7 +44,7 @@ def test_run_load_test_fails():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_supervisor', 'reset_daemon', 'reset_conf',
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_run_foreground():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
@@ -94,7 +67,7 @@ def test_run_foreground():
     assert str(err.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_supervisor', 'reset_daemon', 'reset_conf',
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_run_foreground_pid_error():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
@@ -112,7 +85,7 @@ def test_run_foreground_pid_error():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_supervisor', 'reset_daemon', 'reset_conf',
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_run_foreground_socket_error():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
@@ -132,7 +105,7 @@ def test_run_foreground_socket_error():
     assert str(err.value) == '77'
 
 
-@pytest.mark.usefixtures('reset_supervisor', 'reset_daemon', 'reset_conf',
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_run_background():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
@@ -156,7 +129,7 @@ def test_run_background():
     assert str(err.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_supervisor', 'reset_daemon', 'reset_conf',
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_run_daemon_daemonize_error():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')

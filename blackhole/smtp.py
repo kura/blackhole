@@ -54,9 +54,30 @@ class Smtp(asyncio.StreamReaderProtocol):
         553: 'Requested action not taken: mailbox name not allowed',
         571: 'Blocked',
     }
+    """The response code and message for each bounce type."""
+
     _delay = None
+    """The delay timer value."""
+
     _max_delay = 60
+    """The maximum delay value in seconds. Cannot be more than 60 seconds."""
+
     _mode = None
+    """The response mode to use."""
+
+    flags = {}
+    """Flags defined in each listen directive."""
+
+    _disable_dynamic_switching = False
+    """
+    This option disabled dynamic switching functionality.
+
+    Dynamic switching will be disabled when mode= and delay= flags are
+    configured.
+
+    https://blackhole.io/configuration-options.html#listen
+    https://blackhole.io/configuration-options.html#tls_listen
+    """
 
     def __init__(self, clients, loop=None):
         """
@@ -87,16 +108,32 @@ class Smtp(asyncio.StreamReaderProtocol):
         self.message_id = message_id(self.fqdn)
         self.failed_commands = 0  # An internal counter to stop command spam
 
+    def flags_from_transport(self):
+        """Adapt internal flags for the transport in use."""
+        # This has to be done here since passing it as part of init causes
+        # flags to become garbled and mixed up. Artifact of loop.create_server
+        sock = self.transport.get_extra_info('socket')
+        # Ideally this would use transport.get_extra_info('sockname') but that
+        # crashes the child process for some weird reason. Getting the socket
+        # and interacting directly does not cause a crash, hence...
+        sock_name = sock.getsockname()
+        flags = self.config.flags_from_listener(sock_name[0], sock_name[1])
+        if len(flags.keys()) > 0:
+            self.flags = flags
+            self.disable_dynamic_switching = True
+        logger.debug('Flags for this connection: %s', self.flags)
+
     def connection_made(self, transport):
         """
         Tie a connection to blackhole to the SMTP protocol.
 
-        :param transport: The transport to use.
+        :param transport: The transport class.
         :type transport: :any:`asyncio.transport.Transport`
         """
         super().connection_made(transport)
         logger.debug('Peer connected')
         self.transport = transport
+        self.flags_from_transport()
         self.connection_closed = False
         self._handler_coroutine = self.loop.create_task(self._handle_client())
 
@@ -551,6 +588,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         if self.config.dynamic_switch is False:
             logger.debug('Dynamic switches disabled, ignoring')
             return
+        if self.disable_dynamic_switching is True:
+            logger.debug('Dynamic switches are disabled by flags option.')
+            return
         key, value = line.split(':')
         key, value = key.lower().strip(), value.lower().strip()
         if key == 'x-blackhole-delay':
@@ -869,6 +909,11 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :returns: :any:`int` or :any:`None`
         """
+        if 'delay' in self.flags.keys():
+            delay = self.flags['delay']
+            if isinstance(delay, list):
+                return self._delay_range(delay)
+            return self.flags['delay']
         if self._delay is not None:
             return self._delay
         if self.config.delay is not None:
@@ -979,6 +1024,8 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         :returns: :any:`str`
         """
+        if 'mode' in self.flags.keys():
+            return self.flags['mode']
         if self._mode is not None:
             return self._mode
         return self.config.mode

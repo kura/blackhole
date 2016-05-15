@@ -1,48 +1,28 @@
 import asyncio
-import logging
 import os
 from io import BytesIO
-import tempfile
 import time
 from unittest import mock
 
 import pytest
 
 from blackhole import protocols
-from blackhole.config import Config, Singleton
+from blackhole.config import Config
 from blackhole.worker import Worker
 
-
-logging.getLogger('blackhole').addHandler(logging.NullHandler())
-
-
-@pytest.fixture()
-def cleandir():
-    newpath = tempfile.mkdtemp()
-    os.chdir(newpath)
+from ._utils import *
 
 
-@pytest.fixture()
-def reset_conf():
-    Singleton._instances = {}
-
-
-def create_config(data):
-    cwd = os.getcwd()
-    path = os.path.join(cwd, 'test.conf')
-    with open(path, 'w') as cfile:
-        cfile.write('\n'.join(data))
-    return path
-
-
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_init_start():
     with mock.patch('blackhole.worker.Worker.start') as mock_start:
         Worker([], [])
     assert mock_start.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_stop():
     with mock.patch('blackhole.worker.Worker.start') as mock_start, \
             mock.patch('os.kill') as mock_kill:
@@ -57,7 +37,8 @@ def test_stop():
     assert mock_kill.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_stop_runtime_exception():
     with mock.patch('blackhole.worker.Worker.start') as mock_start, \
             mock.patch('os.kill', side_effect=ProcessLookupError):
@@ -71,7 +52,8 @@ def test_stop_runtime_exception():
     assert mock_start.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_parent_start():
     with mock.patch('os.pipe', return_value=('', '')) as mock_pipe, \
         mock.patch('os.fork', return_value=123) as mock_fork, \
@@ -87,7 +69,8 @@ def test_parent_start():
     assert mock_connect.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_child_start():
     with mock.patch('os.fork', return_value=-1) as mock_fork, \
         mock.patch('blackhole.control.setgid'), \
@@ -101,7 +84,8 @@ def test_child_start():
     assert mock_exit.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_child_start_setgid_fails_invalid_group():
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
@@ -115,7 +99,8 @@ def test_child_start_setgid_fails_invalid_group():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_child_start_setgid_fails_permissions():
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
@@ -129,7 +114,8 @@ def test_child_start_setgid_fails_permissions():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_child_start_setuid_fails_invalid_user():
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
@@ -143,7 +129,8 @@ def test_child_start_setuid_fails_invalid_user():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_child_start_setuid_fails_permissions():
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
@@ -157,9 +144,10 @@ def test_child_start_setuid_fails_permissions():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_worker_heartbeat_not_started():
+async def test_worker_heartbeat_not_started(event_loop):
     with mock.patch('blackhole.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
@@ -171,9 +159,10 @@ async def test_worker_heartbeat_not_started():
     assert mock_heartbeat_stop.called is False
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_worker_heartbeat_started_bad_ping():
+async def test_worker_heartbeat_started_bad_ping(event_loop):
     with mock.patch('blackhole.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
@@ -186,9 +175,10 @@ async def test_worker_heartbeat_started_bad_ping():
     assert mock_heartbeat_stop.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_worker_heartbeat_started_good_ping():
+async def test_worker_heartbeat_started_good_ping(event_loop):
     with mock.patch('blackhole.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
@@ -204,9 +194,10 @@ async def test_worker_heartbeat_started_good_ping():
     reset_task.cancel()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_worker_chat_not_started():
+async def test_worker_chat_not_started(event_loop):
     with mock.patch('blackhole.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
@@ -218,9 +209,10 @@ async def test_worker_chat_not_started():
     assert mock_chat_stop.called is False
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_worker_chat_started_restart():
+async def test_worker_chat_started_restart(event_loop):
     with mock.patch('blackhole.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
@@ -234,11 +226,12 @@ async def test_worker_chat_started_restart():
     assert mock_chat_stop.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_worker_chat_started_good_message():
+async def test_worker_chat_started_good_message(event_loop):
     with mock.patch('blackhole.worker.Worker.start') as mock_start:
-        worker = Worker('1', [], loop=asyncio.new_event_loop())
+        worker = Worker('1', [], loop=event_loop)
     assert mock_start.called is True
     worker._started = True
     worker.ping = 987654321
@@ -254,9 +247,10 @@ async def test_worker_chat_started_good_message():
     reset_task.cancel()
 
 
-@pytest.mark.usefixtures('reset_conf', 'cleandir')
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 @pytest.mark.asyncio
-async def test_worker_connect():
+async def test_worker_connect(event_loop):
     up_read, up_write = os.pipe()
     down_read, down_write = os.pipe()
     os.close(up_read)

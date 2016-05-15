@@ -29,6 +29,10 @@ You can download a copy of this example file from
     # listen=:25  is equivalent to listening on all IPv4 addresses
     # listen=:::25  is equivalent to listen on all IPv6 addresses
     #
+    # Optionally you can specify a mode and delay for each listener you define.
+    #
+    # listen=:25 mode=accept delay=10, :587 mode=bounce delay=5,10
+    #
     # listen=0.0.0.0:25
     # listen=0.0.0.0:1025, fe80::a00:27ff:fe8c:9c6e:1025
     #
@@ -44,6 +48,11 @@ You can download a copy of this example file from
     #
     # tls_listen=:465  is equivalent to listening on all IPv4 addresses
     # tls_listen=:::465  is equivalent to listen on all IPv6 addresses
+    #
+    # Optionally you can specify a mode and delay for each listener you define.
+    #
+    # tls_listen=:465 mode=accept delay=10, :::465 mode=bounce delay=5,10
+    #
     #
     # Port 465 -- while originally a recognised port for SMTP over SSL/TLS --
     # is no longer advised for use. It's listed here because it's a well known
