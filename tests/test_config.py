@@ -72,7 +72,7 @@ def test_warnings():
     mmock = mock.MagicMock(spec=logging)
     with mock.patch('os.getuid', return_value=0), \
         mock.patch('os.getgid', return_value=0), \
-        mock.patch('logging.getLogger', return_value=mmock):
+            mock.patch('logging.getLogger', return_value=mmock):
         warn_options(conf)
     assert mmock.warning.call_count == 3
 
