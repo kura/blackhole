@@ -5,7 +5,8 @@ import pytest
 
 from blackhole.utils import mailname, message_id, get_version
 
-from ._utils import *
+from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
+                     create_config, create_file, Args)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

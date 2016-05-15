@@ -10,7 +10,8 @@ from blackhole.child import Child
 from blackhole.control import _socket
 from blackhole.streams import StreamProtocol
 
-from ._utils import *
+from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
+                     create_config, create_file, Args)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

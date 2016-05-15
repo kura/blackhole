@@ -1,4 +1,3 @@
-import os
 import unittest
 
 import pytest
@@ -6,7 +5,8 @@ import pytest
 from blackhole.config import Config
 from blackhole.smtp import Smtp
 
-from ._utils import *
+from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
+                     create_config, create_file, Args)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

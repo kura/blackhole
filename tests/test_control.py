@@ -1,4 +1,3 @@
-import logging
 import os
 try:
     import ssl
@@ -15,7 +14,8 @@ from blackhole.control import (_context, _socket, server, setuid, setgid,
                                pid_permissions)
 from blackhole.exceptions import BlackholeRuntimeException
 
-from ._utils import *
+from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
+                     create_config, create_file, Args)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

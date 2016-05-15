@@ -2,15 +2,17 @@ import getpass
 import grp
 import logging
 import os
-import pytest
 import socket
 import unittest
 from unittest import mock
 
+import pytest
+
 from blackhole.config import Config, config_test, parse_cmd_args, warn_options
 from blackhole.exceptions import ConfigException
 
-from ._utils import *
+from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
+                     create_config, create_file, Args)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
