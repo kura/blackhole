@@ -21,9 +21,9 @@ If you have a feature you need or would like, feel free to put an issue on the
 the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
---------------
-Future release
---------------
+---------------
+Current release
+---------------
 
 .. _2.1.4:
 
@@ -56,10 +56,9 @@ Future release
   maximum failed commands per connection is 10. Clients that violate this rule
   get disconnected.
 
-
----------------
-Current release
----------------
+-------------
+Past releases
+-------------
 
 .. _2.1.3:
 
@@ -67,10 +66,6 @@ Current release
 =====
 
 - Squashed a bug that caused children to not properly apply their TLS context.
-
--------------
-Past releases
--------------
 
 .. _2.1.2:
 
