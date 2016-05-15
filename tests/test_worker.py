@@ -78,6 +78,7 @@ def test_child_start():
         mock.patch('asyncio.Task'), \
         mock.patch('blackhole.child.Child.heartbeat'), \
         mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever'), \
+        mock.patch('blackhole.child.Child.stop'), \
             mock.patch('os._exit') as mock_exit:
         Worker([], [])
     assert mock_fork.called is True

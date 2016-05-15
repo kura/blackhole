@@ -27,6 +27,7 @@ def test_start():
     with mock.patch('asyncio.Task'), \
         mock.patch('blackhole.child.Child.heartbeat'), \
         mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever'), \
+        mock.patch('blackhole.child.Child.stop'), \
             mock.patch('os._exit') as mock_exit:
         child.start()
     assert mock_exit.called is True
