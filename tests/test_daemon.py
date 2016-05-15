@@ -22,6 +22,7 @@ def test_instantiated_but_not_daemonised():
                          'cleandir')
 def test_set_pid_invalid_path():
     with mock.patch('os.path.exists', return_value=False), \
+        mock.patch('atexit.register'), \
             pytest.raises(DaemonException):
         Daemon('/fake/path.pid')
 
@@ -30,7 +31,8 @@ def test_set_pid_invalid_path():
                          'cleandir')
 def test_set_pid_valid_path():
     pid = os.path.join(os.getcwd(), 'fake.pid')
-    with mock.patch('os.getpid', return_value=666):
+    with mock.patch('os.getpid', return_value=666), \
+            mock.patch('atexit.register'):
         daemon = Daemon(pid)
         assert daemon.pidfile == pid
         assert daemon.pid == 666
@@ -41,15 +43,19 @@ def test_set_pid_valid_path():
 def test_get_pid_file_error():
     with mock.patch('os.path.exists', return_value=True):
         with mock.patch('builtins.open', side_effect=FileNotFoundError), \
+            mock.patch('atexit.register'), \
                 pytest.raises(DaemonException):
             Daemon('/fake/path.pid')
         with mock.patch('builtins.open', side_effect=IOError),\
+            mock.patch('atexit.register'), \
                 pytest.raises(DaemonException):
             Daemon('/fake/path.pid')
         with mock.patch('builtins.open', side_effect=PermissionError), \
+            mock.patch('atexit.register'), \
                 pytest.raises(DaemonException):
             Daemon('/fake/path.pid')
         with mock.patch('builtins.open', side_effect=OSError), \
+            mock.patch('atexit.register'), \
                 pytest.raises(DaemonException):
             Daemon('/fake/path.pid')
 
@@ -58,7 +64,8 @@ def test_get_pid_file_error():
                          'cleandir')
 def test_get_pid():
     pfile = create_file('test.pid', 123)
-    with mock.patch('os.getpid', return_value=123):
+    with mock.patch('os.getpid', return_value=123), \
+            mock.patch('atexit.register'):
         daemon = Daemon(pfile)
         assert daemon.pid is 123
 
@@ -69,6 +76,7 @@ def test_delete_pid_no_exists():
     pfile = create_file('test.pid', 123)
     daemon = Daemon(pfile)
     with mock.patch('os.remove') as mock_rm, \
+        mock.patch('atexit.register'), \
             mock.patch('os.path.exists', return_value=False):
         del daemon.pid
     assert mock_rm.called is False
@@ -78,7 +86,8 @@ def test_delete_pid_no_exists():
                          'cleandir')
 def test_delete_pid():
     pfile = create_file('test.pid', 123)
-    with mock.patch('os.getpid', return_value=123):
+    with mock.patch('os.getpid', return_value=123), \
+            mock.patch('atexit.register'):
         daemon = Daemon(pfile)
         assert daemon.pid is 123
         del daemon.pid
@@ -89,7 +98,8 @@ def test_delete_pid():
                          'cleandir')
 def test_delete_pid_exit():
     pfile = create_file('test.pid', 123)
-    with mock.patch('os.getpid', return_value=123):
+    with mock.patch('os.getpid', return_value=123), \
+            mock.patch('atexit.register'):
         daemon = Daemon(pfile)
         assert daemon.pid is 123
         daemon._exit()
@@ -100,7 +110,8 @@ def test_delete_pid_exit():
                          'cleandir')
 def test_fork():
     pfile = create_file('test.pid', 123)
-    daemon = Daemon(pfile)
+    with mock.patch('atexit.register'):
+        daemon = Daemon(pfile)
     with mock.patch('os.fork', return_value=9999) as mock_fork, \
             mock.patch('os._exit') as mock_exit:
         daemon.fork()
@@ -112,7 +123,8 @@ def test_fork():
                          'cleandir')
 def test_fork_error():
     pfile = create_file('test.pid', 123)
-    daemon = Daemon(pfile)
+    with mock.patch('atexit.register'):
+        daemon = Daemon(pfile)
     with mock.patch('os.fork', side_effect=OSError) as mock_fork, \
             pytest.raises(DaemonException):
         daemon.fork()
