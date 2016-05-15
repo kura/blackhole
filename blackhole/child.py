@@ -80,6 +80,7 @@ class Child:
         signal.signal(signal.SIGTERM, self.stop)
         self.heartbeat_task = asyncio.Task(self.heartbeat())
         self.loop.run_forever()
+        self.stop()
         os._exit(os.EX_OK)
 
     async def _start(self):
@@ -104,23 +105,18 @@ class Child:
         :returns: Exit the process.
         :rtype: :any:`os._exit` -- :any:`os.EX_OK`
         """
+        self.loop.stop()
         for _ in range(len(self.clients)):
             client = self.clients.pop()
             client.close()
-            self.loop.run_until_complete(client.wait_closed())
         for _ in range(len(self.servers)):
             server = self.servers.pop()
             server.close()
-            self.loop.run_until_complete(server.wait_closed())
         self.heartbeat_task.cancel()
         self.server_task.cancel()
         for task in asyncio.Task.all_tasks(self.loop):
             task.cancel()
         self._started = False
-        try:
-            self.loop.stop()
-        except RuntimeError:
-            pass
         os._exit(os.EX_OK)
 
     async def heartbeat(self):

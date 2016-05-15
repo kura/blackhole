@@ -141,6 +141,7 @@ class Supervisor(metaclass=Singleton):
         :type frame: :any:`frame`
         :raises: :any:`SystemExit` -- :any:`os.EX_OK`
         """
+        self.loop.stop()
         self.stop_workers()
         self.close_socks()
         logger.debug('Stopping supervisor')
