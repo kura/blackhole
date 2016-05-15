@@ -29,7 +29,7 @@ import socket
 import time
 
 
-__all__ = ('mailname', 'message_id')
+__all__ = ('mailname', 'message_id', 'get_version')
 
 
 def mailname(mailname_file='/etc/mailname'):
@@ -82,6 +82,8 @@ def get_version():
     path = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(path, '__init__.py')
     pattern = re.compile(r'(?P<version>\d+\.\d+(?:\.\d+)?(?:(?:a|b|rc)\d+)?)')
+    if not os.access(filepath, os.R_OK):
+        raise AssertionError('No __init__.py file found')
     with open(filepath) as fp:
         for line in fp:
             if line.startswith('__version__'):
