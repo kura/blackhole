@@ -1,12 +1,13 @@
 import getpass
 import grp
+import logging
 import os
 import pytest
 import socket
 import unittest
 from unittest import mock
 
-from blackhole.config import Config, config_test, parse_cmd_args
+from blackhole.config import Config, config_test, parse_cmd_args, warn_options
 from blackhole.exceptions import ConfigException
 
 from ._utils import *
@@ -57,6 +58,23 @@ def test_load_none():
     conf = Config(None).load()
     assert conf.mode == 'accept'
     assert conf.workers is 1
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+def test_warnings():
+    settings = (('tls_listen', (1, 2)), ('tls_dhparams', None),
+                ('user', 'root'), ('group', 'root'))
+    conf = Args(settings)
+    args = Args()
+    args.less_secure = True
+    conf.args = args
+    mmock = mock.MagicMock(spec=logging)
+    with mock.patch('os.getuid', return_value=0), \
+        mock.patch('os.getgid', return_value=0), \
+        mock.patch('logging.getLogger', return_value=mmock):
+        warn_options(conf)
+    assert mmock.warning.call_count == 3
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

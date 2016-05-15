@@ -50,6 +50,7 @@ def create_file(name, data=''):
 
 
 class Args(object):
-    def __init__(self, args):
-        for arg in args:
-            setattr(self, arg[0], arg[1])
+    def __init__(self, args=None):
+        if args is not None:
+            for arg in args:
+                setattr(self, arg[0], arg[1])

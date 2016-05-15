@@ -97,11 +97,11 @@ def warn_options(config):
     """
     logger = logging.getLogger('blackhole.warnings')
     if config.args.less_secure:
-        logger.warn('Using -ls or --less-secure reduces security on '
-                    'SSL/TLS connections.')
+        logger.warning('Using -ls or --less-secure reduces security on '
+                       'SSL/TLS connections.')
     if not config.tls_dhparams and len(config.tls_listen) > 0:
-        logger.warn('TLS is enabled but no Diffie Hellman ephemeral '
-                    'parameters file was provided.')
+        logger.warning('TLS is enabled but no Diffie Hellman ephemeral '
+                       'parameters file was provided.')
     _compare_uid_and_gid(config)
 
 
@@ -143,8 +143,8 @@ def _compare_uid_and_gid(config):
     uid, gid = os.getuid(), os.getgid()
     user, group = config.user, config.group
     if (uid == 0 and gid == 0) and (user == 'root' and group == 'root'):
-        logger.warn('It is unsafe to run Blackhole as root without setting a '
-                    'user and group for privilege revocation.')
+        logger.warning('It is unsafe to run Blackhole as root without setting '
+                       'a user and group for privilege revocation.')
 
 
 class Singleton(type):
