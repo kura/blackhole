@@ -39,7 +39,7 @@ description = ('Blackhole is an MTA (message transfer agent) that '
 
 keywords = ('blackhole', 'mta', 'email')
 
-classifiers = ('Development Status :: 5 - Production/Stable',
+classifiers = ['Development Status :: 5 - Production/Stable',
                'Environment :: Console',
                'Intended Audience :: Developers',
                'Intended Audience :: Information Technology',
@@ -59,7 +59,7 @@ classifiers = ('Development Status :: 5 - Production/Stable',
                'Topic :: Software Development :: Testing :: Traffic Generation',
                'Topic :: System :: Networking',
                'Topic :: System :: Systems Administration',
-               'Topic :: Utilities', )
+               'Topic :: Utilities', ]
 
 setup(name='blackhole',
       version=__version__,
