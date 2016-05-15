@@ -30,6 +30,28 @@ def test_mail_name_socket():
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
+def test_mail_name_file_length_0():
+    mnfile = create_file('mailname')
+    check_value = 'socket.blackhole.io'
+    with mock.patch('os.access', return_value=True), \
+            mock.patch('socket.getfqdn', return_value='socket.blackhole.io'):
+        mn = mailname(mnfile)
+    assert mn == check_value
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+def test_mail_name_file_garbage():
+    mnfile = create_file('mailname', '            \n     ')
+    check_value = 'socket.blackhole.io'
+    with mock.patch('os.access', return_value=True), \
+            mock.patch('socket.getfqdn', return_value='socket.blackhole.io'):
+        mn = mailname(mnfile)
+    assert mn == check_value
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 def test_message_id():
     with mock.patch('time.time',
                     return_value=1463290829.4173775) as mock_time, \
