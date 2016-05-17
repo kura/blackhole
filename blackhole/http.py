@@ -40,6 +40,71 @@ __all__ = ('Http', )
 logger = logging.getLogger('blackhole.http')
 
 
+errors = {400: '''    44    00000   00000
+   444   00   00 00   00
+ 44  4   00   00 00   00
+44444444 00   00 00   00
+   444    00000   00000
+
+001101000011000000110000''',
+404: '''    44    00000      44
+   444   00   00    444
+ 44  4   00   00  44  4
+44444444 00   00 44444444
+   444    00000     444
+
+001101000011000000110100''',
+403: '''    44    00000  333333
+   444   00   00    3333
+ 44  4   00   00   3333
+44444444 00   00     333
+   444    00000  333333
+
+00110100 00110000 00110011''',
+405: '''    44    00000  555555
+   444   00   00 55
+ 44  4   00   00 555555
+44444444 00   00    5555
+   444    00000  555555
+
+00110100 00110000 00110101''',
+408: '''    44    00000   88888
+   444   00   00 88   88
+ 44  4   00   00  88888
+44444444 00   00 88   88
+   444    00000   88888
+
+00110100 00110000 00111000''',
+413: '''    44    1  333333
+   444   111    3333
+ 44  4    11   3333
+44444444  11     333
+   444   111 333333
+
+00110100 00110001 00110011''',
+500: '''555555   00000   00000
+55      00   00 00   00
+555555  00   00 00   00
+   5555 00   00 00   00
+555555   00000   00000
+
+00110101 00110000 00110000''',
+503: '''555555   00000  333333
+55      00   00    3333
+555555  00   00   3333
+   5555 00   00     333
+555555   00000  333333
+
+00110101 00110000 00110011''',
+505: '''555555   00000  555555
+55      00   00 55
+555555  00   00 555555
+   5555 00   00    5555
+555555   00000  555555
+
+00110101 00110000 00110101'''}
+
+
 class Request:
 
     fqdn = 'blackhole.io'
@@ -73,8 +138,18 @@ class Request:
         headers = []
         for header in oheaders.split('\r\n')[1:]:
             key, value = header.split(':', 1)
-            headers.append((key.strip(), value.strip()))
+            headers.append((key.strip().lower(), value.strip().lower()))
         return collections.OrderedDict(headers), text
+
+    @property
+    def close(self):
+        if 'connection' in self.headers.keys():
+            conn = self.headers.get('connection')
+            if conn == 'close':
+                return True
+            if conn == 'keep-alive':
+                return False
+        return True
 
 
 class Response:
@@ -82,29 +157,43 @@ class Response:
     banner = 'Blackhole HTTP/{}'.format(get_version())
     request = None
     headers = {}
-    close = True
-    text = ''
-    url = ''
-    response_type = 'text/html'
+    _text = ''
+    content_type = 'text/html'
     encoding = 'utf-8'
     ok = True
-    version = '1.1'
     code = 200
     reason = 'OK'
 
     def __init__(self, request):
         self.request = request
-        self.url = self.request.url
-        self.version = self.request.version
         self.headers = self.setup_headers()
 
     def setup_headers(self):
         headers = [('server', self.banner),
                    ('date', self.date),
-                   ('content-length', len(self.text.encode(self.encoding))),
-                   ('content-type', self.response_type),
-                   ('connection', 'close')]
+                   ('content-length', self.content_length),
+                   ('content-type', self.content_type),
+                   ('connection', self.connection)]
         return collections.OrderedDict(headers)
+
+    @property
+    def version(self):
+        return self.request.version
+
+    @property
+    def url(self):
+        return self.request.url
+
+    @property
+    def connection(self):
+        if self.close is True:
+            return 'close'
+        else:
+            return 'keep-alive'
+
+    @property
+    def close(self):
+        return self.request.close
 
     @property
     def date(self):
@@ -112,12 +201,34 @@ class Response:
         stamp = time.mktime(now.timetuple())
         return format_date_time(stamp)
 
+    @property
+    def content_length(self):
+        return len(self.text.encode(self.encoding))
+
+    @property
+    def text(self):
+        if self.ok is False:
+            art = errors[self.code]
+            return ('<html><head><title>{}</title></head>'
+                    '<body><center><pre>{}</pre></center></body>'
+                    '</html>'.format(self.code, art))
+        return self._text
+
+    @text.setter
+    def text(self, text):
+        self._text = text
+
 
 class BadRequest(Response):
     ok = False
     code = 400
     reason = 'Bad Request'
-    text = 'Invalid HTTP request. Denied.'
+
+
+class NotFound(Response):
+    ok = False
+    code = 404
+    reason = 'Not Found'
 
 
 class Http(asyncio.StreamReaderProtocol):
@@ -184,33 +295,19 @@ class Http(asyncio.StreamReaderProtocol):
 
     async def wait(self):
         received_data = ''
-        verbs_with_body = ('PUT', 'POST')
-        crlf_count = 0
-        verb = None
         while not self.connection_closed:
             try:
-                data = await asyncio.wait_for(self._reader.readline(),
+                data = await asyncio.wait_for(self._reader.read(1024),
                                               self.config.timeout,
                                               loop=self.loop)
+                if data == b'':
+                    return
                 logger.debug('RECV: %s', data)
                 received_data += data.decode('utf-8')
-                if verb is None:
-                    logger.debug('Verb is None which means this is the first '
-                                 'line of data.')
-                    verb = self.verb_from_line(data.decode('utf-8'))
-                    logger.debug('Got VERB: %s', verb)
-                if data == b'\r\n':
-                    crlf_count += 1
-                if verb is not None and crlf_count >= 1:
-                    logger.debug('CRLF count is greater than or equal to 1.')
-                    if verb not in verbs_with_body:
-                        logger.debug('%s does not provide a body. Break.',
-                                     verb)
-                        break
-                    if verb in verbs_with_body and crlf_count >= 2:
-                        logger.debug('%s provides a body and CRLF count is '
-                                     'greater than or equal to 2.', verb)
-                        break
+                if data.endswith(b'\r\n\r\n'):
+                    break
+                if received_data.endswith('\r\n\r\n'):
+                    break
             except asyncio.TimeoutError:
                 await self.timeout()
         self.request = Request(received_data)
@@ -241,7 +338,6 @@ class Http(asyncio.StreamReaderProtocol):
         resp = ['HTTP/{} {} {}'.format(self.response.version,
                                        self.response.code,
                                        self.response.reason), ]
-        print(resp)
         for key, value in self.response.headers.items():
             resp.append('{}: {}'.format(key.title(), value))
         resp.append('')
@@ -249,32 +345,10 @@ class Http(asyncio.StreamReaderProtocol):
             resp.append(self.response.text)
             resp.append('')
         await self.push('\r\n'.join(resp).encode(self.response.encoding))
-        await self.close()
+        if self.response.close:
+            await self.close()
+        await self.wait()
 
     async def process_request(self):
-        self.response = BadRequest(self.request)
-        print(self.response)
+        self.response = NotFound(self.request)
         await self.send_response()
-
-    def verb_from_line(self, line):
-        verb, uri, http_ver = line.split(' ')
-        return verb
-
-    async def verb(self):
-        verb_line = self.headers[0]
-        verb = self.verb_from_line(verb_line)
-        if verb not in self.verbs:
-            await self.bad_request()
-
-    async def bad_request(self):
-        logger.debug('Sending Bad Request')
-        status = 'HTTP/1.1 400 Bad Request'
-        self._response_body = ('Kura', )
-        await self.response(status, self.header_generic)
-
-    async def verb_GET(self):
-        status = 'HTTP/1.1 200 OK'
-        self._response_body = ('Kura', )
-        headers = (self.header_server, self.header_content_type,
-                   self.header_content_length)
-        await self.response(status, headers)
