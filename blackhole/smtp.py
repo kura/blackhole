@@ -30,7 +30,7 @@ import logging
 import random
 
 from .config import Config
-from .utils import message_id
+from .utils import message_id, get_version
 
 
 __all__ = ('Smtp', )
@@ -65,7 +65,8 @@ class Smtp(asyncio.StreamReaderProtocol):
     _mode = None
     """The response mode to use."""
 
-    _flags = {}
+    fqdn = 'blackhole.io'
+    flags = {}
     """Flags defined in each listen directive."""
 
     _disable_dynamic_switching = False
@@ -82,7 +83,7 @@ class Smtp(asyncio.StreamReaderProtocol):
     _failed_commands = 0
     """An internal counter of failed commands for a client."""
 
-    def __init__(self, clients, loop=None):
+    def __init__(self, clients, flags, loop=None):
         """
         Initialise the SMTP protocol.
 
@@ -107,24 +108,10 @@ class Smtp(asyncio.StreamReaderProtocol):
         self.config = Config()
         # This is not a nice way to do this but, socket.getfqdn silently fails
         # and craches inbound connections when called after os.fork
+        self.flags = flags
         self.fqdn = self.config.mailname
         self.message_id = message_id(self.fqdn)
-
-    def flags_from_transport(self):
-        """Adapt internal flags for the transport in use."""
-        # This has to be done here since passing it as part of init causes
-        # flags to become garbled and mixed up. Artifact of loop.create_server
-        sock = self.transport.get_extra_info('socket')
-        # Ideally this would use transport.get_extra_info('sockname') but that
-        # crashes the child process for some weird reason. Getting the socket
-        # and interacting directly does not cause a crash, hence...
-        sock_name = sock.getsockname()
-        flags = self.config.flags_from_listener(sock_name[0], sock_name[1])
-        if len(flags.keys()) > 0:
-            self._flags = flags
-            self._disable_dynamic_switching = True
-            logger.debug('Flags enabled, disabling dynamic switching')
-            logger.debug('Flags for this connection: %s', self._flags)
+        self.banner = '{} Blackhole ESMTP/{}'.format(self.fqdn, get_version())
 
     def connection_made(self, transport):
         """
@@ -136,7 +123,6 @@ class Smtp(asyncio.StreamReaderProtocol):
         super().connection_made(transport)
         logger.debug('Peer connected')
         self.transport = transport
-        self.flags_from_transport()
         self.connection_closed = False
         self._handler_coroutine = self.loop.create_task(self._handle_client())
 
@@ -458,7 +444,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def greet(self):
         """Send a greeting to the client."""
-        await self.push(220, '{} ESMTP'.format(self.fqdn))
+        await self.push(220, '{}'.format(self.banner))
 
     def get_help_members(self):
         """
@@ -922,8 +908,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         :returns: A delay time in seconds.
         :rtype: :any:`int` or :any:`None`
         """
-        if 'delay' in self._flags.keys():
-            delay = self._flags['delay']
+        if 'delay' in self.flags.keys():
+            delay = self.flags['delay']
             if isinstance(delay, list):
                 self._delay_range(delay)
                 return self._delay
@@ -1039,8 +1025,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         :returns: A response mode.
         :rtype: :any:`str`
         """
-        if 'mode' in self._flags.keys():
-            return self._flags['mode']
+        if 'mode' in self.flags.keys():
+            return self.flags['mode']
         if self._mode is not None:
             return self._mode
         return self.config.mode

@@ -51,27 +51,27 @@ def parse_cmd_args(args):
     :returns: Parsed command line arguments.
     :rtype: :any:`argparse.Namespace`
     """
+    usage = """blackhole [--conf FILE]
+                 [--test | --background | --debug | --quiet]
+                 [--less-secure]
+                 [--help] [--version]
+    """
+
     ls_help = ('Disable ssl.OP_SINGLE_DH_USE and ssl.OP_SINGLE_ECDH_USE. '
                'Reduces CPU overhead at the expense of security -- Don\'t '
                'use this option unless you really need to.')
-
-    decription = ('Blackhole is an MTA (mail transfer agent) that '
-                  '(figuratively) pipes all mail to /dev/null. Blackhole is '
-                  'built on top of asyncio and utilises async def and await '
-                  'statements available in Python 3.5 and above.')
 
     epilog = ('An explanation of all command line arguments is provided here '
               '-- https://blackhole.io/command-line-options.html and all '
               'configuration options here -- '
               'https://blackhole.io/configuration-options.html.')
 
-    parser = argparse.ArgumentParser('blackhole', description=decription,
-                                     epilog=epilog)
+    parser = argparse.ArgumentParser('blackhole',
+                                     epilog=epilog, usage=usage)
     parser.add_argument('-v', '--version', action='version',
                         version=get_version())
     parser.add_argument('-c', '--conf', type=str,
-                        default='/etc/blackhole.conf',
-                        dest='config_file', metavar='/etc/blackhole.conf',
+                        dest='config_file', metavar='FILE',
                         help='override the default configuration options')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-t', '--test', dest='test', action='store_true',
@@ -191,7 +191,7 @@ class Config(metaclass=Singleton):
     _max_message_size = 512000
     _dynamic_switch = None
 
-    def __init__(self, config_file="/etc/blackhole.conf"):
+    def __init__(self, config_file=None):
         """
         Initialise the configuration.
 
@@ -199,7 +199,8 @@ class Config(metaclass=Singleton):
                             default '/etc/blackhole.conf'
         :type config_file: :any:`str`
         """
-        self.config_file = config_file
+        if config_file is not None:
+            self.config_file = config_file
         self.user = getpass.getuser()
         self.group = grp.getgrgid(os.getgid()).gr_name
         # this has to be cached here due to the socket.getfqdn call failing
@@ -627,11 +628,15 @@ class Config(metaclass=Singleton):
             if part.count('=') == 1:
                 flag, value = part.split('=')
                 flag, value = flag.strip(), value.strip()
-                if flag in ('mode', 'delay'):
+                if flag in ('mode', 'delay', 'smtp', 'http'):
                     if flag == 'mode':
                         flags.update(self._flag_mode(flag, value))
                     elif flag == 'delay':
                         flags.update(self._flag_delay(flag, value))
+            if part == 'http':
+                flags.update({'http': True})
+            elif part == 'smtp':
+                flags.update({'smtp': True})
         return flags
 
     def _flag_mode(self, flag, value):

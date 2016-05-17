@@ -24,11 +24,13 @@
 
 
 import asyncio
+import functools
 import logging
 import os
 import signal
 
 from . import protocols
+from .http import Http
 from .smtp import Smtp
 from .streams import StreamProtocol
 
@@ -83,11 +85,19 @@ class Child:
         self.stop()
         os._exit(os.EX_OK)
 
+    def klass(self, flags):
+        if 'http' in flags:
+            return Http
+        if 'smtp' in flags:
+            return Smtp
+        return Smtp
+
     async def _start(self):
         """Create an asyncio 'server' for each socket."""
         for sock in self.socks:
-            server = await self.loop.create_server(lambda: Smtp(self.clients),
-                                                   **sock)
+            klass = self.klass(sock['flags'])
+            factory = functools.partial(klass, self.clients, sock['flags'])
+            server = await self.loop.create_server(factory, **sock)
             self.servers.append(server)
 
     def stop(self, signum=None, frame=None):
