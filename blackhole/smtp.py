@@ -30,6 +30,7 @@ import logging
 import random
 
 from .config import Config
+from .protocols import Protocol
 from .utils import message_id, get_version
 
 
@@ -39,7 +40,7 @@ __all__ = ('Smtp', )
 logger = logging.getLogger('blackhole.smtp')
 
 
-class Smtp(asyncio.StreamReaderProtocol):
+class Smtp(Protocol):
     """The class responsible for handling SMTP/SMTPS commands."""
 
     _bounce_responses = {
@@ -64,10 +65,6 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     _mode = None
     """The response mode to use."""
-
-    fqdn = 'blackhole.io'
-    flags = {}
-    """Flags defined in each listen directive."""
 
     _disable_dynamic_switching = False
     """
@@ -101,58 +98,9 @@ class Smtp(asyncio.StreamReaderProtocol):
            an RFC 2822 Message-ID.
         """
         self.loop = loop if loop is not None else asyncio.get_event_loop()
-        super().__init__(asyncio.StreamReader(loop=self.loop),
-                         client_connected_cb=self._client_connected_cb,
-                         loop=self.loop)
-        self.clients = clients
-        self.config = Config()
-        # This is not a nice way to do this but, socket.getfqdn silently fails
-        # and craches inbound connections when called after os.fork
-        self.flags = flags
-        self.fqdn = self.config.mailname
+        super().__init__(clients, flags, loop=loop)
         self.message_id = message_id(self.fqdn)
-        self.banner = '{} Blackhole ESMTP/{}'.format(self.fqdn, get_version())
-
-    def connection_made(self, transport):
-        """
-        Tie a connection to blackhole to the SMTP protocol.
-
-        :param transport: The transport class.
-        :type transport: :any:`asyncio.transport.Transport`
-        """
-        super().connection_made(transport)
-        logger.debug('Peer connected')
-        self.transport = transport
-        self.connection_closed = False
-        self._handler_coroutine = self.loop.create_task(self._handle_client())
-
-    def _client_connected_cb(self, reader, writer):
-        """
-        Callback that binds a stream reader and writer to the SMTP Protocol.
-
-        :param reader: An object for reading incoming data.
-        :type reader: :any:`asyncio.streams.StreamReader`
-        :param writer: An object for writing outgoing data.
-        :type writer: :any:`asyncio.streams.StreamWriter`
-        """
-        self._reader = reader
-        self._writer = writer
-        self.clients.append(writer)
-
-    def connection_lost(self, exc):
-        """
-        Callback for when a connection is closed or lost.
-
-        :param exc:
-        :type exc:
-        """
-        logger.debug('Peer disconnected')
-        try:
-            self.clients.remove(self._writer)
-        except ValueError:
-            pass
-        super().connection_lost(exc)
-        self._connection_closed = True
+        self.banner = '{} ESMTP/{}'.format(self.fqdn, get_version())
 
     async def _handle_client(self):
         """
@@ -366,18 +314,6 @@ class Smtp(asyncio.StreamReaderProtocol):
                      self.config.timeout)
         await self.push(421, 'Timeout')
         await self.close()
-
-    async def close(self):
-        """Close the connection from the client."""
-        logger.debug('Closing connection')
-        if self._writer:
-            try:
-                self.clients.remove(self._writer)
-            except ValueError:
-                pass
-            self._writer.close()
-            await self._writer.drain()
-        self._connection_closed = True
 
     def lookup_handler(self, line):
         """

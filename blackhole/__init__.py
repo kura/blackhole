@@ -37,6 +37,7 @@ from .config import *
 from .control import *
 from .daemon import *
 from .exceptions import *
+from .http import *
 from .logs import *
 from .protocols import *
 from .smtp import *
@@ -62,6 +63,7 @@ __all__ = (application.__all__ +
            control.__all__ +
            daemon.__all__ +
            exceptions.__all__ +
+           http.__all__ +
            logs.__all__ +
            protocols.__all__ +
            smtp.__all__ +

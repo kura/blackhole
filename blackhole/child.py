@@ -30,7 +30,7 @@ import os
 import signal
 
 from . import protocols
-from .http import Http
+from .http.protocol import Http
 from .smtp import Smtp
 from .streams import StreamProtocol
 

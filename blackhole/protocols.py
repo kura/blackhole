@@ -25,11 +25,90 @@ Communication protocols used by the worker and child processes to
 communicate.
 """
 
+import asyncio
+import logging
 
-__all__ = ('PING', 'PONG')
+from . config import Config
+
+
+__all__ = ('PING', 'PONG', 'Protocol')
 
 
 PING = b'x01'
 """Protocol message used by the worker and child processes to communicate."""
 PONG = b'x02'
 """Protocol message used by the worker and child processes to communicate."""
+
+
+logger = logging.getLogger('blackhole.protocol')
+
+
+class Protocol(asyncio.StreamReaderProtocol):
+
+    fqdn = 'blackhole.io'
+    flags = {}
+
+    def __init__(self, clients, flags, loop=None):
+        self.loop = loop if loop is not None else asyncio.get_event_loop()
+        super().__init__(asyncio.StreamReader(loop=self.loop),
+                         client_connected_cb=self._client_connected_cb,
+                         loop=self.loop)
+        self.clients = clients
+        self.config = Config()
+        # This is not a nice way to do this but, socket.getfqdn silently fails
+        # and craches inbound connections when called after os.fork
+        self.flags = flags
+        self.fqdn = self.config.mailname
+
+    def connection_made(self, transport):
+        """
+        Tie a connection to the protocol.
+
+        :param transport: The transport class.
+        :type transport: :any:`asyncio.transport.Transport`
+        """
+        super().connection_made(transport)
+        logger.debug('Peer connected')
+        self.transport = transport
+        self.connection_closed = False
+        self._handler_coroutine = self.loop.create_task(self._handle_client())
+
+    def _client_connected_cb(self, reader, writer):
+        """
+        Callback that binds a stream reader and writer to the SMTP Protocol.
+
+        :param reader: An object for reading incoming data.
+        :type reader: :any:`asyncio.streams.StreamReader`
+        :param writer: An object for writing outgoing data.
+        :type writer: :any:`asyncio.streams.StreamWriter`
+        """
+        self._reader = reader
+        self._writer = writer
+        self.clients.append(writer)
+
+    def connection_lost(self, exc):
+        """
+        Callback for when a connection is closed or lost.
+
+        :param exc:
+        :type exc:
+        """
+        logger.debug('Peer disconnected')
+        try:
+            self.clients.remove(self._writer)
+        except ValueError:
+            pass
+        super().connection_lost(exc)
+        self._connection_closed = True
+
+    async def close(self):
+        """Close the connection from the client."""
+        logger.debug('Closing connection')
+        if self._writer:
+            try:
+                self.clients.remove(self._writer)
+            except ValueError:
+                pass
+            self._writer.close()
+            await self._writer.drain()
+        self._connection_closed = True
