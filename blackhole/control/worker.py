@@ -29,10 +29,10 @@ import os
 import signal
 import time
 
-from . import protocols
 from .child import Child
-from .control import setgid, setuid
-from .streams import StreamProtocol
+from .utils import setgid, setuid
+from .. import protocols
+from ..streams import StreamProtocol
 
 
 __all__ = ('Worker', )

@@ -6,8 +6,8 @@ from unittest import mock
 import pytest
 
 from blackhole import protocols
-from blackhole.child import Child
-from blackhole.control import _socket
+from blackhole.control.child import Child
+from blackhole.control.control import _socket
 from blackhole.streams import StreamProtocol
 
 from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
@@ -26,9 +26,9 @@ def test_start():
     socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
     child = Child('', '', socks, '1')
     with mock.patch('asyncio.Task'), \
-        mock.patch('blackhole.child.Child.heartbeat'), \
+        mock.patch('blackhole.control.child.Child.heartbeat'), \
         mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever'), \
-        mock.patch('blackhole.child.Child.stop'), \
+        mock.patch('blackhole.control.child.Child.stop'), \
             mock.patch('os._exit') as mock_exit:
         child.start()
     assert mock_exit.called is True
@@ -75,7 +75,7 @@ def test_stop_runtime_exception():
 @pytest.mark.asyncio
 async def test__start():
     sock = _socket('127.0.0.1', 0, socket.AF_INET)
-    socks = ({'sock': sock, 'ssl': None}, )
+    socks = ({'sock': sock, 'ssl': None, 'flags': {}}, )
     child = Child('', '', socks, '1')
     loop = child.loop = asyncio.new_event_loop()
     await child._start()
@@ -97,8 +97,8 @@ async def test_child_heartbeat_not_started(event_loop):
     child.loop = event_loop
     child._started = False
     with mock.patch('asyncio.Task') as mock_task, \
-        mock.patch('blackhole.child.Child._start') as mock_start, \
-            mock.patch('blackhole.child.Child.stop') as mock_stop:
+        mock.patch('blackhole.control.child.Child._start') as mock_start, \
+            mock.patch('blackhole.control.child.Child.stop') as mock_stop:
         await child.heartbeat()
     assert mock_task.called is True
     assert mock_start.called is True
@@ -124,8 +124,8 @@ async def test_child_heartbeat_started(event_loop):
     reset_task = asyncio.Task(reset())
     with mock.patch('blackhole.streams.StreamProtocol', return_value=sp), \
         mock.patch('asyncio.Task') as mock_task, \
-        mock.patch('blackhole.child.Child._start') as mock_start, \
-            mock.patch('blackhole.child.Child.stop') as mock_stop:
+        mock.patch('blackhole.control.child.Child._start') as mock_start, \
+            mock.patch('blackhole.control.child.Child.stop') as mock_stop:
         await child.heartbeat()
     reset_task.cancel()
     assert mock_task.called is True

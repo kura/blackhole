@@ -28,7 +28,7 @@ communicate.
 import asyncio
 import logging
 
-from . config import Config
+from .config import Config
 
 
 __all__ = ('PING', 'PONG', 'Protocol')
@@ -75,7 +75,7 @@ class Protocol(asyncio.StreamReaderProtocol):
 
     def _client_connected_cb(self, reader, writer):
         """
-        Callback that binds a stream reader and writer to the SMTP Protocol.
+        Callback that binds a stream reader and writer to the Protocol.
 
         :param reader: An object for reading incoming data.
         :type reader: :any:`asyncio.streams.StreamReader`

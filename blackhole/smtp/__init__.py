@@ -20,16 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Provides the Http protocol wrapper."""
-
-
+from .auth import *
+from .expn import *
+from .help import *
 from .protocol import *
-from .request import *
-from .response import *
-from .status import *
+from .switch import *
 
 
-__all__ = (protocol.__all__ +
-           request.__all__ +
-           response.__all__ +
-           status.__all__)
+__all__ = (auth.__all__ +
+           expn.__all__ +
+           help.__all__ +
+           protocol.__all__+
+           switch.__all__)

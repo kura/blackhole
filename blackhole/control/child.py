@@ -29,10 +29,10 @@ import logging
 import os
 import signal
 
-from . import protocols
-from .http.protocol import Http
-from .smtp import Smtp
-from .streams import StreamProtocol
+from .. import protocols
+from ..http.protocol import Http
+from ..smtp.protocol import Smtp
+from ..streams import StreamProtocol
 
 
 __all__ = ('Child', )

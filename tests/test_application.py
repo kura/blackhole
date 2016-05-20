@@ -58,11 +58,12 @@ def test_run_foreground():
         mock.patch('blackhole.config.warn_options'), \
         mock.patch('atexit.register'), \
         mock.patch('os.chown'), \
-        mock.patch('blackhole.supervisor.Supervisor.generate_servers'), \
-        mock.patch('blackhole.control.pid_permissions'), \
-        mock.patch('blackhole.control.setgid'), \
-        mock.patch('blackhole.control.setuid'), \
-        mock.patch('blackhole.supervisor.Supervisor.run'), \
+        mock.patch('blackhole.control.supervisor.Supervisor.'
+                   'generate_servers'), \
+        mock.patch('blackhole.control.control.pid_permissions'), \
+        mock.patch('blackhole.control.control.setgid'), \
+        mock.patch('blackhole.control.control.setuid'), \
+        mock.patch('blackhole.control.supervisor.Supervisor.run'), \
             pytest.raises(SystemExit) as err:
         run()
     assert str(err.value) == '0'
@@ -98,8 +99,8 @@ def test_run_foreground_socket_error():
         mock.patch('blackhole.config.Config.test'), \
         mock.patch('blackhole.config.warn_options'), \
         mock.patch('atexit.register'), \
-        mock.patch('blackhole.supervisor.Supervisor.close_socks'), \
-        mock.patch('blackhole.supervisor.Supervisor.generate_servers',
+        mock.patch('blackhole.control.supervisor.Supervisor.close_socks'), \
+        mock.patch('blackhole.control.supervisor.Supervisor.generate_servers',
                    side_effect=BlackholeRuntimeException), \
             pytest.raises(SystemExit) as err:
         run()
@@ -119,12 +120,13 @@ def test_run_background():
         mock.patch('blackhole.config.warn_options'), \
         mock.patch('atexit.register'), \
         mock.patch('os.chown'), \
-        mock.patch('blackhole.supervisor.Supervisor.generate_servers'), \
-        mock.patch('blackhole.daemon.Daemon.daemonize'), \
-        mock.patch('blackhole.control.pid_permissions'), \
-        mock.patch('blackhole.control.setgid'), \
-        mock.patch('blackhole.control.setuid'), \
-        mock.patch('blackhole.supervisor.Supervisor.run'), \
+        mock.patch('blackhole.control.supervisor.Supervisor.'
+                   'generate_servers'), \
+        mock.patch('blackhole.control.daemon.Daemon.daemonize'), \
+        mock.patch('blackhole.control.control.pid_permissions'), \
+        mock.patch('blackhole.control.control.setgid'), \
+        mock.patch('blackhole.control.control.setuid'), \
+        mock.patch('blackhole.control.supervisor.Supervisor.run'), \
             pytest.raises(SystemExit) as err:
         run()
     assert str(err.value) == '0'
@@ -143,9 +145,10 @@ def test_run_daemon_daemonize_error():
         mock.patch('blackhole.config.warn_options'), \
         mock.patch('atexit.register'), \
         mock.patch('os.chown'), \
-        mock.patch('blackhole.supervisor.Supervisor.generate_servers'), \
+        mock.patch('blackhole.control.supervisor.Supervisor.'
+                   'generate_servers'), \
         mock.patch('os.fork', side_effect=OSError), \
-        mock.patch('blackhole.supervisor.Supervisor.'
+        mock.patch('blackhole.control.supervisor.Supervisor.'
                    'close_socks') as mock_close, \
             pytest.raises(SystemExit) as err:
         run()

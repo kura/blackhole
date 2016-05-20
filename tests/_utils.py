@@ -5,8 +5,8 @@ import tempfile
 import pytest
 
 from blackhole.config import Singleton as CSingleton
-from blackhole.daemon import Singleton as DSingleton
-from blackhole.supervisor import Singleton as SSingleton
+from blackhole.control.daemon import Singleton as DSingleton
+from blackhole.control.supervisor import Singleton as SSingleton
 
 
 logging.getLogger('blackhole').addHandler(logging.NullHandler())

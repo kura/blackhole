@@ -28,10 +28,10 @@ import logging
 import signal
 import os
 
-from .config import Config
-from .control import server
-from .exceptions import BlackholeRuntimeException
+from .utils import server
 from .worker import Worker
+from ..config import Config
+from ..exceptions import BlackholeRuntimeException
 
 
 __all__ = ('Supervisor', )

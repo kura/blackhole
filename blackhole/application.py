@@ -29,12 +29,12 @@ import sys
 
 from .config import (Config, config_test, parse_cmd_args,
                      warn_options)
-from .control import setgid, setuid, pid_permissions
-from .daemon import Daemon
+from .control.daemon import Daemon
+from .control.utils import setgid, setuid, pid_permissions
 from .exceptions import (ConfigException, DaemonException,
                          BlackholeRuntimeException)
 from .logs import configure_logs
-from .supervisor import Supervisor
+from .control.supervisor import Supervisor
 
 
 __all__ = ('run', )

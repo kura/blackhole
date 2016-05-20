@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Provides functionality to spawn and control child processes."""
-
 
 import collections
 
@@ -50,7 +48,7 @@ class Request:
         self.setup(raw_request)
 
     def setup(self, raw_request):
-        self.raw = raw_request
+        self.raw = raw_request.decode('utf-8')
         self.method, self.path_url, self.version = self.parse_baseline()
         self.url = self.fqdn + self.path_url
         self.headers, self.text = self.parse_request()

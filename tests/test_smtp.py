@@ -1,4 +1,5 @@
 import asyncio
+import functools
 import inspect
 import socket
 from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
@@ -10,8 +11,8 @@ from unittest import mock
 import pytest
 
 from blackhole.config import Config
-from blackhole.control import _socket
-from blackhole.smtp import Smtp
+from blackhole.control.control import _socket
+from blackhole.smtp.protocol import Smtp
 
 from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
                      create_config, create_file, Args)
@@ -25,25 +26,25 @@ def test_initiation():
             mock.patch('socket.getfqdn', return_value='a.blackhole.io'):
         conf = Config(cfile)
     conf.load()
-    smtp = Smtp([])
+    smtp = Smtp([], {})
     assert smtp.fqdn == 'a.blackhole.io'
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_auth_mechanisms():
-    smtp = Smtp([])
+    smtp = Smtp([], {})
     assert smtp.get_auth_members() == ['CRAM-MD5', 'LOGIN', 'PLAIN']
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_handler_lookup():
-    smtp = Smtp([])
+    smtp = Smtp([], {})
+    assert smtp.lookup_handler('AUTH') == smtp.auth_UNKNOWN
     assert smtp.lookup_handler('AUTH CRAM-MD5') == smtp.auth_CRAM_MD5
     assert smtp.lookup_handler('AUTH LOGIN') == smtp.auth_LOGIN
     assert smtp.lookup_handler('AUTH PLAIN') == smtp.auth_PLAIN
-    assert smtp.lookup_handler('AUTH') == smtp.auth_UNKNOWN
     assert smtp.lookup_handler('AUTH KURA') == smtp.auth_UNKNOWN
     assert smtp.lookup_handler('HELP') == smtp.do_HELP
     assert smtp.lookup_handler('DATA') == smtp.do_DATA
@@ -56,11 +57,10 @@ def test_handler_lookup():
     assert smtp.lookup_handler('QUIT') == smtp.do_QUIT
     assert smtp.lookup_handler('RCPT') == smtp.do_RCPT
     assert smtp.lookup_handler('RSET') == smtp.do_RSET
-    assert smtp.lookup_handler('VRFY') == smtp.do_VRFY
     assert smtp.lookup_handler('STARTTLS') == smtp.do_STARTTLS
+    assert smtp.lookup_handler('VRFY') == smtp.do_VRFY
     assert smtp.lookup_handler('KURA') == smtp.do_UNKNOWN
     assert smtp.lookup_handler('') == smtp.do_UNKNOWN
-    assert smtp.lookup_handler('STARTTLS') == smtp.do_STARTTLS
     assert smtp.lookup_handler('HELP DATA') == smtp.help_DATA
     assert smtp.lookup_handler('HELP EHLO') == smtp.help_EHLO
     assert smtp.lookup_handler('HELP ETRN') == smtp.help_ETRN
@@ -71,6 +71,7 @@ def test_handler_lookup():
     assert smtp.lookup_handler('HELP QUIT') == smtp.help_QUIT
     assert smtp.lookup_handler('HELP RCPT') == smtp.help_RCPT
     assert smtp.lookup_handler('HELP RSET') == smtp.help_RSET
+    assert smtp.lookup_handler('HELP STARTTLS') == smtp.help_STARTTLS
     assert smtp.lookup_handler('HELP VRFY') == smtp.help_VRFY
     assert smtp.lookup_handler('HELP KURA') == smtp.help_UNKNOWN
 
@@ -84,9 +85,9 @@ def test_unknown_handlers():
              'do_RSET', 'do_STARTTLS', 'do_UNKNOWN', 'do_VRFY']
     helps = ['help_AUTH', 'help_DATA', 'help_EHLO', 'help_ETRN', 'help_EXPN',
              'help_HELO', 'help_MAIL', 'help_NOOP', 'help_QUIT', 'help_RCPT',
-             'help_RSET', 'help_UNKNOWN', 'help_VRFY']
+             'help_RSET', 'help_STARTTLS', 'help_UNKNOWN', 'help_VRFY']
     auths = ['auth_CRAM_MD5', 'auth_LOGIN', 'auth_PLAIN', 'auth_UNKNOWN']
-    smtp = Smtp([])
+    smtp = Smtp([], {})
     for mem in inspect.getmembers(smtp, inspect.ismethod):
         f, _ = mem
         if f.startswith('do_'):
@@ -101,11 +102,12 @@ def test_unknown_handlers():
                          'cleandir')
 class Controller:
 
-    def __init__(self, sock=None, loop=None):
+    def __init__(self, sock=None, flags={'smtp': True}, loop=None):
         if sock is not None:
             self.sock = sock
         else:
             self.sock = _socket('127.0.0.1', 0, socket.AF_INET)
+        self.flags = flags
         self.server = None
         self.loop = asyncio.new_event_loop() if loop is None else loop
         self.thread = None
@@ -124,8 +126,8 @@ class Controller:
         asyncio.set_event_loop(self.loop)
         conf = Config(None)
         conf.mailname = 'blackhole.io'
-        _server = self.loop.create_server(lambda: Smtp([]),
-                                          sock=self.sock)
+        factory = functools.partial(Smtp, [], self.flags)
+        _server = self.loop.create_server(factory, sock=self.sock)
         self.server = self.loop.run_until_complete(_server)
         self.loop.call_soon(ready_event.set)
         self.loop.run_forever()
@@ -151,16 +153,15 @@ class Controller:
 @pytest.mark.asyncio
 async def test_mode_directive(event_loop, unused_tcp_port):
     cfile = create_config(('listen=:{} mode=bounce'.format(unused_tcp_port), ))
-    conf = Config(cfile).load()
+    Config(cfile).load()
     sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
-    controller = Controller(sock)
+    controller = Controller(sock, {'mode': 'bounce', 'smtp': True})
     controller.start()
-    conf.flags_from_listener('127.0.0.1', unused_tcp_port)
     host, port = sock.getsockname()
     with SMTP(host, port) as client:
         msg = ['From: kura@example.com', 'To: kura@example.com',
                'Subject: Test', 'X-Blackhole-Mode: accept',
-               'X-Blackhole-Delay: 5', '', 'Testing 1, 2, 3']
+               '', 'Testing 1, 2, 3']
         msg = '\n'.join(msg)
         start = time.time()
         code, resp = client.data(msg.encode('utf-8'))
@@ -175,15 +176,14 @@ async def test_mode_directive(event_loop, unused_tcp_port):
 @pytest.mark.asyncio
 async def test_delay_directive(event_loop, unused_tcp_port):
     cfile = create_config(('listen=:{} delay=5'.format(unused_tcp_port), ))
-    conf = Config(cfile).load()
+    Config(cfile).load()
     sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
-    controller = Controller(sock)
+    controller = Controller(sock, {'delay': 5, 'smtp': True})
     controller.start()
-    conf.flags_from_listener('127.0.0.1', unused_tcp_port)
     host, port = sock.getsockname()
     with SMTP(host, port) as client:
         msg = ['From: kura@example.com', 'To: kura@example.com',
-               'Subject: Test', 'X-Blackhole-Mode: bounce',
+               'Subject: Test', 'X-Blackhole-Mode: accept',
                'X-Blackhole-Delay: 30', '', 'Testing 1, 2, 3']
         msg = '\n'.join(msg)
         start = time.time()
@@ -199,11 +199,10 @@ async def test_delay_directive(event_loop, unused_tcp_port):
 @pytest.mark.asyncio
 async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
     cfile = create_config(('listen=:{} delay=5 mode=bounce'.format(unused_tcp_port), ))
-    conf = Config(cfile).load()
+    Config(cfile).load()
     sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
-    controller = Controller(sock)
+    controller = Controller(sock, {'delay': 5, 'mode': 'bounce', 'smtp': True})
     controller.start()
-    conf.flags_from_listener('127.0.0.1', unused_tcp_port)
     host, port = sock.getsockname()
     with SMTP(host, port) as client:
         msg = ['From: kura@example.com', 'To: kura@example.com',
@@ -565,7 +564,7 @@ class TestSmtp(unittest.TestCase):
     def test_help(self):
         with SMTP(self.host, self.port) as client:
             eresp = ('Supported commands: AUTH DATA EHLO ETRN EXPN HELO MAIL '
-                     'NOOP QUIT RCPT RSET VRFY')
+                     'NOOP QUIT RCPT RSET STARTTLS VRFY')
             assert client.help() == eresp.encode('utf-8')
 
     def test_help_auth(self):
@@ -623,18 +622,23 @@ class TestSmtp(unittest.TestCase):
             resp = client.help('RSET')
             assert resp == b'Syntax: RSET'
 
-    def test_help_unknown(self):
+    def test_help_starttls(self):
         with SMTP(self.host, self.port) as client:
-            code, resp = client.docmd('HELP', 'KURA')
-            eresp = ('Supported commands: AUTH DATA EHLO ETRN EXPN HELO MAIL '
-                     'NOOP QUIT RCPT RSET VRFY')
-            assert code == 501
-            assert resp == eresp.encode('utf-8')
+            resp = client.help('STARTTLS')
+            assert resp == b'Syntax: STARTTLS'
 
     def test_help_vrfy(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('VRFY')
             assert resp == b'Syntax: VRFY <address>'
+
+    def test_help_unknown(self):
+        with SMTP(self.host, self.port) as client:
+            code, resp = client.docmd('HELP', 'KURA')
+            eresp = ('Supported commands: AUTH DATA EHLO ETRN EXPN HELO MAIL '
+                     'NOOP QUIT RCPT RSET STARTTLS VRFY')
+            assert code == 501
+            assert resp == eresp.encode('utf-8')
 
     def test_auth_login(self):
         with SMTP(self.host, self.port) as client:

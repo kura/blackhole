@@ -10,7 +10,7 @@ import pytest
 
 from blackhole.config import Config
 from blackhole.exceptions import BlackholeRuntimeException
-from blackhole.supervisor import Supervisor
+from blackhole.control.supervisor import Supervisor
 
 from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
                      create_config, create_file, Args)
@@ -248,7 +248,7 @@ def test_create():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     with mock.patch('socket.socket.bind'), \
-            mock.patch('blackhole.worker.Worker.start'):
+            mock.patch('blackhole.control.worker.Worker.start'):
         supervisor = Supervisor(loop=loop)
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
@@ -263,7 +263,7 @@ def test_run():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     with mock.patch('socket.socket.bind'), \
-            mock.patch('blackhole.worker.Worker.start'):
+            mock.patch('blackhole.control.worker.Worker.start'):
         supervisor = Supervisor(loop)
         with mock.patch('asyncio.unix_events._UnixSelectorEventLoop.'
                         'run_forever'):
@@ -280,11 +280,11 @@ def test_stop():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     with mock.patch('socket.socket.bind'), \
-            mock.patch('blackhole.worker.Worker.start'):
+            mock.patch('blackhole.control.worker.Worker.start'):
         supervisor = Supervisor(loop)
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
-        with mock.patch('blackhole.worker.Worker.stop') as mock_stop, \
+        with mock.patch('blackhole.control.worker.Worker.stop') as mock_stop, \
                 pytest.raises(SystemExit) as err:
             supervisor.stop()
     assert mock_stop.call_count == 2

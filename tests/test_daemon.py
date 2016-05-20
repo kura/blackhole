@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from blackhole.daemon import Daemon, DaemonException
+from blackhole.control.daemon import Daemon, DaemonException
 
 from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
                      create_config, create_file, Args)
@@ -136,7 +136,8 @@ def test_fork_error():
                          'cleandir')
 def test_daemonise():
     pfile = create_file('test.pid', 123)
-    with mock.patch('blackhole.daemon.Daemon.fork') as mock_fork, \
+    with mock.patch('blackhole.control.daemon.Daemon.'
+                    'fork') as mock_fork, \
         mock.patch('os.chdir') as mock_chdir, \
         mock.patch('os.setsid') as mock_setsid, \
         mock.patch('os.umask') as mock_umask, \

@@ -32,8 +32,8 @@ try:
 except ImportError:
     ssl = None
 
-from .config import Config
-from .exceptions import BlackholeRuntimeException
+from ..config import Config
+from ..exceptions import BlackholeRuntimeException
 
 
 __all__ = ('pid_permissions', 'server', 'setgid', 'setuid')

@@ -8,7 +8,7 @@ import pytest
 
 from blackhole import protocols
 from blackhole.config import Config
-from blackhole.worker import Worker
+from blackhole.control.worker import Worker
 
 from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
                      create_config, create_file, Args)
@@ -17,7 +17,7 @@ from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_init_start():
-    with mock.patch('blackhole.worker.Worker.start') as mock_start:
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start:
         Worker([], [])
     assert mock_start.called is True
 
@@ -25,7 +25,7 @@ def test_init_start():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_stop():
-    with mock.patch('blackhole.worker.Worker.start') as mock_start, \
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start, \
             mock.patch('os.kill') as mock_kill:
         w = Worker([], [])
         w.chat_task = mock.Mock()
@@ -41,7 +41,7 @@ def test_stop():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_stop_runtime_exception():
-    with mock.patch('blackhole.worker.Worker.start') as mock_start, \
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start, \
             mock.patch('os.kill', side_effect=ProcessLookupError):
         w = Worker([], [])
         w.chat_task = mock.Mock()
@@ -60,7 +60,8 @@ def test_parent_start():
         mock.patch('os.fork', return_value=123) as mock_fork, \
         mock.patch('os.close') as mock_close, \
         mock.patch('asyncio.ensure_future') as mock_async, \
-            mock.patch('blackhole.worker.Worker.connect') as mock_connect:
+            mock.patch('blackhole.control.worker.'
+                       'Worker.connect') as mock_connect:
         w = Worker([], [])
         w.pid = 123
     assert mock_pipe.call_count == 2
@@ -74,12 +75,12 @@ def test_parent_start():
                          'cleandir')
 def test_child_start():
     with mock.patch('os.fork', return_value=-1) as mock_fork, \
-        mock.patch('blackhole.control.setgid'), \
-        mock.patch('blackhole.control.setuid'), \
+        mock.patch('blackhole.control.control.setgid'), \
+        mock.patch('blackhole.control.control.setuid'), \
         mock.patch('asyncio.Task'), \
-        mock.patch('blackhole.child.Child.heartbeat'), \
+        mock.patch('blackhole.control.child.Child.heartbeat'), \
         mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever'), \
-        mock.patch('blackhole.child.Child.stop'), \
+        mock.patch('blackhole.control.child.Child.stop'), \
             mock.patch('os._exit') as mock_exit:
         Worker([], [])
     assert mock_fork.called is True
@@ -150,12 +151,14 @@ def test_child_start_setuid_fails_permissions():
                          'cleandir')
 @pytest.mark.asyncio
 async def test_worker_heartbeat_not_started(event_loop):
-    with mock.patch('blackhole.worker.Worker.start') as mock_start:
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
     worker._started = False
-    with mock.patch('blackhole.worker.Worker.start') as mock_heartbeat_start, \
-            mock.patch('blackhole.worker.Worker.stop') as mock_heartbeat_stop:
+    with mock.patch('blackhole.control.worker.Worker.'
+                    'start') as mock_heartbeat_start, \
+            mock.patch('blackhole.control.worker.Worker.'
+                       'stop') as mock_heartbeat_stop:
         await worker.heartbeat(None)
     assert mock_heartbeat_start.called is False
     assert mock_heartbeat_stop.called is False
@@ -165,13 +168,15 @@ async def test_worker_heartbeat_not_started(event_loop):
                          'cleandir')
 @pytest.mark.asyncio
 async def test_worker_heartbeat_started_bad_ping(event_loop):
-    with mock.patch('blackhole.worker.Worker.start') as mock_start:
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
     worker._started = True
     worker.ping = time.monotonic() - 120
-    with mock.patch('blackhole.worker.Worker.start') as mock_heartbeat_start, \
-            mock.patch('blackhole.worker.Worker.stop') as mock_heartbeat_stop:
+    with mock.patch('blackhole.control.worker.Worker.'
+                    'start') as mock_heartbeat_start, \
+            mock.patch('blackhole.control.worker.Worker.'
+                       'stop') as mock_heartbeat_stop:
         await worker.heartbeat(None)
     assert mock_heartbeat_start.called is True
     assert mock_heartbeat_stop.called is True
@@ -181,7 +186,7 @@ async def test_worker_heartbeat_started_bad_ping(event_loop):
                          'cleandir')
 @pytest.mark.asyncio
 async def test_worker_heartbeat_started_good_ping(event_loop):
-    with mock.patch('blackhole.worker.Worker.start') as mock_start:
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
     worker._started = True
@@ -200,12 +205,14 @@ async def test_worker_heartbeat_started_good_ping(event_loop):
                          'cleandir')
 @pytest.mark.asyncio
 async def test_worker_chat_not_started(event_loop):
-    with mock.patch('blackhole.worker.Worker.start') as mock_start:
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
     worker._started = False
-    with mock.patch('blackhole.worker.Worker.start') as mock_chat_start, \
-            mock.patch('blackhole.worker.Worker.stop') as mock_chat_stop:
+    with mock.patch('blackhole.control.worker.Worker.'
+                    'start') as mock_chat_start, \
+            mock.patch('blackhole.control.worker.Worker.'
+                       'stop') as mock_chat_stop:
         await worker.chat(None)
     assert mock_chat_start.called is False
     assert mock_chat_stop.called is False
@@ -215,12 +222,13 @@ async def test_worker_chat_not_started(event_loop):
                          'cleandir')
 @pytest.mark.asyncio
 async def test_worker_chat_started_restart(event_loop):
-    with mock.patch('blackhole.worker.Worker.start') as mock_start:
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
     worker._started = True
-    with mock.patch('blackhole.worker.Worker.start') as mock_chat_start, \
-        mock.patch('blackhole.worker.Worker.stop') as mock_chat_stop, \
+    with mock.patch('blackhole.control.worker.Worker.'
+                    'start') as mock_chat_start, \
+        mock.patch('blackhole.control.worker.Worker.stop') as mock_chat_stop, \
             mock.patch('asyncio.StreamReader.read', side_effect=Exception):
         reader = asyncio.StreamReader()
         await worker.chat(reader)
@@ -232,7 +240,7 @@ async def test_worker_chat_started_restart(event_loop):
                          'cleandir')
 @pytest.mark.asyncio
 async def test_worker_chat_started_good_message(event_loop):
-    with mock.patch('blackhole.worker.Worker.start') as mock_start:
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start:
         worker = Worker('1', [], loop=event_loop)
     assert mock_start.called is True
     worker._started = True
@@ -257,12 +265,13 @@ async def test_worker_connect(event_loop):
     down_read, down_write = os.pipe()
     os.close(up_read)
     os.close(down_write)
-    with mock.patch('blackhole.worker.Worker.start') as mock_start:
+    with mock.patch('blackhole.control.worker.Worker.start') as mock_start:
         worker = Worker('1', [])
     assert mock_start.called is True
     with mock.patch('asyncio.ensure_future'), \
-        mock.patch('blackhole.worker.Worker.chat') as mock_chat, \
-            mock.patch('blackhole.worker.Worker.heartbeat') as mock_heartbeat:
+        mock.patch('blackhole.control.worker.Worker.chat') as mock_chat, \
+            mock.patch('blackhole.control.worker.Worker.'
+                       'heartbeat') as mock_heartbeat:
         await worker.connect('1', up_write, down_read)
     assert mock_chat.called is True
     assert mock_heartbeat.called is True

@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Provides the Smtp protocol wrapper."""
+"""Provides the Http protocol wrapper."""
 
 
 import asyncio
@@ -29,9 +29,7 @@ import logging
 from .request import Request
 from .response import (Response, NotFound, BadRequest, RequestTimeout,
                        HttpVersionNotSupported)
-from ..config import Config
 from ..protocols import Protocol
-from ..utils import get_version
 
 
 __all__ = ('Http', )
@@ -48,20 +46,13 @@ class Http(Protocol):
 
     def __init__(self, clients, flags, loop=None):
         """
-        Initialise the SMTP protocol.
+        Initialise the HTTP protocol.
 
-        :param parent: The parent worker.
-        :type parent: :any:`blackhole.child.Child`
         :param clients: A list of connected clients.
         :type clients: :any:`list`
         :param loop: The event loop to use.
         :type loop: :any:`None` or
                     :any:`syncio.unix_events._UnixSelectorEventLoop`
-
-        .. note::
-
-           Loads the configuration, defines the server's FQDN and generates
-           an RFC 2822 Message-ID.
         """
         self.loop = loop if loop is not None else asyncio.get_event_loop()
         super().__init__(clients, flags, loop=loop)
@@ -71,7 +62,7 @@ class Http(Protocol):
             await self.wait()
 
     async def wait(self):
-        received_data = ''
+        received_data = b''
         while not self.connection_closed:
             try:
                 data = await asyncio.wait_for(self._reader.read(1024),
@@ -80,10 +71,10 @@ class Http(Protocol):
                 if data == b'':
                     return
                 logger.debug('RECV: %s', data)
-                received_data += data.decode('utf-8')
+                received_data += data
                 if data.endswith(b'\r\n\r\n'):
                     break
-                if received_data.endswith('\r\n\r\n'):
+                if received_data.endswith(b'\r\n\r\n'):
                     break
             except asyncio.TimeoutError:
                 await self.timeout()
@@ -99,11 +90,10 @@ class Http(Protocol):
 
     async def push(self, msg):
         logger.debug('SEND: %s', msg)
-        self._writer.write(msg)
+        self._writer.write(msg.encode(self.response.encoding))
         await self._writer.drain()
 
     async def send_response(self):
-        print('send_response')
         resp = ['HTTP/{} {} {}'.format(str(self.response.version),
                                        self.response.code,
                                        self.response.reason), ]
@@ -113,7 +103,7 @@ class Http(Protocol):
         if len(self.response.text) > 0:
             resp.append(self.response.text)
             resp.append('')
-        await self.push('\r\n'.join(resp).encode(self.response.encoding))
+        await self.push('\r\n'.join(resp))
         if self.response.close:
             await self.close()
         await self.wait()
@@ -121,6 +111,16 @@ class Http(Protocol):
     async def process_request(self):
         if self.request.version not in (1.0, 1.1):
             self.response = HttpVersionNotSupported(self.request)
-        else:
+            await self.send_response()
+            return
+        if 'host' not in self.request.headers.keys():
+            self.response = BadRequest(self.request)
+            await self.send_response()
+            return
+        if self.request.headers.get('host') != self.fqdn:
             self.response = NotFound(self.request)
+            await self.send_response()
+            return
+        self.response = NotFound(self.request)
         await self.send_response()
+        return

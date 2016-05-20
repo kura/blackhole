@@ -10,8 +10,8 @@ from unittest import mock
 import pytest
 
 from blackhole.config import Config
-from blackhole.control import (_context, _socket, server, setuid, setgid,
-                               pid_permissions)
+from blackhole.control.control import (_context, _socket, server, setuid,
+                                       setgid, pid_permissions)
 from blackhole.exceptions import BlackholeRuntimeException
 
 from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,

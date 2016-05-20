@@ -568,52 +568,6 @@ class Config(metaclass=Singleton):
             clisteners.append(host)
         return clisteners
 
-    def flags_from_listener(self, addr, port):
-        """
-        Get a list of flags defined for the provided listener.
-
-        Scope: ``listen``, ``tls_listen``.
-
-        :param addr: The listener host address.
-        :type addr: :any:`str`
-        :param port: The listener port.
-        :type port: :any:`int`
-        :returns: Flags defined for this socket.
-        :rtype: :any:`dict`
-
-        .. note::
-
-           If multiple modes or delays are listed in a single listener, the
-           last definition will be used:
-
-           ``listen = :25 mode=bounce mode=random``  ->  ``mode=random``
-
-           A mode and delay can be used in tandum:
-
-           ``listen = :25 mode=bounce delay=10``
-
-           The delay can also be specified as a range:
-
-           ``listen = :25 delay=5-10``
-
-           Using a delay range will cause the server to choose a random value
-           within that range per connection.
-
-           Mode and delay can be defined for each address/port in a listen
-           directive:
-
-           ``listen = :25 mode=bounce, :::25 delay=10, :587 mode=random``
-        """
-        if addr in ('127.0.0.1', '0.0.0.0'):
-            addr = ''
-        elif addr in ('::1', ):
-            addr = '::'
-        listeners = self.listen + self.tls_listen
-        for laddr, lport, lfam, lflags in listeners:
-            if laddr == addr and lport == port:
-                return lflags
-        return {}
-
     def create_flags(self, parts):
         """
         Create a set of flags from a listener directive.
@@ -636,6 +590,8 @@ class Config(metaclass=Singleton):
             if part == 'http':
                 flags.update({'http': True})
             elif part == 'smtp':
+                flags.update({'smtp': True})
+            else:
                 flags.update({'smtp': True})
         return flags
 

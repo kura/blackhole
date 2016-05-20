@@ -26,7 +26,7 @@
 import atexit
 import os
 
-from .exceptions import DaemonException
+from ..exceptions import DaemonException
 
 
 __all__ = ('Daemon', )
