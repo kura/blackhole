@@ -16,36 +16,19 @@
 
 """setup.py helper functions."""
 
-
+import codecs
 import os
-import re
 import sys
 
 
 __all__ = [
-    'contents',
-    'find_doctests',
     'get_version',
+    'include_file',
     'require_python',
     ]
 
 
-DEFAULT_VERSION_RE = re.compile(
-    r'(?P<version>\d+\.\d+(?:\.\d+)?(?:(?:a|b|rc)\d+)?)')
-EMPTYSTRING = ''
-
-
 def require_python(minimum):
-    """Require at least a minimum Python version.
-
-    The version number is expressed in terms of `sys.hexversion`.  E.g. to
-    require a minimum of Python 2.6, use::
-
-    >>> require_python(0x206000f0)
-
-    :param minimum: Minimum Python version supported.
-    :type minimum: integer
-    """
     if sys.hexversion < minimum:
         hversion = hex(minimum)[2:]
         if len(hversion) % 2 != 0:
@@ -64,68 +47,16 @@ def require_python(minimum):
         sys.exit(1)
 
 
-def get_version(filename, pattern=None):
-    """Extract the __version__ from a file without importing it.
-
-    While you could get the __version__ by importing the module, the very act
-    of importing can cause unintended consequences.  For example, Distribute's
-    automatic 2to3 support will break.  Instead, this searches the file for a
-    line that starts with __version__, and extract the version number by
-    regular expression matching.
-
-    By default, two or three dot-separated digits are recognized, but by
-    passing a pattern parameter, you can recognize just about anything.  Use
-    the `version` group name to specify the match group.
-
-    :param filename: The name of the file to search.
-    :type filename: string
-    :param pattern: Optional alternative regular expression pattern to use.
-    :type pattern: string
-    :return: The version that was extracted.
-    :rtype: string
-    """
-    if pattern is None:
-        cre = DEFAULT_VERSION_RE
-    else:
-        cre = re.compile(pattern)
-    with open(filename) as fp:
-        for line in fp:
-            if line.startswith('__version__'):
-                mo = cre.search(line)
-                assert mo, 'No valid __version__ string found'
-                return mo.group('version')
-    raise AssertionError('No __version__ assignment found')
+def include_file(filename):
+    here = os.path.abspath(os.path.dirname(__file__))
+    fpath = os.path.join(here, filename)
+    if not os.access(fpath, os.R_OK):
+        raise OSError('Cannot open {} for reading', fpath)
+    return codecs.open(fpath, encoding='utf-8').read()
 
 
-def find_doctests(start='.', extension='.rst'):
-    """Find separate-file doctests in the package.
-
-    This is useful for Distribute's automatic 2to3 conversion support.  The
-    `setup()` keyword argument `convert_2to3_doctests` requires file names,
-    which may be difficult to track automatically as you add new doctests.
-
-    :param start: Directory to start searching in (default is cwd)
-    :type start: string
-    :param extension: Doctest file extension (default is .txt)
-    :type extension: string
-    :return: The doctest files found.
-    :rtype: list
-    """
-    doctests = []
-    for dirpath, dirnames, filenames in os.walk(start):
-        doctests.extend(os.path.join(dirpath, filename)
-                        for filename in filenames
-                        if filename.endswith(extension))
-    return doctests
-
-
-def file_contents(*filenames):
-    """Provide a long description."""
-    res = ['']
-    for filename in filenames:
-        with open(filename) as fp:
-            for line in fp:
-                res.append('' + line)
-            res.append('')
-        res.append('\n')
-    return EMPTYSTRING.join(res)
+def get_version(filepath):
+    for line in include_file(filepath).split('\n'):
+        if line.startswith('__version__'):
+            _, vers = line.split('=')
+            return vers.strip().replace('"', '').replace("'", '')

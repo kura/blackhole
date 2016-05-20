@@ -22,9 +22,9 @@
 
 """Provides utility functionality."""
 
+import codecs
 import os
 import random
-import re
 import socket
 import time
 
@@ -81,13 +81,15 @@ def get_version():
     """
     path = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(path, '__init__.py')
-    pattern = re.compile(r'(?P<version>\d+\.\d+(?:\.\d+)?(?:(?:a|b|rc)\d+)?)')
     if not os.access(filepath, os.R_OK):
-        raise AssertionError('No __init__.py file found')
-    with open(filepath) as fp:
+        raise OSError('Cannot open __init__.py file for reading')
+    with codecs.open(filepath, encoding='utf-8') as fp:
         for line in fp:
             if line.startswith('__version__'):
-                mo = pattern.search(line)
-                assert mo, 'No valid __version__ string found'
-                return mo.group('version')
+                try:
+                    _, vers = line.split('=')
+                except ValueError:
+                    raise AssertionError('Cannot extract version from '
+                                         '__version__')
+                return vers.strip().replace('"', '').replace("'", '')
     raise AssertionError('No __version__ assignment found')

@@ -1,6 +1,6 @@
 import sys
 
-from setup_helpers import require_python, get_version, file_contents
+from setup_helpers import require_python, get_version, include_file
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
@@ -69,9 +69,9 @@ setup(name='blackhole',
       maintainer='Kura',
       maintainer_email='kura@kura.io',
       description=description,
-      long_description=file_contents('README.rst'),
+      long_description=include_file('README.rst'),
       keywords=', '.join(keywords),
-      license=file_contents('LICENSE'),
+      license=include_file('LICENSE'),
       platforms=['linux'],
       packages=find_packages(exclude=["*.tests"]),
       install_requires=[],
