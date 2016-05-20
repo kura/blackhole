@@ -89,17 +89,19 @@ def get_version():
                 try:
                     _, vers = line.split('=')
                 except ValueError:
-                    raise AssertionError('Cannot extract version from '
-                                         '__version__')
+                    msg = 'Cannot extract version from __version__'
+                    raise AssertionError(msg)
                 version = vers.strip().replace('"', '').replace("'", '')
                 try:
                     major, minor, patch = version.split('.')
                     digits = (major.isdigit(), minor.isdigit(),
                               patch.isdigit())
                     if not all(digits):
-                        raise AssertionError('{} is not a valid version '
-                                             'number')
+                        msg = ('{} is not a valid version '
+                               'number').format(version)
+                        raise AssertionError(msg)
                 except ValueError:
-                    raise AssertionError('{} is not a valid version number')
+                    msg = '{} is not a valid version number'.format(version)
+                    raise AssertionError(msg)
                 return version
     raise AssertionError('No __version__ assignment found')

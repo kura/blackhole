@@ -97,27 +97,27 @@ def test_get_version_invalid_version_split():
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
-def test_get_version_invalid_version_number():
-    version_file = create_file('version.py', '__version__ = a.1')
-    with mock.patch('os.path.join', return_value=version_file), \
+def test_get_version_invalid_version():
+    version_file_a = create_file('versiona.py', '__version__ = a.1')
+    with mock.patch('os.path.join', return_value=version_file_a), \
             pytest.raises(AssertionError) as err:
         get_version()
-        assert str(err.value) == 'a.1 is not a valid version number'
-    version_file = create_file('version.py', '__version__ = a.1.1')
-    with mock.patch('os.path.join', return_value=version_file), \
+    assert str(err.value) == 'a.1 is not a valid version number'
+    version_file_b = create_file('versionb.py', '__version__ = a.1.1')
+    with mock.patch('os.path.join', return_value=version_file_b), \
             pytest.raises(AssertionError) as err:
         get_version()
-        assert str(err.value) == 'a.1.1 is not a valid version number'
-    version_file = create_file('version.py', '__version__ = 1.a.1')
-    with mock.patch('os.path.join', return_value=version_file), \
+    assert str(err.value) == 'a.1.1 is not a valid version number'
+    version_file_c = create_file('versionc.py', '__version__ = 1.a.1')
+    with mock.patch('os.path.join', return_value=version_file_c), \
             pytest.raises(AssertionError) as err:
         get_version()
-        assert str(err.value) == '1.a.1 is not a valid version number'
-    version_file = create_file('version.py', '__version__ = 1.1.a')
-    with mock.patch('os.path.join', return_value=version_file), \
+    assert str(err.value) == '1.a.1 is not a valid version number'
+    version_file_d = create_file('versiond.py', '__version__ = 1.1.a')
+    with mock.patch('os.path.join', return_value=version_file_d), \
             pytest.raises(AssertionError) as err:
         get_version()
-        assert str(err.value) == '1.1.a is not a valid version number'
+    assert str(err.value) == '1.1.a is not a valid version number'
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
