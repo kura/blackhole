@@ -80,19 +80,44 @@ def test_get_version():
                          'cleandir')
 def test_get_version_no_access():
     with mock.patch('os.access', return_value=False), \
-            pytest.raises(AssertionError) as err:
+            pytest.raises(OSError) as err:
         get_version()
-    assert str(err.value) == 'No __init__.py file found'
+    assert str(err.value) == 'Cannot open __init__.py file for reading'
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
-def test_get_version_bad_version_number():
-    version_file = create_file('version.py', '__version__ = "abc"')
+def test_get_version_invalid_version_split():
+    version_file = create_file('version.py', '__version__')
     with mock.patch('os.path.join', return_value=version_file), \
             pytest.raises(AssertionError) as err:
         get_version()
-    assert str(err.value) == 'No valid __version__ string found'
+    assert str(err.value) == 'Cannot extract version from __version__'
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+def test_get_version_invalid_version_number():
+    version_file = create_file('version.py', '__version__ = a.1')
+    with mock.patch('os.path.join', return_value=version_file), \
+            pytest.raises(AssertionError) as err:
+        get_version()
+        assert str(err.value) == 'a.1 is not a valid version number'
+    version_file = create_file('version.py', '__version__ = a.1.1')
+    with mock.patch('os.path.join', return_value=version_file), \
+            pytest.raises(AssertionError) as err:
+        get_version()
+        assert str(err.value) == 'a.1.1 is not a valid version number'
+    version_file = create_file('version.py', '__version__ = 1.a.1')
+    with mock.patch('os.path.join', return_value=version_file), \
+            pytest.raises(AssertionError) as err:
+        get_version()
+        assert str(err.value) == '1.a.1 is not a valid version number'
+    version_file = create_file('version.py', '__version__ = 1.1.a')
+    with mock.patch('os.path.join', return_value=version_file), \
+            pytest.raises(AssertionError) as err:
+        get_version()
+        assert str(err.value) == '1.1.a is not a valid version number'
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
