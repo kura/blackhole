@@ -238,9 +238,32 @@ class Config(metaclass=Singleton):
             if line.count('=') >= 1:
                 key, value = line.split('=', 1)
                 key, value = key.strip(), value.strip()
+                self.validate_option(key)
                 value = value.replace('"', '').replace("'", '')
                 setattr(self, key, value)
         return self
+
+    def validate_option(self, key):
+        """
+        Validate config option is actually... valid...
+
+        :param key: Configuration option
+        :type key: :any:`str`
+        :raises: :any:`blackhole.exceptions.ConfigException`
+        :rtype: :any:`None`
+        """
+        if key == '':
+            return
+        attributes = inspect.getmembers(self,
+                                        lambda a: not(inspect.isroutine(a)))
+        attrs = [a[0][1:] for a in attributes if not(a[0].startswith('__') and
+                 a[0].endswith('__')) and a[0].startswith('_')]
+        if key not in attrs:
+            valid_attrs = '\'{}\' and \'{}\''.format('\', \''.join(attrs[:-1]),
+                                                     attrs[-1])
+            msg = ('Invalid configuration option \'{}\'.\n\nValid options '
+                   'are: {}'.format(key, valid_attrs))
+            raise ConfigException(msg)
 
     @property
     def workers(self):

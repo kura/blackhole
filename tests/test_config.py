@@ -81,6 +81,14 @@ def test_warnings():
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
+def test_invalid_options():
+    cfile = create_config(('workers=2', 'delay=10', 'test=option'))
+    with pytest.raises(ConfigException):
+        Config(cfile).load()
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
 class TestCmdParser(unittest.TestCase):
 
     def test_default_conf(self):
