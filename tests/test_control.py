@@ -33,7 +33,7 @@ def test_tls_context_no_dhparams():
     tls_key = create_file('key.key')
     cfile = create_config(('listen=127.0.0.1:25', 'tls_listen=127.0.0.1:9000',
                            'tls_cert={}'.format(tls_cert),
-                           'tls_key={}'.format(tls_key),))
+                           'tls_key={}'.format(tls_key), ))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', False), ))
     with mock.patch('ssl.SSLContext.load_cert_chain'):
@@ -48,7 +48,7 @@ def test_tls_context_less_secure():
     tls_key = create_file('key.key')
     cfile = create_config(('listen=127.0.0.1:25', 'tls_listen=127.0.0.1:9000',
                            'tls_cert={}'.format(tls_cert),
-                           'tls_key={}'.format(tls_key),))
+                           'tls_key={}'.format(tls_key), ))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', True), ))
     with mock.patch('ssl.SSLContext.load_cert_chain'):
@@ -94,7 +94,7 @@ def test_create_ipv4_socket_fails():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_create_server_ipv4_bind_fails():
-    cfile = create_config(('listen=127.0.0.1:9000',))
+    cfile = create_config(('listen=127.0.0.1:9000', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind',
                     side_effect=OSError) as mock_sock, \
@@ -108,7 +108,7 @@ def test_create_server_ipv4_bind_fails():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_create_server_ipv6_bind_fails():
-    cfile = create_config(('listen=:::9000',))
+    cfile = create_config(('listen=:::9000', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind',
                     side_effect=OSError) as mock_sock, \
@@ -122,7 +122,7 @@ def test_create_server_ipv6_bind_fails():
                          'cleandir')
 @mock.patch('socket.socket.bind')
 def test_create_server_ipv4_bind_works(mock_sock):
-    cfile = create_config(('listen=127.0.0.1:9000',))
+    cfile = create_config(('listen=127.0.0.1:9000', ))
     Config(cfile).load()
     server('127.0.0.1', 9000, socket.AF_INET, {})
     assert mock_sock.called is True
@@ -133,7 +133,7 @@ def test_create_server_ipv4_bind_works(mock_sock):
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_create_server_ipv6_bind_works():
-    cfile = create_config(('listen=:::9000',))
+    cfile = create_config(('listen=:::9000', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind') as mock_sock:
         server('::', 9000, socket.AF_INET6, {})
@@ -145,7 +145,7 @@ def test_create_server_ipv6_bind_works():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_create_server_ipv4_tls_bind_fails():
-    cfile = create_config(('tls_listen=127.0.0.1:9000',))
+    cfile = create_config(('tls_listen=127.0.0.1:9000', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind',
                     side_effect=OSError) as mock_sock, \
@@ -160,7 +160,7 @@ def test_create_server_ipv4_tls_bind_fails():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_create_server_ipv6_tls_bind_fails():
-    cfile = create_config(('tls_listen=:::9000',))
+    cfile = create_config(('tls_listen=:::9000', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind',
                     side_effect=OSError) as mock_sock, \
@@ -175,7 +175,7 @@ def test_create_server_ipv6_tls_bind_fails():
                          'cleandir')
 def test_create_server_tls_ipv4_bind_works():
     cfile = create_config(('listen=127.0.0.1:25',
-                           'tls_listen=127.0.0.1:9000',))
+                           'tls_listen=127.0.0.1:9000', ))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', False), ))
     with mock.patch('socket.socket.bind') as mock_sock, \
@@ -193,7 +193,7 @@ def test_create_server_tls_ipv4_bind_works():
                          'cleandir')
 def test_create_server_tls_ipv6_bind_works():
     cfile = create_config(('listen=:::25',
-                           'tls_listen=:::9000',))
+                           'tls_listen=:::9000', ))
     conf = Config(cfile).load()
     conf.args = Args((('less_secure', False), ))
     with mock.patch('socket.socket.bind') as mock_sock, \
@@ -213,7 +213,7 @@ class Grp(mock.MagicMock):
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_setgid():
-    cfile = create_config(('group=abc',))
+    cfile = create_config(('group=abc', ))
     with mock.patch('grp.getgrnam') as mock_getgrnam, \
             mock.patch('os.setgid') as mock_setgid:
         Config(cfile).load()
@@ -235,7 +235,7 @@ def test_setgid_same_group():
                          'cleandir')
 @mock.patch('grp.getgrnam', side_effect=KeyError)
 def test_setgid_invalid_group(_):
-    cfile = create_config(('group=testgroup',))
+    cfile = create_config(('group=testgroup', ))
     with pytest.raises(SystemExit) as err:
         Config(cfile).load()
         setgid()
@@ -245,7 +245,7 @@ def test_setgid_invalid_group(_):
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_setgid_no_perms():
-    cfile = create_config(('group=testgroup',))
+    cfile = create_config(('group=testgroup', ))
     with mock.patch('grp.getgrnam', side_effect=PermissionError), \
             pytest.raises(SystemExit) as err:
         Config(cfile).load()
@@ -260,7 +260,7 @@ class Pwd(mock.MagicMock):
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_setuid():
-    cfile = create_config(('user=abc',))
+    cfile = create_config(('user=abc', ))
     with mock.patch('pwd.getpwnam') as mock_getpwnam, \
             mock.patch('os.setuid') as mock_setuid:
         Config(cfile).load()
@@ -281,7 +281,7 @@ def test_setuid_same_user():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_setuid_invalid_user():
-    cfile = create_config(('user=testuser',))
+    cfile = create_config(('user=testuser', ))
     with mock.patch('pwd.getpwnam', side_effect=KeyError), \
             pytest.raises(SystemExit) as err:
         Config(cfile).load()
@@ -292,7 +292,7 @@ def test_setuid_invalid_user():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_setuid_no_perms():
-    cfile = create_config(('user=testuser',))
+    cfile = create_config(('user=testuser', ))
     with mock.patch('pwd.getpwnam', side_effect=PermissionError), \
             pytest.raises(SystemExit) as err:
         Config(cfile).load()

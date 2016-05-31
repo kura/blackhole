@@ -155,18 +155,18 @@ class TestConfigTest(unittest.TestCase):
 class TestListen(unittest.TestCase):
 
     def test_default(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         conf = Config(cfile).load()
         assert conf.listen == [('127.0.0.1', 25, socket.AF_INET, {}),
                                ('127.0.0.1', 587, socket.AF_INET, {})]
 
     def test_localhost(self):
-        cfile = create_config(('listen=localhost:25',))
+        cfile = create_config(('listen=localhost:25', ))
         conf = Config(cfile).load()
         assert conf.listen == [('localhost', 25, socket.AF_INET, {})]
 
     def test_ipv6_disabled(self):
-        cfile = create_config(('listen=:::25',))
+        cfile = create_config(('listen=:::25', ))
         conf = Config(cfile).load()
         conf._listen = [('::', 25, socket.AF_UNSPEC, {})]
         with pytest.raises(ConfigException), \
@@ -175,45 +175,45 @@ class TestListen(unittest.TestCase):
 
     @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
     def test_ipv6(self):
-        cfile = create_config(('listen=:::25',))
+        cfile = create_config(('listen=:::25', ))
         conf = Config(cfile).load()
         assert conf.listen == [('::', 25, socket.AF_INET6, {})]
 
     def test_no_flags(self):
-        cfile = create_config(('listen=:25',))
+        cfile = create_config(('listen=:25', ))
         conf = Config(cfile).load()
         assert conf.listen == [('', 25, socket.AF_INET, {})]
 
     def test_mode_flag(self):
-        cfile = create_config(('listen=:25 mode=bounce',))
+        cfile = create_config(('listen=:25 mode=bounce', ))
         conf = Config(cfile).load()
         assert conf.listen == [('', 25, socket.AF_INET, {'mode': 'bounce'})]
 
     def test_delay_flag(self):
-        cfile = create_config(('listen=:25 delay=30',))
+        cfile = create_config(('listen=:25 delay=30', ))
         conf = Config(cfile).load()
         assert conf.listen == [('', 25, socket.AF_INET, {'delay': '30'})]
 
     def test_delay_range_flag(self):
-        cfile = create_config(('listen=:25 delay=30-50',))
+        cfile = create_config(('listen=:25 delay=30-50', ))
         conf = Config(cfile).load()
         assert conf.listen == [('', 25, socket.AF_INET,
                                {'delay': ('30', '50')})]
 
     def test_mode_and_delay_range_flag(self):
-        cfile = create_config(('listen=:25 delay=15-20 mode=bounce',))
+        cfile = create_config(('listen=:25 delay=15-20 mode=bounce', ))
         conf = Config(cfile).load()
         assert conf.listen == [('', 25, socket.AF_INET, {'delay': ('15', '20'),
                                                          'mode': 'bounce'})]
 
     def test_listen_flags_special_ipv4(self):
-        cfile = create_config(('listen=:25 mode=bounce',))
+        cfile = create_config(('listen=:25 mode=bounce', ))
         conf = Config(cfile).load()
         assert conf.flags_from_listener('127.0.0.1', 25) == {'mode': 'bounce'}
         assert conf.flags_from_listener('0.0.0.0', 25) == {'mode': 'bounce'}
 
     def test_listen_flags_special_ipv6(self):
-        cfile = create_config(('listen=:::25 mode=bounce',))
+        cfile = create_config(('listen=:::25 mode=bounce', ))
         conf = Config(cfile).load()
         assert conf.flags_from_listener('::1', 25) == {'mode': 'bounce'}
 
@@ -223,24 +223,24 @@ class TestListen(unittest.TestCase):
 class TestPort(unittest.TestCase):
 
     def test_str_port(self):
-        cfile = create_config(('listen=127.0.0.1:abc',))
+        cfile = create_config(('listen=127.0.0.1:abc', ))
         with pytest.raises(ConfigException):
             Config(cfile).load()
 
     def test_lower_than_min(self):
-        cfile = create_config(('listen=127.0.0.1:0',))
+        cfile = create_config(('listen=127.0.0.1:0', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_port()
 
     def test_larger_than_max(self):
-        cfile = create_config(('listen=127.0.0.1:99999',))
+        cfile = create_config(('listen=127.0.0.1:99999', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_port()
 
     def test_port_under_1024_no_perms(self):
-        cfile = create_config(('listen=127.0.0.1:1023',))
+        cfile = create_config(('listen=127.0.0.1:1023', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=9000) as mock_getuid, \
                 pytest.raises(ConfigException):
@@ -249,7 +249,7 @@ class TestPort(unittest.TestCase):
         assert mock_getuid.call_count is 1
 
     def test_port_under_1024_with_perms_available(self):
-        cfile = create_config(('listen=127.0.0.1:1024',))
+        cfile = create_config(('listen=127.0.0.1:1024', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=0) as mock_getuid, \
                 mock.patch('socket.socket.bind', return_value=True):
@@ -272,7 +272,7 @@ class TestPort(unittest.TestCase):
                                ('::', 9001, socket.AF_INET6, {})]
 
     def test_port_under_1024_with_perms_unavailable(self):
-        cfile = create_config(('listen=127.0.0.1:1023',))
+        cfile = create_config(('listen=127.0.0.1:1023', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=0) as mock_getuid, \
             mock.patch('socket.socket.bind',
@@ -285,7 +285,7 @@ class TestPort(unittest.TestCase):
         assert mock_socket.call_count is 1
 
     def test_port_over_1023_available(self):
-        cfile = create_config(('listen=127.0.0.1:1024',))
+        cfile = create_config(('listen=127.0.0.1:1024', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=9000) as mock_getuid, \
                 mock.patch('socket.socket.bind', return_value=True):
@@ -294,7 +294,7 @@ class TestPort(unittest.TestCase):
         assert mock_getuid.call_count is 1
 
     def test_port_over_1023_unavailable(self):
-        cfile = create_config(('listen=127.0.0.1:1024',))
+        cfile = create_config(('listen=127.0.0.1:1024', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=9000) as mock_getuid, \
             mock.patch('socket.socket.bind',
@@ -312,13 +312,13 @@ class TestPort(unittest.TestCase):
 class TestUser(unittest.TestCase):
 
     def test_invalid_user(self):
-        cfile = create_config(('user=xcbsfbsrwgrwgsgrsgsdgrwty4y4fsg',))
+        cfile = create_config(('user=xcbsfbsrwgrwgsgrsgsdgrwty4y4fsg', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_user()
 
     def test_valid_user(self):
-        cfile = create_config(('user={}'.format(getpass.getuser()),))
+        cfile = create_config(('user={}'.format(getpass.getuser()), ))
         conf = Config(cfile).load()
         assert conf.user == getpass.getuser()
 
@@ -328,7 +328,7 @@ class TestUser(unittest.TestCase):
 class TestGroup(unittest.TestCase):
 
     def test_invalid_group(self):
-        cfile = create_config(('group=xcbsfbsrwgrwgsgrsgsdgrwty4y4fsg',))
+        cfile = create_config(('group=xcbsfbsrwgrwgsgrsgsdgrwty4y4fsg', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_group()
@@ -345,23 +345,23 @@ class TestGroup(unittest.TestCase):
 class TestTimeout(unittest.TestCase):
 
     def test_default_timeout(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         conf = Config(cfile).load()
         assert conf.timeout == 60
 
     def test_str_timeout(self):
-        cfile = create_config(('timeout=xcbsfbsrwgrwgsgrsgsdgrwty4y4fsg',))
+        cfile = create_config(('timeout=xcbsfbsrwgrwgsgrsgsdgrwty4y4fsg', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_timeout()
 
     def test_valid_timeout(self):
-        cfile = create_config(('timeout=10',))
+        cfile = create_config(('timeout=10', ))
         conf = Config(cfile).load()
         assert conf.timeout == 10
 
     def test_timeout_over_180(self):
-        cfile = create_config(('timeout=300',))
+        cfile = create_config(('timeout=300', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_timeout()
@@ -372,41 +372,41 @@ class TestTimeout(unittest.TestCase):
 class TestTlsPort(unittest.TestCase):
 
     def test_default_tls_port(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         conf = Config(cfile).load()
         assert conf.tls_listen == []
 
     def test_str_tls_port(self):
-        cfile = create_config(('tls_listen=127.0.0.1:abc',))
+        cfile = create_config(('tls_listen=127.0.0.1:abc', ))
         with pytest.raises(ConfigException):
             Config(cfile).load()
 
     def test_same_port_tls_port(self):
         cfile = create_config(('listen=127.0.0.1:25',
-                               'tls_listen=127.0.0.1:25',))
+                               'tls_listen=127.0.0.1:25', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_tls_port()
 
     def test_valid_tls_port(self):
-        cfile = create_config(('tls_listen=127.0.0.1:19',))
+        cfile = create_config(('tls_listen=127.0.0.1:19', ))
         conf = Config(cfile).load()
         assert conf.tls_listen == [('127.0.0.1', 19, socket.AF_INET, {})]
 
     def test_tls_lower_than_min(self):
-        cfile = create_config(('tls_listen=127.0.0.1:0',))
+        cfile = create_config(('tls_listen=127.0.0.1:0', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_port()
 
     def test_tls_larger_than_max(self):
-        cfile = create_config(('tls_listen=127.0.0.1:99999',))
+        cfile = create_config(('tls_listen=127.0.0.1:99999', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_port()
 
     def test_tls_under_1024_no_perms(self):
-        cfile = create_config(('tls_listen=127.0.0.1:1023',))
+        cfile = create_config(('tls_listen=127.0.0.1:1023', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=9000) as mock_getuid, \
                 pytest.raises(ConfigException):
@@ -415,7 +415,7 @@ class TestTlsPort(unittest.TestCase):
         assert mock_getuid.call_count is 1
 
     def test_tls_under_1024_with_perms_available(self):
-        cfile = create_config(('tls_listen=127.0.0.1:1024',))
+        cfile = create_config(('tls_listen=127.0.0.1:1024', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=0) as mock_getuid, \
                 mock.patch('socket.socket.bind', return_value=True):
@@ -424,7 +424,7 @@ class TestTlsPort(unittest.TestCase):
         assert mock_getuid.call_count is 1
 
     def test_tls_under_1024_with_perms_unavailable(self):
-        cfile = create_config(('tls_listen=127.0.0.1:1023',))
+        cfile = create_config(('tls_listen=127.0.0.1:1023', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=0) as mock_getuid, \
             mock.patch('socket.socket.bind',
@@ -437,7 +437,7 @@ class TestTlsPort(unittest.TestCase):
         assert mock_socket.call_count is 1
 
     def test_tls_over_1023_available(self):
-        cfile = create_config(('tls_listen=127.0.0.1:1024',))
+        cfile = create_config(('tls_listen=127.0.0.1:1024', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=9000) as mock_getuid, \
                 mock.patch('socket.socket.bind', return_value=True):
@@ -446,7 +446,7 @@ class TestTlsPort(unittest.TestCase):
         assert mock_getuid.call_count is 1
 
     def test_tls_over_1023_unavailable(self):
-        cfile = create_config(('tls_listen=127.0.0.1:1024',))
+        cfile = create_config(('tls_listen=127.0.0.1:1024', ))
         conf = Config(cfile).load()
         with mock.patch('os.getuid', return_value=9000) as mock_getuid, \
             mock.patch('socket.socket.bind',
@@ -478,12 +478,12 @@ class TestTlsPort(unittest.TestCase):
 class TestTls(unittest.TestCase):
 
     def test_disabled(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         conf = Config(cfile).load()
         assert conf.test_tls_settings() is None
 
     def test_ipv6_disabled(self):
-        cfile = create_config(('tls_listen=:::465',))
+        cfile = create_config(('tls_listen=:::465', ))
         conf = Config(cfile).load()
         conf._tls_listen = [('::', 465, socket.AF_UNSPEC, {})]
         with pytest.raises(ConfigException), \
@@ -635,13 +635,13 @@ class TestTls(unittest.TestCase):
                                    {'delay': ('15', '20'), 'mode': 'bounce'})]
 
     def test_tls_listen_flags_special_ipv4(self):
-        cfile = create_config(('tls_listen=:465 mode=bounce',))
+        cfile = create_config(('tls_listen=:465 mode=bounce', ))
         conf = Config(cfile).load()
         assert conf.flags_from_listener('127.0.0.1', 465) == {'mode': 'bounce'}
         assert conf.flags_from_listener('0.0.0.0', 465) == {'mode': 'bounce'}
 
     def test_tls_listen_flags_special_ipv6(self):
-        cfile = create_config(('listen=:::465 mode=bounce',))
+        cfile = create_config(('listen=:::465 mode=bounce', ))
         conf = Config(cfile).load()
         assert conf.flags_from_listener('::1', 465) == {'mode': 'bounce'}
 
@@ -651,7 +651,7 @@ class TestTls(unittest.TestCase):
 class TestDelay(unittest.TestCase):
 
     def test_no_delay(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         conf = Config(cfile).load()
         assert conf.test_delay() is None
         assert conf.delay is None
@@ -681,29 +681,29 @@ class TestDelay(unittest.TestCase):
 class TestMode(unittest.TestCase):
 
     def test_default(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         conf = Config(cfile).load()
         assert conf.mode == 'accept'
 
     def test_invalid_mode(self):
-        cfile = create_config(('mode=kura',))
+        cfile = create_config(('mode=kura', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             assert conf.test_mode()
         assert conf.mode == 'kura'
 
     def test_accept(self):
-        cfile = create_config(('mode=accept',))
+        cfile = create_config(('mode=accept', ))
         conf = Config(cfile).load()
         assert conf.mode == 'accept'
 
     def test_bounce(self):
-        cfile = create_config(('mode=bounce',))
+        cfile = create_config(('mode=bounce', ))
         conf = Config(cfile).load()
         assert conf.mode == 'bounce'
 
     def test_random(self):
-        cfile = create_config(('mode=random',))
+        cfile = create_config(('mode=random', ))
         conf = Config(cfile).load()
         assert conf.mode == 'random'
 
@@ -713,18 +713,18 @@ class TestMode(unittest.TestCase):
 class TestMaxMessageSize(unittest.TestCase):
 
     def test_no_size(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         conf = Config(cfile).load()
         assert conf.max_message_size == 512000
 
     def test_invalid_size(self):
-        cfile = create_config(('max_message_size=abc',))
+        cfile = create_config(('max_message_size=abc', ))
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_max_message_size()
 
     def test_size(self):
-        cfile = create_config(('max_message_size=1024000',))
+        cfile = create_config(('max_message_size=1024000', ))
         conf = Config(cfile).load()
         assert conf.max_message_size == 1024000
         assert conf.test_max_message_size() is None

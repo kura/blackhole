@@ -136,7 +136,7 @@ class Controller:
 
     def start(self):
         ready_event = threading.Event()
-        self.thread = threading.Thread(target=self._run, args=(ready_event,))
+        self.thread = threading.Thread(target=self._run, args=(ready_event, ))
         self.thread.daemon = True
         self.thread.start()
         ready_event.wait()

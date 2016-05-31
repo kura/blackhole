@@ -19,7 +19,7 @@ from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_spawn_ipv4():
-    cfile = create_config(('listen=127.0.0.1:9999',))
+    cfile = create_config(('listen=127.0.0.1:9999', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind'):
         supervisor = Supervisor()
@@ -192,7 +192,7 @@ def test_spawn_ipv6_tls_dhparams():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_spawn_ipv6():
-    cfile = create_config(('listen=:::9999',))
+    cfile = create_config(('listen=:::9999', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind'):
         supervisor = Supervisor()
@@ -202,7 +202,7 @@ def test_spawn_ipv6():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_spawn_ipv4_and_ipv6():
-    cfile = create_config(('listen=:9999, :::9999',))
+    cfile = create_config(('listen=:9999, :::9999', ))
     Config(cfile).load()
     supervisor = Supervisor()
     with mock.patch('socket.socket.bind'):
@@ -213,7 +213,7 @@ def test_spawn_ipv4_and_ipv6():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_spawn_ipv4_fail():
-    cfile = create_config(('listen=:9999',))
+    cfile = create_config(('listen=:9999', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind', side_effect=OSError), \
             pytest.raises(BlackholeRuntimeException):
@@ -223,7 +223,7 @@ def test_spawn_ipv4_fail():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_spawn_ipv6_fail():
-    cfile = create_config((':::9999',))
+    cfile = create_config(('listen=:::9999', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind', side_effect=OSError), \
             pytest.raises(BlackholeRuntimeException):
@@ -233,7 +233,7 @@ def test_spawn_ipv6_fail():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_spawn_ipv4_and_ipv6_fail():
-    cfile = create_config(('listen=:9999, :::9999',))
+    cfile = create_config(('listen=:9999, :::9999', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind', side_effect=OSError), \
             pytest.raises(BlackholeRuntimeException):

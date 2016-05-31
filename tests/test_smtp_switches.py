@@ -168,13 +168,13 @@ class TestDelaySwitch(unittest.TestCase):
         assert smtp.delay is None
 
     def test_delay_from_config(self):
-        cfile = create_config(('delay=30',))
+        cfile = create_config(('delay=30', ))
         Config(cfile).load()
         smtp = Smtp([])
         assert smtp.delay is 30
 
     def test_delay_switch_overrides_config_single(self):
-        cfile = create_config(('delay=30',))
+        cfile = create_config(('delay=30', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '60'
@@ -182,7 +182,7 @@ class TestDelaySwitch(unittest.TestCase):
         assert smtp.config.delay is 30
 
     def test_delay_switch_range_overrides_config(self):
-        cfile = create_config(('delay=30',))
+        cfile = create_config(('delay=30', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '40, 45'
@@ -190,91 +190,91 @@ class TestDelaySwitch(unittest.TestCase):
         assert smtp.config.delay is 30
 
     def test_delay_switch_invalid_single_value_no_config(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = 'fifteen'
         assert smtp.delay is None
 
     def test_delay_switch_invalid_single_value_config_60(self):
-        cfile = create_config(('delay=30',))
+        cfile = create_config(('delay=30', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = 'fifteen'
         assert smtp.delay is 30
 
     def test_delay_switch_invalid_single_negative_value(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '-10'
         assert smtp.delay is None
 
     def test_delay_switch_not_above_max(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '90'
         assert smtp.delay is 60
 
     def test_delay_switch_invalid_range_value_no_config(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = 'fifteen, eighteen'
         assert smtp.delay is None
 
     def test_delay_switch_invalid_min_range_value_no_config(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = 'fifteen, 18'
         assert smtp.delay is None
 
     def test_delay_switch_invalid_max_range_value_no_config(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '15, eighteen'
         assert smtp.delay is None
 
     def test_delay_switch_invalid_range_negative_min_value(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '-10, 10'
         assert smtp.delay is None
 
     def test_delay_switch_invalid_range_negative_max_value(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '1, -10'
         assert smtp.delay is None
 
     def test_delay_switch_invalid_range_negatives(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '-10, -1'
         assert smtp.delay is None
 
     def test_delay_switch_range_min_higher_than_max(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '20, 10'
         assert smtp.delay is None
 
     def test_delay_switch_range_max_higher_than_60(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '59, 70'
         assert smtp.delay in [59, 60]
 
     def test_delay_switch_more_than_2(self):
-        cfile = create_config(('',))
+        cfile = create_config(('', ))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = '1, 2, 3'

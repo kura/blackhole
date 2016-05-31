@@ -233,6 +233,8 @@ class Config(metaclass=Singleton):
             line = line.strip()
             if line.startswith('#'):
                 continue
+            if line.strip() == '':
+                continue
             if '#' in line:
                 line = line.split('#')[0]
             if line.count('=') >= 1:
@@ -248,6 +250,8 @@ class Config(metaclass=Singleton):
     def validate_option(self, key):
         """
         Validate config option is actually... valid...
+
+        https://blackhole.io/configuration-options.html
 
         :param key: Configuration option
         :type key: :any:`str`
