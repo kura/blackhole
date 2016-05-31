@@ -44,14 +44,15 @@ def test_no_access():
                          'cleandir')
 def test_load():
     cfile = create_config(('#not=thisline', 'listen=10.0.0.1:1025',
-                           '''this won't be added''',
                            'mode=bounce   #default accept'))
     conf = Config(cfile).load()
     assert conf.listen == [('10.0.0.1', 1025, socket.AF_INET, {})]
     assert conf.tls_listen == []
-    assert getattr(conf, 'not', None) is None
-    assert getattr(conf, 'this', None) is None
-    assert getattr(conf, 'default', None) is None
+    cfile = create_config(('#not=thisline', 'listen=10.0.0.1:1025',
+                           '''this won't be added''',
+                           'mode=bounce   #default accept'))
+    with pytest.raises(ConfigException):
+        Config(cfile).load()
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
@@ -334,7 +335,7 @@ class TestGroup(unittest.TestCase):
 
     def test_valid_group(self):
         gname = grp.getgrgid(os.getgid()).gr_name
-        cfile = create_config(('group={}'.format(gname)))
+        cfile = create_config(('group={}'.format(gname), ))
         conf = Config(cfile).load()
         assert conf.group == grp.getgrgid(os.getgid()).gr_name
 

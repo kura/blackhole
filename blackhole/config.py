@@ -241,6 +241,8 @@ class Config(metaclass=Singleton):
                 self.validate_option(key)
                 value = value.replace('"', '').replace("'", '')
                 setattr(self, key, value)
+            else:
+                self.validate_option(line)
         return self
 
     def validate_option(self, key):
