@@ -70,8 +70,7 @@ def parse_cmd_args(args):
     parser.add_argument('-v', '--version', action='version',
                         version=get_version())
     parser.add_argument('-c', '--conf', type=str,
-                        default='/etc/blackhole.conf',
-                        dest='config_file', metavar='/etc/blackhole.conf',
+                        dest='config_file', metavar='FILE',
                         help='override the default configuration options')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-t', '--test', dest='test', action='store_true',
@@ -191,12 +190,11 @@ class Config(metaclass=Singleton):
     _max_message_size = 512000
     _dynamic_switch = None
 
-    def __init__(self, config_file="/etc/blackhole.conf"):
+    def __init__(self, config_file=None):
         """
         Initialise the configuration.
 
-        :param config_file: The configuration file,
-                            default '/etc/blackhole.conf'
+        :param config_file: The configuration file.
         :type config_file: :any:`str`
         """
         self.config_file = config_file
