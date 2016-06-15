@@ -24,6 +24,11 @@ appears to have been delivered or bounced.
 Think of blackhole sort of like a honeypot in terms of how it handles mail,
 but it's specifically designed with testing in mind.
 
+Service status
+==============
+
+You can find the current service status on `status.blackhole.io
+<http://status.blackhole.io/>`_.
 
 Why?
 ====
