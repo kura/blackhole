@@ -21,7 +21,7 @@ def test_default():
     with mock.patch('getpass.getuser') as mock_getuser, \
             mock.patch('grp.getgrgid') as mock_getgrgid:
         conf = Config()
-    assert conf.config_file == '/etc/blackhole.conf'
+    assert conf.config_file is None
     assert mock_getuser.called is True
     assert mock_getuser.call_count is 1
     assert mock_getgrgid.called is True
