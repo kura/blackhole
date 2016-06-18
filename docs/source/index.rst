@@ -30,6 +30,16 @@ Service status
 You can find the current service status on `status.blackhole.io
 <http://status.blackhole.io/>`_.
 
+Donations
+=========
+
+Blackhole costs a bit of money to run, it received millions of emails on a
+daily basis, sometimes millions every 5 minutes depending on the load of the
+platform.
+
+To keep Blackhole running, please think about donating even just a little to
+the project `via Gratipay <https://gratipay.com/blackhole.io/>`_.
+
 Why?
 ====
 

@@ -22,39 +22,43 @@ Blackhole
     :target: https://gitter.im/kura/blackhole
     :alt: Chat on Gitter
 
-About
-=====
+Blackhole is an `MTA (message transfer agent)
+<https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
+pipes all mail to /dev/null.
 
-Blackhole is an MTA (message transfer agent) that (figuratively) pipes all mail
-to /dev/null.
-
-Blackhole is built on top of `asyncio <https://docs.python.org/3/library/asyncio.html>`_
-and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html#async-def>`_
+Blackhole is built on top of `asyncio
+<https://docs.python.org/3/library/asyncio.html>`_ and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html#async-def>`_
 and `await <https://docs.python.org/3/reference/expressions.html#await>`_
 statements available in `Python 3.5
 <https://docs.python.org/3/whatsnew/3.5.html>`_ and above.
 
-While Blackhole is an MTA (mail transport agent), none of the actions
+While blackhole is an MTA (mail transport agent), none of the actions
 performed via SMTP or SMTPS are actually processed and no email or sent or
 delivered.
 
-You can tell Blackhole how to handle mail that it receives. It can accept all
+You can tell blackhole how to handle mail that it receives. It can accept all
 of it, bounce it all or randomly do either of those two actions. No matter how
 you choose to configure it, the email is never actually delivered, it just
 appears to have been delivered or bounced.
 
-Think of Blackhole sort of like a honeypot in terms of how it handles mail,
+Think of blackhole sort of like a honeypot in terms of how it handles mail,
 but it's specifically designed with testing in mind.
 
-Python < 3.5
-------------
+Service status
+==============
 
-The original incarnation of Blackhole -- built on top of Tornado -- is still
-available for use on Python versions lower than 3.5, including PyPy.
+You can find the current service status on `status.blackhole.io
+<http://status.blackhole.io/>`_.
 
-It is no longer maintained however, but is available for posterity's sake on
-`blackhole.io/1 <https://blackhole.io/1/>`_ and `GitHub
-<https://github.com/kura/blackhole/releases/tag/1.8.1>`_.
+Donations
+=========
+
+Blackhole costs a bit of money to run, it received millions of emails on a
+daily basis, sometimes millions every 5 minutes depending on the load of the
+platform.
+
+To keep Blackhole running, please think about donating even just a little to
+the project `via Gratipay <https://gratipay.com/blackhole.io/>`_.
 
 Why?
 ====
