@@ -33,7 +33,7 @@ You can find the current service status on `status.blackhole.io
 Donations
 =========
 
-Blackhole costs a bit of money to run, it received millions of emails on a
+Blackhole costs a bit of money to run, it receives millions of emails on a
 daily basis, sometimes millions every 5 minutes depending on the load of the
 platform.
 
