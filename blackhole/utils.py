@@ -28,6 +28,13 @@ import random
 import socket
 import time
 
+try:  # pragma: no cover
+    import asyncio
+    import uvloop
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+except ImportError:  # pragma: no cover
+    pass
+
 
 __all__ = ('mailname', 'message_id', 'get_version')
 
