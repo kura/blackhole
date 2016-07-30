@@ -25,6 +25,16 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.6:
+
+- Introduced the ability to use `uvloop
+  <https://github.com/MagicStack/uvloop>`_ in place of the default
+  :any:`asyncio.event_loop`.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.4:
 .. _2.1.5:
 
@@ -61,10 +71,6 @@ the large 2.1.4 release.
 - Added an internal counter of invalid SMTP commands. Mitigate DoS attacks,
   maximum failed commands per connection is 10. Clients that violate this rule
   get disconnected.
-
--------------
-Past releases
--------------
 
 .. _2.1.3:
 
