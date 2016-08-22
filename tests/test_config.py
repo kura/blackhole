@@ -157,8 +157,14 @@ class TestListen(unittest.TestCase):
     def test_default(self):
         cfile = create_config(('', ))
         conf = Config(cfile).load()
-        assert conf.listen == [('127.0.0.1', 25, socket.AF_INET, {}),
-                               ('127.0.0.1', 587, socket.AF_INET, {})]
+        with mock.patch('socket.has_ipv6', False):
+            assert conf.listen == [('127.0.0.1', 25, socket.AF_INET, {}),
+                                   ('127.0.0.1', 587, socket.AF_INET, {})]
+        with mock.patch('socket.has_ipv6', True):
+            assert conf.listen == [('127.0.0.1', 25, socket.AF_INET, {}),
+                                   ('127.0.0.1', 587, socket.AF_INET, {}),
+                                   ('::', 25, socket.AF_INET6, {}),
+                                   ('::', 587, socket.AF_INET6, {})]
 
     def test_localhost(self):
         cfile = create_config(('listen=localhost:25', ))

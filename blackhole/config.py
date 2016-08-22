@@ -220,6 +220,7 @@ class Config(metaclass=Singleton):
 
            i.e.
 
+           # listen = :1025, :::1025   ->
            listen = :25, :::25  # IPv4 & IPv6   ->   listen = :25, :::25
         """
         if self.config_file is None:
@@ -303,11 +304,26 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-            Default value is [('127.0.0.1', 25, :any:`socket.AF_INET`),
-                              ('127.0.0.1', 587, :any:`socket.AF_INET`)]
+            Default values are:
+
+                If IPv6 is supported:
+
+                    [('127.0.0.1', 25, :any:`socket.AF_INET`),
+                     ('127.0.0.1', 587, :any:`socket.AF_INET`),
+                     ('::', 25, :any:`socket.AF_INET6`),
+                     ('::', 587, :any:`socket.AF_INET6`)]
+
+                If IPv6 is not supported:
+
+                    [('127.0.0.1', 25, :any:`socket.AF_INET`),
+                     ('127.0.0.1', 587, :any:`socket.AF_INET`)]
         """
-        return self._listen or [('127.0.0.1', 25, socket.AF_INET, {}),
-                                ('127.0.0.1', 587, socket.AF_INET, {})]
+        ipv4 = [('127.0.0.1', 25, socket.AF_INET, {}),
+                ('127.0.0.1', 587, socket.AF_INET, {})]
+        ipv6 = [('::', 25, socket.AF_INET6, {}),
+                ('::', 587, socket.AF_INET6, {})]
+        default = ipv4 + ipv6 if socket.has_ipv6 else ipv4
+        return self._listen or default
 
     @listen.setter
     def listen(self, addrs):

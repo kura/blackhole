@@ -36,8 +36,9 @@ listen
 :Syntax:
     **listen** = *[address]:port [mode=MODE] [delay=DELAY]*
 :Default:
-    127.0.0.1:25, 127.0.0.1:587 -- 25 is the recognised SMTP port, 587 is the
-    recognised SMTP Submission port.
+    127.0.0.1:25, 127.0.0.1:587, :::25, :::587 -- 25 is the recognised SMTP
+    port, 587 is the recognised SMTP Submission port. IPv6 listeners are only
+    enabled if IPv6 is supported.
 :Optional:
     *mode=* and *delay=* -- allows setting a response mode and delay per
     listener.
