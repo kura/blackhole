@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import pathlib
 import tempfile
 
 import pytest
@@ -36,7 +37,8 @@ def reset_supervisor():
 
 def create_config(data):
     cwd = os.getcwd()
-    path = os.path.join(cwd, 'test.conf')
+    path = os.path.join(pathlib.Path(cwd),
+                        pathlib.Path('test.conf'))
     with open(path, 'w') as cfile:
         cfile.write('\n'.join(data))
     return path
@@ -44,7 +46,7 @@ def create_config(data):
 
 def create_file(name, data=''):
     cwd = os.getcwd()
-    path = os.path.join(cwd, name)
+    path = os.path.join(pathlib.Path(cwd), pathlib.Path(name))
     with open(path, 'w') as ffile:
         ffile.write(str(data))
     return path

@@ -30,6 +30,7 @@ import inspect
 import logging
 import multiprocessing
 import os
+import pathlib
 import pwd
 import socket
 
@@ -184,7 +185,7 @@ class Config(metaclass=Singleton):
     _tls_key = None
     _tls_cert = None
     _tls_dhparams = None
-    _pidfile = '/tmp/blackhole.pid'
+    _pidfile = pathlib.Path('/tmp/blackhole.pid')
     _delay = None
     _mode = 'accept'
     _max_message_size = 512000
@@ -197,7 +198,8 @@ class Config(metaclass=Singleton):
         :param config_file: The configuration file.
         :type config_file: :any:`str`
         """
-        self.config_file = config_file
+        if config_file:
+            self.config_file = pathlib.Path(config_file)
         self.user = getpass.getuser()
         self.group = grp.getgrgid(os.getgid()).gr_name
         # this has to be cached here due to the socket.getfqdn call failing
@@ -414,13 +416,14 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#tls_key
 
         :returns: A path to a TLS key file.
-        :rtype: :any:`str`
+        :rtype: :any:`pathlib.Path`
         """
         return self._tls_key
 
     @tls_key.setter
     def tls_key(self, tls_key):
-        self._tls_key = tls_key
+        if tls_key is not None:
+            self._tls_key = pathlib.Path(tls_key)
 
     @property
     def tls_cert(self):
@@ -430,13 +433,14 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#tls_cert
 
         :returns: A path to a TLS certificate.
-        :rtype: :any:`str`
+        :rtype: :any:`pathlib.Path`
         """
         return self._tls_cert
 
     @tls_cert.setter
     def tls_cert(self, tls_cert):
-        self._tls_cert = tls_cert
+        if tls_cert is not None:
+            self._tls_cert = pathlib.Path(tls_cert)
 
     @property
     def tls_dhparams(self):
@@ -446,13 +450,14 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#tls_dhparams
 
         :returns: A path to a file containing dhparams.
-        :rtype: :any:`str`
+        :rtype: :any:`pathlib.Path`
         """
         return self._tls_dhparams
 
     @tls_dhparams.setter
     def tls_dhparams(self, tls_dhparams):
-        self._tls_dhparams = tls_dhparams
+        if tls_dhparams is not None:
+            self._tls_dhparams = pathlib.Path(tls_dhparams)
 
     @property
     def pidfile(self):
@@ -462,13 +467,14 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#pidfile
 
         :returns: A path to a pid file.
-        :rtype: :any:`str`
+        :rtype: :any:`pathlib.Path`
         """
         return self._pidfile
 
     @pidfile.setter
     def pidfile(self, pidfile):
-        self._pidfile = pidfile
+        if pidfile is not None:
+            self._pidfile = pathlib.Path(pidfile)
 
     @property
     def delay(self):
