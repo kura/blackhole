@@ -3,7 +3,7 @@ python:
   - "3.6"
   - "3.7-dev"
 dist: trusty
-sudo: required
+sudo: false
 install:
   - make install
 script:
