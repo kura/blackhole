@@ -24,6 +24,7 @@
 
 import codecs
 import os
+import pathlib
 import random
 import socket
 import time
@@ -53,6 +54,7 @@ def mailname(mailname_file='/etc/mailname'):
        Prefers content of `mailname_file`, falls back on :any:`socket.getfqdn`
        if `mailname_file` does not exist or cannot be opened for reading.
     """
+    mailname_file = pathlib.Path(mailname_file)
     if os.access(mailname_file, os.R_OK):
         mailname_content = open(mailname_file, 'r').readlines()
         if len(mailname_content) == 0:
@@ -87,7 +89,7 @@ def get_version():
     :raises: :any:`AssertionError`
     """
     path = os.path.dirname(os.path.abspath(__file__))
-    filepath = os.path.join(path, '__init__.py')
+    filepath = os.path.join(pathlib.Path(path), pathlib.Path('__init__.py'))
     if not os.access(filepath, os.R_OK):
         raise OSError('Cannot open __init__.py file for reading')
     with codecs.open(filepath, encoding='utf-8') as fp:
