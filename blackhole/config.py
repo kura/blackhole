@@ -143,7 +143,7 @@ def _compare_uid_and_gid(config):
     user, group = config.user, config.group
     if (uid == 0 and gid == 0) and (user == 'root' and group == 'root'):
         logger.warning('It is unsafe to run Blackhole as root without setting '
-                       'a user and group for privilege revocation.')
+                       'a user and group for privilege separation.')
 
 
 class Singleton(type):
@@ -152,7 +152,7 @@ class Singleton(type):
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
-        """A singleton for :any:`blackhole.config.Config`."""
+        """Singleton for :any:`blackhole.config.Config`."""
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
                                                                  **kwargs)
@@ -273,7 +273,7 @@ class Config(metaclass=Singleton):
     @property
     def workers(self):
         """
-        Number of workers to spawn to handle incoming connections.
+        How many workers to spawn to handle incoming connections.
 
         https://blackhole.io/configuration-options.html#workers
 
@@ -304,7 +304,7 @@ class Config(metaclass=Singleton):
 
         .. note::
 
-            Default values are:
+           Default values are:
 
                 If IPv6 is supported:
 
@@ -348,7 +348,7 @@ class Config(metaclass=Singleton):
     @property
     def user(self):
         """
-        A UNIX user.
+        UNIX user.
 
         https://blackhole.io/configuration-options.html#user
 
@@ -368,7 +368,7 @@ class Config(metaclass=Singleton):
     @property
     def group(self):
         """
-        A UNIX group.
+        UNIX group.
 
         https://blackhole.io/configuration-options.html#group
 
@@ -388,7 +388,7 @@ class Config(metaclass=Singleton):
     @property
     def timeout(self):
         """
-        A timeout in seconds.
+        Timeout in seconds.
 
         https://blackhole.io/configuration-options.html#timeout
 
@@ -409,7 +409,7 @@ class Config(metaclass=Singleton):
     @property
     def tls_key(self):
         """
-        A TLS key file.
+        TLS key file.
 
         https://blackhole.io/configuration-options.html#tls_key
 
@@ -425,7 +425,7 @@ class Config(metaclass=Singleton):
     @property
     def tls_cert(self):
         """
-        A TLS certificate file.
+        TLS certificate file.
 
         https://blackhole.io/configuration-options.html#tls_cert
 
@@ -457,7 +457,7 @@ class Config(metaclass=Singleton):
     @property
     def pidfile(self):
         """
-        A path to store the pid.
+        Path to store the pid.
 
         https://blackhole.io/configuration-options.html#pidfile
 
@@ -473,7 +473,7 @@ class Config(metaclass=Singleton):
     @property
     def delay(self):
         """
-        A delay in seconds.
+        Delay in seconds.
 
         https://blackhole.io/configuration-options.html#delay
 
@@ -496,7 +496,7 @@ class Config(metaclass=Singleton):
     @property
     def mode(self):
         """
-        The mode with which to respond.
+        Mode with which to respond.
 
         https://blackhole.io/configuration-options.html#mode
 
@@ -517,7 +517,7 @@ class Config(metaclass=Singleton):
     @property
     def max_message_size(self):
         """
-        The maximum size, in bytes, of a message.
+        Maximum size, in bytes, of a message.
 
         https://blackhole.io/configuration-options.html#max_message_size
 
@@ -823,7 +823,7 @@ class Config(metaclass=Singleton):
 
     def _min_max_port(self, port):
         """
-        The minimum and maximum allowed port.
+        Minimum and maximum allowed port.
 
         :param port: The port to test for validity.
         :type port: :any:`int`
@@ -927,7 +927,7 @@ class Config(metaclass=Singleton):
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
         try:
-            _ = self.timeout
+            __ = self.timeout
         except ValueError:
             msg = '{} is not a valid number of seconds.'.format(self._timeout)
             raise ConfigException(msg)
@@ -1023,7 +1023,7 @@ class Config(metaclass=Singleton):
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
         try:
-            _ = self.max_message_size
+            __ = self.max_message_size
         except ValueError:
             size = self._max_message_size
             msg = '{} is not a valid number of bytes.'.format(size)

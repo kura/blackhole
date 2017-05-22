@@ -142,7 +142,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     def _client_connected_cb(self, reader, writer):
         """
-        Callback that binds a stream reader and writer to the SMTP Protocol.
+        Binds a stream reader and writer to the SMTP Protocol.
 
         :param reader: An object for reading incoming data.
         :type reader: :any:`asyncio.streams.StreamReader`
@@ -155,7 +155,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     def connection_lost(self, exc):
         """
-        Callback for when a connection is closed or lost.
+        Client connection is closed or lost.
 
         :param exc:
         :type exc:

@@ -39,7 +39,7 @@ class Singleton(type):
 
     def __call__(cls, *args, **kwargs):
         """
-        A singleton for :any:`blackhole.daemon.Daemon`.
+        Singleton for :any:`blackhole.daemon.Daemon`.
 
         :param cls:
         :type cls: :any:`blackhole.daemon.Daemon`
@@ -79,7 +79,7 @@ class Daemon(metaclass=Singleton):
 
     def _exit(self, signum=None, frame=None):
         """
-        Called on exit using :any:`atexit.register` or via a signal.
+        Call on exit using :any:`atexit.register` or via a signal.
 
         :param signum: The signal number.
         :type: signum: :any:`int`
@@ -105,7 +105,7 @@ class Daemon(metaclass=Singleton):
     @property
     def pid(self):
         """
-        The pid of the process, if it's been daemonised.
+        Pid of the process, if it's been daemonised.
 
         :raises: :any:`blackhole.exceptions.DaemonException` if pid cannot be
                  read from the filesystem.

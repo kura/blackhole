@@ -20,10 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Communication protocols used by the worker and child processes to
-communicate.
-"""
+"""Communication protocols used by the worker and child processes."""
 
 
 __all__ = ('PING', 'PONG')
@@ -31,5 +28,6 @@ __all__ = ('PING', 'PONG')
 
 PING = b'x01'
 """Protocol message used by the worker and child processes to communicate."""
+
 PONG = b'x02'
 """Protocol message used by the worker and child processes to communicate."""

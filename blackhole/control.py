@@ -129,7 +129,7 @@ def _socket(addr, port, family):
 
 def server(addr, port, family, flags={}, use_tls=False):
     """
-    A socket and possibly a TLS context.
+    Socket and possibly a TLS context.
 
     Create an instance of :any:`socket.socket`, bind it and return a dictionary
     containing the socket object and a TLS context if configured.

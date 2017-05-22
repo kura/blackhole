@@ -27,15 +27,24 @@ __all__ = ('ConfigException', 'DaemonException', 'BlackholeRuntimeException')
 
 
 class ConfigException(Exception):  # pragma: no cover
-    """A configuration exception."""
+    """Configuration exception."""
+
     pass
 
 
 class DaemonException(Exception):  # pragma: no cover
     """A daemon exception."""
+
     pass
 
 
-class BlackholeRuntimeException(Exception):  # param: no cover
-    """A Blackhole runtime exception."""
+class BlackholeRuntimeException(Exception):  # pragma: no cover
+    """Blackhole runtime exception."""
+
+    pass
+
+
+class HeartbeatException(Exception):  # pragma: no cover
+    """Heartbeat exception."""
+
     pass

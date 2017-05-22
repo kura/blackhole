@@ -41,7 +41,7 @@ __all__ = ('mailname', 'message_id', 'get_version')
 
 def mailname(mailname_file='/etc/mailname'):
     """
-    A fully qualified domain name for HELO and EHLO.
+    Fully qualified domain name for HELO and EHLO.
 
     :param mailname_file: A path to the mailname file.
     :type mailname_file: :any:`str`

@@ -84,23 +84,25 @@ class Supervisor(metaclass=Singleton):
     def generate_servers(self):
         """Spawn all of the required sockets and TLS contexts."""
         logger.debug('Attaching sockets to the supervisor')
-        for host, port, family, flags in self.config.listen:
-            aserver = server(host, port, family, flags)
-            self.socks.append(aserver)
-            logger.debug('Attaching %s:%s with flags %s', host, port, flags)
-
+        self.create_socket(self.config.listen)
         tls_conf = (self.config.tls_cert, self.config.tls_key)
         if len(self.config.tls_listen) > 0 and all(tls_conf):
-            for host, port, family, flags in self.config.tls_listen:
-                aserver = server(host, port, family, flags, use_tls=True)
-                self.socks.append(aserver)
-                logger.debug('Attaching %s:%s (TLS) with flags %s',
-                             host, port, flags)
+            self.create_socket(self.config.tls_listen, use_tls=True)
+
+    def create_socket(self, listeners, use_tls=False):
+        """Create supervisor socket."""
+        msg = 'Attaching %s:%s with flags %s'
+        if use_tls:
+            msg = 'Attaching %s:%s (TLS) with flags %s'
+        for host, port, family, flags in listeners:
+            aserver = server(host, port, family, flags, use_tls=use_tls)
+            self.socks.append(aserver)
+            logger.debug(msg, host, port, flags)
 
     def run(self):
         """
-        Start all workers and their children, attach signals and run the event
-        loop 'forever'.
+        Start all workers and their children, attach signals and run the
+        event loop.
         """
         self.start_workers()
         signal.signal(signal.SIGTERM, self.stop)

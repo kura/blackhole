@@ -73,16 +73,15 @@ def test_stop_runtime_exception():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 @pytest.mark.asyncio
-async def test__start():
+async def test_start_child_loop(event_loop):
     sock = _socket('127.0.0.1', 0, socket.AF_INET)
     socks = ({'sock': sock, 'ssl': None}, )
     child = Child('', '', socks, '1')
-    loop = child.loop = asyncio.new_event_loop()
+    child.loop = event_loop
     await child._start()
     assert len(child.servers) == 1
     for server in child.servers:
         server.close()
-        loop.run_until_complete(server.wait_closed())
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
@@ -118,6 +117,7 @@ async def test_child_heartbeat_started(event_loop):
     child._started = True
     sp = StreamProtocol()
     sp.reader = asyncio.StreamReader()
+
     async def reset():
         sp.reader.feed_data(protocols.PING)
         child._started = False

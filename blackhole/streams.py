@@ -36,21 +36,25 @@ class StreamProtocol(asyncio.streams.FlowControlMixin, asyncio.Protocol):
     """Helper class to adapt between Protocol and StreamReader."""
 
     def __init__(self, *, loop=None, disconnect_error=RuntimeError, **kwargs):
+        """Stream protocol."""
         super().__init__(loop=loop)
         self.transport = None
         self.writer = None
         self.reader = asyncio.StreamReader(loop=loop)
 
     def is_connected(self):
+        """Client is connected."""
         return self.transport is not None
 
     def connection_made(self, transport):
+        """Client connection made callback."""
         self.transport = transport
         self.reader.set_transport(transport)
         self.writer = asyncio.StreamWriter(transport, self, self.reader,
                                            self._loop)
 
     def connection_lost(self, exc):
+        """Client connection lost callback."""
         self.transport = self.writer = None
         self.reader._transport = None
 
@@ -63,7 +67,9 @@ class StreamProtocol(asyncio.streams.FlowControlMixin, asyncio.Protocol):
         super().connection_lost(exc)
 
     def data_received(self, data):
+        """Client data received."""
         self.reader.feed_data(data)
 
     def eof_received(self):
+        """Client EOF received."""
         self.reader.feed_eof()
