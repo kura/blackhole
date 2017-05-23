@@ -13,8 +13,8 @@ tox:
 	detox
 
 test:
-	pip install pytest pytest-cov pytest-asyncio pytest-xdist codecov sphinx
-	py.test -n2 --boxed --cov ./blackhole \
+	pip install pytest pytest-cov pytest-asyncio codecov sphinx
+	py.test --cov ./blackhole \
 	        --cov ./tests \
 			--verbose \
 			./blackhole ./tests \
