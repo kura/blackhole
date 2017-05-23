@@ -29,10 +29,10 @@ import sys
 
 from .config import (Config, config_test, parse_cmd_args,
                      warn_options)
-from .control import setgid, setuid, pid_permissions
+from .control import pid_permissions, setgid, setuid
 from .daemon import Daemon
-from .exceptions import (ConfigException, DaemonException,
-                         BlackholeRuntimeException)
+from .exceptions import (BlackholeRuntimeException, ConfigException,
+                         DaemonException)
 from .logs import configure_logs
 from .supervisor import Supervisor
 

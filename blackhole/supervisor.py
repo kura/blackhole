@@ -25,8 +25,8 @@
 
 import asyncio
 import logging
-import signal
 import os
+import signal
 
 from .config import Config
 from .control import server
@@ -101,8 +101,9 @@ class Supervisor(metaclass=Singleton):
 
     def run(self):
         """
-        Start all workers and their children, attach signals and run the
-        event loop.
+        Start all workers and their children.
+
+        Attaches signals and runs the event loop.
         """
         self.start_workers()
         signal.signal(signal.SIGTERM, self.stop)

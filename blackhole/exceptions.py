@@ -42,9 +42,3 @@ class BlackholeRuntimeException(Exception):  # pragma: no cover
     """Blackhole runtime exception."""
 
     pass
-
-
-class HeartbeatException(Exception):  # pragma: no cover
-    """Heartbeat exception."""
-
-    pass

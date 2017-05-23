@@ -8,7 +8,6 @@ import pytest
 
 from blackhole import protocols
 from blackhole.config import Config
-from blackhole.exceptions import HeartbeatException
 from blackhole.worker import Worker
 
 from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
@@ -223,8 +222,7 @@ async def test_worker_chat_started_restart(event_loop):
     worker._started = True
     with mock.patch('blackhole.worker.Worker.start') as mock_chat_start, \
         mock.patch('blackhole.worker.Worker.stop') as mock_chat_stop, \
-            mock.patch('asyncio.StreamReader.read',
-                       side_effect=HeartbeatException):
+            mock.patch('asyncio.StreamReader.read', side_effect=Exception):
         reader = asyncio.StreamReader()
         await worker.chat(reader)
     assert mock_chat_start.called is True

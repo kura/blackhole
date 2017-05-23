@@ -32,7 +32,6 @@ import time
 from . import protocols
 from .child import Child
 from .control import setgid, setuid
-from .exceptions import HeartbeatException
 from .streams import StreamProtocol
 
 
@@ -160,7 +159,7 @@ class Worker:
         while self._started:
             try:
                 msg = await reader.read(3)
-            except HeartbeatException:
+            except:
                 if self._started:
                     logger.debug('worker.%s.chat: Communication failed. '
                                  'Restarting worker', self.idx)
@@ -190,7 +189,6 @@ class Worker:
         w_trans, w_proto = await self.loop.connect_write_pipe(StreamProtocol,
                                                               write_fd)
         reader = r_proto.reader
-        reader.set_exception(HeartbeatException)
         writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)
         self.pid = pid
         self.ping = time.monotonic()

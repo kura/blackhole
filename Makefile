@@ -13,8 +13,8 @@ tox:
 	detox
 
 test:
-	pip install pytest pytest-cov pytest-asyncio codecov sphinx
-	py.test --cov ./blackhole \
+	pip install pytest pytest-cov pytest-asyncio pytest-xdist codecov sphinx
+	py.test -n2 --boxed --cov ./blackhole \
 	        --cov ./tests \
 			--verbose \
 			./blackhole ./tests \
@@ -24,9 +24,12 @@ test:
 	sphinx-build -b html docs/source/ docs/build/
 
 lint:
-	pip install flake8 pylint
-	flake8 blackhole
-	pylint blackhole
+	pip install flake8 flake8-colors flake8-commas flake8-docstrings \
+			    flake8-import-order flake8-pep3101 flake8-sorted-keys \
+				flake8-todo
+	flake8 --show-source --statistics blackhole
+
+testall: test lint
 
 docs:
 	pip install sphinx

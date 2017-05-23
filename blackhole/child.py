@@ -90,7 +90,7 @@ class Child:
                                                    **sock)
             self.servers.append(server)
 
-    def stop(self, signum=None, frame=None):
+    def stop(self, *args, **kwargs):
         """
         Stop the child process.
 

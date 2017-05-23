@@ -35,7 +35,7 @@ import pwd
 import socket
 
 from .exceptions import ConfigException
-from .utils import mailname, get_version
+from .utils import get_version, mailname
 
 
 __all__ = ('parse_cmd_args', 'warn_options', 'config_test', 'Config')
@@ -887,7 +887,7 @@ class Config(metaclass=Singleton):
         try:
             sock.bind((address, port))
         except OSError as err:
-            errmsg = err.strerror.lower()
+            errmsg = err.strerror
             msg = 'Could not use port {}, {}'.format(port, errmsg)
             raise ConfigException(msg)
         finally:
@@ -933,13 +933,13 @@ class Config(metaclass=Singleton):
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
         try:
-            __ = self.timeout
+            __ = self.timeout  # NOQA
         except ValueError:
             msg = '{} is not a valid number of seconds.'.format(self._timeout)
             raise ConfigException(msg)
         if self.timeout and self.timeout > 180:
-            msg = ('Timeout must be 180 seconds or less for security (denial '
-                   'of service).')
+            msg = ('Timeout must be at least 180 seconds or less for security '
+                   '(denial of service).')
             raise ConfigException(msg)
 
     def test_tls_port(self):
@@ -1029,7 +1029,7 @@ class Config(metaclass=Singleton):
         :raises: :any:`blackhole.exceptions.ConfigException`
         """
         try:
-            __ = self.max_message_size
+            __ = self.max_message_size  # NOQA
         except ValueError:
             size = self._max_message_size
             msg = '{} is not a valid number of bytes.'.format(size)

@@ -34,7 +34,6 @@ DEBUG_FORMAT = ('[%(asctime)s] [%(levelname)s] blackhole.%(module)s: '
                 '%(message)s')
 
 LOG_CONFIG = {
-    'version': 1,
     'formatters': {
         'console': {'format': '%(message)s'},
         'debug': {'format': DEBUG_FORMAT},
@@ -43,7 +42,8 @@ LOG_CONFIG = {
     },
     'loggers': {
         'blackhole': {'handlers': [], 'level': logging.INFO},
-    }
+    },
+    'version': 1,
 }
 
 DEBUG_HANDLER = {'class': 'logging.StreamHandler',
@@ -69,7 +69,9 @@ def configure_logs(args):
         logger_handlers.append('default_handler')
     elif args.quiet:
         LOG_CONFIG['loggers']['blackhole']['level'] = logging.ERROR
+        LOG_CONFIG['handlers']['default_handler'] = DEFAULT_HANDLER
         LOG_CONFIG['handlers']['default_handler']['level'] = logging.ERROR
+        logger_handlers.append('default_handler')
     else:
         LOG_CONFIG['loggers']['blackhole']['level'] = logging.INFO
         LOG_CONFIG['handlers']['default_handler'] = DEFAULT_HANDLER

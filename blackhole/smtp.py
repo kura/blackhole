@@ -296,8 +296,8 @@ class Smtp(asyncio.StreamReaderProtocol):
            authentication pass, using ``fail=`` will trigger an authentication
            failure.
         """
-        message_id = base64.b64encode(self.message_id.encode('utf-8'), b'==')
-        await self.push(334, message_id.decode('utf-8'))
+        emessage_id = base64.b64encode(self.message_id.encode('utf-8'), b'==')
+        await self.push(334, emessage_id.decode('utf-8'))
         line = await self.wait()
         logger.debug('RECV %s', line)
         if b'fail=' in line.lower():
@@ -765,7 +765,7 @@ class Smtp(asyncio.StreamReaderProtocol):
                       'Amos Burton'),
             'list3': ('Takeshi Kovacs', 'Laurens Bancroft', 'Kristin Ortega',
                       'Quellcrist Falconer', 'Virginia Vidaura',
-                      'Reileen Kawahara')
+                      'Reileen Kawahara'),
         }
         if expn == 'all':
             iterator = []
