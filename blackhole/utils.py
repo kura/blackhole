@@ -70,7 +70,7 @@ def message_id(domain):
     Return a string suitable for RFC 2822 compliant Message-ID.
 
     :param domain: A fully qualified domain.
-    :type domain :any:`str`
+    :type domain: :any:`str`
     :returns: An RFC 2822 compliant Message-ID.
     :rtype: :any:`str`
     """

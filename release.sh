@@ -1,9 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 last_rel=`blackhole -v`
 echo "Current version: ${last_rel}"
 
-read -p "New version: " version
+printf "New version: "
+read version
 
 sed -i "s/__version__.*/__version__ = '${version}'/g" blackhole/__init__.py
 git add blackhole/__init__.py

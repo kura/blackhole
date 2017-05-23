@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 if test -f .codecov
 then
-  source .codecov
+  . .codecov
   codecov -t $CODECOV_TOKEN
 fi

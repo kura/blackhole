@@ -20,7 +20,7 @@ test:
 			./blackhole ./tests \
 			--cov-report xml \
 			--cov-report term-missing
-	bash codecov.sh
+	./codecov.sh
 	sphinx-build -b html docs/source/ docs/build/
 
 lint:
@@ -34,7 +34,7 @@ docs:
 	sphinx-build -b html docs/source/ docs/build/
 
 release:
-	bash release.sh
+	./release.sh
 
 web:
 	make docs
