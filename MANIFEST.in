@@ -1,9 +1,8 @@
-include README.rst
-include LICENSE
-include setup_helpers.py
+include bash-completion/blackhole-completion.bash
+include example.conf
 include CHANGELOG.rst
 include CONTRIBUTORS.rst
+include LICENSE
+include README.rst
 include THANKS.rst
 include TODO.rst
-include example.conf
-include blackhole-completion.bash
