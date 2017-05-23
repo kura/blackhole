@@ -43,8 +43,8 @@ prototyped, I quickly realised that any mail server I pointed it at would fall
 over due to the stess -- thus blackhole was born.
 
 
-Using the blackhole.io service
-==============================
+Communicating with the SMTP service
+===================================
 
 Supported commands/verbs and dynamic responses
 ----------------------------------------------
