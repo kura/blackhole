@@ -20,9 +20,8 @@ The original incarnation of Blackhole -- built on top of Tornado -- is still
 available for use on Python versions lower than 3.5, including PyPy.
 
 It is no longer maintained however, but is available for posterity's sake on
-`blackhole.io/1 <https://blackhole.io/1/>`_ and `GitHub
-<https://github.com/kura/blackhole/releases/tag/1.8.1>`_ for those people
-unable to use Python 3.5.
+`GitHub <https://github.com/kura/blackhole/releases/tag/1.8.1>`_ for those
+people unable to use Python 3.5.
 
 Getting started
 ===============

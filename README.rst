@@ -44,12 +44,6 @@ appears to have been delivered or bounced.
 Think of blackhole sort of like a honeypot in terms of how it handles mail,
 but it's specifically designed with testing in mind.
 
-Service status
-==============
-
-You can find the current service status on `status.blackhole.io
-<http://status.blackhole.io/>`_.
-
 Donations
 =========
 
@@ -71,10 +65,10 @@ over due to the stess -- thus blackhole was born.
 Documentation
 =============
 
-You can find the latest documentation `here <https://blackhole.io/>`_.
+You can find the latest documentation `here <https://https://kura.github.io/blackhole/>`_.
 
 If you would like to contribute, please read the `contributors guide
-<https://blackhole.io/contributing.html>`_.
+<https://kura.github.io/blackhole/contributing.html>`_.
 
 The latest build status on `travis <https://travis-ci.org/kura/blackhole/>`_.
 
@@ -85,4 +79,4 @@ Changelog
 =========
 
 You can find a list of changes `on the
-blackhole website <https://blackhole.io/changelog.html>`_.
+blackhole website <https://kura.github.io/blackhole/changelog.html>`_.

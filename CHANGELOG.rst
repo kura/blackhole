@@ -147,7 +147,7 @@ Will be read as.
 - Added an option to disable :any:`ssl.OP_SINGLE_DH_USE` and
   :any:`ssl.OP_SINGLE_ECDH_USE`. Reduces CPU overhead at the expense
   of security. Disabled by default, warns if used. Slightly better for high
-  load environments. -- `<https://blackhole.io/command-line-options.html>`_
+  load environments. -- :ref:`command-line-options`
 
 .. _2.0.12:
 
@@ -184,8 +184,7 @@ Will be read as.
 - Moved out functionality for creating sockets and TLS contexts to separate
   control functions.
 - Added warning for TLS being used with no Diffie Hellman ephemeral parameters
-  being configured. --
-  `<https://blackhole.io/configuration-options.html#tls-dhparams>`_
+  being configured. -- :ref:`configuration-options`
 - Added further security to TSL. The following options are now enforced.
   :any:`ssl.OP_NO_COMPRESSION`, :any:`ssl.OP_SINGLE_DH_USE`,
   :any:`ssl.OP_SINGLE_ECDH_USE` and :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`.
