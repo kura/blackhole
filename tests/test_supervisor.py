@@ -290,3 +290,27 @@ def test_stop():
     assert mock_stop.call_count == 2
     assert str(err.value) == '0'
     supervisor.loop.stop()
+
+
+@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
+                         'cleandir')
+def test_stop_runtime_error():
+    cfile = create_config(('listen=:9999, :::9999', 'workers=2', ))
+    Config(cfile).load()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    with mock.patch('socket.socket.bind'), \
+            mock.patch('blackhole.worker.Worker.start'):
+        supervisor = Supervisor(loop)
+        supervisor.start_workers()
+        assert len(supervisor.workers) == 2
+        with mock.patch('blackhole.worker.Worker.stop') as mock_stop, \
+                mock.patch('asyncio.unix_events._UnixSelectorEventLoop.'
+                           'stop',
+                           side_effect=RuntimeError) as mock_rt, \
+                pytest.raises(SystemExit) as err:
+            supervisor.stop()
+    assert mock_rt.call_count == 1
+    assert mock_stop.call_count == 2
+    assert str(err.value) == '0'
+    supervisor.loop.stop()
