@@ -12,9 +12,11 @@ from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
+@pytest.mark.asyncio
 async def test_ping_pong():
     aserver = server('127.0.0.1', 0, socket.AF_INET)
     worker = Worker('1', [aserver, ])
+    assert worker._started is True
     await asyncio.sleep(35)
     worker.stop()
     assert worker._started is False
