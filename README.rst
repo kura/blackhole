@@ -65,7 +65,7 @@ over due to the stess -- thus blackhole was born.
 Documentation
 =============
 
-You can find the latest documentation `here <https://https://kura.github.io/blackhole/>`_.
+You can find the latest documentation `here <https://kura.github.io/blackhole/>`_.
 
 If you would like to contribute, please read the `contributors guide
 <https://kura.github.io/blackhole/contributing.html>`_.
