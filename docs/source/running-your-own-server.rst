@@ -7,21 +7,23 @@ Running your own server
 Blackhole is built on top of `asyncio <https://docs.python.org/3/library/asyncio.html>`_
 and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html#async-def>`_
 and `await <https://docs.python.org/3/reference/expressions.html#await>`_
-statements available in Python 3.5 and above.
+statements available in Python 3.5 and above and the `pathlib
+<https://docs.python.org/3/library/pathlib.html#module-pathlib>`_ module made
+available by Python 3.6.
 
 There are plenty of reasons for running your own server and it's very simple to
 do. The base installation is a single line in length and the server will run
 out-of-the-box.
 
-Python < 3.5
+Python < 3.6
 ------------
 
 The original incarnation of Blackhole -- built on top of Tornado -- is still
-available for use on Python versions lower than 3.5, including PyPy.
+available for use on Python versions lower than 3.6, including PyPy.
 
 It is no longer maintained however, but is available for posterity's sake on
 `GitHub <https://github.com/kura/blackhole/releases/tag/1.8.1>`_ for those
-people unable to use Python 3.5.
+people unable to use Python 3.6.
 
 Getting started
 ===============
