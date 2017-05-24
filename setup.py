@@ -1,13 +1,16 @@
+"""Setup file."""
+from setuptools import setup, find_packages
+from setuptools.command.test import test as TestCommand
 import sys
 
 from setup_helpers import require_python, get_version, include_file
-from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 
 
 class PyTest(TestCommand):
+    """Test command."""
 
     def finalize_options(self):
+        """Build options."""
         TestCommand.finalize_options(self)
         self.test_args = [
             '--doctest-modules', '--verbose',
@@ -16,6 +19,7 @@ class PyTest(TestCommand):
         self.test_suite = True
 
     def run_tests(self):
+        """Run ze tests."""
         import pytest
         sys.exit(pytest.main(self.test_args))
 
@@ -56,7 +60,8 @@ classifiers = ['Development Status :: 5 - Production/Stable',
                'Topic :: Internet',
                'Topic :: Software Development',
                'Topic :: Software Development :: Testing',
-               'Topic :: Software Development :: Testing :: Traffic Generation',
+               ('Topic :: Software Development :: Testing :: '
+                'Traffic Generation'),
                'Topic :: System :: Networking',
                'Topic :: System :: Systems Administration',
                'Topic :: Utilities', ]

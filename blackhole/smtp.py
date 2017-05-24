@@ -1,6 +1,6 @@
 # (The MIT License)
 #
-# Copyright (c) 2016 Kura
+# Copyright (c) 2017 Kura
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -142,7 +142,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     def _client_connected_cb(self, reader, writer):
         """
-        Binds a stream reader and writer to the SMTP Protocol.
+        Bind a stream reader and writer to the SMTP Protocol.
 
         :param reader: An object for reading incoming data.
         :type reader: :any:`asyncio.streams.StreamReader`
