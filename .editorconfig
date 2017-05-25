@@ -1,0 +1,21 @@
+root = true
+
+[*]
+end_of_line = LF
+charset = utf-8
+max_line_length = 80
+
+[*.{py,rst,ini}]
+indent_style = space
+indent_size = 4
+
+[Makefile]
+indent_style = tab
+
+[.travis.yml]
+indent_style = space
+indent_size = 2
+
+[*.{js,css}]
+indent_style = space
+indent_size = 2
