@@ -34,6 +34,7 @@ from .streams import StreamProtocol
 
 
 __all__ = ('Child', )
+"""Tuple all the things."""
 
 
 logger = logging.getLogger('blackhole.child')
@@ -151,7 +152,8 @@ class Child:
         while self._started:
             try:
                 msg = await reader.read(3)
-            except:
+            except (asyncio.CancelledError, asyncio.InvalidStateError,
+                    asyncio.TimeoutError):
                 break
             if msg == protocols.PING:
                 logger.debug('child.%s.heartbeat: Ping request received from '

@@ -22,21 +22,23 @@
 
 """Provides control functionality, including socket wrappers."""
 
+try:  # pragma: no cover
+    import ssl
+except ImportError:  # pragma: no cover
+    ssl = None
+
 import grp
 import logging
 import os
 import pwd
 import socket
-try:
-    import ssl
-except ImportError:
-    ssl = None
 
 from .config import Config
 from .exceptions import BlackholeRuntimeException
 
 
 __all__ = ('pid_permissions', 'server', 'setgid', 'setuid')
+"""Tuple all the things."""
 
 
 logger = logging.getLogger('blackhole.control')
@@ -45,6 +47,7 @@ ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
            'ECDHE-ECDSA-AES128-GCM-SHA256', 'ECDHE-RSA-AES128-GCM-SHA256',
            'ECDHE-ECDSA-AES256-SHA384', 'ECDHE-RSA-AES256-SHA384',
            'ECDHE-ECDSA-AES128-SHA256', 'ECDHE-RSA-AES128-SHA256']
+"""Strong default TLS ciphers."""
 
 
 def _context(use_tls=False):

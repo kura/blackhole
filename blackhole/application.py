@@ -27,8 +27,7 @@ import logging
 import os
 import sys
 
-from .config import (Config, config_test, parse_cmd_args,
-                     warn_options)
+from .config import Config, config_test, parse_cmd_args, warn_options
 from .control import pid_permissions, setgid, setuid
 from .daemon import Daemon
 from .exceptions import (BlackholeRuntimeException, ConfigException,
@@ -38,6 +37,7 @@ from .supervisor import Supervisor
 
 
 __all__ = ('run', )
+"""Tuple all the things."""
 
 
 def run():

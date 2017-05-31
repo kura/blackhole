@@ -27,6 +27,7 @@ import logging
 
 
 __all__ = ('StreamProtocol', )
+"""Tuple all the things."""
 
 
 logger = logging.getLogger('blackhole.streams')

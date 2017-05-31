@@ -28,6 +28,7 @@ from logging.config import dictConfig
 
 
 __all__ = ('configure_logs', )
+"""Tuple all the things."""
 
 
 DEBUG_FORMAT = ('[%(asctime)s] [%(levelname)s] blackhole.%(module)s: '

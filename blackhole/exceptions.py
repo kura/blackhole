@@ -24,6 +24,7 @@
 
 
 __all__ = ('ConfigException', 'DaemonException', 'BlackholeRuntimeException')
+"""Tuple all the things."""
 
 
 class ConfigException(Exception):  # pragma: no cover

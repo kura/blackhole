@@ -34,6 +34,7 @@ from .utils import message_id
 
 
 __all__ = ('Smtp', )
+"""Tuple all the things."""
 
 
 logger = logging.getLogger('blackhole.smtp')

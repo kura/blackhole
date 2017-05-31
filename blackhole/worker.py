@@ -52,6 +52,7 @@ class Worker:
     """
 
     _started = False
+    ping_count = 0
 
     def __init__(self, idx, socks, loop=None):
         """
@@ -159,7 +160,8 @@ class Worker:
         while self._started:
             try:
                 msg = await reader.read(3)
-            except:
+            except (asyncio.CancelledError, asyncio.InvalidStateError,
+                    asyncio.TimeoutError):
                 if self._started:
                     logger.debug('worker.%s.chat: Communication failed. '
                                  'Restarting worker', self.idx)
@@ -170,6 +172,7 @@ class Worker:
                 logger.debug('worker.%s.chat: Ping received from child',
                              self.idx)
                 self.ping = time.monotonic()
+                self.ping_count += 1
 
     async def connect(self, pid, up_write, down_read):
         """

@@ -35,15 +35,19 @@ from .worker import Worker
 
 
 __all__ = ('Supervisor', )
+"""Tuple all the things."""
 
 
 logger = logging.getLogger('blackhole.supervisor')
 
 
 class Singleton(type):
+    """Singleton for :any:`blackhole.supervisor.Supervisor`."""
+
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
+        """Singleton for :any:`blackhole.supervisor.Supervisor`."""
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
                                                                  **kwargs)

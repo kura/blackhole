@@ -24,6 +24,7 @@
 
 
 __all__ = ('PING', 'PONG')
+"""Tuple all the things."""
 
 
 PING = b'x01'

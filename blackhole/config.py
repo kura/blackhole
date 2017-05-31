@@ -39,6 +39,7 @@ from .utils import get_version, mailname
 
 
 __all__ = ('parse_cmd_args', 'warn_options', 'config_test', 'Config')
+"""Tuple all the things."""
 
 
 def parse_cmd_args(args):
@@ -148,7 +149,7 @@ def _compare_uid_and_gid(config):
 
 
 class Singleton(type):
-    """A singleton for :any:`blackhole.config.Config`."""
+    """Singleton for :any:`blackhole.config.Config`."""
 
     _instances = {}
 
