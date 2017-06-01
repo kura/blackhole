@@ -29,7 +29,7 @@ test:
 			--cov-report term-missing \
 			--pylama \
 			--verbose \
-			./blackhole ./tests
+			blackhole tests
 	./codecov.sh
 	sphinx-build -b html docs/source/ /tmp/blackhole-docs/
 	rm -rf /tmp/blackhole-docs/
