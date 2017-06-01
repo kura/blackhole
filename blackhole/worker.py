@@ -160,8 +160,7 @@ class Worker:
         while self._started:
             try:
                 msg = await reader.read(3)
-            except (asyncio.CancelledError, asyncio.InvalidStateError,
-                    asyncio.TimeoutError):
+            except:
                 if self._started:
                     logger.debug('worker.%s.chat: Communication failed. '
                                  'Restarting worker', self.idx)
