@@ -7,7 +7,7 @@ sudo: false
 install:
   - make install
 script:
-  - make testall
+  - make test
 after_success:
   - codecov
 notifications:
