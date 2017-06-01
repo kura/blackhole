@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "06c430de9fa64c2396c1e578907e6839b788a69837fb585dc34370c12844c0a2"
+            "sha256": "fa14a8d497abf45468078b3858e6a19d3dbaf9e024d6e63502a6b2eaf572c69d"
         },
         "requires": {
             "python_version": "3.6"
@@ -15,17 +15,56 @@
     },
     "default": {},
     "develop": {
-        "appdirs": {
-            "version": "==1.4.3"
+        "alabaster": {
+            "version": "==0.7.10"
         },
-        "packaging": {
-            "version": "==16.8"
+        "babel": {
+            "version": "==2.4.0"
+        },
+        "certifi": {
+            "version": "==2017.4.17"
+        },
+        "chardet": {
+            "version": "==3.0.3"
+        },
+        "docutils": {
+            "version": "==0.13.1"
+        },
+        "idna": {
+            "version": "==2.5"
+        },
+        "imagesize": {
+            "version": "==0.7.1"
+        },
+        "isort": {
+            "version": "==4.2.11"
+        },
+        "jinja2": {
+            "version": "==2.9.6"
+        },
+        "markupsafe": {
+            "version": "==1.0"
+        },
+        "mccabe": {
+            "version": "==0.6.1"
         },
         "py": {
             "version": "==1.4.33"
         },
-        "pyparsing": {
+        "pycodestyle": {
+            "version": "==2.3.1"
+        },
+        "pydocstyle": {
+            "version": "==2.0.0"
+        },
+        "pyflakes": {
+            "version": "==1.5.0"
+        },
+        "pygments": {
             "version": "==2.2.0"
+        },
+        "pylama": {
+            "version": "==7.3.3"
         },
         "pytest": {
             "version": "==3.1.1"
@@ -33,11 +72,29 @@
         "pytest-asyncio": {
             "version": "==0.6.0"
         },
+        "pytz": {
+            "version": "==2017.2"
+        },
+        "requests": {
+            "version": "==2.17.3"
+        },
         "setuptools": {
-            "version": "==35.0.2"
+            "version": "==36.0.1"
         },
         "six": {
             "version": "==1.10.0"
+        },
+        "snowballstemmer": {
+            "version": "==1.2.1"
+        },
+        "sphinx": {
+            "version": "==1.6.2"
+        },
+        "sphinxcontrib-websupport": {
+            "version": "==1.0.1"
+        },
+        "urllib3": {
+            "version": "==1.21.1"
         }
     }
 }
