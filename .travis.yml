@@ -21,6 +21,6 @@ deploy:
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
-  local_dir: /tmp/blackhole-docs/
+  local_dir: /tmp/blackhole-docs
   on:
     branch: master
