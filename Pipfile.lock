@@ -1,0 +1,43 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "06c430de9fa64c2396c1e578907e6839b788a69837fb585dc34370c12844c0a2"
+        },
+        "requires": {
+            "python_version": "3.6"
+        },
+        "sources": [
+            {
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {},
+    "develop": {
+        "appdirs": {
+            "version": "==1.4.3"
+        },
+        "packaging": {
+            "version": "==16.8"
+        },
+        "py": {
+            "version": "==1.4.33"
+        },
+        "pyparsing": {
+            "version": "==2.2.0"
+        },
+        "pytest": {
+            "version": "==3.1.1"
+        },
+        "pytest-asyncio": {
+            "version": "==0.6.0"
+        },
+        "setuptools": {
+            "version": "==35.0.2"
+        },
+        "six": {
+            "version": "==1.10.0"
+        }
+    }
+}
