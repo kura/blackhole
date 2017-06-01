@@ -276,6 +276,12 @@ the :ref:`contributing` section for information on how you could implement
 the functionality yourself.
 
 
+License
+=======
+
+Blackhole is licensed under the `MIT license <https://github.com/kura/blackhole/blob/master/LICENSE>`_.
+
+
 Changelog
 =========
 
@@ -326,11 +332,6 @@ Thanks & contributors
 
 Thanks are here -- :ref:`thanks` and contributors here -- :ref:`contributors`.
 
-
-License
-=======
-
-Blackhole is license under the `MIT license <https://github.com/kura/blackhole/blob/master/LICENSE>`_.
 
 Indices and tables
 ==================
