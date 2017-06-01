@@ -32,7 +32,7 @@ class PyTest(TestCommand):
     def finalize_options(self):
         """Build options."""
         TestCommand.finalize_options(self)
-        self.test_args = ('--verbose', './blackhole', './tests')
+        self.test_args = ['--verbose', './blackhole', './tests']
         self.test_suite = True
 
     def run_tests(self):
