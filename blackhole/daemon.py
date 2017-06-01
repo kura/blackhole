@@ -28,7 +28,6 @@ import os
 
 from .exceptions import DaemonException
 
-
 __all__ = ('Daemon', )
 """Tuple all the things."""
 

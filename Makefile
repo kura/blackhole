@@ -26,8 +26,9 @@ test:
 lint:
 	pip install flake8 flake8-colors flake8-commas flake8-docstrings \
 			    flake8-import-order flake8-pep3101 flake8-sorted-keys \
-				flake8-todo
+				flake8-todo isort
 	flake8 --show-source --statistics blackhole
+	isort -rc -c -df blackhole
 
 testall: test lint
 

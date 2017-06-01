@@ -34,7 +34,6 @@ from .child import Child
 from .control import setgid, setuid
 from .streams import StreamProtocol
 
-
 __all__ = ('Worker', )
 
 

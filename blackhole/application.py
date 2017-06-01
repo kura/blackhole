@@ -35,7 +35,6 @@ from .exceptions import (BlackholeRuntimeException, ConfigException,
 from .logs import configure_logs
 from .supervisor import Supervisor
 
-
 __all__ = ('run', )
 """Tuple all the things."""
 

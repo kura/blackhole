@@ -25,7 +25,6 @@
 import asyncio
 import logging
 
-
 __all__ = ('StreamProtocol', )
 """Tuple all the things."""
 

@@ -32,7 +32,6 @@ import random
 from .config import Config
 from .utils import message_id
 
-
 __all__ = ('Smtp', )
 """Tuple all the things."""
 
