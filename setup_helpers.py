@@ -1,3 +1,4 @@
+# Copyright (c) 2017 Kura
 # Copyright (C) 2009-2015 Barry A. Warsaw
 #
 # This file is part of setup_helpers.py
@@ -18,14 +19,26 @@
 
 import codecs
 import os
+from setuptools.command.test import test as TestCommand
 import sys
 
 
-__all__ = [
-    'get_version',
-    'include_file',
-    'require_python',
-    ]
+__all__ = ('get_version', 'include_file', 'require_python', 'PyTest')
+
+
+class PyTest(TestCommand):
+    """Test command."""
+
+    def finalize_options(self):
+        """Build options."""
+        TestCommand.finalize_options(self)
+        self.test_args = ('--verbose', './blackhole', './tests')
+        self.test_suite = True
+
+    def run_tests(self):
+        """Run ze tests."""
+        import pytest
+        sys.exit(pytest.main(self.test_args))
 
 
 def require_python(minimum):

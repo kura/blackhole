@@ -1,30 +1,33 @@
+# (The MIT License)
+#
+# Copyright (c) 2013-2017 Kura
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """Setup file."""
+
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
-import sys
 
-from setup_helpers import require_python, get_version, include_file
+from setup_helpers import require_python, get_version, include_file, PyTest
 
 
-class PyTest(TestCommand):
-    """Test command."""
-
-    def finalize_options(self):
-        """Build options."""
-        TestCommand.finalize_options(self)
-        self.test_args = [
-            '--doctest-modules', '--verbose',
-            './blackhole', './tests'
-        ]
-        self.test_suite = True
-
-    def run_tests(self):
-        """Run ze tests."""
-        import pytest
-        sys.exit(pytest.main(self.test_args))
-
-
-require_python(50659568)
+require_python(50725360)
 __version__ = get_version('blackhole/__init__.py')
 
 entry_points = {
@@ -33,10 +36,7 @@ entry_points = {
     )
 }
 
-tests_require = [
-    'pytest',
-    'pytest-asyncio'
-]
+tests_require = ('pytest', 'pytest-asyncio')
 
 description = ('Blackhole is an MTA (message transfer agent) that '
                '(figuratively) pipes all mail to /dev/null.')
