@@ -31,8 +31,7 @@ test:
 			--verbose \
 			blackhole tests
 	./codecov.sh
-	sphinx-build -b html docs/source/ /tmp/blackhole-docs/
-	rm -rf /tmp/blackhole-docs/
+	sphinx-build -b html docs/source/ docs/build/
 
 docs:
 	pip install sphinx
