@@ -16,3 +16,6 @@ test.conf
 .coverage.*
 .codecov
 coverage.*
+sendmail.py
+imap.py
+dns.py
