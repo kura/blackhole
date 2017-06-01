@@ -1,7 +1,7 @@
 import asyncio
 import os
-from io import BytesIO
 import time
+from io import BytesIO
 from unittest import mock
 
 import pytest
@@ -10,8 +10,8 @@ from blackhole import protocols
 from blackhole.config import Config
 from blackhole.worker import Worker
 
-from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
-                     create_config, create_file, Args)
+from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
+                     reset_daemon, reset_supervisor)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

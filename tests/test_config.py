@@ -13,8 +13,8 @@ import pytest
 from blackhole.config import Config, config_test, parse_cmd_args, warn_options
 from blackhole.exceptions import ConfigException
 
-from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
-                     create_config, create_file, Args)
+from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
+                     reset_daemon, reset_supervisor)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

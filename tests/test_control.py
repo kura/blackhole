@@ -1,8 +1,4 @@
 import os
-try:
-    import ssl
-except ImportError:
-    ssl = None
 import socket
 import unittest
 from unittest import mock
@@ -10,12 +6,20 @@ from unittest import mock
 import pytest
 
 from blackhole.config import Config
-from blackhole.control import (_context, _socket, server, setuid, setgid,
-                               pid_permissions)
+from blackhole.control import (_context, _socket, pid_permissions, server,
+                               setgid, setuid)
 from blackhole.exceptions import BlackholeRuntimeException
 
-from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
-                     create_config, create_file, Args)
+from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
+                     reset_daemon, reset_supervisor)
+
+try:
+    import ssl
+except ImportError:
+    ssl = None
+
+
+
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

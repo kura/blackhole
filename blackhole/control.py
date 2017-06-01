@@ -120,7 +120,7 @@ def _socket(addr, port, family):
     try:
         sock.bind((addr, port))
     except OSError:
-        msg = 'Cannot bind to {}:{}.'.format(addr, port)
+        msg = 'Cannot bind to {0}:{1}.'.format(addr, port)
         logger.fatal(msg)
         sock.close()
         raise BlackholeRuntimeException(msg)

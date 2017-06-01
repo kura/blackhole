@@ -77,7 +77,7 @@ def message_id(domain):
     timeval = int(time.time() * 100)
     pid = os.getpid()
     randint = random.getrandbits(64)
-    return '<{}.{}.{}@{}>'.format(timeval, pid, randint, domain)
+    return '<{0}.{1}.{2}@{3}>'.format(timeval, pid, randint, domain)
 
 
 def get_version():
@@ -106,11 +106,11 @@ def get_version():
                     digits = (major.isdigit(), minor.isdigit(),
                               patch.isdigit())
                     if not all(digits):
-                        msg = ('{} is not a valid version '
+                        msg = ('{0} is not a valid version '
                                'number').format(version)
                         raise AssertionError(msg)
                 except ValueError:
-                    msg = '{} is not a valid version number'.format(version)
+                    msg = '{0} is not a valid version number'.format(version)
                     raise AssertionError(msg)
                 return version
     raise AssertionError('No __version__ assignment found')

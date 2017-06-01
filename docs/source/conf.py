@@ -14,8 +14,8 @@
 # serve to show the default.
 
 import datetime
-import sys
 import os
+import sys
 
 from blackhole import __author__, __version__
 

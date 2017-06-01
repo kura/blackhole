@@ -233,7 +233,7 @@ class Smtp(asyncio.StreamReaderProtocol):
             if 'fail=' in line:
                 return self._auth_failure
             return self._auth_success
-        return getattr(self, 'auth_{}'.format(mechanism.upper()),
+        return getattr(self, 'auth_{0}'.format(mechanism.upper()),
                        self.auth_UNKNOWN)
 
     async def auth_UNKNOWN(self):
@@ -247,7 +247,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/index.html#help-verb
         """
         mechanisms = ' '.join(self.get_auth_members())
-        await self.push(250, 'Syntax: AUTH {}'.format(mechanisms))
+        await self.push(250, 'Syntax: AUTH {0}'.format(mechanisms))
 
     async def auth_LOGIN(self):
         """
@@ -427,7 +427,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         :rtype: :any:`blackhole.smtp.Smtp.help_VERB`
         """
         if len(parts) > 1:
-            cmd = 'help_{}'.format(parts[1].upper())
+            cmd = 'help_{0}'.format(parts[1].upper())
         else:
             cmd = 'do_HELP'
         return getattr(self, cmd, self.help_UNKNOWN)
@@ -441,7 +441,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         :returns: A callable command handler.
         :rtype: :any:`blackhole.smtp.Smtp.do_VERB`
         """
-        return getattr(self, 'do_{}'.format(verb.upper()), self.do_UNKNOWN)
+        return getattr(self, 'do_{0}'.format(verb.upper()), self.do_UNKNOWN)
 
     async def push(self, code, msg):
         """
@@ -452,14 +452,14 @@ class Smtp(asyncio.StreamReaderProtocol):
         :param msg: The message for the SMTP code
         :type msg: :any:`str`
         """
-        response = "{} {}\r\n".format(code, msg).encode('utf-8')
+        response = "{0} {1}\r\n".format(code, msg).encode('utf-8')
         logger.debug('SEND %s', response)
         self._writer.write(response)
         await self._writer.drain()
 
     async def greet(self):
         """Send a greeting to the client."""
-        await self.push(220, '{} ESMTP'.format(self.fqdn))
+        await self.push(220, '{0} ESMTP'.format(self.fqdn))
 
     def get_help_members(self):
         """
@@ -484,7 +484,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/index.html#help-verb
         """
         msg = ' '.join(self.get_help_members())
-        await self.push(250, 'Supported commands: {}'.format(msg))
+        await self.push(250, 'Supported commands: {0}'.format(msg))
 
     async def help_HELO(self):
         """
@@ -508,16 +508,16 @@ class Smtp(asyncio.StreamReaderProtocol):
 
     async def do_EHLO(self):
         """Send response to EHLO verb."""
-        response = "250-{}\r\n".format(self.fqdn).encode('utf-8')
+        response = "250-{0}\r\n".format(self.fqdn).encode('utf-8')
         self._writer.write(response)
         logger.debug('SENT %s', response)
         auth = ' '.join(self.get_auth_members())
-        responses = ('250-HELP', '250-PIPELINING', '250-AUTH {}'.format(auth),
-                     '250-SIZE {}'.format(self.config.max_message_size),
+        responses = ('250-HELP', '250-PIPELINING', '250-AUTH {0}'.format(auth),
+                     '250-SIZE {0}'.format(self.config.max_message_size),
                      '250-VRFY', '250-ETRN', '250-ENHANCEDSTATUSCODES',
                      '250-8BITMIME', '250-SMTPUTF8', '250-EXPN', '250 DSN', )
         for response in responses:
-            response = "{}\r\n".format(response).encode('utf-8')
+            response = "{0}\r\n".format(response).encode('utf-8')
             logger.debug("SENT %s", response)
             self._writer.write(response)
         await self._writer.drain()
@@ -625,12 +625,12 @@ class Smtp(asyncio.StreamReaderProtocol):
             key = random.choice(list(self._bounce_responses.keys()))
             await self.push(key, self._bounce_responses[key])
         elif self.mode == 'random':
-            resps = {250: '2.0.0 OK: queued as {}'.format(self.message_id), }
+            resps = {250: '2.0.0 OK: queued as {0}'.format(self.message_id), }
             resps.update(self._bounce_responses)
             key = random.choice(list(resps.keys()))
             await self.push(key, resps[key])
         else:
-            msg = '2.0.0 OK: queued as {}'.format(self.message_id)
+            msg = '2.0.0 OK: queued as {0}'.format(self.message_id)
             await self.push(250, msg)
 
     async def do_DATA(self):
@@ -737,9 +737,9 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         _, addr = self._line.split(' ')
         if 'pass=' in self._line:
-            await self.push(250, '2.0.0 <{}> OK'.format(addr))
+            await self.push(250, '2.0.0 <{0}> OK'.format(addr))
         elif 'fail=' in self._line:
-            await self.push(550, '5.7.1 <{}> unknown'.format(addr))
+            await self.push(550, '5.7.1 <{0}> unknown'.format(addr))
         else:
             await self.push(252, '2.0.0 Will attempt delivery')
 
@@ -790,7 +790,8 @@ class Smtp(asyncio.StreamReaderProtocol):
             if len(iterator) == i:
                 start = '250 '
             user = item.lower().replace(' ', '.')
-            resp.append('{}{} <{}@{}>'.format(start, item, user, self.fqdn))
+            resp.append('{0}{1} <{2}@{3}>'.format(start, item, user,
+                                                  self.fqdn))
             i += 1
         return resp
 
@@ -857,7 +858,7 @@ class Smtp(asyncio.StreamReaderProtocol):
             await self.push(550, 'Not authorised')
             return
         for response in await self._expn_response():
-            response = "{}\r\n".format(response).encode('utf-8')
+            response = "{0}\r\n".format(response).encode('utf-8')
             logger.debug("SENT %s", response)
             self._writer.write(response)
         await self._writer.drain()
@@ -899,7 +900,7 @@ class Smtp(asyncio.StreamReaderProtocol):
     async def help_UNKNOWN(self):
         """Send available help verbs when an invalid verb is received."""
         msg = ' '.join(self.get_help_members())
-        await self.push(501, 'Supported commands: {}'.format(msg))
+        await self.push(501, 'Supported commands: {0}'.format(msg))
 
     async def do_UNKNOWN(self):
         """Send response to unknown verb."""

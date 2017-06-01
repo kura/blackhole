@@ -19,9 +19,9 @@
 
 import codecs
 import os
-from setuptools.command.test import test as TestCommand
 import sys
 
+from setuptools.command.test import test as TestCommand
 
 __all__ = ('get_version', 'include_file', 'require_python', 'PyTest')
 

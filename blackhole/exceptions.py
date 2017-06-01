@@ -23,7 +23,8 @@
 """Exceptions..."""
 
 
-__all__ = ('ConfigException', 'DaemonException', 'BlackholeRuntimeException')
+__all__ = ('ConfigException', 'DaemonException',
+           'BlackholeRuntimeException')
 """Tuple all the things."""
 
 

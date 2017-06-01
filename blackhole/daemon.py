@@ -141,7 +141,7 @@ class Daemon(metaclass=Singleton):
         pid = str(pid)
         try:
             with open(self.pidfile, 'w+') as pidfile:
-                pidfile.write("{}\n".format(pid))
+                pidfile.write("{0}\n".format(pid))
         except (IOError, FileNotFoundError, PermissionError) as err:
             raise DaemonException(err.strerror)
 

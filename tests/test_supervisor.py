@@ -1,8 +1,4 @@
 import asyncio
-try:
-    import ssl
-except ImportError:
-    ssl = None
 import unittest
 from unittest import mock
 
@@ -12,8 +8,16 @@ from blackhole.config import Config
 from blackhole.exceptions import BlackholeRuntimeException
 from blackhole.supervisor import Supervisor
 
-from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
-                     create_config, create_file, Args)
+from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
+                     reset_daemon, reset_supervisor)
+
+try:
+    import ssl
+except ImportError:
+    ssl = None
+
+
+
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

@@ -118,7 +118,7 @@ class Supervisor(metaclass=Singleton):
         """Start each worker and it's child process."""
         logger.debug('Starting workers')
         for idx in range(self.config.workers):
-            num = '{}'.format(idx + 1)
+            num = '{0}'.format(idx + 1)
             logger.debug('Creating worker: %s', num)
             self.workers.append(Worker(num, self.socks, self.loop))
 

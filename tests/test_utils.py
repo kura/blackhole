@@ -3,10 +3,10 @@ from unittest import mock
 
 import pytest
 
-from blackhole.utils import mailname, message_id, get_version
+from blackhole.utils import get_version, mailname, message_id
 
-from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
-                     create_config, create_file, Args)
+from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
+                     reset_daemon, reset_supervisor)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

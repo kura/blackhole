@@ -5,11 +5,11 @@ import pytest
 
 from blackhole.application import run
 from blackhole.config import Config
-from blackhole.exceptions import (ConfigException, DaemonException,
-                                  BlackholeRuntimeException)
+from blackhole.exceptions import (BlackholeRuntimeException, ConfigException,
+                                  DaemonException)
 
-from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
-                     create_config, create_file, Args)
+from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
+                     reset_daemon, reset_supervisor)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

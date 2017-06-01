@@ -1,10 +1,10 @@
 import asyncio
 import inspect
 import socket
-from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
 import threading
 import time
 import unittest
+from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
 from unittest import mock
 
 import pytest
@@ -13,8 +13,8 @@ from blackhole.config import Config
 from blackhole.control import _socket
 from blackhole.smtp import Smtp
 
-from ._utils import (cleandir, reset_conf, reset_daemon, reset_supervisor,
-                     create_config, create_file, Args)
+from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
+                     reset_daemon, reset_supervisor)
 
 
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

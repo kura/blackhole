@@ -16,19 +16,24 @@ test:
 	pip install pytest pytest-cov pytest-asyncio codecov sphinx
 	py.test --cov ./blackhole \
 	        --cov ./tests \
-			--verbose \
-			./blackhole ./tests \
 			--cov-report xml \
 			--cov-report term-missing
+			--verbose \
+			./blackhole ./tests \
 	./codecov.sh
 	sphinx-build -b html docs/source/ docs/build/
 
 lint:
-	pip install flake8 flake8-colors flake8-commas flake8-docstrings \
-			    flake8-import-order flake8-pep3101 flake8-sorted-keys \
-				flake8-todo isort
-	flake8 --show-source --statistics blackhole
-	isort -rc -c -df blackhole
+	pip install flake8 \
+				flake8-colors \
+				flake8-commas \
+				flake8-docstrings \
+				flake8-import-order \
+				flake8-pep3101 \
+				flake8-sorted-keys \
+				flake8-string-format \
+				flake8-todo
+	flake8 blackhole
 
 testall: test lint
 
@@ -39,11 +44,6 @@ docs:
 
 release:
 	./release.sh
-
-web:
-	make docs
-	knock ego.kura.io && rsync -avhr -e "/usr/bin/ssh -p 2222" docs/build/ ego.kura.io:/var/www/blackhole.io/
-	rm -rf docs/build
 
 testssl:
 	sudo apt-get install -y aha
