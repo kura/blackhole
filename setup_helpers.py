@@ -32,7 +32,7 @@ class PyTest(TestCommand):
     def finalize_options(self):
         """Build options."""
         TestCommand.finalize_options(self)
-        self.test_args = ['--verbose', './blackhole', './tests']
+        self.test_args = ['--pylama', '--verbose', './blackhole', './tests']
         self.test_suite = True
 
     def run_tests(self):
@@ -42,6 +42,7 @@ class PyTest(TestCommand):
 
 
 def require_python(minimum):
+    """Python version check."""
     if sys.hexversion < minimum:
         hversion = hex(minimum)[2:]
         if len(hversion) % 2 != 0:
@@ -61,6 +62,7 @@ def require_python(minimum):
 
 
 def include_file(filename):
+    """Include contents of specified file."""
     here = os.path.abspath(os.path.dirname(__file__))
     fpath = os.path.join(here, filename)
     if not os.access(fpath, os.R_OK):
@@ -69,6 +71,7 @@ def include_file(filename):
 
 
 def get_version(filepath):
+    """Return program version."""
     for line in include_file(filepath).split('\n'):
         if line.startswith('__version__'):
             _, vers = line.split('=')

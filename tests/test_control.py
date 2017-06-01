@@ -19,9 +19,6 @@ except ImportError:
     ssl = None
 
 
-
-
-
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_tls_context_no_config():
