@@ -36,6 +36,7 @@ import socket
 from .config import Config
 from .exceptions import BlackholeRuntimeException
 
+
 __all__ = ('pid_permissions', 'server', 'setgid', 'setuid')
 """Tuple all the things."""
 

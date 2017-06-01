@@ -36,6 +36,7 @@ try:  # pragma: no cover
 except ImportError:  # pragma: no cover
     pass
 
+
 __all__ = ('mailname', 'message_id', 'get_version')
 
 

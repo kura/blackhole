@@ -26,6 +26,7 @@
 import logging
 from logging.config import dictConfig
 
+
 __all__ = ('configure_logs', )
 """Tuple all the things."""
 
