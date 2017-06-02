@@ -303,11 +303,13 @@ class Config(metaclass=Singleton):
 
            Default IPv4:
 
-               [('127.0.0.1', 25, socket.AF_INET, ('127.0.0.1', 587, socket.AF_INET), ]
+               [('127.0.0.1', 25, socket.AF_INET,
+                ('127.0.0.1', 587, socket.AF_INET), ]
 
            Default IPv6:
 
-               [('127.0.0.1', 25, socket.AF_INET), ('127.0.0.1', 587, socket.AF_INET), ]
+               [('127.0.0.1', 25, socket.AF_INET),
+                ('127.0.0.1', 587, socket.AF_INET), ]
         """
         ipv4 = [('127.0.0.1', 25, socket.AF_INET, {}),
                 ('127.0.0.1', 587, socket.AF_INET, {})]
