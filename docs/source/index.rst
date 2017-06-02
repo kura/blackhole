@@ -337,22 +337,9 @@ Indices and tables
 ==================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    api
-   api-application
-   api-child
-   api-config
-   api-control
-   api-daemon
-   api-exceptions
-   api-logs
-   api-protocols
-   api-smtp
-   api-streams
-   api-supervisor
-   api-utils
-   api-worker
    changelog
    command-auth
    command-expn
