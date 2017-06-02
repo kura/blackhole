@@ -58,10 +58,8 @@ class Worker:
         """
         Initialise the worker.
 
-        :param idx: The number reference of the worker and child.
-        :type idx: :py:obj:`str`
-        :param socks: Sockets to listen for connections on.
-        :type socks: :py:obj:`list`
+        :param str idx: The number reference of the worker and child.
+        :param list socks: Sockets to listen for connections on.
         :param loop: The event loop to use.
         :type loop: :py:class:`asyncio.unix_events._UnixSelectorEventLoop` or
                     :py:obj:`None` to get the current event loop using
@@ -102,8 +100,8 @@ class Worker:
         killed, the worker managing it will also be removed and a new worker
         and child will be spawned.
 
-        :param writer: An object for writing data to the pipe.
-        :type writer: :py:class:`asyncio.StreamWriter`
+        :param asyncio.StreamWriter writer: An object for writing data to the
+                                            pipe.
 
         .. note::
 
@@ -140,8 +138,8 @@ class Worker:
         killed, the worker managing it will also be removed and a new worker
         and child will be spawned.
 
-        :param reader: An object for reading data from the pipe.
-        :type reader: :py:class:`asyncio.StreamReader`
+        :param asyncio.StreamReader reader: An object for reading data from
+                                            the pipe.
 
         .. note::
 
@@ -177,12 +175,9 @@ class Worker:
         """
         Connect the child and worker so they can communicate.
 
-        :param pid: A process identifier
-        :type pid: :py:obj:`int`
-        :param up_write: a file descriptor
-        :type up_write: :py:class:`io.TextIOWrapper`
-        :param down_read: a file descriptor
-        :type down_read: :py:class:`io.TextIOWrapper`
+        :param int pid: A process identifier.
+        :param int up_write: A file descriptor.
+        :param int down_read: A file descriptor.
         """
         read_fd = os.fdopen(down_read, 'rb')
         r_trans, r_proto = await self.loop.connect_read_pipe(StreamProtocol,

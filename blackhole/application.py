@@ -44,9 +44,10 @@ def run():
     """
     Create the asyncio loop and start the server.
 
-    :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_USAGE`,
-             :py:obj:`os.EX_OK` or
-             :py:obj:`os.EX_NOPERM`
+    :raises SystemExit: Exit code :py:obj:`os.EX_USAGE` when a configuration
+                        error occurs, :py:obj:`os.EX_NOPERM` when a permission
+                        error occurs or :py:obj:`os.EX_OK` when the program
+                        exits cleanly.
     """
     args = parse_cmd_args(sys.argv[1:])
     configure_logs(args)

@@ -44,8 +44,8 @@ def mailname(mailname_file='/etc/mailname'):
     """
     Fully qualified domain name for HELO and EHLO.
 
-    :param mailname_file: A path to the mailname file.
-    :type mailname_file: :py:obj:`str`
+    :param str mailname_file: A path to the mailname file. Default:
+                              ``/etc/mailname``.
     :returns: A domain name.
     :rtype: :py:obj:`str`
 
@@ -55,9 +55,10 @@ def mailname(mailname_file='/etc/mailname'):
        :py:func:`socket.getfqdn` if `mailname_file` does not exist or cannot be
        opened for reading.
     """
-    mailname_file = pathlib.Path(mailname_file)
+    mailname_file = pathlib.PurePath(mailname_file)
     if os.access(mailname_file, os.R_OK):
-        mailname_content = open(mailname_file, 'r').readlines()
+        mailname_content = codecs.open(mailname_file,
+                                       encoding='utf-8').readlines()
         if len(mailname_content) == 0:
             return socket.getfqdn()
         mailname_content = mailname_content[0].strip()
@@ -70,12 +71,11 @@ def message_id(domain):
     """
     Return a string suitable for RFC 2822 compliant Message-ID.
 
-    :param domain: A fully qualified domain.
-    :type domain: :py:obj:`str`
+    :param str domain: A fully qualified domain.
     :returns: An RFC 2822 compliant Message-ID.
     :rtype: :py:obj:`str`
     """
-    timeval = int(time.time() * 100)
+    timeval = int(time.monotonic() * 100)
     pid = os.getpid()
     randint = random.getrandbits(64)
     return '<{0}.{1}.{2}@{3}>'.format(timeval, pid, randint, domain)
@@ -87,10 +87,11 @@ def get_version():
 
     :return: The version that was extracted.
     :rtype: :py:obj:`str`
-    :raises: :py:exc:`AssertionError`
+    :raises AssertionError: When a version cannot be determined.
     """
     path = os.path.dirname(os.path.abspath(__file__))
-    filepath = os.path.join(pathlib.Path(path), pathlib.Path('__init__.py'))
+    filepath = os.path.join(pathlib.PurePath(path),
+                            pathlib.PurePath('__init__.py'))
     if not os.access(filepath, os.R_OK):
         raise OSError('Cannot open __init__.py file for reading')
     with codecs.open(filepath, encoding='utf-8') as fp:

@@ -87,10 +87,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Initialise the SMTP protocol.
 
-        :param parent: The parent worker.
-        :type parent: :class:`blackhole.child.Child`
-        :param clients: A list of connected clients.
-        :type clients: :py:obj:`list`
+        :param Child parent: The parent worker.
+        :param list clients: A list of connected clients.
         :param loop: The event loop to use.
         :type loop: :py:obj:`None` or
                     :py:class:`syncio.unix_events._UnixSelectorEventLoop`
@@ -131,8 +129,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Tie a connection to blackhole to the SMTP protocol.
 
-        :param transport: The transport class.
-        :type transport: :py:class:`asyncio.transport.Transport`
+        :param asyncio.transport.Transport transport: The transport class.
         """
         super().connection_made(transport)
         logger.debug('Peer connected')
@@ -145,10 +142,10 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Bind a stream reader and writer to the SMTP Protocol.
 
-        :param reader: An object for reading incoming data.
-        :type reader: :py:class:`asyncio.streams.StreamReader`
-        :param writer: An object for writing outgoing data.
-        :type writer: :py:class:`asyncio.streams.StreamWriter`
+        :param asyncio.streams.StreamReader reader: An object for reading
+                                                    incoming data.
+        :param asyncio.streams.StreamWriter writer: An object for writing
+                                                    outgoing data.
         """
         self._reader = reader
         self._writer = writer
@@ -158,8 +155,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Client connection is closed or lost.
 
-        :param exc:
-        :type exc: :py:exc:
+        :param exc exc: Exception.
         """
         logger.debug('Peer disconnected')
         try:
@@ -210,8 +206,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Look up a handler for the received AUTH mechanism.
 
-        :param line: A line of data from a client.
-        :type line: :py:obj:`str`
+        :param str line: A line of data from a client.
         :returns: A callable authentication mechanism.
         :rtype: `blackhole.smtp.Smtp.auth_MECHANISM`
 
@@ -398,8 +393,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Look up the SMTP VERB against a handler.
 
-        :param line: Look up the command handler to use from the data provided.
-        :type line: :py:obj:`str`
+        :param str line: Look up the command handler to use from the data
+                         provided.
         :returns: A callable command handler.
         :rtype: `blackhole.smtp.Smtp.do_VERB`,
                 `blackhole.smtp.Smtp.auth_MECHANISM`,
@@ -421,8 +416,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         https://blackhole.io/index.html#help-verb
 
-        :param parts: A list of command data, split on spaces.
-        :type parts: :py:obj:`list`
+        :param list parts: A list of command data, split on spaces.
         :returns: A callable help handler.
         :rtype: `blackhole.smtp.Smtp.help_VERB`
         """
@@ -436,8 +430,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Look up a handler for the SMTP VERB.
 
-        :param verb:
-        :type verb: :py:obj:`str`
+        :param str verb:
         :returns: A callable command handler.
         :rtype: `blackhole.smtp.Smtp.do_VERB`
         """
@@ -447,10 +440,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Write a response code and message to the client.
 
-        :param code: SMTP code, i.e. 250.
-        :type code: :py:obj:`int`
-        :param msg: The message for the SMTP code
-        :type msg: :py:obj:`str`
+        :param int code: SMTP code, i.e. 250.
+        :param str msg: The message for the SMTP code
         """
         response = "{0} {1}\r\n".format(code, msg).encode('utf-8')
         logger.debug('SEND %s', response)
@@ -592,8 +583,7 @@ class Smtp(asyncio.StreamReaderProtocol):
 
         https://blackhole.io/dynamic-switches.html
 
-        :param line: An email header.
-        :type line: :py:obj:`str`
+        :param str line: An email header.
         """
         logger.debug('HEADER RECV: %s', line)
         if self.config.dynamic_switch is False:
@@ -921,7 +911,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/configuration-options.html#delay
         https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
 
-        :returns: A delay time in seconds.
+        :returns: A delay time in seconds. Default: ``None``.
         :rtype: :py:obj:`int` or :py:obj:`None`
         """
         if 'delay' in self._flags.keys():
@@ -955,9 +945,8 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/configuration-options.html#delay
         https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
 
-        :param value: A list of minimum and maximum values as a string. i.e.
-                      (10, 20).
-        :type value: :py:obj:`str`
+        :param str value: A list of minimum and maximum values as a string.
+                          i.e. (10, 20).
 
         .. note::
 
@@ -999,8 +988,7 @@ class Smtp(asyncio.StreamReaderProtocol):
         https://blackhole.io/configuration-options.html#delay
         https://blackhole.io/dynamic-switches.html#dynamic-delay-switches
 
-        :param value: Time in seconds as a string.
-        :type value: :py:obj:`str`
+        :param str value: Time in seconds as a string.
 
         .. note:
 

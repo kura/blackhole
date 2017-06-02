@@ -72,7 +72,8 @@ class Supervisor(metaclass=Singleton):
         :type loop: :py:class:`syncio.unix_events._UnixSelectorEventLoop` or
                     :py:obj:`None` to get the current event loop using
                     :py:func:`asyncio.get_event_loop`.
-        :raises: :exc:`blackhole.exceptions.BlackholeRuntimeException`
+        :raises BlackholeRuntimeException: When an error occurs generating
+                                           servers.
         """
         logger.debug('Initiating the supervisor')
         self.config = Config()
@@ -136,17 +137,13 @@ class Supervisor(metaclass=Singleton):
         for sock in self.socks:
             sock['sock'].close()
 
-    def stop(self, signum=None, frame=None):
+    def stop(self, *args, **kwargs):
         """
         Terminate all of the workers.
 
         Generally should be called by a signal, nothing else.
 
-        :param signum: A signal number.
-        :type signum: :py:obj:`int`
-        :param frame: Interrupted stack frame.
-        :type frame: :py:obj:`frame`
-        :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_OK`
+        :raise SystemExit: With code :py:obj:`os.EX_OK`.
         """
         self.stop_workers()
         self.close_socks()

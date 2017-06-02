@@ -14,7 +14,7 @@ from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
 def test_mail_name_file():
     check_value = 'file.blackhole.io'
     with mock.patch('os.access', return_value=True), \
-            mock.patch('builtins.open', return_value=StringIO(check_value)):
+            mock.patch('codecs.open', return_value=StringIO(check_value)):
         mn = mailname()
         assert mn == check_value
 
@@ -54,7 +54,7 @@ def test_mail_name_file_garbage():
 @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
                          'cleandir')
 def test_message_id():
-    with mock.patch('time.time',
+    with mock.patch('time.monotonic',
                     return_value=1463290829.4173775) as mock_time, \
         mock.patch('os.getpid', return_value=9000) as mock_getpid, \
             mock.patch('random.getrandbits',

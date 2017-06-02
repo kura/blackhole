@@ -54,9 +54,9 @@ def _context(use_tls=False):
     """
     Create a TLS context using the certificate, key and dhparams file.
 
-    :param use_tls: Whether to create a TLS context or not.
-    :type use_tls: :py:obj:`bool`
-    :returns: A TLS context or none.
+    :param bool use_tls: Whether to create a TLS context or not.
+                         Default: ``False``.
+    :returns: A TLS context or ``None``.
     :rtype: :py:class:`ssl.SSLContext` or :py:obj:`None`.
 
     .. note::
@@ -99,15 +99,13 @@ def _socket(addr, port, family):
     """
     Create a socket, bind and listen.
 
-    :param addr: The address to use.
-    :type addr: :py:obj:`str`
-    :param port: The port to use.
-    :type port: :py:obj:`int`
+    :param str addr: The address to use.
+    :param int port: The port to use.
     :param family: The type of socket to use.
     :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`.
-    :returns: A bound socket.
+    :returns: Bound socket.
     :rtype: :py:func:`socket.socket`
-    :raises: :exc:`blackhole.exceptions.BlackholeRuntimeException`
+    :raises BlackholeRuntimeException: When a socket cannot be bound.
     """
     sock = socket.socket(family, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -137,17 +135,14 @@ def server(addr, port, family, flags={}, use_tls=False):
     Create an instance of :py:func:`socket.socket`, bind it and return a
     dictionary containing the socket object and a TLS context if configured.
 
-    :param addr: The address to use.
-    :type addr: :py:obj:`str`
-    :param port: The port to use.
-    :type port: :py:obj:`int`
+    :param str addr: The address to use.
+    :param int port: The port to use.
     :param family: The type of socket to use.
     :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`.
-    :param flags: Flags to use.
-    :type flags: :py:obj:`dict`. Default: {}
-    :param use_tls: Whether to create a TLS context or not.
-    :type use_tls: :py:obj:`bool`
-    :returns: A bound socket, a TLS context if configured and any configured
+    :param dict flags: Flags to use. Default: ``{}``.
+    :param bool use_tls: Whether to create a TLS context or not.
+                         Default: ``False``.
+    :returns: Bound socket, a TLS context if configured and any configured
               flags.
     :rtype: :py:obj:`dict`
     """
@@ -164,7 +159,8 @@ def pid_permissions():
     :func:`blackhole.control.setuid` are called to stop
     :class:`blackhole.daemon.Daemon` losing permissions to modify the pid file.
 
-    :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_USAGE`
+    :raises SystemExit: With exit code :py:obj:`os.EX_USAGE` when a permissions
+                        error occurs.
     """
     config = Config()
     try:
@@ -183,8 +179,9 @@ def setgid():
     Change to a less privileged group. Unless you're using it incorrectly --
     in which case, don't use it.
 
-    :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_USAGE` or
-             :py:obj:`os.EX_NOPERM`
+    :raises SystemExit: Exit code :py:obj:`os.EX_USAGE` when a configuration
+                        error occurs or :py:obj:`os.EX_NOPERM` when a
+                        permission error occurs.
 
     .. note::
 
@@ -210,8 +207,9 @@ def setuid():
     Change to a less privileged user.Unless you're using it incorrectly --
     inwhich case, don't use it.
 
-    :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_USAGE` or
-             :py:obj:`os.EX_NOPERM`
+    :raises SystemExit: Exit code :py:obj:`os.EX_USAGE` when a configuration
+                        error occurs or :py:obj:`os.EX_NOPERM` when a
+                        permission error occurs.
 
     .. note::
 

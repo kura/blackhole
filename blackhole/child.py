@@ -60,12 +60,9 @@ class Child:
         """
         Initialise a child process.
 
-        :param up_read: A pipe to the worker process for heartbeats.
-        :type up_read: :py:func:`os.pipe`
-        :param down_write: A pipe to the worker process for heartbeats.
-        :type down_write: :py:func:`os.pipe`
-        :param socks: A list of sockets to get data from.
-        :type socks: :py:obj:`list`
+        :param int up_read: A file descriptor for reading.
+        :param int down_write: A file descriptor for writing.
+        :param list socks: A list of sockets.
         """
         self.up_read = up_read
         self.down_write = down_write
@@ -85,7 +82,7 @@ class Child:
         os._exit(os.EX_OK)
 
     async def _start(self):
-        """Create an asyncio 'server' for each socket."""
+        """Create an asyncio server for each socket."""
         for sock in self.socks:
             server = await self.loop.create_server(lambda: Smtp(self.clients),
                                                    **sock)
@@ -98,13 +95,6 @@ class Child:
         Mark the process as being stopped, closes each client connected via
         this child, cancels internal communication with the supervisor and
         finally stops the process and exits.
-
-        :param signum: A signal number.
-        :type signum: :py:obj:`int`
-        :param frame: Interrupted stack frame.
-        :type frame: :py:obj:`frame`
-        :returns: Exit the process.
-        :rtype: :py:func:`os._exit` -- :py:obj:`os.EX_OK`
         """
         self.loop.stop()
         for _ in range(len(self.clients)):

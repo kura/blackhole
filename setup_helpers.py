@@ -19,6 +19,7 @@
 
 import codecs
 import os
+import pathlib
 import sys
 
 from setuptools.command.test import test as TestCommand
@@ -64,7 +65,8 @@ def require_python(minimum):
 def include_file(filename):
     """Include contents of specified file."""
     here = os.path.abspath(os.path.dirname(__file__))
-    fpath = os.path.join(here, filename)
+    fpath = os.path.join(pathlib.PurePath(here), pathlib.PurePath(filename))
+    fpath = pathlib.PurePath(fpath)
     if not os.access(fpath, os.R_OK):
         raise OSError('Cannot open {} for reading', fpath)
     return codecs.open(fpath, encoding='utf-8').read()

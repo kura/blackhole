@@ -34,7 +34,7 @@ def test_default():
                          'cleandir')
 def test_no_access():
     conf = Config()
-    conf.config_file = pathlib.Path('/fake/file.conf')
+    conf.config_file = pathlib.PurePath('/fake/file.conf')
     with mock.patch('os.access', return_value=False) as mock_os_access, \
             pytest.raises(ConfigException):
         conf.load()
@@ -518,7 +518,7 @@ class TestTls(unittest.TestCase):
         with pytest.raises(ConfigException):
             conf.test_tls_settings()
         assert conf.tls_listen == []
-        assert conf.tls_cert == pathlib.Path(cert)
+        assert conf.tls_cert == pathlib.PurePath(cert)
         assert conf.tls_key is None
 
     def test_key_no_port_cert(self):
@@ -530,7 +530,7 @@ class TestTls(unittest.TestCase):
             conf.test_tls_settings()
         assert conf.tls_listen == []
         assert conf.tls_cert is None
-        assert conf.tls_key == pathlib.Path(key)
+        assert conf.tls_key == pathlib.PurePath(key)
 
     def test_cert_key_no_port(self):
         cert = create_file('crt.crt')
@@ -542,8 +542,8 @@ class TestTls(unittest.TestCase):
         with pytest.raises(ConfigException):
             conf.test_tls_settings()
         assert conf.tls_listen == []
-        assert conf.tls_cert == pathlib.Path(cert)
-        assert conf.tls_key == pathlib.Path(key)
+        assert conf.tls_cert == pathlib.PurePath(cert)
+        assert conf.tls_key == pathlib.PurePath(key)
 
     def test_port_cert_no_key(self):
         cert = create_file('crt.crt')
@@ -553,7 +553,7 @@ class TestTls(unittest.TestCase):
         with pytest.raises(ConfigException):
             conf.test_tls_settings()
         assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
-        assert conf.tls_cert == pathlib.Path(cert)
+        assert conf.tls_cert == pathlib.PurePath(cert)
         assert conf.tls_key is None
 
     def test_port_key_no_cert(self):
@@ -565,7 +565,7 @@ class TestTls(unittest.TestCase):
             conf.test_tls_settings()
         assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
         assert conf.tls_cert is None
-        assert conf.tls_key == pathlib.Path(key)
+        assert conf.tls_key == pathlib.PurePath(key)
 
     def test_port_cert_key(self):
         key = create_file('key.key')
@@ -576,8 +576,8 @@ class TestTls(unittest.TestCase):
         conf = Config(cfile).load()
         conf.test_tls_settings()
         assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
-        assert conf.tls_cert == pathlib.Path(cert)
-        assert conf.tls_key == pathlib.Path(key)
+        assert conf.tls_cert == pathlib.PurePath(cert)
+        assert conf.tls_key == pathlib.PurePath(key)
 
     def test_default_dhparam(self):
         cfile = create_config(('', ))
@@ -588,7 +588,7 @@ class TestTls(unittest.TestCase):
         dhparams = create_file('dhparams.pem')
         cfile = create_config(('tls_dhparams={}'.format(dhparams), ))
         conf = Config(cfile).load()
-        assert conf.tls_dhparams == pathlib.Path(dhparams)
+        assert conf.tls_dhparams == pathlib.PurePath(dhparams)
 
     def test_dhparam_no_exist(self):
         cfile = create_config(('tls_dhparams=/fake/path/dhparams.pem', ))
@@ -747,7 +747,7 @@ class TestPidfile(unittest.TestCase):
     def test_pidfile_default(self):
         cfile = create_config(('', ))
         conf = Config(cfile).load()
-        assert conf.pidfile == pathlib.Path('/tmp/blackhole.pid')
+        assert conf.pidfile == pathlib.PurePath('/tmp/blackhole.pid')
 
     def test_pidfile_no_permission(self):
         cfile = create_config(('pidfile=/fake/path.pid', ))
