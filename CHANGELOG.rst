@@ -29,7 +29,7 @@ Current release
 
 - Introduced the ability to use `uvloop
   <https://github.com/MagicStack/uvloop>`_ in place of the default
-  :any:`asyncio.event_loop`.
+  :py:obj:`asyncio.event_loop`.
 
 -------------
 Past releases
@@ -44,8 +44,8 @@ Past releases
 The 2.1.5 release is actually a tiny bug fix release that I'm combining with
 the large 2.1.4 release.
 
-- Bugfix for :any:`socket.SO_REUSEPORT`.
-- Squashed bugs related to :any:`socket.socket` failing in child processes.
+- Bugfix for :py:obj:`socket.SO_REUSEPORT`.
+- Squashed bugs related to :py:func:`socket.socket` failing in child processes.
   These squashed bugs fix IPv6 which had a tendency of not working as expected.
 - Added communication between supervisor and children, allow children to be
   restarted if they fail to communicate to the supervisor.
@@ -91,6 +91,7 @@ the large 2.1.4 release.
   a reduced privilege user and group and the ``-d`` or ``--daemon`` flags.
 
 .. _2.1.1:
+.. _2.1.0:
 
 2.1.1
 =====
@@ -99,10 +100,9 @@ the large 2.1.4 release.
 that version number)*
 
 - Fix ``SIZE=`` being parsed in the ``MAIL`` verb.
-- Huge overhaul of testing, finally almost all of :any:`blackhole.smtp.Smtp` is
-  tested.
+- Huge overhaul of testing, finally almost all of :class:`blackhole.smtp.Smtp`
+  is tested.
 - Added worker processes.
-
 
 .. _2.0.14:
 
@@ -142,10 +142,10 @@ Will be read as.
     listen = :25, :::25
 
 - Large scale documentation updates. Pretty much everything should be fully
-  documented now, including all :any:`SystemExit` calls including their return
-  codes.
-- Added an option to disable :any:`ssl.OP_SINGLE_DH_USE` and
-  :any:`ssl.OP_SINGLE_ECDH_USE`. Reduces CPU overhead at the expense
+  documented now, including all :py:exc:`SystemExit` calls including their
+  return codes.
+- Added an option to disable :py:obj:`ssl.OP_SINGLE_DH_USE` and
+  :py:obj:`ssl.OP_SINGLE_ECDH_USE`. Reduces CPU overhead at the expense
   of security. Disabled by default, warns if used. Slightly better for high
   load environments. -- :ref:`command-line-options`
 
@@ -168,10 +168,10 @@ Will be read as.
 2.0.10
 ======
 
-- Added error catching to :any:`socket.SO_REUSEPORT` -- on some systems this is
-  available while still triggering a `Protocol Error` and causing blackhole to
-  crash. The error catching will attempt to set this option if it's available
-  but silently ignore it if it errors.
+- Added error catching to :py:obj:`socket.SO_REUSEPORT` -- on some systems this
+  is available while still triggering a `Protocol Error` and causing blackhole
+  to crash. The error catching will attempt to set this option if it's
+  available but silently ignore it if it errors.
 
 .. _2.0.9:
 
@@ -186,8 +186,9 @@ Will be read as.
 - Added warning for TLS being used with no Diffie Hellman ephemeral parameters
   being configured. -- :ref:`configuration-options`
 - Added further security to TSL. The following options are now enforced.
-  :any:`ssl.OP_NO_COMPRESSION`, :any:`ssl.OP_SINGLE_DH_USE`,
-  :any:`ssl.OP_SINGLE_ECDH_USE` and :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`.
+  :py:obj:`ssl.OP_NO_COMPRESSION`, :py:obj:`ssl.OP_SINGLE_DH_USE`,
+  :py:obj:`ssl.OP_SINGLE_ECDH_USE` and
+  :py:obj:`ssl.OP_CIPHER_SERVER_PREFERENCE`.
   `See the Python documentation for more information on the flags
   <https://docs.python.org/3/library/ssl.html#ssl.OP_CIPHER_SERVER_PREFERENCE>`_.
 

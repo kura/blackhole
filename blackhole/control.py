@@ -55,25 +55,25 @@ def _context(use_tls=False):
     Create a TLS context using the certificate, key and dhparams file.
 
     :param use_tls: Whether to create a TLS context or not.
-    :type use_tls: :any:`bool`
+    :type use_tls: :py:obj:`bool`
     :returns: A TLS context or none.
-    :rtype: :any:`ssl.SSLContext` or :any:`None`.
+    :rtype: :py:class:`ssl.SSLContext` or :py:obj:`None`.
 
     .. note::
 
        Created with:
 
-       - :any:`ssl.OP_NO_SSLv2`
-       - :any:`ssl.OP_NO_SSLv3`
-       - :any:`ssl.OP_NO_COMPRESSION`
-       - :any:`ssl.OP_CIPHER_SERVER_PREFERENCE`
+       - :py:obj:`ssl.OP_NO_SSLv2`
+       - :py:obj:`ssl.OP_NO_SSLv3`
+       - :py:obj:`ssl.OP_NO_COMPRESSION`
+       - :py:obj:`ssl.OP_CIPHER_SERVER_PREFERENCE`
 
        Also responsible for loading Diffie Hellman ephemeral parameters if
-       they're provided -- :any:`ssl.SSLContext.load_dh_params`
+       they're provided -- :py:func:`ssl.SSLContext.load_dh_params`
 
        If the ``-ls`` or ``--less-secure`` option is provided,
-       :any:`ssl.OP_SINGLE_DH_USE` and :any:`ssl.OP_SINGLE_ECDH_USE` will be
-       omitted from the context. --
+       :py:obj:`ssl.OP_SINGLE_DH_USE` and :py:obj:`ssl.OP_SINGLE_ECDH_USE`
+       will be omitted from the context. --
        https://blackhole.io/command-line-options.html#command-line-options --
        added in :ref:`2.0.13`
     """
@@ -100,14 +100,14 @@ def _socket(addr, port, family):
     Create a socket, bind and listen.
 
     :param addr: The address to use.
-    :type addr: :any:`str`
+    :type addr: :py:obj:`str`
     :param port: The port to use.
-    :type port: :any:`int`
+    :type port: :py:obj:`int`
     :param family: The type of socket to use.
-    :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
+    :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`.
     :returns: A bound socket.
-    :rtype: :any:`socket.socket`
-    :raises: :any:`blackhole.exceptions.BlackholeRuntimeException`
+    :rtype: :py:func:`socket.socket`
+    :raises: :exc:`blackhole.exceptions.BlackholeRuntimeException`
     """
     sock = socket.socket(family, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -134,22 +134,22 @@ def server(addr, port, family, flags={}, use_tls=False):
     """
     Socket and possibly a TLS context.
 
-    Create an instance of :any:`socket.socket`, bind it and return a dictionary
-    containing the socket object and a TLS context if configured.
+    Create an instance of :py:func:`socket.socket`, bind it and return a
+    dictionary containing the socket object and a TLS context if configured.
 
     :param addr: The address to use.
-    :type addr: :any:`str`
+    :type addr: :py:obj:`str`
     :param port: The port to use.
-    :type port: :any:`int`
+    :type port: :py:obj:`int`
     :param family: The type of socket to use.
-    :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`.
+    :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`.
     :param flags: Flags to use.
-    :type flags: :any:`dict`. Default: {}
+    :type flags: :py:obj:`dict`. Default: {}
     :param use_tls: Whether to create a TLS context or not.
-    :type use_tls: :any:`bool`
+    :type use_tls: :py:obj:`bool`
     :returns: A bound socket, a TLS context if configured and any configured
               flags.
-    :rtype: :any:`dict`
+    :rtype: :py:obj:`dict`
     """
     sock = _socket(addr, port, family)
     ctx = _context(use_tls=use_tls)
@@ -160,11 +160,11 @@ def pid_permissions():
     """
     Change the pid file ownership.
 
-    Called before :any:`blackhole.control.setgid` and
-    :any:`blackhole.control.setuid` are called to stop
-    :any:`blackhole.daemon.Daemon` losing permissions to modify the pid file.
+    Called before :func:`blackhole.control.setgid` and
+    :func:`blackhole.control.setuid` are called to stop
+    :class:`blackhole.daemon.Daemon` losing permissions to modify the pid file.
 
-    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE`
+    :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_USAGE`
     """
     config = Config()
     try:
@@ -182,7 +182,9 @@ def setgid():
 
     Change to a less privileged group. Unless you're using it incorrectly --
     in which case, don't use it.
-    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` or :any:`os.EX_NOPERM`
+
+    :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_USAGE` or
+             :py:obj:`os.EX_NOPERM`
 
     .. note::
 
@@ -207,7 +209,9 @@ def setuid():
 
     Change to a less privileged user.Unless you're using it incorrectly --
     inwhich case, don't use it.
-    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` or :any:`os.EX_NOPERM`
+
+    :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_USAGE` or
+             :py:obj:`os.EX_NOPERM`
 
     .. note::
 

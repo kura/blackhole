@@ -42,12 +42,12 @@ logger = logging.getLogger('blackhole.supervisor')
 
 
 class Singleton(type):
-    """Singleton for :any:`blackhole.supervisor.Supervisor`."""
+    """Singleton for :class:`blackhole.supervisor.Supervisor`."""
 
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
-        """Singleton for :any:`blackhole.supervisor.Supervisor`."""
+        """Singleton for :class:`blackhole.supervisor.Supervisor`."""
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
                                                                  **kwargs)
@@ -69,10 +69,10 @@ class Supervisor(metaclass=Singleton):
         Loads the configuration and event loop.
 
         :param loop: The event loop to use.
-        :type loop: :any:`syncio.unix_events._UnixSelectorEventLoop` or
-                    :any:`None` to get the current event loop using
-                    :any:`asyncio.get_event_loop`.
-        :raises: :any:`blackhole.exceptions.BlackholeRuntimeException`
+        :type loop: :py:class:`syncio.unix_events._UnixSelectorEventLoop` or
+                    :py:obj:`None` to get the current event loop using
+                    :py:func:`asyncio.get_event_loop`.
+        :raises: :exc:`blackhole.exceptions.BlackholeRuntimeException`
         """
         logger.debug('Initiating the supervisor')
         self.config = Config()
@@ -143,10 +143,10 @@ class Supervisor(metaclass=Singleton):
         Generally should be called by a signal, nothing else.
 
         :param signum: A signal number.
-        :type signum: :any:`int`
+        :type signum: :py:obj:`int`
         :param frame: Interrupted stack frame.
-        :type frame: :any:`frame`
-        :raises: :any:`SystemExit` -- :any:`os.EX_OK`
+        :type frame: :py:obj:`frame`
+        :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_OK`
         """
         self.stop_workers()
         self.close_socks()

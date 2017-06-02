@@ -22,8 +22,9 @@ The original incarnation of Blackhole -- built on top of Tornado -- is still
 available for use on Python versions lower than 3.6, including PyPy.
 
 It is no longer maintained however, but is available for posterity's sake on
-`GitHub <https://github.com/kura/blackhole/releases/tag/1.8.1>`_ for those
-people unable to use Python 3.6.
+github_tag_ for those people unable to use Python 3.6.
+
+.. _github_tag: https://github.com/kura/blackhole/releases/tag/1.8.1
 
 Getting started
 ===============
@@ -45,7 +46,7 @@ Installation
 Packaged
 --------
 
-From `PyPI <https://pypi.python.org/pypi/blackhole>`_
+From pypi_
 
 .. code-block:: bash
 
@@ -61,12 +62,15 @@ From GitHub
 From source
 -----------
 
-Download the latest tarball from `PyPI <https://pypi.python.org/pypi/blackhole>`_
-or `GitHub <https://github.com/kura/blackhole/tags>`_. Unpack and run:
+Download the latest tarball from pypi_ or github_tags_. Unpack and run:
+
+.. _github_tags: https://github.com/kura/blackhole/tags
 
 .. code-block:: bash
 
   python setup.py install
+
+.. _pypi: https://pypi.python.org/pypi/blackhole
 
 Configuration
 =============

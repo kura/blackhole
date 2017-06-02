@@ -45,13 +45,13 @@ class Child:
     A child process.
 
     Each child process maintains a list of the internal
-    :any:`asyncio.create_server` instances it utilises. Each child also
+    :py:class:`asyncio.Server` instances it utilises. Each child also
     maintains a list of all connections being managed by the child.
     """
 
     _started = False
     servers = []
-    """List of :any:`asyncio.create_server` instances."""
+    """List of :py:class:`asyncio.Server` instances."""
 
     clients = []
     """List of clients connected to this process."""
@@ -61,11 +61,11 @@ class Child:
         Initialise a child process.
 
         :param up_read: A pipe to the worker process for heartbeats.
-        :type up_read: :any:`os.pipe`
+        :type up_read: :py:func:`os.pipe`
         :param down_write: A pipe to the worker process for heartbeats.
-        :type down_write: :any:`os.pipe`
+        :type down_write: :py:func:`os.pipe`
         :param socks: A list of sockets to get data from.
-        :type socks: :any:`list`
+        :type socks: :py:obj:`list`
         """
         self.up_read = up_read
         self.down_write = down_write
@@ -100,11 +100,11 @@ class Child:
         finally stops the process and exits.
 
         :param signum: A signal number.
-        :type signum: :any:`int`
+        :type signum: :py:obj:`int`
         :param frame: Interrupted stack frame.
-        :type frame: :any:`frame`
+        :type frame: :py:obj:`frame`
         :returns: Exit the process.
-        :rtype: :any:`os._exit` -- :any:`os.EX_OK`
+        :rtype: :py:func:`os._exit` -- :py:obj:`os.EX_OK`
         """
         self.loop.stop()
         for _ in range(len(self.clients)):
@@ -132,10 +132,10 @@ class Child:
 
            3 bytes are used in the communication channel.
 
-           - b'x01' -- :any:`blackhole.protocols.PING`
-           - b'x02' -- :any:`blackhole.protocols.PONG`
+           - b'x01' -- :const:`blackhole.protocols.PING`
+           - b'x02' -- :const:`blackhole.protocols.PONG`
 
-           These message values are defined in the :any:`blackhole.proto`
+           These message values are defined in the :mod:`blackhole.protocols`
            schema. Documentation is available at --
            https://blackhole.io/api-protocols.html#blackhole.proto
         """

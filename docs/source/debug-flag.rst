@@ -7,8 +7,8 @@ Debug Flag
 After much debate and several emails from developers a debug flag has been
 added to blackhole.
 
-You can enable debug using command line options :ref:`configuration_options`
-or via the configuration file :ref:`configuration_file_example`.
+You can enable debug using command line options :ref:`configuration-options`
+or via the configuration file :ref:`configuration-file-example`.
 
 Enabling the debug flag will log all incoming and outgoing commands to the
 blackhole log file as well as all data sent after a `DATA` command.

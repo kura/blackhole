@@ -34,16 +34,16 @@ __all__ = ('Daemon', )
 
 
 class Singleton(type):
-    """A singleton for :any:`blackhole.daemon.Daemon`."""
+    """A singleton for :class:`blackhole.daemon.Daemon`."""
 
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
         """
-        Singleton for :any:`blackhole.daemon.Daemon`.
+        Singleton for :class:`blackhole.daemon.Daemon`.
 
         :param cls:
-        :type cls: :any:`blackhole.daemon.Daemon`
+        :type cls: :class:`blackhole.daemon.Daemon`
         """
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
@@ -56,14 +56,14 @@ class Daemon(metaclass=Singleton):
 
     def __init__(self, pidfile):
         """
-        Create an instance of :any:`blackhole.daemon.Daemon`.
+        Create an instance of :class:`blackhole.daemon.Daemon`.
 
         :param pidfile: A path to store the pid
-        :type pidfile: :any:`str`
+        :type pidfile: :py:obj:`str`
 
         .. note::
 
-           Registers an :any:`atexit.register` signal to delete the pid on
+           Registers an :py.func:`atexit.register` signal to delete the pid on
            exit.
         """
         self.pidfile = pidfile
@@ -80,12 +80,12 @@ class Daemon(metaclass=Singleton):
 
     def _exit(self, signum=None, frame=None):
         """
-        Call on exit using :any:`atexit.register` or via a signal.
+        Call on exit using :py:func:`atexit.register` or via a signal.
 
         :param signum: The signal number.
-        :type: signum: :any:`int`
+        :type: signum: :py:obj:`int`
         :param frame: The stack frame when interrupted.
-        :type frame: :any:`frame`
+        :type frame: :py:obj:`frame`
         """
         del self.pid
 
@@ -93,8 +93,8 @@ class Daemon(metaclass=Singleton):
         """
         Fork off the process.
 
-        :raises: :any:`os._exit` -- :any:`os.EX_OK`
-        :raises: :any:`blackhole.exceptions.DaemonException`
+        :raises: :py:func:`os._exit` -- :py:obj:`os.EX_OK`
+        :raises: :class:`blackhole.exceptions.DaemonException`
         """
         try:
             pid = os.fork()
@@ -108,10 +108,10 @@ class Daemon(metaclass=Singleton):
         """
         Pid of the process, if it's been daemonised.
 
-        :raises: :any:`blackhole.exceptions.DaemonException` if pid cannot be
+        :raises: :exc:`blackhole.exceptions.DaemonException` if pid cannot be
                  read from the filesystem.
         :returns: The current pid.
-        :rtype: :any:`int` or :any:`None`
+        :rtype: :py:obj:`int` or :py:obj:`None`
 
         .. note::
 
@@ -133,10 +133,10 @@ class Daemon(metaclass=Singleton):
         """
         Write the pid to the filesystem.
 
-        :raises: :any:`daemon.daemon.DaemonException` if writing to filesystem
+        :raises: :exc:`daemon.daemon.DaemonException` if writing to filesystem
                  fails.
         :param pid: the process's pid.
-        :type pid: :any:`int`
+        :type pid: :py:obj:`int`
         """
         pid = str(pid)
         try:

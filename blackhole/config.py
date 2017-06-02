@@ -49,9 +49,9 @@ def parse_cmd_args(args):
     https://blackhole.io/command-line-options.html
 
     :param args: A list of option command line arguments.
-    :type args: :any:`list`
+    :type args: :py:obj:`list`
     :returns: Parsed command line arguments.
-    :rtype: :any:`argparse.Namespace`
+    :rtype: :py:class:`argparse.Namespace`
     """
     ls_help = ('Disable ssl.OP_SINGLE_DH_USE and ssl.OP_SINGLE_ECDH_USE. '
                'Reduces CPU overhead at the expense of security -- Don\'t '
@@ -94,7 +94,7 @@ def warn_options(config):
     Warn the user when using certain options.
 
     :param config: The configuration.
-    :type config: :any:`blackhole.config.Config`
+    :type config: :class:`blackhole.config.Config`
     """
     logger = logging.getLogger('blackhole.warnings')
     if config.args.less_secure:
@@ -110,14 +110,15 @@ def config_test(args):
     """
     Test the validity of the configuration file content.
 
-    :param args: arguments parsed from :any:`argparse`.
-    :type args: :any:`argparse.Namespace`
-    :raises: :any:`SystemExit` -- :any:`os.EX_USAGE` and :any:`os.EX_OK`
+    :param args: arguments parsed from :py:mod:`argparse`.
+    :type args: :py:class:`argparse.Namespace`
+    :raises: :py:exc:`SystemExit` -- :py:obj:`os.EX_USAGE` and
+             :py:obj:`os.EX_OK`
 
     .. note::
 
        Problems with the configuration will be written to the console using
-       the :any:`logging` module.
+       the :py:mod:`logging` module.
     """
     logger = logging.getLogger('blackhole.config.test')
     logger.setLevel(logging.INFO)
@@ -138,7 +139,7 @@ def _compare_uid_and_gid(config):
     Compare the current user and group and conf settings.
 
     :param config: The configuration.
-    :type config: :any:`blackhole.config.Config`
+    :type config: :class:`blackhole.config.Config`
     """
     logger = logging.getLogger('blackhole.warnings')
     uid, gid = os.getuid(), os.getgid()
@@ -149,12 +150,12 @@ def _compare_uid_and_gid(config):
 
 
 class Singleton(type):
-    """Singleton for :any:`blackhole.config.Config`."""
+    """Singleton for :class:`blackhole.config.Config`."""
 
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
-        """Singleton for :any:`blackhole.config.Config`."""
+        """Singleton for :class:`blackhole.config.Config`."""
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
                                                                  **kwargs)
@@ -197,7 +198,7 @@ class Config(metaclass=Singleton):
         Initialise the configuration.
 
         :param config_file: The configuration file.
-        :type config_file: :any:`str`
+        :type config_file: :py:obj:`str`
         """
         if config_file:
             self.config_file = pathlib.Path(config_file)
@@ -211,9 +212,9 @@ class Config(metaclass=Singleton):
         """
         Load the configuration file and parse.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
-        :returns: An instance of :any:`blackhole.config.Config`
-        :rtype: :any:`blackhole.config.Config`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
+        :returns: An instance of :class:`blackhole.config.Config`
+        :rtype: :class:`blackhole.config.Config`
 
         .. note::
 
@@ -256,9 +257,9 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html
 
         :param key: Configuration option
-        :type key: :any:`str`
-        :raises: :any:`blackhole.exceptions.ConfigException`
-        :rtype: :any:`None`
+        :type key: :py:obj:`str`
+        :raises: :class:`blackhole.exceptions.ConfigException`
+        :rtype: :py:obj:`None`
         """
         if key == '':
             return
@@ -282,7 +283,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#workers
 
         :returns: Number of workers.
-        :rtype: :any:`int`
+        :rtype: :py:obj:`int`
 
         .. note::
 
@@ -304,7 +305,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#listen
 
         :returns: Sockets to listen on.
-        :rtype: :any:`list`
+        :rtype: :py:obj:`list`
 
         .. note::
 
@@ -312,15 +313,15 @@ class Config(metaclass=Singleton):
 
                 If IPv6 is supported:
 
-                    [('127.0.0.1', 25, :any:`socket.AF_INET`),
-                     ('127.0.0.1', 587, :any:`socket.AF_INET`),
-                     ('::', 25, :any:`socket.AF_INET6`),
-                     ('::', 587, :any:`socket.AF_INET6`)]
+                    [('127.0.0.1', 25, :py:obj:`socket.AF_INET`),
+                     ('127.0.0.1', 587, :py:obj:`socket.AF_INET`),
+                     ('::', 25, :py:obj:`socket.AF_INET6`),
+                     ('::', 587, :py:obj:`socket.AF_INET6`)]
 
                 If IPv6 is not supported:
 
-                    [('127.0.0.1', 25, :any:`socket.AF_INET`),
-                     ('127.0.0.1', 587, :any:`socket.AF_INET`)]
+                    [('127.0.0.1', 25, :py:obj:`socket.AF_INET`),
+                     ('127.0.0.1', 587, :py:obj:`socket.AF_INET`)]
         """
         ipv4 = [('127.0.0.1', 25, socket.AF_INET, {}),
                 ('127.0.0.1', 587, socket.AF_INET, {})]
@@ -341,7 +342,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#tls_listen
 
         :returns: Sockets to listen on.
-        :rtype: :any:`list`
+        :rtype: :py:obj:`list`
         """
         return self._tls_listen or []
 
@@ -357,7 +358,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#user
 
         :returns: A user name.
-        :rtype: :any:`str`
+        :rtype: :py:obj:`str`
 
         .. note::
 
@@ -377,7 +378,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#group
 
         :returns: A group name.
-        :rtype: :any:`str`
+        :rtype: :py:obj:`str`
 
         .. note::
 
@@ -397,7 +398,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#timeout
 
         :returns: A timeout in seconds.
-        :rtype: :any:`int`
+        :rtype: :py:obj:`int`
 
         .. note::
 
@@ -418,7 +419,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#tls_key
 
         :returns: A path to a TLS key file.
-        :rtype: :any:`pathlib.Path`
+        :rtype: :py:class:`pathlib.Path`
         """
         return self._tls_key
 
@@ -435,7 +436,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#tls_cert
 
         :returns: A path to a TLS certificate.
-        :rtype: :any:`pathlib.Path`
+        :rtype: :py:class:`pathlib.Path`
         """
         return self._tls_cert
 
@@ -452,7 +453,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#tls_dhparams
 
         :returns: A path to a file containing dhparams.
-        :rtype: :any:`pathlib.Path`
+        :rtype: :py:class:`pathlib.Path`
         """
         return self._tls_dhparams
 
@@ -469,7 +470,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#pidfile
 
         :returns: A path to a pid file.
-        :rtype: :any:`pathlib.Path`
+        :rtype: :py:class:`pathlib.Path`
         """
         return self._pidfile
 
@@ -486,11 +487,11 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#delay
 
         :returns: A delay in seconds or none if not configured.
-        :rtype: :any:`int` or :any:`None`
+        :rtype: :py:obj:`int` or :py:obj:`None`
 
         .. note::
 
-           Defaults to :any:`None`.
+           Defaults to :py:obj:`None`.
            Cannot be higher than 60 seconds for security (denial of service).
         """
         if self._delay is not None:
@@ -509,7 +510,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#mode
 
         :returns: A response mode.
-        :rtype: :any:`str`
+        :rtype: :py:obj:`str`
 
         .. note::
 
@@ -530,7 +531,7 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#max_message_size
 
         :returns: Maximum message size in bytes.
-        :rtype: :any:`int`
+        :rtype: :py:obj:`int`
 
         .. note::
 
@@ -551,12 +552,12 @@ class Config(metaclass=Singleton):
         https://blackhole.io/configuration-options.html#dynamic_switch
 
         :returns: Whether dynamic switches are enabled or not.
-        :rtype: :any:`bool` - :any:`True` or :any:`False`
+        :rtype: :py:obj:`bool` - :py:obj:`True` or :py:obj:`False`
 
         .. note::
 
-           Allowed values are :any:`True` and :any:`False`.
-           Default: :any:`True`
+           Allowed values are :py:obj:`True` and :py:obj:`False`.
+           Default: :py:obj:`True`
         """
         if self._dynamic_switch is None:
             return True
@@ -577,10 +578,10 @@ class Config(metaclass=Singleton):
         Convert a port from the configuration files' string to an integer.
 
         :param port: A port number.
-        :type port: :any:`str`
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :type port: :py:obj:`str`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         :returns: A port number.
-        :rtype: :any:`int`
+        :rtype: :py:obj:`int`
         """
         try:
             return int(port)
@@ -594,9 +595,9 @@ class Config(metaclass=Singleton):
 
         :param listeners: A list of addresses and ports, separated by commas.
                          -- e.g. '127.0.0.1:25, 10.0.0.1:25, :25, :::25'
-        :type listeners: :any:`str`
+        :type listeners: :py:obj:`str`
         :returns: A list of addresses and sockets to listen on.
-        :rtype: :any:`list` or :any:`None`
+        :rtype: :py:obj:`list` or :py:obj:`None`
         """
         clisteners = []
         _listeners = listeners.split(',')
@@ -625,11 +626,11 @@ class Config(metaclass=Singleton):
         Scope: ``listen``, ``tls_listen``.
 
         :param addr: The listener host address.
-        :type addr: :any:`str`
+        :type addr: :py:obj:`str`
         :param port: The listener port.
-        :type port: :any:`int`
+        :type port: :py:obj:`int`
         :returns: Flags defined for this socket.
-        :rtype: :any:`dict`
+        :rtype: :py:obj:`dict`
 
         .. note::
 
@@ -669,9 +670,9 @@ class Config(metaclass=Singleton):
         Create a set of flags from a listener directive.
 
         :param parts: Parts of the listener definition.
-        :type parts: :any:`list`
+        :type parts: :py:obj:`list`
         :returns: Flags for a listener.
-        :rtype: :any:`dict`
+        :rtype: :py:obj:`dict`
         """
         flags = {}
         for part in parts:
@@ -690,12 +691,12 @@ class Config(metaclass=Singleton):
         Create a flag for the mode directive.
 
         :param flag: The flag name.
-        :type flag: :any:`str`
+        :type flag: :py:obj:`str`
         :param value: The value of the flag.
-        :type value: :any:`str`
+        :type value: :py:obj:`str`
         :returns: Mode flag for a listener.
-        :rtype: :any:`dict`
-        :raises: :any:`blackhole.exception.ConfigException`
+        :rtype: :py:obj:`dict`
+        :raises: :exc:`blackhole.exception.ConfigException`
         """
         if value in ('accept', 'bounce', 'random'):
             return {flag: value}
@@ -709,12 +710,12 @@ class Config(metaclass=Singleton):
         Create a delay flag, delay can be an int or a range.
 
         :param flag: The flag name.
-        :type flag: :any:`str`
+        :type flag: :py:obj:`str`
         :param value: The value of the flag.
-        :type value: :any:`str`
+        :type value: :py:obj:`str`
         :returns: Delay flag for a listener.
-        :rtype: :any:`dict`
-        :raises: :any:`blackhole.exception.ConfigException`
+        :rtype: :py:obj:`dict`
+        :raises: :exc:`blackhole.exception.ConfigException`
         """
         if value.count('-') == 0:
             if value.isdigit() and int(value) < 60:
@@ -737,13 +738,13 @@ class Config(metaclass=Singleton):
         """
         Test configuration validity.
 
-        :returns: An instance of :any:`blackhole.config.Config`.
-        :rtype: :any:`blackhole.config.Config`
+        :returns: An instance of :class:`blackhole.config.Config`.
+        :rtype: :class:`blackhole.config.Config`
 
         .. note::
 
-           Uses the magic of :any:`inspect.getmembers` to introspect methods
-           beginning with 'test_' and calling them.
+           Uses the magic of :py:func:`inspect.getmembers` to introspect
+           methods beginning with 'test_' and calling them.
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         for name, _ in members:
@@ -755,7 +756,7 @@ class Config(metaclass=Singleton):
         """
         Validate the number of workers.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -772,7 +773,7 @@ class Config(metaclass=Singleton):
         """
         If an IPv6 listener is configured, confirm IPv6 is supported.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         for address, port, family, flags in self.listen:
             if ':' in address:
@@ -785,7 +786,7 @@ class Config(metaclass=Singleton):
         """
         If an IPv6 listener is configured, confirm IPv6 is supported.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         for address, port, family, flags in self.tls_listen:
             if ':' in address:
@@ -798,7 +799,7 @@ class Config(metaclass=Singleton):
         """
         Test that multiple listeners are not configured on the same port.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -823,7 +824,7 @@ class Config(metaclass=Singleton):
         """
         Test that at least one listener is configured.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         if not len(self.listen) > 0 and not len(self.tls_listen) > 0:
             msg = 'You need to define at least one listener.'
@@ -834,8 +835,8 @@ class Config(metaclass=Singleton):
         Minimum and maximum allowed port.
 
         :param port: The port to test for validity.
-        :type port: :any:`int`
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :type port: :py:obj:`int`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -857,7 +858,7 @@ class Config(metaclass=Singleton):
         """
         Validate port number.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         for host, port, family, flags in self.listen:
             self._port_permissions(host, port, family)
@@ -867,12 +868,12 @@ class Config(metaclass=Singleton):
         Validate that we have permission to use the port and it's not in use.
 
         :param address: The address to use.
-        :type address: :any:`str`
+        :type address: :py:obj:`str`
         :param port: The port to use.
-        :type port: :any:`int`
+        :type port: :py:obj:`int`
         :param family: The type of socket to use.
-        :type family: :any:`socket.AF_INET` or :any:`socket.AF_INET6`
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         self._min_max_port(port)
         if os.getuid() is not 0 and port < 1024:
@@ -900,11 +901,11 @@ class Config(metaclass=Singleton):
         """
         Validate user exists in UNIX password database.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
-           Defaults to :any:`getpass.getuser` if no user is specified.
+           Defaults to :py:func:`getpass.getuser` if no user is specified.
         """
         try:
             pwd.getpwnam(self.user)
@@ -916,11 +917,12 @@ class Config(metaclass=Singleton):
         """
         Validate group exists in UNIX group database.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
-           Defaults to :any:`grp.getgrgid.gr_name` if no group is specified.
+           Defaults to :py:attr:`grp.getgrgid.gr_name` if no group is
+           specified.
         """
         try:
             grp.getgrnam(self.group)
@@ -932,7 +934,7 @@ class Config(metaclass=Singleton):
         """
         Validate timeout - only allow a valid integer value in seconds.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         try:
             __ = self.timeout  # NOQA
@@ -948,7 +950,7 @@ class Config(metaclass=Singleton):
         """
         Validate TLS port number.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         if len(self.tls_listen) == 0:
             return
@@ -959,7 +961,7 @@ class Config(metaclass=Singleton):
         """
         Validate TLS configuration.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -981,7 +983,7 @@ class Config(metaclass=Singleton):
         """
         Validate Diffie Hellman ephemeral parameters.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -996,7 +998,7 @@ class Config(metaclass=Singleton):
         """
         Validate the delay period.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -1014,7 +1016,7 @@ class Config(metaclass=Singleton):
         """
         Validate the response mode.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
 
         .. note::
 
@@ -1028,7 +1030,7 @@ class Config(metaclass=Singleton):
         """
         Validate max_message size is an integer.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         try:
             __ = self.max_message_size  # NOQA
@@ -1041,7 +1043,7 @@ class Config(metaclass=Singleton):
         """
         Validate that the pidfile can be written to.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         if not self.pidfile:
             return
@@ -1058,7 +1060,7 @@ class Config(metaclass=Singleton):
         """
         Validate that the dynamic_switch value is correct.
 
-        :raises: :any:`blackhole.exceptions.ConfigException`
+        :raises: :exc:`blackhole.exceptions.ConfigException`
         """
         if self._dynamic_switch is None:
             return

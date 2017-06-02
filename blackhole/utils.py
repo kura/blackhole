@@ -45,14 +45,15 @@ def mailname(mailname_file='/etc/mailname'):
     Fully qualified domain name for HELO and EHLO.
 
     :param mailname_file: A path to the mailname file.
-    :type mailname_file: :any:`str`
+    :type mailname_file: :py:obj:`str`
     :returns: A domain name.
-    :rtype: :any:`str`
+    :rtype: :py:obj:`str`
 
     .. note::
 
-       Prefers content of `mailname_file`, falls back on :any:`socket.getfqdn`
-       if `mailname_file` does not exist or cannot be opened for reading.
+       Prefers content of `mailname_file`, falls back on
+       :py:func:`socket.getfqdn` if `mailname_file` does not exist or cannot be
+       opened for reading.
     """
     mailname_file = pathlib.Path(mailname_file)
     if os.access(mailname_file, os.R_OK):
@@ -70,9 +71,9 @@ def message_id(domain):
     Return a string suitable for RFC 2822 compliant Message-ID.
 
     :param domain: A fully qualified domain.
-    :type domain: :any:`str`
+    :type domain: :py:obj:`str`
     :returns: An RFC 2822 compliant Message-ID.
-    :rtype: :any:`str`
+    :rtype: :py:obj:`str`
     """
     timeval = int(time.time() * 100)
     pid = os.getpid()
@@ -85,8 +86,8 @@ def get_version():
     Extract the __version__ from a file without importing it.
 
     :return: The version that was extracted.
-    :rtype: :any:`str`
-    :raises: :any:`AssertionError`
+    :rtype: :py:obj:`str`
+    :raises: :py:exc:`AssertionError`
     """
     path = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(pathlib.Path(path), pathlib.Path('__init__.py'))

@@ -59,13 +59,13 @@ class Worker:
         Initialise the worker.
 
         :param idx: The number reference of the worker and child.
-        :type idx: :any:`str`
+        :type idx: :py:obj:`str`
         :param socks: Sockets to listen for connections on.
-        :type socks: :any:`list`
+        :type socks: :py:obj:`list`
         :param loop: The event loop to use.
-        :type loop: :any:`asyncio.unix_events._UnixSelectorEventLoop` or
-                    :any:`None` to get the current event loop using
-                    :any:`asyncio.get_event_loop`.
+        :type loop: :py:class:`asyncio.unix_events._UnixSelectorEventLoop` or
+                    :py:obj:`None` to get the current event loop using
+                    :py:func:`asyncio.get_event_loop`.
         """
         self.loop = loop if loop is not None else asyncio.get_event_loop()
         self.socks = socks
@@ -103,22 +103,22 @@ class Worker:
         and child will be spawned.
 
         :param writer: An object for writing data to the pipe.
-        :type writer: :any:`asyncio.StreamWriter`
+        :type writer: :py:class:`asyncio.StreamWriter`
 
         .. note::
 
            3 bytes are used in the communication channel.
 
-           - b'x01' -- :any:`blackhole.protocols.PING`
-           - b'x02' -- :any:`blackhole.protocols.PONG`
+           - b'x01' -- :const:`blackhole.protocols.PING`
+           - b'x02' -- :const:`blackhole.protocols.PONG`
 
            The worker will sleep for 15 seconds, before requesting a ping from
            the child. If we go for over 30 seconds waiting for a ping, the
            worker will restart itself and the child bound to it.
 
-           These message values are defined in the :any:`blackhole.protocols`
+           These message values are defined in the :mod:`blackhole.protocols`
            schema. Documentation is available at --
-           https://blackhole.io/api-protocols.html#blackhole.proto
+           https://blackhole.io/api-protocols.html#blackhole.protocols
         """
         while self._started:
             await asyncio.sleep(15)
@@ -141,21 +141,21 @@ class Worker:
         and child will be spawned.
 
         :param reader: An object for reading data from the pipe.
-        :type reader: :any:`asyncio.StreamReader`
+        :type reader: :py:class:`asyncio.StreamReader`
 
         .. note::
 
            3 bytes are used in the communication channel.
 
-           - b'x01' -- :any:`blackhole.protocols.PING`
-           - b'x02' -- :any:`blackhole.protocols.PONG`
+           - b'x01' -- :const:`blackhole.protocols.PING`
+           - b'x02' -- :const:`blackhole.protocols.PONG`
 
            Read data coming in from the child. If a PONG is received, we'll
            update the worker, setting this PONG as a 'PING' from the child.
 
-           These message values are defined in the :any:`blackhole.proto`
+           These message values are defined in the :mod:`blackhole.protocols`
            schema. Documentation is available at --
-           https://blackhole.io/api-protocols.html#blackhole.proto
+           https://blackhole.io/api-protocols.html#blackhole.protocols
         """
         while self._started:
             try:
@@ -178,11 +178,11 @@ class Worker:
         Connect the child and worker so they can communicate.
 
         :param pid: A process identifier
-        :type pid: :any:`int`
+        :type pid: :py:obj:`int`
         :param up_write: a file descriptor
-        :type up_write: :any:`io.TextIOWrapper`
+        :type up_write: :py:class:`io.TextIOWrapper`
         :param down_read: a file descriptor
-        :type down_read: :any:`io.TextIOWrapper`
+        :type down_read: :py:class:`io.TextIOWrapper`
         """
         read_fd = os.fdopen(down_read, 'rb')
         r_trans, r_proto = await self.loop.connect_read_pipe(StreamProtocol,

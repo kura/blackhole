@@ -336,6 +336,45 @@ Thanks are here -- :ref:`thanks` and contributors here -- :ref:`contributors`.
 Indices and tables
 ==================
 
+.. toctree::
+   :maxdepth: 2
+
+   api
+   api-application
+   api-child
+   api-config
+   api-control
+   api-daemon
+   api-exceptions
+   api-logs
+   api-protocols
+   api-smtp
+   api-streams
+   api-supervisor
+   api-utils
+   api-worker
+   changelog
+   command-auth
+   command-expn
+   command-line-options
+   command-vrfy
+   commands
+   configuration-file-example
+   configuration-options
+   contributing
+   contributors
+   controlling-the-server-with-init-d
+   debug-flag
+   delay-flag
+   dynamic-responses
+   dynamic-switches
+   frequently-asked-questions
+   modes
+   response-codes
+   running-your-own-server
+   thanks
+   todo
+
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
