@@ -1,3 +1,7 @@
+.. image::https://github.com/kura/blackhole/raw/master/docs/source/_static/blackhole.png
+    :alt: Blackhole
+    :align: center
+
 =========
 Blackhole
 =========
