@@ -96,6 +96,7 @@ class Child:
         this child, cancels internal communication with the supervisor and
         finally stops the process and exits.
         """
+        self._started = False
         self.loop.stop()
         for _ in range(len(self.clients)):
             client = self.clients.pop()
