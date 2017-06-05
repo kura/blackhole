@@ -27,6 +27,7 @@ test:
 			--cov ./tests \
 			--cov-report xml \
 			--cov-report term-missing \
+			--cov-branch \
 			--pylama \
 			--verbose \
 			--cache-clear \
