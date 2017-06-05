@@ -75,22 +75,41 @@ class Worker:
         assert not self._started
         self._started = True
 
-        up_read, up_write = os.pipe()
-        down_read, down_write = os.pipe()
+        self.up_read, self.up_write = os.pipe()
+        self.down_read, self.down_write = os.pipe()
 
         self.pid = os.fork()
         if self.pid > 0:  # Parent
-            os.close(up_read)
-            os.close(down_write)
-            asyncio.ensure_future(self.connect(self.pid, up_write, down_read))
+            asyncio.ensure_future(self.connect())
         else:  # Child
-            os.close(up_write)
-            os.close(down_read)
-            setgid()
-            setuid()
-            asyncio.set_event_loop(None)
-            process = Child(up_read, down_write, self.socks, self.idx)
-            process.start()
+            self.setup_child()
+
+    def setup_child(self):
+        """Basic setup for the child process and starting it."""
+        setgid()
+        setuid()
+        asyncio.set_event_loop(None)
+        process = Child(self.up_read, self.down_write, self.socks,
+                        self.idx)
+        process.start()
+
+    def restart_child(self):
+        """Restart the child process."""
+        self.kill_child()
+        self.pid = os.fork()
+        if self.pid > 0:
+            self.ping_count = 0
+            self.ping = time.monotonic()
+        else:
+            self.setup_child()
+
+    def kill_child(self):
+        """Kill the child process."""
+        try:
+            os.kill(self.pid, signal.SIGTERM)
+            os.wait()
+        except ProcessLookupError:
+            pass
 
     async def heartbeat(self, writer):
         """
@@ -126,17 +145,14 @@ class Worker:
                 if self._started:
                     logger.debug('worker.%s.heartbeat: Communication failed. '
                                  'Restarting worker', self.idx)
-                    self.stop()
-                    self.start()
-                return
+                    self.restart_child()
 
     async def chat(self, reader):
         """
         Communicate between a worker and child.
 
-        If a child process stops communicating with it's worker, it will be
-        killed, the worker managing it will also be removed and a new worker
-        and child will be spawned.
+        If communication with the child fails the worker is shutdown and the
+        child is killed.
 
         :param asyncio.StreamReader reader: An object for reading data from
                                             the pipe.
@@ -158,36 +174,29 @@ class Worker:
         while self._started:
             try:
                 msg = await reader.read(3)
+                if msg == protocols.PONG:
+                    logger.debug('worker.%s.chat: Pong received from child',
+                                 self.idx)
+                    self.ping = time.monotonic()
+                    self.ping_count += 1
             except:
-                if self._started:
-                    logger.debug('worker.%s.chat: Communication failed. '
-                                 'Restarting worker', self.idx)
-                    self.stop()
-                    self.start()
-                return
-            if msg == protocols.PONG:
-                logger.debug('worker.%s.chat: Ping received from child',
-                             self.idx)
-                self.ping = time.monotonic()
-                self.ping_count += 1
+                self.stop()
 
-    async def connect(self, pid, up_write, down_read):
+    async def connect(self):
         """
         Connect the child and worker so they can communicate.
 
-        :param int pid: A process identifier.
         :param int up_write: A file descriptor.
         :param int down_read: A file descriptor.
         """
-        read_fd = os.fdopen(down_read, 'rb')
+        read_fd = os.fdopen(self.down_read, 'rb')
         r_trans, r_proto = await self.loop.connect_read_pipe(StreamProtocol,
                                                              read_fd)
-        write_fd = os.fdopen(up_write, 'wb')
+        write_fd = os.fdopen(self.up_write, 'wb')
         w_trans, w_proto = await self.loop.connect_write_pipe(StreamProtocol,
                                                               write_fd)
         reader = r_proto.reader
         writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)
-        self.pid = pid
         self.ping = time.monotonic()
         self.rtransport = r_trans
         self.wtransport = w_trans
@@ -196,14 +205,9 @@ class Worker:
 
     def stop(self):
         """Terminate the worker and it's respective child process."""
+        self.kill_child()
         self._started = False
         self.chat_task.cancel()
         self.heartbeat_task.cancel()
         self.rtransport.close()
         self.wtransport.close()
-        for task in asyncio.Task.all_tasks(self.loop):
-            task.cancel()
-        try:
-            os.kill(self.pid, signal.SIGTERM)
-        except ProcessLookupError:
-            pass
