@@ -29,6 +29,7 @@ test:
 			--cov-report term-missing \
 			--pylama \
 			--verbose \
+			--cache-clear \
 			blackhole tests
 	./codecov.sh
 	sphinx-build -b html docs/source/ docs/build/
