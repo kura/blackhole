@@ -12,14 +12,6 @@ switches, you can tell blackhole to bounce an email instead of accepting it or
 delay for 10 seconds before processing the email -- without affecting any
 other emails you are sending to the service.
 
-Disabling dynamic switches
-==========================
-
-By default, dynamic switches are enabled. You can disable dynamic switches in
-the blackhole configuration. Take a look at the
-:ref:`configuration-file-example` for information on how to disable this
-feature.
-
 Dynamic mode switches
 =====================
 
@@ -53,9 +45,6 @@ Dynamic delay switches
 ======================
 
 The ``X-Blackhole-Delay`` header is responsible for dynamic delay switching.
-
-Please see the :ref:`delay_flag` page for information on what the delay flag
-does.
 
 Delay for a set amount of time
 ------------------------------
