@@ -2,7 +2,6 @@
 Overview
 ========
 
-
 .. _requirements:
 
 Requirements
@@ -16,43 +15,32 @@ Requirements
     available for use on Python versions lower than 3.6, including PyPy.
 
     It is no longer maintained however, but is available for posterity's sake on
-    github_tag_ for those people unable to use Python 3.6.
+    `GitHub <https://github.com/kura/blackhole/tree/1.8.1>`__ for those people
+    unable to use Python 3.6.
 
-    .. _github_tag: https://github.com/kura/blackhole/releases/tag/1.8.1
 
 .. _installation:
 
 Installation
 ============
 
-Packaged
---------
-
-From pypi_
+PyPI
+----
 
 .. code-block:: bash
 
   pip install blackhole
 
-From GitHub
------------
+Source
+------
 
-.. code-block:: bash
-
-  pip install -e git+git://github.com/kura/blackhole.git#egg=blackhole
-
-From source
------------
-
-Download the latest tarball from pypi_ or github_tags_. Unpack and run:
-
-.. _github_tags: https://github.com/kura/blackhole/tags
+Download the latest tarball from `PyPI
+<https://pypi.python.org/pypi/blackhole>`_ or `GitHub
+<https://github.com/kura/blackhole/tags>`__. Unpack and run:
 
 .. code-block:: bash
 
   python setup.py install
-
-.. _pypi: https://pypi.python.org/pypi/blackhole
 
 
 .. _license:
