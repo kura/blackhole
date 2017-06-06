@@ -31,7 +31,6 @@ test: docs
 			--cache-clear \
 			blackhole tests
 	./codecov.sh
-	sphinx-build -b html docs/source/ docs/build/
 
 docs:
 	pip install sphinx guzzle_sphinx_theme
