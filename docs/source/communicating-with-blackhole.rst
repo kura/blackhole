@@ -1,10 +1,39 @@
+============================
+Communicating with Blackhole
+============================
+
+With Python
+===========
+
+.. code-block:: python
+
+    # from smtplib import SMTP             # For sending without SSL/TLS.
+    from smtplib import SMTP_SSL
+
+    server = 'blackhole.io'  # Change this to your server address.
+    msg = '''From: <test@blackhole.io>
+    To: <test@blackhole.io>
+    Subject: Test email
+
+    Random test email. Some UTF-8 characters: ßæøþ'''
+
+    # smtp = SMTP(server, 25)      # For sending without SSL/TLS.
+    smtp = SMTP_SSL(server, 465)
+    smtp.sendmail('test@blackhole.io', 'test@blackhole.io',
+                  msg.encode('utf-8'))
+
+    # We can send multiple messages using the same connection.
+    smtp.sendmail(server, 'tset@blackhole.io',
+                  msg.encode('utf-8'))
+
+    # Quit after we're done
+    smtp.quit()
+
+
 .. _commands:
 
-=====================================
 Supported commands/verbs & parameters
 =====================================
-
-The following commands and parameters are supported by Blackhole.
 
 - :ref:`auth`
 - `DATA`_
@@ -25,7 +54,7 @@ The following commands and parameters are supported by Blackhole.
 .. _DATA:
 
 DATA
-====
+----
 
 :Syntax:
     **DATA**
@@ -42,7 +71,7 @@ DATA
 .. _EHLO:
 
 EHLO
-====
+----
 
 :Syntax:
     **EHLO** *domain.tld*
@@ -67,7 +96,7 @@ EHLO
 .. _ETRN:
 
 ETRN
-====
+----
 
 :Syntax:
     **ETRN**
@@ -82,7 +111,7 @@ ETRN
 .. _HELO:
 
 HELO
-====
+----
 
 :Syntax:
     **HELO** *domain.tld*
@@ -97,7 +126,7 @@ HELO
 .. _HELP:
 
 HELP
-====
+----
 
 :Syntax:
     **HELP**
@@ -118,7 +147,7 @@ HELP
 .. _SMTPUTF8:
 
 MAIL
-====
+----
 
 :Syntax:
     **MAIL FROM:** *<user@domain.tld>*
@@ -135,7 +164,7 @@ MAIL
     250 2.1.0 OK
 
 BODY=
------
+~~~~~
 
 .. code-block:: none
 
@@ -155,7 +184,7 @@ BODY=
 .. _SIZE:
 
 SIZE=
------
+~~~~~
 
 You can also specify the size using the ``SIZE=`` parameter.
 
@@ -169,7 +198,7 @@ You can also specify the size using the ``SIZE=`` parameter.
 .. _NOOP:
 
 NOOP
-====
+----
 
 :Syntax:
     **NOOP**
@@ -184,7 +213,7 @@ NOOP
 .. _QUIT:
 
 QUIT
-====
+----
 
 :Syntax:
     **QUIT**
@@ -199,7 +228,7 @@ QUIT
 .. _RCPT:
 
 RCPT
-====
+----
 
 :Syntax:
     **RCPT TO:** *<user@domain.tld>*
@@ -214,7 +243,7 @@ RCPT
 .. _RSET:
 
 RSET
-====
+----
 
 :Syntax:
     **RSET**
@@ -223,3 +252,32 @@ RSET
 
     >>> RSET
     250 2.0.0 OK
+
+
+.. _response-codes:
+
+Response codes
+==============
+
+Accept codes
+------------
+
+::
+
+    250: 2.0.0 OK: queued as MESSAGE-ID
+
+Bounce codes
+------------
+
+::
+
+    450: Requested mail action not taken: mailbox unavailable
+    451: Requested action aborted: local error in processing
+    452: Requested action not taken: insufficient system storage
+    458: Unable to queue message
+    521: Machine does not accept mail
+    550: Requested action not taken: mailbox unavailable
+    551: User not local
+    552: Requested mail action aborted: exceeded storage allocation
+    553: Requested action not taken: mailbox name not allowed
+    571: Blocked
