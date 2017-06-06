@@ -1,7 +1,3 @@
-.. image:: https://github.com/kura/blackhole/raw/master/docs/source/_static/blackhole.png
-    :alt: Blackhole
-    :align: center
-
 =========
 Blackhole
 =========
@@ -22,57 +18,31 @@ Blackhole
      :target: https://codecov.io/github/kura/blackhole/
      :alt: Test coverage
 
-.. image:: https://img.shields.io/gitter/room/kura/blackhole.svg?style=flat-square
-    :target: https://gitter.im/kura/blackhole
-    :alt: Chat on Gitter
-
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
-pipes all mail to /dev/null.
-
-Blackhole is built on top of `asyncio
+pipes all mail to /dev/null, built on top of `asyncio
 <https://docs.python.org/3/library/asyncio.html>`_ and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html#async-def>`_
 and `await <https://docs.python.org/3/reference/expressions.html#await>`_
 statements available in `Python 3.5
-<https://docs.python.org/3/whatsnew/3.5.html>`_ and above.
+<https://docs.python.org/3/whatsnew/3.5.html>`_.
 
-While blackhole is an MTA (mail transport agent), none of the actions
-performed via SMTP or SMTPS are actually processed and no email or sent or
-delivered.
+While Blackhole is an MTA, none of the actions performed via SMTP or SMTPS are
+actually processed and no email is delivered.
 
-You can tell blackhole how to handle mail that it receives. It can accept all
-of it, bounce it all or randomly do either of those two actions. No matter how
-you choose to configure it, the email is never actually delivered, it just
-appears to have been delivered or bounced.
+You can tell Blackhole how to handle mail that it receives. It can accept all
+of it, bounce it all or randomly do either of those two actions.
 
-Think of blackhole sort of like a honeypot in terms of how it handles mail,
+Think of Blackhole sort of like a honeypot in terms of how it handles mail,
 but it's specifically designed with testing in mind.
-
-Donations
-=========
-
-Blackhole costs a bit of money to run, it receives millions of emails on a
-daily basis, sometimes millions every 5 minutes depending on the load of the
-platform.
-
-To keep Blackhole running, please think about donating even just a little to
-the project `via Gratipay <https://gratipay.com/blackhole.io/>`_.
-
-Why?
-====
-
-Blackhole was first built when I was working on a project that required me to
-be able to send/receive millions of emails per minute. As the sender was being
-prototyped, I quickly realised that any mail server I pointed it at would fall
-over due to the stess -- thus blackhole was born.
 
 Documentation
 =============
 
-You can find the latest documentation `here <https://kura.github.io/blackhole/>`_.
+You can find the latest documentation `here
+<https://kura.github.io/blackhole/>`_.
 
 If you would like to contribute, please read the `contributors guide
-<https://kura.github.io/blackhole/contributing.html>`_.
+<https://kura.github.io/blackhole/overview.html#contributing>`_.
 
 The latest build status on `travis <https://travis-ci.org/kura/blackhole/>`_.
 

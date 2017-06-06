@@ -1,6 +1,6 @@
-=============================================
-Blackhole |pypi| |travis| |coverage| |gitter|
-=============================================
+====================================
+Blackhole |pypi| |travis| |coverage|
+====================================
 
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
@@ -45,7 +45,3 @@ User Guide
 .. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
-
-.. |gitter| image:: https://img.shields.io/gitter/room/kura/blackhole.svg?style=flat-square
-    :target: https://gitter.im/kura/blackhole
-    :alt: Chat on Gitter
