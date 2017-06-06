@@ -20,10 +20,3 @@ API
    api-supervisor
    api-utils
    api-worker
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

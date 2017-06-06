@@ -1,15 +1,36 @@
+=============
+Configuration
+=============
+
+.. _command-line-options:
+
+Command line options
+====================
+
+Configuration options can be passed via the command line
+as below:
+
+-h			show this help message and exit
+-v			show program's version number and exit
+-c FILE		override the default configuration options
+-t			perform a configuration test and exit
+-d			enable debugging mode
+-b			run in the background
+-ls			Disable :any:`ssl.OP_SINGLE_DH_USE` and
+			:any:`ssl.OP_SINGLE_ECDH_USE`. Reduces CPU overhead at the expense
+			of security. Don't use this option unless you really need to. --
+			added in :ref:`2.0.13`
+-q			Suppress warnings when using -ls/--less-secure, running as root or
+			not using :ref:`tls_dhparams` option.
+
+
 .. _configuration-options:
 
-=====================
 Configuration options
 =====================
 
 Here are all available options for the configuration file, their default values
 and information on what the options actually do.
-
-For more information on the command line arguments see the
-:ref:`command-line-options` document. For an example configuration file please
-see :ref:`configuration-file-example`.
 
 - `listen`_
 - `tls_listen`_
@@ -354,3 +375,38 @@ The workers option allows you to define how many worker processes to spawn to
 handle incoming mail. The absolute minimum is actually 2. Even by setting the
 ``workers`` value to 1, a supervisor process will always exist meaning that you
 would have 1 worker and a supervisor.
+
+
+STARTTLS
+--------
+
+Currently `asyncio` does not have the code in place to make STARTTLS
+possible, the STARTTLS verb returns a ``500 Not implemented`` response
+until it's possible to implement. --`https://bugs.python.org/review/23749/
+<https://bugs.python.org/review/23749/>`_
+
+
+Installing the init.d/rc.d scripts
+==================================
+
+The init script depends on */etc/blackhole.conf* being in place and configured.
+
+Blackhole comes with a script that works with init.d/rc.d, to install it copy it
+from the *init.d/YOUR_DISTRO* folder in the root directory of this project to
+*/etc/init.d/*.
+
+The init scripts can be found `here`_.
+
+.. _here: https://github.com/kura/blackhole/tree/master/init.d
+
+i.e. for Debian/Ubuntu users, mv the file from *init.d/debian-ubuntu/* to */etc/init.d/*.
+
+Then make sure it's executable
+
+.. code-block:: bash
+
+  chmod +x /etc/init.d/blackhole
+
+To make blackhole start on a reboot use the following::
+
+  update-rc.d blackhole defaults

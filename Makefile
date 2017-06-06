@@ -12,7 +12,7 @@ tox:
 	pip install tox detox
 	detox
 
-test:
+test: docs
 	pip install pytest \
 				pytest-cov \
 				pytest-asyncio \
@@ -21,8 +21,7 @@ test:
 				pycodestyle \
 				pydocstyle==1.1.1 \
 				isort \
-				codecov \
-				sphinx
+				codecov
 	py.test --cov ./blackhole \
 			--cov ./tests \
 			--cov-report xml \
@@ -32,10 +31,9 @@ test:
 			--cache-clear \
 			blackhole tests
 	./codecov.sh
-	sphinx-build -b html docs/source/ docs/build/
 
 docs:
-	pip install sphinx
+	pip install sphinx guzzle_sphinx_theme
 	rm -rf docs/build
 	sphinx-build -b html docs/source/ docs/build/
 

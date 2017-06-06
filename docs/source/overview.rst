@@ -1,6 +1,93 @@
+========
+Overview
+========
+
+
+.. _requirements:
+
+Requirements
+============
+
+- Python 3.6
+
+.. note::
+
+    The original incarnation of Blackhole -- built on top of Tornado -- is still
+    available for use on Python versions lower than 3.6, including PyPy.
+
+    It is no longer maintained however, but is available for posterity's sake on
+    github_tag_ for those people unable to use Python 3.6.
+
+    .. _github_tag: https://github.com/kura/blackhole/releases/tag/1.8.1
+
+.. _installation:
+
+Installation
+============
+
+Packaged
+--------
+
+From pypi_
+
+.. code-block:: bash
+
+  pip install blackhole
+
+From GitHub
+-----------
+
+.. code-block:: bash
+
+  pip install -e git+git://github.com/kura/blackhole.git#egg=blackhole
+
+From source
+-----------
+
+Download the latest tarball from pypi_ or github_tags_. Unpack and run:
+
+.. _github_tags: https://github.com/kura/blackhole/tags
+
+.. code-block:: bash
+
+  python setup.py install
+
+.. _pypi: https://pypi.python.org/pypi/blackhole
+
+
+.. _license:
+
+License
+=======
+
+Blackhole is licensed under the `MIT license
+<https://github.com/kura/blackhole/blob/master/LICENSE>`_.
+
+    (The MIT License)
+
+    Copyright (c) 2013-2017 Kura
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the 'Software'), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+
 .. _contributing:
 
-============
 Contributing
 ============
 
@@ -21,7 +108,7 @@ The :ref:`api` section also has a wealth of information on how the server works
 and how you can modify it or use parts of it.
 
 Getting started
-===============
+---------------
 
 Getting started is very similar to installing blackhole yourself. You should
 familarise yourself with the documentation,
@@ -61,7 +148,7 @@ Things to do before submitting a pull request
 .. _testing:
 
 Running tests
-=============
+-------------
 
 You can find the latest tests against the source code on `travis
 <https://travis-ci.org/kura/blackhole/>`_.
@@ -95,20 +182,29 @@ and `detox` automatically.
 
     make tox
 
-Lint and style guide tests
-==========================
-
-The Makefile contains a target for testing PEP8 and PEP257
-
-.. code-block:: bash
-
-    make lint
-
 Building the documentation
-==========================
+--------------------------
 
 The Makefile suppied also has a target for building the documentation.
 
 .. code-block:: bash
 
     make docs
+
+
+Upcoming/planned features
+=========================
+
+.. toctree::
+    :maxdepth: 3
+
+    todo
+
+
+Changelog
+=========
+
+.. toctree::
+    :maxdepth: 3
+
+    changelog
