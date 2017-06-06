@@ -34,20 +34,6 @@ User Guide
     api
 
 
-Author
-======
-
-Written and maintained by `Kura <https://kura.io/>`_. You can stalk Kura on
-`Twitter <https://twitter.com/kuramanga>`_ and laugh at his code on `GitHub
-<https://github.com/kura>`_.
-
-
-Thanks & contributors
-=====================
-
-Thanks are here -- :ref:`thanks` and contributors here -- :ref:`contributors`.
-
-
 .. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=flat-square&label=version
     :target: https://pypi.python.org/pypi/blackhole
     :alt: Latest version released on PyPi
