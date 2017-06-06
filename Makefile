@@ -32,10 +32,14 @@ test: docs
 			blackhole tests
 	./codecov.sh
 
+autodocs: docs
+	pip install sphinx-autobuild
+	sphinx-autobuild -z blackhole docs/source docs/build
+
 docs:
 	pip install sphinx guzzle_sphinx_theme
 	rm -rf docs/build
-	sphinx-build -b html docs/source/ docs/build/
+	sphinx-build docs/source/ docs/build/
 
 release:
 	./release.sh
