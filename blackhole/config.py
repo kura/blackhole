@@ -35,7 +35,7 @@ import pwd
 import socket
 
 from .exceptions import ConfigException
-from .utils import get_version, mailname
+from .utils import (get_version, mailname, Singleton)
 
 
 __all__ = ('parse_cmd_args', 'warn_options', 'config_test', 'Config')
@@ -142,19 +142,6 @@ def _compare_uid_and_gid(config):
     if (uid == 0 and gid == 0) and (user == 'root' and group == 'root'):
         logger.warning('It is unsafe to run Blackhole as root without setting '
                        'a user and group for privilege separation.')
-
-
-class Singleton(type):
-    """Singleton for :class:`Config`."""
-
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        """Singleton for :class:`Config`."""
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args,
-                                                                 **kwargs)
-        return cls._instances[cls]
 
 
 class Config(metaclass=Singleton):

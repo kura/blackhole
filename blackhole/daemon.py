@@ -27,23 +27,11 @@ import atexit
 import os
 
 from .exceptions import DaemonException
+from .utils import Singleton
 
 
 __all__ = ('Daemon', )
 """Tuple all the things."""
-
-
-class Singleton(type):
-    """A singleton for :class:`Daemon`."""
-
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        """Singleton for :class:`Daemon`."""
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args,
-                                                                 **kwargs)
-        return cls._instances[cls]
 
 
 class Daemon(metaclass=Singleton):

@@ -5,12 +5,10 @@ import pytest
 
 from blackhole.daemon import Daemon, DaemonException
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_instantiated_but_not_daemonised():
     pid = os.path.join(os.getcwd(), 'fake.pid')
     with mock.patch('os.getpid', return_value=666):
@@ -19,8 +17,7 @@ def test_instantiated_but_not_daemonised():
         assert daemon.pid == 666
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_set_pid_invalid_path():
     with mock.patch('os.path.exists', return_value=False), \
         mock.patch('atexit.register'), \
@@ -28,8 +25,7 @@ def test_set_pid_invalid_path():
         Daemon('/fake/path.pid')
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_set_pid_valid_path():
     pid = os.path.join(os.getcwd(), 'fake.pid')
     with mock.patch('os.getpid', return_value=666), \
@@ -39,8 +35,7 @@ def test_set_pid_valid_path():
         assert daemon.pid == 666
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_pid_file_error():
     with mock.patch('os.path.exists', return_value=True):
         with mock.patch('builtins.open', side_effect=FileNotFoundError), \
@@ -61,8 +56,7 @@ def test_get_pid_file_error():
             Daemon('/fake/path.pid')
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_pid():
     pfile = create_file('test.pid', 123)
     with mock.patch('os.getpid', return_value=123), \
@@ -71,8 +65,7 @@ def test_get_pid():
         assert daemon.pid is 123
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_delete_pid_no_exists():
     pfile = create_file('test.pid', 123)
     daemon = Daemon(pfile)
@@ -83,8 +76,7 @@ def test_delete_pid_no_exists():
     assert mock_rm.called is False
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_delete_pid():
     pfile = create_file('test.pid', 123)
     with mock.patch('os.getpid', return_value=123), \
@@ -95,8 +87,7 @@ def test_delete_pid():
         assert daemon.pid is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_delete_pid_exit():
     pfile = create_file('test.pid', 123)
     with mock.patch('os.getpid', return_value=123), \
@@ -107,8 +98,7 @@ def test_delete_pid_exit():
         assert daemon.pid is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_fork():
     pfile = create_file('test.pid', 123)
     with mock.patch('atexit.register'):
@@ -120,8 +110,7 @@ def test_fork():
     assert mock_exit.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_fork_error():
     pfile = create_file('test.pid', 123)
     with mock.patch('atexit.register'):
@@ -132,8 +121,7 @@ def test_fork_error():
     assert mock_fork.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_daemonise():
     pfile = create_file('test.pid', 123)
     with mock.patch('blackhole.daemon.Daemon.fork') as mock_fork, \

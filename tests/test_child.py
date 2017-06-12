@@ -10,18 +10,15 @@ from blackhole.child import Child
 from blackhole.control import _socket
 from blackhole.streams import StreamProtocol
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_initiation():
     Child('', '', [], '1')
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_start():
     socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
     child = Child('', '', socks, '1')
@@ -34,8 +31,7 @@ def test_start():
     assert mock_exit.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_stop():
     socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
     child = Child('', '', socks, '1')
@@ -52,8 +48,7 @@ def test_stop():
     assert mock_exit.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_stop_runtime_exception():
     socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
     child = Child('', '', socks, '1')
@@ -70,8 +65,7 @@ def test_stop_runtime_exception():
     assert mock_exit.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_start_child_loop(event_loop):
     sock = _socket('127.0.0.1', 0, socket.AF_INET)
@@ -84,8 +78,7 @@ async def test_start_child_loop(event_loop):
         server.close()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_child_heartbeat_not_started(event_loop):
     up_read, up_write = os.pipe()
@@ -104,8 +97,7 @@ async def test_child_heartbeat_not_started(event_loop):
     assert mock_stop.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_child_heartbeat_started(event_loop):
     up_read, up_write = os.pipe()

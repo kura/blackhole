@@ -6,9 +6,7 @@ import tempfile
 
 import pytest
 
-from blackhole.config import Singleton as CSingleton
-from blackhole.daemon import Singleton as DSingleton
-from blackhole.supervisor import Singleton as SSingleton
+from blackhole.utils import Singleton
 
 logging.getLogger('blackhole').addHandler(logging.NullHandler())
 
@@ -20,18 +18,8 @@ def cleandir():
 
 
 @pytest.fixture()
-def reset_conf():
-    CSingleton._instances = {}
-
-
-@pytest.fixture()
-def reset_daemon():
-    DSingleton._instances = {}
-
-
-@pytest.fixture()
-def reset_supervisor():
-    SSingleton._instances = {}
+def reset():
+    Singleton._instances = {}
 
 
 def create_config(data):

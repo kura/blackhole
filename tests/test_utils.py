@@ -5,12 +5,10 @@ import pytest
 
 from blackhole.utils import get_version, mailname, message_id
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_mail_name_file():
     check_value = 'file.blackhole.io'
     with mock.patch('os.access', return_value=True), \
@@ -19,8 +17,7 @@ def test_mail_name_file():
         assert mn == check_value
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_mail_name_socket():
     check_value = 'socket.blackhole.io'
     with mock.patch('os.access', return_value=False), \
@@ -29,8 +26,7 @@ def test_mail_name_socket():
     assert mn == check_value
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_mail_name_file_length_0():
     mnfile = create_file('mailname')
     check_value = 'socket.blackhole.io'
@@ -40,8 +36,7 @@ def test_mail_name_file_length_0():
     assert mn == check_value
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_mail_name_file_garbage():
     mnfile = create_file('mailname', '            \n     ')
     check_value = 'socket.blackhole.io'
@@ -51,8 +46,7 @@ def test_mail_name_file_garbage():
     assert mn == check_value
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_message_id():
     with mock.patch('time.monotonic',
                     return_value=1463290829.4173775) as mock_time, \
@@ -68,16 +62,14 @@ def test_message_id():
     assert mock_randbits.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version():
     version_file = create_file('version.py', '__version__ = "9.9.9"')
     with mock.patch('os.path.join', return_value=version_file):
         assert get_version() == '9.9.9'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version_no_access():
     with mock.patch('os.access', return_value=False), \
             pytest.raises(OSError) as err:
@@ -85,8 +77,7 @@ def test_get_version_no_access():
     assert str(err.value) == 'Cannot open __init__.py file for reading'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version_invalid_version_split():
     version_file = create_file('version.py', '__version__')
     with mock.patch('os.path.join', return_value=version_file), \
@@ -95,8 +86,7 @@ def test_get_version_invalid_version_split():
     assert str(err.value) == 'Cannot extract version from __version__'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version_invalid_version():
     version_file_a = create_file('versiona.py', '__version__ = a.1')
     with mock.patch('os.path.join', return_value=version_file_a), \
@@ -120,8 +110,7 @@ def test_get_version_invalid_version():
     assert str(err.value) == '1.1.a is not a valid version number'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version_version_not_found():
     version_file = create_file('version.py', 'version = "abc"')
     with mock.patch('os.path.join', return_value=version_file), \

@@ -10,12 +10,10 @@ from blackhole import protocols
 from blackhole.config import Config
 from blackhole.worker import Worker
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_start_stop():
     worker = Worker(1, [])
@@ -25,8 +23,7 @@ async def test_start_stop():
     assert worker._started is False
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_child_start_setgid_fails_invalid_group():
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
@@ -40,8 +37,7 @@ def test_child_start_setgid_fails_invalid_group():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_child_start_setgid_fails_permissions():
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
@@ -55,8 +51,7 @@ def test_child_start_setgid_fails_permissions():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_child_start_setuid_fails_invalid_user():
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
@@ -70,8 +65,7 @@ def test_child_start_setuid_fails_invalid_user():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_child_start_setuid_fails_permissions():
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))

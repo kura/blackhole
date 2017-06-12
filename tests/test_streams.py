@@ -7,20 +7,17 @@ import pytest
 
 from blackhole.streams import StreamProtocol
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_client_not_connected():
     sp = StreamProtocol()
     assert sp.is_connected() is False
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_client_connected(event_loop):
     sp = StreamProtocol(loop=event_loop)

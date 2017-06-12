@@ -40,6 +40,19 @@ except ImportError:  # pragma: no cover
 __all__ = ('mailname', 'message_id', 'get_version')
 
 
+class Singleton(type):
+    """Singleton."""
+
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        """Override the __call__ method."""
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args,
+                                                                 **kwargs)
+        return cls._instances[cls]
+
+
 def mailname(mailname_file='/etc/mailname'):
     """
     Fully qualified domain name for HELO and EHLO.

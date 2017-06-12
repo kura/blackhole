@@ -10,8 +10,7 @@ from blackhole.control import (_context, _socket, pid_permissions, server,
                                setgid, setuid)
 from blackhole.exceptions import BlackholeRuntimeException
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 try:
     import ssl
@@ -19,16 +18,14 @@ except ImportError:
     ssl = None
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_tls_context_no_config():
     ctx = _context()
     assert ctx is None
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_tls_context_no_dhparams():
     tls_cert = create_file('cert.cert')
     tls_key = create_file('key.key')
@@ -42,8 +39,7 @@ def test_tls_context_no_dhparams():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_tls_context_less_secure():
     tls_cert = create_file('cert.cert')
     tls_key = create_file('key.key')
@@ -57,8 +53,7 @@ def test_tls_context_less_secure():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_tls_context_dhparams():
     tls_cert = create_file('cert.cert')
     tls_key = create_file('key.key')
@@ -76,24 +71,21 @@ def test_tls_context_dhparams():
 
 
 @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_ipv6_socket_fails():
     with mock.patch('socket.socket.bind', side_effect=OSError), \
             pytest.raises(BlackholeRuntimeException):
         _socket('::', 25, socket.AF_INET)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_ipv4_socket_fails():
     with mock.patch('socket.socket.bind', side_effect=OSError), \
             pytest.raises(BlackholeRuntimeException):
         _socket('127.0.0.1', 25, socket.AF_INET)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_server_ipv4_bind_fails():
     cfile = create_config(('listen=127.0.0.1:9000', ))
     Config(cfile).load()
@@ -106,8 +98,7 @@ def test_create_server_ipv4_bind_fails():
 
 
 @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_server_ipv6_bind_fails():
     cfile = create_config(('listen=:::9000', ))
     Config(cfile).load()
@@ -119,8 +110,7 @@ def test_create_server_ipv6_bind_fails():
     assert mock_sock.call_count is 1
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @mock.patch('socket.socket.bind')
 def test_create_server_ipv4_bind_works(mock_sock):
     cfile = create_config(('listen=127.0.0.1:9000', ))
@@ -131,8 +121,7 @@ def test_create_server_ipv4_bind_works(mock_sock):
 
 
 @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_server_ipv6_bind_works():
     cfile = create_config(('listen=:::9000', ))
     Config(cfile).load()
@@ -143,8 +132,7 @@ def test_create_server_ipv6_bind_works():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_server_ipv4_tls_bind_fails():
     cfile = create_config(('tls_listen=127.0.0.1:9000', ))
     Config(cfile).load()
@@ -158,8 +146,7 @@ def test_create_server_ipv4_tls_bind_fails():
 
 @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_server_ipv6_tls_bind_fails():
     cfile = create_config(('tls_listen=:::9000', ))
     Config(cfile).load()
@@ -172,8 +159,7 @@ def test_create_server_ipv6_tls_bind_fails():
 
 
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_server_tls_ipv4_bind_works():
     cfile = create_config(('listen=127.0.0.1:25',
                            'tls_listen=127.0.0.1:9000', ))
@@ -190,8 +176,7 @@ def test_create_server_tls_ipv4_bind_works():
 
 @unittest.skipIf(socket.has_ipv6 is False, 'No IPv6 support')
 @unittest.skipIf(ssl is None, 'No ssl module')
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_create_server_tls_ipv6_bind_works():
     cfile = create_config(('listen=:::25',
                            'tls_listen=:::9000', ))
@@ -211,8 +196,7 @@ class Grp(mock.MagicMock):
     gr_gid = 9000
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_setgid():
     cfile = create_config(('group=abc', ))
     with mock.patch('grp.getgrnam') as mock_getgrnam, \
@@ -223,8 +207,7 @@ def test_setgid():
     assert mock_setgid.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_setgid_same_group():
     cfile = create_config(('', ))
     with mock.patch('os.setgid'):
@@ -232,8 +215,7 @@ def test_setgid_same_group():
         assert setgid() is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @mock.patch('grp.getgrnam', side_effect=KeyError)
 def test_setgid_invalid_group(_):
     cfile = create_config(('group=testgroup', ))
@@ -243,8 +225,7 @@ def test_setgid_invalid_group(_):
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_setgid_no_perms():
     cfile = create_config(('group=testgroup', ))
     with mock.patch('grp.getgrnam', side_effect=PermissionError), \
@@ -258,8 +239,7 @@ class Pwd(mock.MagicMock):
     pwd_uid = 9000
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_setuid():
     cfile = create_config(('user=abc', ))
     with mock.patch('pwd.getpwnam') as mock_getpwnam, \
@@ -270,8 +250,7 @@ def test_setuid():
     assert mock_setuid.called is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_setuid_same_user():
     cfile = create_config(('', ))
     with mock.patch('os.setuid'):
@@ -279,8 +258,7 @@ def test_setuid_same_user():
         assert setuid() is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_setuid_invalid_user():
     cfile = create_config(('user=testuser', ))
     with mock.patch('pwd.getpwnam', side_effect=KeyError), \
@@ -290,8 +268,7 @@ def test_setuid_invalid_user():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_setuid_no_perms():
     cfile = create_config(('user=testuser', ))
     with mock.patch('pwd.getpwnam', side_effect=PermissionError), \
@@ -301,8 +278,7 @@ def test_setuid_no_perms():
     assert str(err.value) == '77'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_set_pid_permissions():
     pidfile = os.path.join(os.getcwd(), 'pid.pid')
     cfile = create_config(('user=testuser', 'group=testgroup',

@@ -1,23 +1,20 @@
 import asyncio
-import os
-import signal
 import socket
 import time
 from unittest import mock
 
 import pytest
 
+from blackhole.child import Child
 from blackhole.control import server
 from blackhole.worker import Worker
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
-async def test_ping_pong(unused_tcp_port):
+async def test_worker_ping_pong(unused_tcp_port):
     aserver = server('127.0.0.1', unused_tcp_port, socket.AF_INET)
     started = time.monotonic()
     worker = Worker('1', [aserver, ])
@@ -29,8 +26,7 @@ async def test_ping_pong(unused_tcp_port):
     assert worker.ping_count == 2
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_restart(unused_tcp_port):
     aserver = server('127.0.0.1', unused_tcp_port, socket.AF_INET)
