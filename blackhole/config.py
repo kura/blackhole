@@ -703,7 +703,7 @@ class Config(metaclass=Singleton):
                               'must be less than 60.'.format(value))
 
     def test(self):
-        """
+        r"""
         Test configuration validity.
 
         :returns: The configuration object.
@@ -712,7 +712,7 @@ class Config(metaclass=Singleton):
         .. note::
 
            Uses the magic of :py:func:`inspect.getmembers` to introspect
-           methods beginning with 'test_' and calling them.
+           methods beginning with \'test\_\' and calling them.
         """
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         for name, _ in members:
