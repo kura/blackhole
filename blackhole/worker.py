@@ -181,6 +181,7 @@ class Worker:
                     self.ping_count += 1
             except:
                 self.stop()
+            await asyncio.sleep(5)
 
     async def connect(self):
         """
