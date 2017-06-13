@@ -6,11 +6,12 @@ verify_ssl = true
 python_version = "3.6"
 
 [dev-packages]
+guzzle_sphinx_theme = "*"
+isort = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pylama = "*"
 pyflakes = "*"
 pycodestyle = "*"
 pydocstyle = "1.1.1"
-isort = "*"
 Sphinx = "*"

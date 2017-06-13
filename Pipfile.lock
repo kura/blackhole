@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fa14a8d497abf45468078b3858e6a19d3dbaf9e024d6e63502a6b2eaf572c69d"
+            "sha256": "55373163af785c4bc182408d2ff517b48cedbbbb0627f1f8571b0ed587ae7ae8"
         },
         "requires": {
             "python_version": "3.6"
@@ -25,10 +25,13 @@
             "version": "==2017.4.17"
         },
         "chardet": {
-            "version": "==3.0.3"
+            "version": "==3.0.4"
         },
         "docutils": {
             "version": "==0.13.1"
+        },
+        "guzzle-sphinx-theme": {
+            "version": "==0.7.11"
         },
         "idna": {
             "version": "==2.5"
@@ -37,7 +40,7 @@
             "version": "==0.7.1"
         },
         "isort": {
-            "version": "==4.2.11"
+            "version": "==4.2.15"
         },
         "jinja2": {
             "version": "==2.9.6"
@@ -49,7 +52,7 @@
             "version": "==0.6.1"
         },
         "py": {
-            "version": "==1.4.33"
+            "version": "==1.4.34"
         },
         "pycodestyle": {
             "version": "==2.3.1"
@@ -67,7 +70,7 @@
             "version": "==7.3.3"
         },
         "pytest": {
-            "version": "==3.1.1"
+            "version": "==3.1.2"
         },
         "pytest-asyncio": {
             "version": "==0.6.0"
