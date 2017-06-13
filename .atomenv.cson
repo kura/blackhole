@@ -1,0 +1,2 @@
+env:
+  PATH: "/home/kura/.virtualenvs/blackhole/bin:/home/kura/.local/bin"

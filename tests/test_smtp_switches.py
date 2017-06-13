@@ -1,3 +1,25 @@
+# (The MIT License)
+#
+# Copyright (c) 2013-2017 Kura
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import unittest
 
 import pytest
@@ -5,12 +27,10 @@ import pytest
 from blackhole.config import Config
 from blackhole.smtp import Smtp
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestHeadersSwitchDisabled(unittest.TestCase):
 
     def test_headers_disabled(self):
@@ -38,8 +58,7 @@ class TestHeadersSwitchDisabled(unittest.TestCase):
         assert smtp.mode == 'bounce'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestDynamicSwitchDisabledByFlags(unittest.TestCase):
 
     def test_mode(self):
@@ -77,8 +96,7 @@ class TestDynamicSwitchDisabledByFlags(unittest.TestCase):
         assert smtp.mode == 'bounce'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestProcessHeaders(unittest.TestCase):
 
     def test_valid_mode_header(self):
@@ -124,8 +142,7 @@ class TestProcessHeaders(unittest.TestCase):
         assert smtp.delay is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestModeSwitch(unittest.TestCase):
 
     def test_mode_default(self):
@@ -157,8 +174,7 @@ class TestModeSwitch(unittest.TestCase):
         assert smtp.mode == 'accept'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestDelaySwitch(unittest.TestCase):
 
     def test_delay_not_enabled_or_set(self):

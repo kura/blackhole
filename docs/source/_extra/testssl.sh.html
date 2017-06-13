@@ -1,3 +1,27 @@
+<!--.
+(The MIT License)
+
+Copyright (c) 2013-2017 Kura
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the 'Software'), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+//-->
+
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!-- This file was created with the aha Ansi HTML Adapter. http://ziz.delphigl.com/tool_aha.php -->
@@ -53,14 +77,14 @@
 
 <span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing (perfect) forward secrecy, (P)FS -- omitting 3DES, RC4 and Null Encryption here </span>
 
-<span style="color:blue;"> PFS is offered (OK)</span>, ciphers follow (client/browser support is important here) 
+<span style="color:blue;"> PFS is offered (OK)</span>, ciphers follow (client/browser support is important here)
 
 Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher Suite Name (RFC)
 --------------------------------------------------------------------------------------------------------------------------
- xc030   ECDHE-RSA-AES256-GCM-SHA384    ECDH <span style="color:blue;">256 </span>  AESGCM     256         TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384             
- xc028   ECDHE-RSA-AES256-SHA384        ECDH <span style="color:blue;">256 </span>  AES        256         TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384             
- xc02f   ECDHE-RSA-AES128-GCM-SHA256    ECDH <span style="color:blue;">256 </span>  AESGCM     128         TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256             
- xc027   ECDHE-RSA-AES128-SHA256        ECDH <span style="color:blue;">256 </span>  AES        128         TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256             
+ xc030   ECDHE-RSA-AES256-GCM-SHA384    ECDH <span style="color:blue;">256 </span>  AESGCM     256         TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+ xc028   ECDHE-RSA-AES256-SHA384        ECDH <span style="color:blue;">256 </span>  AES        256         TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+ xc02f   ECDHE-RSA-AES128-GCM-SHA256    ECDH <span style="color:blue;">256 </span>  AESGCM     128         TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+ xc027   ECDHE-RSA-AES128-SHA256        ECDH <span style="color:blue;">256 </span>  AES        128         TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
 
 <span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing server preferences </span>
 
@@ -68,22 +92,22 @@ Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher
 <span style="font-weight:bold;"> Negotiated protocol          </span><span style="color:blue;font-weight:bold;">TLSv1.2</span>
 <span style="font-weight:bold;"> Negotiated cipher            </span><span style="color:blue;font-weight:bold;">ECDHE-RSA-AES256-GCM-SHA384</span>, <span style="color:blue;">256 bit ECDH</span>
 <span style="font-weight:bold;"> Cipher order</span>
-     TLSv1.2:   ECDHE-RSA-AES256-GCM-SHA384 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-SHA384 ECDHE-RSA-AES128-SHA256 
+     TLSv1.2:   ECDHE-RSA-AES256-GCM-SHA384 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-RSA-AES256-SHA384 ECDHE-RSA-AES128-SHA256
 
 <span style="font-weight:bold;"></span><span style="text-decoration:underline;font-weight:bold;"> Testing server defaults (Server Hello) </span>
 
 <span style="font-weight:bold;"> TLS extensions (standard)    </span>&quot;renegotiation info/#65281&quot; &quot;EC point formats/#11&quot; &quot;session ticket/#35&quot; &quot;heartbeat/#15&quot;
 <span style="font-weight:bold;"> Session Tickets RFC 5077     </span>300 seconds <span style="color:olive;font-weight:bold;">(PFS requires session ticket keys to be rotated &lt;= daily)</span>
 <span style="font-weight:bold;"> SSL Session ID support       </span>yes
-<span style="font-weight:bold;"> TLS clock skew</span>               random values, no fingerprinting possible 
+<span style="font-weight:bold;"> TLS clock skew</span>               random values, no fingerprinting possible
 <span style="font-weight:bold;"> Signature Algorithm          </span><span style="color:blue;">SHA256 with RSA</span>
 <span style="font-weight:bold;"> Server key size              </span><span style="color:blue;">4096</span> bits
 <span style="font-weight:bold;"> Fingerprint / Serial         </span>SHA1 E7B475A435CAE16126A0F584C912FE5070C390A4 / 1121C4EEA8F4A2814F1163FB8FDEAE2BBFF6
                               SHA256 B5EBA51F79953A019EFCA8494044049B4C40CA5F701A61C07066952DAA6949BD
 <span style="font-weight:bold;"> Common Name (CN)             </span>&quot;*.blackhole.io&quot; (wildcard certificate match) (works w/o SNI)
-<span style="font-weight:bold;"> subjectAltName (SAN)         </span>&quot;*.blackhole.io&quot; &quot;blackhole.io&quot; 
+<span style="font-weight:bold;"> subjectAltName (SAN)         </span>&quot;*.blackhole.io&quot; &quot;blackhole.io&quot;
 <span style="font-weight:bold;"> Issuer                       </span>&quot;GlobalSign Domain Validation CA - SHA256 - G2&quot; (&quot;GlobalSign nv-sa&quot; from &quot;BE&quot;)
-<span style="font-weight:bold;"> EV cert</span> (experimental)       no 
+<span style="font-weight:bold;"> EV cert</span> (experimental)       no
 <span style="font-weight:bold;"> Certificate Expiration       </span><span style="color:red;font-weight:bold;">expired!</span> (2014-07-12 00:10 --&gt; 2015-09-25 20:57 +0100)
 <span style="font-weight:bold;"> # of certificates provided</span>   1
 <span style="font-weight:bold;"> Chain of trust</span> (experim.)    <span style="color:red;font-weight:bold;">NOT ok</span> (chain incomplete)
@@ -113,12 +137,11 @@ Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher
 
 Hexcode  Cipher Suite Name (OpenSSL)    KeyExch.   Encryption Bits        Cipher Suite Name (RFC)
 --------------------------------------------------------------------------------------------------------------------------
- xc030   ECDHE-RSA-AES256-GCM-SHA384    ECDH <span style="color:blue;">256 </span>  AESGCM     256         TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384             
- xc028   ECDHE-RSA-AES256-SHA384        ECDH <span style="color:blue;">256 </span>  AES        256         TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384             
- xc02f   ECDHE-RSA-AES128-GCM-SHA256    ECDH <span style="color:blue;">256 </span>  AESGCM     128         TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256             
- xc027   ECDHE-RSA-AES128-SHA256        ECDH <span style="color:blue;">256 </span>  AES        128         TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256             
+ xc030   ECDHE-RSA-AES256-GCM-SHA384    ECDH <span style="color:blue;">256 </span>  AESGCM     256         TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+ xc028   ECDHE-RSA-AES256-SHA384        ECDH <span style="color:blue;">256 </span>  AES        256         TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+ xc02f   ECDHE-RSA-AES128-GCM-SHA256    ECDH <span style="color:blue;">256 </span>  AESGCM     128         TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+ xc027   ECDHE-RSA-AES128-SHA256        ECDH <span style="color:blue;">256 </span>  AES        128         TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
 
 </pre>
 </body>
 </html>
-

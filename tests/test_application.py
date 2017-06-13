@@ -1,3 +1,25 @@
+# (The MIT License)
+#
+# Copyright (c) 2013-2017 Kura
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import os
 from unittest import mock
 
@@ -8,12 +30,10 @@ from blackhole.config import Config
 from blackhole.exceptions import (BlackholeRuntimeException, ConfigException,
                                   DaemonException)
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_run_test():
     cfile = create_config(('', ))
     with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
@@ -23,8 +43,7 @@ def test_run_test():
     assert str(err.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_run_test_fails():
     cfile = create_config(('listen=127.0.0.1:0', ))
     with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
@@ -33,8 +52,7 @@ def test_run_test_fails():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_run_load_test_fails():
     cfile = create_config(('listen=127.0.0.1:0', ))
     with mock.patch('sys.argv', ['blackhole', '-t', '-c', cfile]), \
@@ -45,8 +63,7 @@ def test_run_load_test_fails():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_run_foreground():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
     cfile = create_config(('listen=127.0.0.1:9000',
@@ -68,8 +85,7 @@ def test_run_foreground():
     assert str(err.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_run_foreground_pid_error():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
     cfile = create_config(('listen=127.0.0.1:9000',
@@ -86,8 +102,7 @@ def test_run_foreground_pid_error():
     assert str(err.value) == '64'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_run_foreground_socket_error():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
     cfile = create_config(('listen=127.0.0.1:9000',
@@ -106,8 +121,7 @@ def test_run_foreground_socket_error():
     assert str(err.value) == '77'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_run_background():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
     cfile = create_config(('listen=127.0.0.1:9000',
@@ -130,8 +144,7 @@ def test_run_background():
     assert str(err.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_run_daemon_daemonize_error():
     pidfile = os.path.join(os.getcwd(), 'blackhole-test.pid')
     cfile = create_config(('listen=127.0.0.1:9000',

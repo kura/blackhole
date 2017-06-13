@@ -150,6 +150,7 @@ class Child:
                 logger.debug('child.%s.heartbeat: Ping request received from '
                              'parent', self.idx)
                 writer.write(protocols.PONG)
+            await asyncio.sleep(5)
         r_trans.close()
         w_trans.close()
         self.stop()

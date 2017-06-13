@@ -23,13 +23,13 @@
 # SOFTWARE.
 
 ### BEGIN INIT INFO
-# Provides:          blackhole
+# Provides:          Blackhole
 # Required-Start:    $local_fs $remote_fs $network $syslog
 # Required-Stop:     $local_fs $remote_fs $network $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: starts the blackhole MTA
-# Description:       starts blackhole using start-stop-daemon
+# Short-Description: Starts the Blackhole MTA
+# Description:       Starts Blackhole using start-stop-daemon
 ### END INIT INFO
 
 
@@ -43,14 +43,14 @@ pidfile=/var/run/blackhole.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
 # Exit if the package is not installed
-[ -x "$DAEMON" ] || exit 0
+[ -x "$DAEMON" ] || exit 1
 
 if test -f $CONF
 then
   . $CONF
 else
   echo "Failed to open conf: ${CONF}"
-  exit
+  exit 1
 fi
 
 SDAEMON_OPTS="${DAEMON_OPTS} -c ${CONF} -b"

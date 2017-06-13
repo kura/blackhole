@@ -1,3 +1,25 @@
+# (The MIT License)
+#
+# Copyright (c) 2013-2017 Kura
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import asyncio
 import inspect
 import socket
@@ -13,12 +35,10 @@ from blackhole.config import Config
 from blackhole.control import _socket
 from blackhole.smtp import Smtp
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_initiation():
     cfile = create_config(('', ))
     with mock.patch('os.access', return_value=False), \
@@ -29,15 +49,13 @@ def test_initiation():
     assert smtp.fqdn == 'a.blackhole.io'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_auth_mechanisms():
     smtp = Smtp([])
     assert smtp.get_auth_members() == ['CRAM-MD5', 'LOGIN', 'PLAIN']
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_handler_lookup():
     smtp = Smtp([])
     assert smtp.lookup_handler('AUTH CRAM-MD5') == smtp.auth_CRAM_MD5
@@ -75,8 +93,7 @@ def test_handler_lookup():
     assert smtp.lookup_handler('HELP KURA') == smtp.help_UNKNOWN
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_unknown_handlers():
     # Protection against adding/removing without updating tests
     verbs = ['do_DATA', 'do_EHLO', 'do_ETRN', 'do_EXPN', 'do_HELO', 'do_HELP',
@@ -97,8 +114,7 @@ def test_unknown_handlers():
             assert f in auths
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class Controller:
 
     def __init__(self, sock=None, loop=None):
@@ -146,8 +162,7 @@ class Controller:
         self.thread.join()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_mode_directive(event_loop, unused_tcp_port):
     cfile = create_config(('listen=:{} mode=bounce'.format(unused_tcp_port), ))
@@ -170,8 +185,7 @@ async def test_mode_directive(event_loop, unused_tcp_port):
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_delay_directive(event_loop, unused_tcp_port):
     cfile = create_config(('listen=:{} delay=5'.format(unused_tcp_port), ))
@@ -194,8 +208,7 @@ async def test_delay_directive(event_loop, unused_tcp_port):
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
     cfile = create_config(('listen=:{} delay=5 mode=bounce'.format(unused_tcp_port), ))
@@ -218,8 +231,7 @@ async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_timeout(event_loop):
     cfile = create_config(('timeout=5', ))
@@ -235,8 +247,7 @@ async def test_timeout(event_loop):
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_delay(event_loop):
     cfile = create_config(('timeout=10', ))
@@ -258,8 +269,7 @@ async def test_delay(event_loop):
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_delayed_bounce(event_loop):
     cfile = create_config(('timeout=10', ))
@@ -280,8 +290,7 @@ async def test_delayed_bounce(event_loop):
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_delay_range(event_loop):
     cfile = create_config(('timeout=10', ))
@@ -303,8 +312,7 @@ async def test_delay_range(event_loop):
     controller.stop()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestSmtp(unittest.TestCase):
 
     def setUp(self):

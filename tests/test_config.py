@@ -1,3 +1,25 @@
+# (The MIT License)
+#
+# Copyright (c) 2013-2017 Kura
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the 'Software'), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import getpass
 import grp
 import logging
@@ -13,12 +35,10 @@ import pytest
 from blackhole.config import Config, config_test, parse_cmd_args, warn_options
 from blackhole.exceptions import ConfigException
 
-from ._utils import (Args, cleandir, create_config, create_file, reset_conf,
-                     reset_daemon, reset_supervisor)
+from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_default():
     with mock.patch('getpass.getuser') as mock_getuser, \
             mock.patch('grp.getgrgid') as mock_getgrgid:
@@ -30,8 +50,7 @@ def test_default():
     assert mock_getgrgid.call_count is 1
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_no_access():
     conf = Config()
     conf.config_file = pathlib.PurePath('/fake/file.conf')
@@ -42,8 +61,7 @@ def test_no_access():
     assert mock_os_access.call_count is 1
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_load():
     cfile = create_config(('#not=thisline', 'listen=10.0.0.1:1025',
                            'mode=bounce   #default accept'))
@@ -57,16 +75,14 @@ def test_load():
         Config(cfile).load()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_load_none():
     conf = Config(None).load()
     assert conf.mode == 'accept'
     assert conf.workers is 1
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_warnings():
     settings = (('tls_listen', (1, 2)), ('tls_dhparams', None),
                 ('user', 'root'), ('group', 'root'))
@@ -82,16 +98,14 @@ def test_warnings():
     assert mmock.warning.call_count == 3
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 def test_invalid_options():
     cfile = create_config(('workers=2', 'delay=10', 'test=option'))
     with pytest.raises(ConfigException):
         Config(cfile).load()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestCmdParser(unittest.TestCase):
 
     def test_default_conf(self):
@@ -127,8 +141,7 @@ class TestCmdParser(unittest.TestCase):
         assert parser.background is True
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestConfigTest(unittest.TestCase):
 
     def test_config_test(self):
@@ -152,8 +165,7 @@ class TestConfigTest(unittest.TestCase):
         assert str(exc.value) == '0'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestListen(unittest.TestCase):
 
     def test_default(self):
@@ -226,8 +238,7 @@ class TestListen(unittest.TestCase):
         assert conf.flags_from_listener('::1', 25) == {'mode': 'bounce'}
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestPort(unittest.TestCase):
 
     def test_str_port(self):
@@ -315,8 +326,7 @@ class TestPort(unittest.TestCase):
         assert mock_socket.call_count is 1
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestUser(unittest.TestCase):
 
     def test_invalid_user(self):
@@ -332,8 +342,7 @@ class TestUser(unittest.TestCase):
         assert conf.user == getpass.getuser()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestGroup(unittest.TestCase):
 
     def test_invalid_group(self):
@@ -350,8 +359,7 @@ class TestGroup(unittest.TestCase):
         assert conf.group == grp.getgrgid(os.getgid()).gr_name
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestTimeout(unittest.TestCase):
 
     def test_default_timeout(self):
@@ -377,8 +385,7 @@ class TestTimeout(unittest.TestCase):
             conf.test_timeout()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestTlsPort(unittest.TestCase):
 
     def test_default_tls_port(self):
@@ -483,8 +490,7 @@ class TestTlsPort(unittest.TestCase):
                                    ('::', 9001, socket.AF_INET6, {})]
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestTls(unittest.TestCase):
 
     def test_disabled(self):
@@ -656,8 +662,7 @@ class TestTls(unittest.TestCase):
         assert conf.flags_from_listener('::1', 465) == {'mode': 'bounce'}
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestDelay(unittest.TestCase):
 
     def test_no_delay(self):
@@ -686,8 +691,7 @@ class TestDelay(unittest.TestCase):
         assert conf.delay is 70
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestMode(unittest.TestCase):
 
     def test_default(self):
@@ -718,8 +722,7 @@ class TestMode(unittest.TestCase):
         assert conf.mode == 'random'
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestMaxMessageSize(unittest.TestCase):
 
     def test_no_size(self):
@@ -740,8 +743,7 @@ class TestMaxMessageSize(unittest.TestCase):
         assert conf.test_max_message_size() is None
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestPidfile(unittest.TestCase):
 
     def test_pidfile_default(self):
@@ -762,8 +764,7 @@ class TestPidfile(unittest.TestCase):
             conf.test_pidfile()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestDynamicSwitch(unittest.TestCase):
 
     def test_dynamic_switch_default(self):
@@ -787,8 +788,7 @@ class TestDynamicSwitch(unittest.TestCase):
             conf.test_dynamic_switch()
 
 
-@pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
-                         'cleandir')
+@pytest.mark.usefixtures('reset', 'cleandir')
 class TestWorkers(unittest.TestCase):
 
     def test_default(self):

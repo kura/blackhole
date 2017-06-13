@@ -31,6 +31,7 @@ import signal
 from .config import Config
 from .control import server
 from .exceptions import BlackholeRuntimeException
+from .utils import Singleton
 from .worker import Worker
 
 
@@ -39,19 +40,6 @@ __all__ = ('Supervisor', )
 
 
 logger = logging.getLogger('blackhole.supervisor')
-
-
-class Singleton(type):
-    """Singleton for :class:`blackhole.supervisor.Supervisor`."""
-
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        """Singleton for :class:`blackhole.supervisor.Supervisor`."""
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args,
-                                                                 **kwargs)
-        return cls._instances[cls]
 
 
 class Supervisor(metaclass=Singleton):
