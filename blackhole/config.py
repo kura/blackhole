@@ -1039,6 +1039,6 @@ class Config(metaclass=Singleton):
         """
         if self._dynamic_switch is None:
             return
-        if self._dynamic_switch not in ('true', 'false'):
+        if self._dynamic_switch not in (True, False):
             msg = 'Allowed dynamic_switch values are true and false.'
             raise ConfigException(msg)
