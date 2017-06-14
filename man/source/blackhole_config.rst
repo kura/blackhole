@@ -1,82 +1,39 @@
-..
-    # (The MIT License)
-    #
-    # Copyright (c) 2013-2017 Kura
-    #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy
-    # of this software and associated documentation files (the 'Software'), to deal
-    # in the Software without restriction, including without limitation the rights
-    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    # copies of the Software, and to permit persons to whom the Software is
-    # furnished to do so, subject to the following conditions:
-    #
-    # The above copyright notice and this permission notice shall be included in
-    # all copies or substantial portions of the Software.
-    #
-    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    # SOFTWARE.
+================
+blackhole_config
+================
 
-=============
-Configuration
-=============
+--------------------------------------------
+the config file format for the Blackhole MTA
+--------------------------------------------
 
-.. _command-line-options:
+:Manual section: 1
 
-Command line options
-====================
+DESCRIPTION
+===========
 
-Configuration options can be passed via the command line
-as below:
+This manual page documents the ``Blackhole`` configuration file format and
+options.
 
--h			show this help message and exit
--v			show program's version number and exit
--c FILE		override the default configuration options
--t			perform a configuration test and exit
--d			enable debugging mode
--b			run in the background
--ls			Disable :ssl.OP_SINGLE_DH_USE and ssl.OP_SINGLE_ECDH_USE.
-			Reduces CPU overhead at the expense of security. Don't use this
-			option unless you really need to. -- added in :ref:`2.0.13`
--q			Suppress warnings when using -ls/--less-secure, running as root or
-			not using :ref:`tls_dhparams` option.
+OPTIONS
+=======
 
+These are all available options for the configuration file, their default
+values and information on what the options actually do.
 
-.. _configuration-options:
+The file format is a simple `attribute = value` style, an example is shown
+below.
 
-Configuration options
-=====================
+::
 
-Here are all available options for the configuration file, their default values
-and information on what the options actually do.
-
-- `listen`_
-- `tls_listen`_
-- `user`_
-- `group`_
-- `pidfile`_
-- `timeout`_
-- `tls_cert`_
-- `tls_key`_
-- `tls_dhparams`_
-- `delay`_
-- `mode`_
-- `max_message_size`_
-- `dynamic_switch`_
-- `workers`_
-
------
-
-.. _listen:
+    # This is a comment.
+    listen = :25  # This is an inline comment.
+    user = kura
+    group = kura
 
 listen
 ------
 
-:Syntax:
+:Default:
     **listen** = *[address]:port [mode=MODE] [delay=DELAY]*
 :Default:
     127.0.0.1:25, 127.0.0.1:587, :::25, :::587 -- 25 is the recognised SMTP
@@ -86,8 +43,8 @@ listen
     *mode=* and *delay=* -- allows setting a response mode and delay per
     listener.
 :Added:
-    :ref:`2.0.8` -- introduced the new IPv6 aware syntax
-    :ref:`2.1.4` -- added optional mode and delay flags
+    #. `2.1.4` -- added optional mode and delay flags
+    #. `2.0.8` -- introduced the new IPv6 aware syntax
 
 `:25` is equivalent to listening on port 25 on all IPv4 addresses and `:::25`
 is equivalent to listening on port 25 on all IPv6 addresses.
@@ -112,12 +69,10 @@ The ``mode=`` and ``delay=`` flags may also be specified together, as required.
 
     listen = 10.0.0.1:25 mode=accept delay=5, 10.0.0.2:25 mode=bounce delay=10
 
-The flags accept the same options as :ref:`dynamic-switches`, including setting
+The flags accept the same options as `dynamic-switches`, including setting
 a delay range.
 
 -----
-
-.. _tls_listen:
 
 tls_listen
 ----------
@@ -125,13 +80,13 @@ tls_listen
 :Syntax:
     **tls_listen** = *[address]:port [mode=MODE] [delay=DELAY]*
 :Default:
-    None -- 465 is the recognised SMTPS port [*]_.
+    None -- 465 is the recognised SMTPS port [1]_.
 :Optional:
     *mode=* and *delay=* -- allows setting a response mode and delay per
     listener.
 :Added:
-    :ref:`2.0.8` -- introduced the new IPv6 aware syntax
-    :ref:`2.1.4` -- added optional mode and delay flags
+    #. `2.1.4` -- added optional mode and delay flags
+    #. `2.0.8` -- introduced the new IPv6 aware syntax
 
 `:465` is equivalent to listening on port 465 on all IPv4 addresses and
 `:::465` is equivalent to listening on port 465 on all IPv6 addresses.
@@ -156,18 +111,16 @@ The ``mode=`` and ``delay=`` flags may also be specified together, as required.
 
     tls_listen = 10.0.0.1:465 mode=accept delay=5, 10.0.0.2:465 mode=bounce delay=10
 
-The flags accept the same options as :ref:`dynamic-switches`, including setting
+The flags accept the same options as `dynamic-switches`, including setting
 a delay range.
 
-.. [*] Port 465 -- while originally a recognised port for SMTP over
+.. [1] Port 465 -- while originally a recognised port for SMTP over
    SSL/TLS -- is no longer advised for use. It's listed here because it's a
    well known and well used port, but also because Blackhole currently does not
    support ``STARTTLS`` over SMTP or SMTP Submission. --
    `<https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt>`_
 
 -----
-
-.. _user:
 
 user
 ----
@@ -188,8 +141,6 @@ those privileges.
 
 -----
 
-.. _group:
-
 group
 -----
 
@@ -206,8 +157,6 @@ Blackhole will set it's process group to the value provided with this options.
 
 -----
 
-.. _pidfile:
-
 pidfile
 -------
 
@@ -216,7 +165,7 @@ pidfile
 :Default:
     /tmp/blackhole.pid
 :Added:
-    :ref:`2.0.4`
+    #. `2.0.4`
 
 Blackhole will write it's Process ID to this file, allowing you to easily track
 the process and send signals to it.
@@ -226,8 +175,6 @@ the process and send signals to it.
     pidfile = /var/run/blackhole.pid
 
 -----
-
-.. _timeout:
 
 timeout
 -------
@@ -249,8 +196,6 @@ Helps mitigate DoS risks.
 
 -----
 
-.. _tls_cert:
-
 tls_cert
 --------
 
@@ -267,8 +212,6 @@ The certificate file in x509 format for wrapping a connection in SSL/TLS.
 
 -----
 
-.. _tls_key:
-
 tls_key
 -------
 
@@ -277,15 +220,13 @@ tls_key
 :Default:
     None
 
-The private key of the `tls_cert`_.
+The private key of the `tls_cert`.
 
 ::
 
     tls_key = /etc/ssl/private/blackhole.key
 
 -----
-
-.. _tls_dhparams:
 
 tls_dhparams
 ------------
@@ -295,7 +236,7 @@ tls_dhparams
 :Default:
     None
 :Added:
-    :ref:`2.0.4`
+    #. `2.0.4`
 
 
 File containing Diffie Hellman ephemeral parameters for ECDH ciphers.
@@ -305,8 +246,6 @@ File containing Diffie Hellman ephemeral parameters for ECDH ciphers.
     tls_dhparams = /etc/ssl/dhparams.pem
 
 -----
-
-.. _delay:
 
 delay
 -----
@@ -325,8 +264,6 @@ use this to delay testing or simulate lag.
 
 -----
 
-.. _mode:
-
 mode
 ----
 
@@ -341,8 +278,6 @@ mode
 
 -----
 
-.. _max_message_size:
-
 max_message_size
 ----------------
 
@@ -351,7 +286,7 @@ max_message_size
 :Default:
     512000 Bytes (512 KB)
 :Added:
-    :ref:`2.0.4`
+    #. `2.0.4`
 
 The maximum message size for a message. This includes headers and helps
 mitigate a DoS risk.
@@ -362,8 +297,6 @@ mitigate a DoS risk.
 
 -----
 
-.. _dynamic_switch:
-
 dynamic_switch
 --------------
 
@@ -372,18 +305,16 @@ dynamic_switch
 :Default:
     true -- valid options are:- true, false.
 :Added:
-    :ref:`2.0.6`
+    #. `2.0.6`
 
 The dynamic switch option allows you to enable or disable parsing of dynamic
-switches from email headers -- :ref:`dynamic-switches`
+switches from email headers -- `dynamic-switches`
 
 ::
 
     dynamic_switch = false
 
 -----
-
-.. _workers:
 
 workers
 -------
@@ -393,46 +324,25 @@ workers
 :Default:
     1
 :Added:
-    :ref:`2.1.0`
+    #. `2.1.0`
 
 The workers option allows you to define how many worker processes to spawn to
 handle incoming mail. The absolute minimum is actually 2. Even by setting the
 ``workers`` value to 1, a supervisor process will always exist meaning that you
 would have 1 worker and a supervisor.
 
------
+SEE ALSO
+========
 
+- ``man blackhole``
+- `<https://kura.github.io/blackhole/configuration.html>`_
 
-STARTTLS
---------
+LICENSE
+=======
 
-Currently `asyncio` does not have the code in place to make STARTTLS
-possible, the STARTTLS verb returns a ``500 Not implemented`` response
-until it's possible to implement. --`https://bugs.python.org/review/23749/
-<https://bugs.python.org/review/23749/>`_
+The MIT license must be distributed with this software.
 
+AUTHOR(S)
+=========
 
-Installing the init.d/rc.d scripts
-==================================
-
-The init script depends on */etc/blackhole.conf* being in place and configured.
-
-Blackhole comes with a script that works with init.d/rc.d, to install it copy it
-from the *init.d/YOUR_DISTRO* folder in the root directory of this project to
-*/etc/init.d/*.
-
-The init scripts can be found `here`_.
-
-.. _here: https://github.com/kura/blackhole/tree/master/init.d
-
-i.e. for Debian/Ubuntu users, mv the file from *init.d/debian-ubuntu/* to */etc/init.d/*.
-
-Then make sure it's executable
-
-.. code-block:: bash
-
-  chmod +x /etc/init.d/blackhole
-
-To make blackhole start on a reboot use the following::
-
-  update-rc.d blackhole defaults
+Kura <kura@kura.io>

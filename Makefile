@@ -1,6 +1,7 @@
 .PHONY: clean install uninstall tox test lint docs release web testssl
 clean:
 	find . -name "*.pyc" -delete
+	find . -name "__pycache__" -delete
 
 install:
 	python setup.py install
@@ -12,7 +13,7 @@ tox:
 	pip install tox detox
 	detox
 
-test: docs
+test: docs manpages
 	pip install pytest \
 				pytest-cov \
 				pytest-asyncio \
@@ -39,7 +40,14 @@ autodocs: docs
 docs:
 	pip install sphinx guzzle_sphinx_theme
 	rm -rf docs/build
-	sphinx-build docs/source/ docs/build/
+	sphinx-build -j 4 docs/source/ docs/build/
+
+manpages:
+	pip install docutils
+	rm -rf man/build
+	mkdir -p man/build
+	rst2man.py man/source/blackhole.rst man/build/blackhole.1
+	rst2man.py man/source/blackhole_config.rst man/build/blackhole_config.1
 
 release:
 	./release.sh
