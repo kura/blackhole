@@ -54,10 +54,10 @@ def require_python(minimum):
             parts.append(int(''.join((split.pop(0), split.pop(0))), 16))
         major, minor, micro, release = parts
         if release == 0xf0:
-            print('Python {0}.{1}.{2} or better is required'.format(
+            print('Python {0}.{1}.{2} or higher is required'.format(
                 major, minor, micro))
         else:
-            print('Python {0}.{1}.{2} ({3}) or better is required'.format(
+            print('Python {0}.{1}.{2} ({3}) or higher is required'.format(
                 major, minor, micro, hex(release)[2:]))
         sys.exit(1)
 
