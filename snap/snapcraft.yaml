@@ -1,0 +1,18 @@
+name: blackhole
+version: '2.1.7' # just for humans, typically '1.2+git' or '1.3.2'
+summary: An MTA written on top of asyncio, utilising async and await statements
+description: |
+  Blackhole is an MTA (message transfer agent) that (figuratively) pipes all
+  mail to /dev/null, built on top of asyncio and utilises async def and await
+  statements available in Python 3.5.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+apps:
+  blackhole:
+    command: blackhole
+
+parts:
+  blackhole-gh:
+    plugin: make
+    source: https://github.com/kura/blackhole/archive/2.1.7.tar.gz
