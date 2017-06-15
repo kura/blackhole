@@ -51,7 +51,7 @@ OPTIONS
 SEE ALSO
 ========
 
-- **blackhole_config**(1)
+- **blackhole_config** (1)
 - `<https://kura.github.io/blackhole/configuration.html>`_
 
 LICENSE

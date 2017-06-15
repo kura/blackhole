@@ -1,4 +1,4 @@
-.PHONY: clean install uninstall tox test lint docs release web testssl
+.PHONY: clean install uninstall tox test autodocs docs manpages release testssl
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete

@@ -42,9 +42,6 @@ listen
 :Optional:
     *mode=* and *delay=* -- allows setting a response mode and delay per
     listener.
-:Added:
-    #. `2.1.4` -- added optional mode and delay flags
-    #. `2.0.8` -- introduced the new IPv6 aware syntax
 
 `:25` is equivalent to listening on port 25 on all IPv4 addresses and `:::25`
 is equivalent to listening on port 25 on all IPv6 addresses.
@@ -85,8 +82,6 @@ tls_listen
     *mode=* and *delay=* -- allows setting a response mode and delay per
     listener.
 :Added:
-    #. `2.1.4` -- added optional mode and delay flags
-    #. `2.0.8` -- introduced the new IPv6 aware syntax
 
 `:465` is equivalent to listening on port 465 on all IPv4 addresses and
 `:::465` is equivalent to listening on port 465 on all IPv6 addresses.
@@ -135,10 +130,6 @@ Ports below 1024 require sudo or root privileges, this option is available so
 that the process can be started, listen on privileged ports and then give up
 those privileges.
 
-::
-
-    user = blackhole
-
 -----
 
 group
@@ -151,10 +142,6 @@ group
 
 Blackhole will set it's process group to the value provided with this options.
 
-::
-
-    group = blackhole
-
 -----
 
 pidfile
@@ -164,15 +151,9 @@ pidfile
     **pidfile** = */path/to/file.pid*
 :Default:
     /tmp/blackhole.pid
-:Added:
-    #. `2.0.4`
 
 Blackhole will write it's Process ID to this file, allowing you to easily track
 the process and send signals to it.
-
-::
-
-    pidfile = /var/run/blackhole.pid
 
 -----
 
@@ -190,10 +171,6 @@ will be terminated and a ``421 Timeout`` message will be sent to the client.
 
 Helps mitigate DoS risks.
 
-::
-
-    timeout = 30
-
 -----
 
 tls_cert
@@ -206,10 +183,6 @@ tls_cert
 
 The certificate file in x509 format for wrapping a connection in SSL/TLS.
 
-::
-
-    tls_cert = /etc/ssl/certs/blackhole.crt
-
 -----
 
 tls_key
@@ -220,12 +193,6 @@ tls_key
 :Default:
     None
 
-The private key of the `tls_cert`.
-
-::
-
-    tls_key = /etc/ssl/private/blackhole.key
-
 -----
 
 tls_dhparams
@@ -235,15 +202,9 @@ tls_dhparams
     **tls_dhparams** = */path/to/dhparams.pem*
 :Default:
     None
-:Added:
-    #. `2.0.4`
 
 
 File containing Diffie Hellman ephemeral parameters for ECDH ciphers.
-
-::
-
-    tls_dhparams = /etc/ssl/dhparams.pem
 
 -----
 
@@ -258,10 +219,6 @@ delay
 Time to delay before returning a response to a completed DATA command. You can
 use this to delay testing or simulate lag.
 
-::
-
-    delay = 30
-
 -----
 
 mode
@@ -270,11 +227,7 @@ mode
 :Syntax:
     **mode** = *accept | bounce | random*
 :Default:
-    accept -- valid options are:- accept, bounce, random.
-
-::
-
-    mode = random
+    accept
 
 -----
 
@@ -285,15 +238,9 @@ max_message_size
     **max_message_size** = *bytes*
 :Default:
     512000 Bytes (512 KB)
-:Added:
-    #. `2.0.4`
 
 The maximum message size for a message. This includes headers and helps
 mitigate a DoS risk.
-
-::
-
-    max_message_size = 1024000
 
 -----
 
@@ -303,16 +250,10 @@ dynamic_switch
 :Syntax:
     **dynamic_switch** = *true | false*
 :Default:
-    true -- valid options are:- true, false.
-:Added:
-    #. `2.0.6`
+    true
 
 The dynamic switch option allows you to enable or disable parsing of dynamic
-switches from email headers -- `dynamic-switches`
-
-::
-
-    dynamic_switch = false
+switches from email headers.
 
 -----
 
@@ -323,8 +264,6 @@ workers
     **workers** = *number*
 :Default:
     1
-:Added:
-    #. `2.1.0`
 
 The workers option allows you to define how many worker processes to spawn to
 handle incoming mail. The absolute minimum is actually 2. Even by setting the
@@ -334,7 +273,7 @@ would have 1 worker and a supervisor.
 SEE ALSO
 ========
 
-- **blackhole**(1)
+- **blackhole** (1)
 - `<https://kura.github.io/blackhole/configuration.html>`_
 
 LICENSE

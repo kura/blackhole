@@ -57,7 +57,7 @@ group = kura
 .SS listen
 .INDENT 0.0
 .TP
-.B Default
+.B Syntax
 \fBlisten\fP = \fI[address]:port [mode=MODE] [delay=DELAY]\fP
 .TP
 .B Default
@@ -68,14 +68,6 @@ enabled if IPv6 is supported.
 .B Optional
 \fImode=\fP and \fIdelay=\fP \-\- allows setting a response mode and delay per
 listener.
-.TP
-.B Added
-.INDENT 7.0
-.IP 1. 3
-\fI2.1.4\fP \-\- added optional mode and delay flags
-.IP 2. 3
-\fI2.0.8\fP \-\- introduced the new IPv6 aware syntax
-.UNINDENT
 .UNINDENT
 .sp
 \fI:25\fP is equivalent to listening on port 25 on all IPv4 addresses and \fI:::25\fP
@@ -142,12 +134,6 @@ None \-\- 465 is the recognised SMTPS port [1]\&.
 listener.
 .TP
 .B Added
-.INDENT 7.0
-.IP 1. 3
-\fI2.1.4\fP \-\- added optional mode and delay flags
-.IP 2. 3
-\fI2.0.8\fP \-\- introduced the new IPv6 aware syntax
-.UNINDENT
 .UNINDENT
 .sp
 \fI:465\fP is equivalent to listening on port 465 on all IPv4 addresses and
@@ -220,16 +206,6 @@ Blackhole will set it\(aqs process owner to the value provided with this options
 Ports below 1024 require sudo or root privileges, this option is available so
 that the process can be started, listen on privileged ports and then give up
 those privileges.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-user = blackhole
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -248,16 +224,6 @@ The primary group of the current Linux user
 .UNINDENT
 .sp
 Blackhole will set it\(aqs process group to the value provided with this options.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-group = blackhole
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -273,26 +239,10 @@ group = blackhole
 .TP
 .B Default
 /tmp/blackhole.pid
-.TP
-.B Added
-.INDENT 7.0
-.IP 1. 3
-\fI2.0.4\fP
-.UNINDENT
 .UNINDENT
 .sp
 Blackhole will write it\(aqs Process ID to this file, allowing you to easily track
 the process and send signals to it.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-pidfile = /var/run/blackhole.pid
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -315,16 +265,6 @@ value has been reached with no data being sent by the client, the connection
 will be terminated and a \fB421 Timeout\fP message will be sent to the client.
 .sp
 Helps mitigate DoS risks.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-timeout = 30
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -343,16 +283,6 @@ None
 .UNINDENT
 .sp
 The certificate file in x509 format for wrapping a connection in SSL/TLS.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-tls_cert = /etc/ssl/certs/blackhole.crt
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -369,18 +299,6 @@ tls_cert = /etc/ssl/certs/blackhole.crt
 .B Default
 None
 .UNINDENT
-.sp
-The private key of the \fItls_cert\fP\&.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-tls_key = /etc/ssl/private/blackhole.key
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -396,25 +314,9 @@ tls_key = /etc/ssl/private/blackhole.key
 .TP
 .B Default
 None
-.TP
-.B Added
-.INDENT 7.0
-.IP 1. 3
-\fI2.0.4\fP
-.UNINDENT
 .UNINDENT
 .sp
 File containing Diffie Hellman ephemeral parameters for ECDH ciphers.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-tls_dhparams = /etc/ssl/dhparams.pem
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -434,16 +336,6 @@ None \-\- Maximum value of 60 seconds.
 .sp
 Time to delay before returning a response to a completed DATA command. You can
 use this to delay testing or simulate lag.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-delay = 30
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -458,17 +350,7 @@ delay = 30
 \fBmode\fP = \fIaccept | bounce | random\fP
 .TP
 .B Default
-accept \-\- valid options are:\- accept, bounce, random.
-.UNINDENT
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-mode = random
-.ft P
-.fi
-.UNINDENT
+accept
 .UNINDENT
 
 .sp
@@ -485,26 +367,10 @@ mode = random
 .TP
 .B Default
 512000 Bytes (512 KB)
-.TP
-.B Added
-.INDENT 7.0
-.IP 1. 3
-\fI2.0.4\fP
-.UNINDENT
 .UNINDENT
 .sp
 The maximum message size for a message. This includes headers and helps
 mitigate a DoS risk.
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-max_message_size = 1024000
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
 
 .sp
 .ce
@@ -519,27 +385,11 @@ max_message_size = 1024000
 \fBdynamic_switch\fP = \fItrue | false\fP
 .TP
 .B Default
-true \-\- valid options are:\- true, false.
-.TP
-.B Added
-.INDENT 7.0
-.IP 1. 3
-\fI2.0.6\fP
-.UNINDENT
+true
 .UNINDENT
 .sp
 The dynamic switch option allows you to enable or disable parsing of dynamic
-switches from email headers \-\- \fIdynamic\-switches\fP
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.nf
-.ft C
-dynamic_switch = false
-.ft P
-.fi
-.UNINDENT
-.UNINDENT
+switches from email headers.
 
 .sp
 .ce
@@ -555,12 +405,6 @@ dynamic_switch = false
 .TP
 .B Default
 1
-.TP
-.B Added
-.INDENT 7.0
-.IP 1. 3
-\fI2.1.0\fP
-.UNINDENT
 .UNINDENT
 .sp
 The workers option allows you to define how many worker processes to spawn to
@@ -570,7 +414,7 @@ would have 1 worker and a supervisor.
 .SH SEE ALSO
 .INDENT 0.0
 .IP \(bu 2
-\fBman blackhole\fP
+\fBblackhole\fP (1)
 .IP \(bu 2
 \fI\%https://kura.github.io/blackhole/configuration.html\fP
 .UNINDENT
