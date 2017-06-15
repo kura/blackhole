@@ -43,7 +43,7 @@ __all__ = ('run', )
 
 def blackhole_config():
     """
-    Print the config help to the console.
+    Print the config help to the console with man-style formatting.
 
     :raises SystemExit: Exit code :py:obj:`os.EX_OK`.
     """
