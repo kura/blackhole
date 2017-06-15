@@ -40,11 +40,11 @@ Provides utility functionality.
 
 .. autofunction:: get_version
 
-.. autoclass:: formatter
+.. autoclass:: Formatter
 
 .. py:data:: formatting
 
-    An instance of `formatter` used with `blackhole_config`.
+    An instance of `Formatter` used with `blackhole_config`.
 
 .. py:data:: blackhole_config_help
 
