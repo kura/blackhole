@@ -32,4 +32,6 @@
 
 Provides functionality to run the server.
 
+.. autofunction:: blackhole_config
+
 .. autofunction:: run

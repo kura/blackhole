@@ -32,6 +32,20 @@
 
 Provides utility functionality.
 
+.. autoclass:: Singleton
+
 .. autofunction:: mailname
 
 .. autofunction:: message_id
+
+.. autofunction:: get_version
+
+.. autoclass:: formatter
+
+.. py:data:: formatting
+
+    An instance of `formatter` used with `blackhole_config`.
+
+.. py:data:: blackhole_config_help
+
+    The output message including formatting like bold and underline.

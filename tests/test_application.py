@@ -20,15 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import logging
 import os
 from unittest import mock
 
 import pytest
 
-from blackhole.application import run
+from blackhole.application import blackhole_config, run
 from blackhole.config import Config
 from blackhole.exceptions import (BlackholeRuntimeException, ConfigException,
                                   DaemonException)
+from blackhole.logs import configure_logs
 
 from ._utils import (Args, cleandir, create_config, create_file, reset)
 
@@ -164,3 +166,14 @@ def test_run_daemon_daemonize_error():
         run()
     assert str(err.value) == '77'
     assert mock_close.called is True
+
+
+@pytest.mark.usefixtures('reset', 'cleandir')
+def test_blackhole_config():
+    args = Args((('debug', False), ('quiet', False), ))
+    configure_logs(args)
+    mmock = mock.MagicMock(spec=logging)
+    with pytest.raises(SystemExit) as err, \
+            mock.patch('logging.getLogger', return_value=mmock):
+        blackhole_config()
+    assert str(err.value) == '2'

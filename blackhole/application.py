@@ -42,7 +42,16 @@ __all__ = ('run', )
 
 
 def blackhole_config():
-    print(blackhole_config_help)
+    """
+    Print the config help to the console.
+
+    :raises SystemExit: Exit code :py:obj:`os.EX_OK`.
+    """
+    args = parse_cmd_args(sys.argv[1:])
+    configure_logs(args)
+    logger = logging.getLogger('blackhole_config')
+    logger.info(blackhole_config_help)
+    raise SystemExit(os.EX_OK)
 
 
 def run():
