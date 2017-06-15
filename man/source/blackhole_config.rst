@@ -33,7 +33,7 @@ below.
 listen
 ------
 
-:Default:
+:Syntax:
     **listen** = *[address]:port [mode=MODE] [delay=DELAY]*
 :Default:
     127.0.0.1:25, 127.0.0.1:587, :::25, :::587 -- 25 is the recognised SMTP
@@ -334,7 +334,7 @@ would have 1 worker and a supervisor.
 SEE ALSO
 ========
 
-- ``man blackhole``
+- **blackhole**(1)
 - `<https://kura.github.io/blackhole/configuration.html>`_
 
 LICENSE

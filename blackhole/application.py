@@ -33,11 +33,16 @@ from .daemon import Daemon
 from .exceptions import (BlackholeRuntimeException, ConfigException,
                          DaemonException)
 from .logs import configure_logs
+from .utils import blackhole_config_help
 from .supervisor import Supervisor
 
 
 __all__ = ('run', )
 """Tuple all the things."""
+
+
+def blackhole_config():
+    print(blackhole_config_help)
 
 
 def run():
