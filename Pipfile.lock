@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "55373163af785c4bc182408d2ff517b48cedbbbb0627f1f8571b0ed587ae7ae8"
+            "sha256": "d352f52171d30cbc122c324fee9ecf30d159a13a9dae20ac5d38da8ad8b080be"
         },
         "requires": {
             "python_version": "3.6"
@@ -27,8 +27,23 @@
         "chardet": {
             "version": "==3.0.4"
         },
+        "codecov": {
+            "version": "==2.0.9"
+        },
+        "colorama": {
+            "version": "==0.3.9"
+        },
+        "coverage": {
+            "version": "==4.4.1"
+        },
         "docutils": {
             "version": "==0.13.1"
+        },
+        "flake8": {
+            "version": "==3.3.0"
+        },
+        "flake8-polyfill": {
+            "version": "==1.0.1"
         },
         "guzzle-sphinx-theme": {
             "version": "==0.7.11"
@@ -44,6 +59,9 @@
         },
         "jinja2": {
             "version": "==2.9.6"
+        },
+        "mando": {
+            "version": "==0.6.4"
         },
         "markupsafe": {
             "version": "==1.0"
@@ -75,11 +93,17 @@
         "pytest-asyncio": {
             "version": "==0.6.0"
         },
+        "pytest-cov": {
+            "version": "==2.5.1"
+        },
         "pytz": {
             "version": "==2017.2"
         },
+        "radon": {
+            "version": "==2.0.2"
+        },
         "requests": {
-            "version": "==2.17.3"
+            "version": "==2.18.1"
         },
         "setuptools": {
             "version": "==36.0.1"
