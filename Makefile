@@ -20,7 +20,7 @@ test: docs
 				pyflakes \
 				pycodestyle \
 				pydocstyle==1.1.1 \
-				isort \
+				radon \
 				codecov
 	py.test --cov ./blackhole \
 			--cov ./tests \
@@ -30,6 +30,8 @@ test: docs
 			--verbose \
 			--cache-clear \
 			blackhole tests
+	radon cc -a -nc blackhole
+	radon mi -nc blackhole
 	./codecov.sh
 
 autodocs: docs
