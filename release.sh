@@ -15,4 +15,3 @@ git push --tags
 pip install wheel
 python setup.py sdist bdist_wheel upload
 rm -rf dist/build
-make web
