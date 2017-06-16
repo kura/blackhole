@@ -1,0 +1,428 @@
+.\" Man page generated from reStructuredText.
+.
+.TH BLACKHOLE_CONFIG 1 "" "" ""
+.SH NAME
+blackhole_config \- the config file format for the Blackhole MTA
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH DESCRIPTION
+.sp
+This manual page documents the \fBBlackhole\fP configuration file format and
+options.
+.SH OPTIONS
+.sp
+These are all available options for the configuration file, their default
+values and information on what the options actually do.
+.sp
+The file format is a simple \fIattribute = value\fP style, an example is shown
+below.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+# This is a comment.
+listen = :25  # This is an inline comment.
+user = kura
+group = kura
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SS listen
+.INDENT 0.0
+.TP
+.B Syntax
+\fBlisten\fP = \fI[address]:port [mode=MODE] [delay=DELAY]\fP
+.TP
+.B Default
+127.0.0.1:25, 127.0.0.1:587, :::25, :::587 \-\- 25 is the recognised SMTP
+port, 587 is the recognised SMTP Submission port. IPv6 listeners are only
+enabled if IPv6 is supported.
+.TP
+.B Optional
+\fImode=\fP and \fIdelay=\fP \-\- allows setting a response mode and delay per
+listener.
+.UNINDENT
+.sp
+\fI:25\fP is equivalent to listening on port 25 on all IPv4 addresses and \fI:::25\fP
+is equivalent to listening on port 25 on all IPv6 addresses.
+.sp
+Multiple addresses and ports can be listed on a single line.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+listen = 10.0.0.1:25, 10.0.0.2:25, :25, :::25, :587, :::587
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The \fBmode=\fP and \fBdelay=\fP flags allow specific ports to act in specific
+ways. i.e. you could accept all mail on 10.0.0.1:25 and bounce it all on
+10.0.0.2:25, as below.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+listen = 10.0.0.1:25 mode=accept, 10.0.0.2:25 mode=bounce
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The \fBmode=\fP and \fBdelay=\fP flags may also be specified together, as required.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+listen = 10.0.0.1:25 mode=accept delay=5, 10.0.0.2:25 mode=bounce delay=10
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The flags accept the same options as \fIdynamic\-switches\fP, including setting
+a delay range.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS tls_listen
+.INDENT 0.0
+.TP
+.B Syntax
+\fBtls_listen\fP = \fI[address]:port [mode=MODE] [delay=DELAY]\fP
+.TP
+.B Default
+None \-\- 465 is the recognised SMTPS port [1]\&.
+.TP
+.B Optional
+\fImode=\fP and \fIdelay=\fP \-\- allows setting a response mode and delay per
+listener.
+.TP
+.B Added
+.UNINDENT
+.sp
+\fI:465\fP is equivalent to listening on port 465 on all IPv4 addresses and
+\fI:::465\fP is equivalent to listening on port 465 on all IPv6 addresses.
+.sp
+Multiple addresses and ports can be listed on a single line.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+tls_listen = 10.0.0.1:465, 10.0.0.2:465, :465, :::465
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The \fBmode=\fP and \fBdelay=\fP flags allow specific ports to act in specific
+ways. i.e. you could accept all mail on 10.0.0.1:465 and bounce it all on
+10.0.0.2:465, as below.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+tls_listen = 10.0.0.1:465 mode=accept, 10.0.0.2:465 mode=bounce
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The \fBmode=\fP and \fBdelay=\fP flags may also be specified together, as required.
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+tls_listen = 10.0.0.1:465 mode=accept delay=5, 10.0.0.2:465 mode=bounce delay=10
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.sp
+The flags accept the same options as \fIdynamic\-switches\fP, including setting
+a delay range.
+.IP [1] 5
+Port 465 \-\- while originally a recognised port for SMTP over
+SSL/TLS \-\- is no longer advised for use. It\(aqs listed here because it\(aqs a
+well known and well used port, but also because Blackhole currently does not
+support \fBSTARTTLS\fP over SMTP or SMTP Submission. \-\-
+\fI\%https://www.iana.org/assignments/service\-names\-port\-numbers/service\-names\-port\-numbers.txt\fP
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS user
+.INDENT 0.0
+.TP
+.B Syntax
+\fBuser\fP = \fIuser\fP
+.TP
+.B Default
+The current Linux user
+.UNINDENT
+.sp
+Blackhole will set it\(aqs process owner to the value provided with this options.
+Ports below 1024 require sudo or root privileges, this option is available so
+that the process can be started, listen on privileged ports and then give up
+those privileges.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS group
+.INDENT 0.0
+.TP
+.B Syntax
+\fBgroup\fP = \fIgroup\fP
+.TP
+.B Default
+The primary group of the current Linux user
+.UNINDENT
+.sp
+Blackhole will set it\(aqs process group to the value provided with this options.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS pidfile
+.INDENT 0.0
+.TP
+.B Syntax
+\fBpidfile\fP = \fI/path/to/file.pid\fP
+.TP
+.B Default
+/tmp/blackhole.pid
+.UNINDENT
+.sp
+Blackhole will write it\(aqs Process ID to this file, allowing you to easily track
+the process and send signals to it.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS timeout
+.INDENT 0.0
+.TP
+.B Syntax
+\fBtimeout\fP = \fIseconds\fP
+.TP
+.B Default
+60 \-\- Maximum value of 180 seconds.
+.UNINDENT
+.sp
+This is the amount of time to wait for a client to send data. Once the timeout
+value has been reached with no data being sent by the client, the connection
+will be terminated and a \fB421 Timeout\fP message will be sent to the client.
+.sp
+Helps mitigate DoS risks.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS tls_cert
+.INDENT 0.0
+.TP
+.B Syntax
+\fBtls_cert\fP = \fI/path/to/certificate.pem\fP
+.TP
+.B Default
+None
+.UNINDENT
+.sp
+The certificate file in x509 format for wrapping a connection in SSL/TLS.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS tls_key
+.INDENT 0.0
+.TP
+.B Syntax
+\fBtls_key\fP = \fI/path/to/private.key\fP
+.TP
+.B Default
+None
+.UNINDENT
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS tls_dhparams
+.INDENT 0.0
+.TP
+.B Syntax
+\fBtls_dhparams\fP = \fI/path/to/dhparams.pem\fP
+.TP
+.B Default
+None
+.UNINDENT
+.sp
+File containing Diffie Hellman ephemeral parameters for ECDH ciphers.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS delay
+.INDENT 0.0
+.TP
+.B Syntax
+\fBdelay\fP = \fIseconds\fP
+.TP
+.B Default
+None \-\- Maximum value of 60 seconds.
+.UNINDENT
+.sp
+Time to delay before returning a response to a completed DATA command. You can
+use this to delay testing or simulate lag.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS mode
+.INDENT 0.0
+.TP
+.B Syntax
+\fBmode\fP = \fIaccept | bounce | random\fP
+.TP
+.B Default
+accept
+.UNINDENT
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS max_message_size
+.INDENT 0.0
+.TP
+.B Syntax
+\fBmax_message_size\fP = \fIbytes\fP
+.TP
+.B Default
+512000 Bytes (512 KB)
+.UNINDENT
+.sp
+The maximum message size for a message. This includes headers and helps
+mitigate a DoS risk.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS dynamic_switch
+.INDENT 0.0
+.TP
+.B Syntax
+\fBdynamic_switch\fP = \fItrue | false\fP
+.TP
+.B Default
+true
+.UNINDENT
+.sp
+The dynamic switch option allows you to enable or disable parsing of dynamic
+switches from email headers.
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.SS workers
+.INDENT 0.0
+.TP
+.B Syntax
+\fBworkers\fP = \fInumber\fP
+.TP
+.B Default
+1
+.UNINDENT
+.sp
+The workers option allows you to define how many worker processes to spawn to
+handle incoming mail. The absolute minimum is actually 2. Even by setting the
+\fBworkers\fP value to 1, a supervisor process will always exist meaning that you
+would have 1 worker and a supervisor.
+.SH SEE ALSO
+.INDENT 0.0
+.IP \(bu 2
+\fBblackhole\fP (1)
+.IP \(bu 2
+\fI\%https://kura.github.io/blackhole/configuration.html\fP
+.UNINDENT
+.SH LICENSE
+.sp
+The MIT license must be distributed with this software.
+.SH AUTHOR(S)
+.sp
+Kura <\fI\%kura@kura.io\fP>
+.\" Generated by docutils manpage writer.
+.

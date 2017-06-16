@@ -33,11 +33,25 @@ from .daemon import Daemon
 from .exceptions import (BlackholeRuntimeException, ConfigException,
                          DaemonException)
 from .logs import configure_logs
+from .utils import blackhole_config_help
 from .supervisor import Supervisor
 
 
 __all__ = ('run', )
 """Tuple all the things."""
+
+
+def blackhole_config():
+    """
+    Print the config help to the console with man-style formatting.
+
+    :raises SystemExit: Exit code :py:obj:`os.EX_OK`.
+    """
+    args = parse_cmd_args(sys.argv[1:])
+    configure_logs(args)
+    logger = logging.getLogger('blackhole.blackhole_config')
+    logger.info(blackhole_config_help)
+    raise SystemExit(os.EX_OK)
 
 
 def run():
