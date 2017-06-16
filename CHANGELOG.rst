@@ -25,15 +25,25 @@ the functionality yourself.
 Current release
 ---------------
 
+2.1.8
+=====
+
+.. _2.1.8:
+
+- Mostly a bugfix release.
+- Added new command ``blackhole_config`` to display config options on command
+  line.
+
+-------------
+Past releases
+-------------
+
+.. _2.1.7:
 .. _2.1.6:
 
 - Introduced the ability to use `uvloop
   <https://github.com/MagicStack/uvloop>`_ in place of the default
   :py:obj:`asyncio.event_loop`.
-
--------------
-Past releases
--------------
 
 .. _2.1.4:
 .. _2.1.5:
