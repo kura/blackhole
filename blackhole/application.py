@@ -49,7 +49,7 @@ def blackhole_config():
     """
     args = parse_cmd_args(sys.argv[1:])
     configure_logs(args)
-    logger = logging.getLogger('blackhole_config')
+    logger = logging.getLogger('blackhole.blackhole_config')
     logger.info(blackhole_config_help)
     raise SystemExit(os.EX_OK)
 

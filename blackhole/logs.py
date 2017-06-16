@@ -43,7 +43,6 @@ LOG_CONFIG = {
     },
     'loggers': {
         'blackhole': {'handlers': [], 'level': logging.INFO},
-        'blackhole_config': {'handlers': [], 'level': logging.INFO},
     },
     'version': 1,
 }
