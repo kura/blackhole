@@ -358,4 +358,4 @@ blackhole_config_help = '''BLACKHOLE_CONFIG(1)
         spawn to handle incoming mail. The absolute minimum is actually 2. Even
         by setting the workers value to 1, a supervisor process will always
         exist meaning that you would have 1 worker and a supervisor.
-'''.format(f=formatting)
+'''.format(f=formatting)  # noqa
