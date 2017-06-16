@@ -41,6 +41,9 @@ Past releases
 .. _2.1.7:
 .. _2.1.6:
 
+2.1.7
+=====
+
 - Introduced the ability to use `uvloop
   <https://github.com/MagicStack/uvloop>`_ in place of the default
   :py:obj:`asyncio.event_loop`.
