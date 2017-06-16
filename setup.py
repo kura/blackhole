@@ -34,6 +34,7 @@ __version__ = get_version('blackhole/__init__.py')
 entry_points = {
     'console_scripts': (
         'blackhole = blackhole.application:run',
+        'blackhole_config = blackhole.application:blackhole_config',
     )
 }
 
