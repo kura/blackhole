@@ -38,8 +38,18 @@ entry_points = {
     )
 }
 
-tests_require = ('pytest', 'pytest-asyncio', 'pylama', 'pyflakes',
-                 'pycodestyle', 'pydocstyle==1.1.1', 'isort')
+tests_require = ('codecov',
+                 'guzzle_sphinx_theme',
+                 'isort',
+                 'pycodestyle',
+                 'pydocstyle==1.1.1',
+                 'pyflakes',
+                 'pylama',
+                 'pytest',
+                 'pytest-asyncio',
+                 'pytest-cov',
+                 'radon',
+                 'sphinx', )
 
 description = ('Blackhole is an MTA (message transfer agent) that '
                '(figuratively) pipes all mail to /dev/null.')
