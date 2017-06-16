@@ -143,8 +143,7 @@ class Child:
         while self._started:
             try:
                 msg = await reader.read(3)
-            except (asyncio.CancelledError, asyncio.InvalidStateError,
-                    asyncio.TimeoutError):
+            except:  # noqa
                 break
             if msg == protocols.PING:
                 logger.debug('child.%s.heartbeat: Ping request received from '

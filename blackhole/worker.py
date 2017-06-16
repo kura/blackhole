@@ -179,7 +179,7 @@ class Worker:
                                  self.idx)
                     self.ping = time.monotonic()
                     self.ping_count += 1
-            except:
+            except:  # noqa
                 self.stop()
             await asyncio.sleep(5)
 
