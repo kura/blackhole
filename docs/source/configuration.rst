@@ -39,7 +39,7 @@ as below:
 -t			perform a configuration test and exit
 -d			enable debugging mode
 -b			run in the background
--ls			Disable :ssl.OP_SINGLE_DH_USE and ssl.OP_SINGLE_ECDH_USE.
+-ls			Disable :py:obj:`ssl.OP_SINGLE_DH_USE` and :py:obj:`ssl.OP_SINGLE_ECDH_USE`.
 			Reduces CPU overhead at the expense of security. Don't use this
 			option unless you really need to. -- added in :ref:`2.0.13`
 -q			Suppress warnings when using -ls/--less-secure, running as root or
@@ -53,6 +53,9 @@ Configuration options
 
 Here are all available options for the configuration file, their default values
 and information on what the options actually do.
+
+From :ref:`2.1.8` onwards the ``blackhole_config`` command will also display this
+information directly from the command line.
 
 - `listen`_
 - `tls_listen`_
