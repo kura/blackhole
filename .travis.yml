@@ -15,7 +15,7 @@ jobs:
     - stage: test std asyncio
       script: make test
     - stage: test uvloop
-      script: make testuv
+      script: make uvtest
     - stage: test man
       script: make man
     - stage: test docs
