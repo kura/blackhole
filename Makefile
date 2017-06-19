@@ -44,7 +44,7 @@ _test:
 uvtest: _test_deps
 	pip install uvloop
 	make _test
-	pip uninstall uvloop
+	pip uninstall -y uvloop
 
 cov:
 	coverage combine
