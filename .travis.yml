@@ -4,11 +4,16 @@ python:
   - "3.6"
 dist: trusty
 sudo: false
+addons:
+  apt:
+    packages:
+      - libuv
 install:
   - make install
 script:
-  - make test
+  - make testall
 after_success:
+  - make cov
   - codecov
 notifications:
   webhooks:

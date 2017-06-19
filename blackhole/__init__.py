@@ -70,3 +70,10 @@ __all__ = (__application_all__ +
            __utils_all__ +
            __worker_all__)
 """Tuple all the things."""
+
+try:
+    import asyncio
+    import uvloop
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+except ImportError:
+    pass

@@ -128,7 +128,7 @@ def _socket(addr, port, family):
     return sock
 
 
-def server(addr, port, family, flags={}, use_tls=False):
+def server(addr, port, family, use_tls=False):
     """
     Socket and possibly a TLS context.
 
@@ -139,16 +139,14 @@ def server(addr, port, family, flags={}, use_tls=False):
     :param int port: The port to use.
     :param family: The type of socket to use.
     :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`.
-    :param dict flags: Flags to use. Default: ``{}``.
     :param bool use_tls: Whether to create a TLS context or not.
                          Default: ``False``.
-    :returns: Bound socket, a TLS context if configured and any configured
-              flags.
+    :returns: Bound socket, a TLS context if configured.
     :rtype: :py:obj:`dict`
     """
     sock = _socket(addr, port, family)
     ctx = _context(use_tls=use_tls)
-    return {'sock': sock, 'ssl': ctx, 'flags': flags}
+    return {'sock': sock, 'ssl': ctx}
 
 
 def pid_permissions():

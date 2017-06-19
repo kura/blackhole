@@ -15,7 +15,11 @@ tox:
 	pip install tox detox
 	detox
 
-test: clean docs manpages
+test: _test_deps _test
+
+testall: test uvtest docs manpages cov
+
+_test_deps:
 	pip install pytest \
 				pytest-cov \
 				pytest-asyncio \
@@ -25,6 +29,8 @@ test: clean docs manpages
 				pydocstyle==1.1.1 \
 				radon \
 				codecov
+
+_test:
 	py.test --cov ./blackhole \
 			--cov ./tests \
 			--cov-report xml \
@@ -34,6 +40,14 @@ test: clean docs manpages
 			--cache-clear \
 			blackhole tests
 	radon mi -nc blackhole
+
+uvtest: _test_deps
+	pip install uvloop
+	make _test
+	pip uninstall uvloop
+
+cov:
+	coverage combine
 	./codecov.sh
 
 autodocs: clean docs

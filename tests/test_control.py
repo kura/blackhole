@@ -139,7 +139,7 @@ def test_create_server_ipv6_bind_fails():
 def test_create_server_ipv4_bind_works(mock_sock):
     cfile = create_config(('listen=127.0.0.1:9000', ))
     Config(cfile).load()
-    server('127.0.0.1', 9000, socket.AF_INET, {})
+    server('127.0.0.1', 9000, socket.AF_INET)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -150,7 +150,7 @@ def test_create_server_ipv6_bind_works():
     cfile = create_config(('listen=:::9000', ))
     Config(cfile).load()
     with mock.patch('socket.socket.bind') as mock_sock:
-        server('::', 9000, socket.AF_INET6, {})
+        server('::', 9000, socket.AF_INET6)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -163,7 +163,7 @@ def test_create_server_ipv4_tls_bind_fails():
     with mock.patch('socket.socket.bind',
                     side_effect=OSError) as mock_sock, \
             pytest.raises(BlackholeRuntimeException):
-        server('127.0.0.1', 9000, socket.AF_INET, {})
+        server('127.0.0.1', 9000, socket.AF_INET)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -177,7 +177,7 @@ def test_create_server_ipv6_tls_bind_fails():
     with mock.patch('socket.socket.bind',
                     side_effect=OSError) as mock_sock, \
             pytest.raises(BlackholeRuntimeException):
-        server('::', 9000, socket.AF_INET6, {})
+        server('::', 9000, socket.AF_INET6)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -191,7 +191,7 @@ def test_create_server_tls_ipv4_bind_works():
     conf.args = Args((('less_secure', False), ))
     with mock.patch('socket.socket.bind') as mock_sock, \
             mock.patch('ssl.create_default_context') as mock_ssl:
-        server('127.0.0.1', 9000, socket.AF_INET, {}, use_tls=True)
+        server('127.0.0.1', 9000, socket.AF_INET, use_tls=True)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
     assert mock_ssl.called is True
@@ -208,7 +208,7 @@ def test_create_server_tls_ipv6_bind_works():
     conf.args = Args((('less_secure', False), ))
     with mock.patch('socket.socket.bind') as mock_sock, \
             mock.patch('ssl.create_default_context') as mock_ssl:
-        server('::', 9000, socket.AF_INET6, {}, use_tls=True)
+        server('::', 9000, socket.AF_INET6, use_tls=True)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
     assert mock_ssl.called is True

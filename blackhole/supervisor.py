@@ -88,7 +88,7 @@ class Supervisor(metaclass=Singleton):
         if use_tls:
             msg = 'Attaching %s:%s (TLS) with flags %s'
         for host, port, family, flags in listeners:
-            aserver = server(host, port, family, flags, use_tls=use_tls)
+            aserver = server(host, port, family, use_tls=use_tls)
             self.socks.append(aserver)
             logger.debug(msg, host, port, flags)
 
