@@ -7,7 +7,7 @@ sudo: true
 group: edge
 before_install:
   - sudo apt-get update -q
-  - sudo apt-get install -y libuv0.10 libuv0.10-dev
+  - sudo apt-get install -y libuv0.10
 install:
   - make install
 script:
