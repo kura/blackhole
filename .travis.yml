@@ -5,11 +5,9 @@ python:
 dist: trusty
 sudo: true
 group: edge
-addons:
-  apt:
-    packages:
-      - libuv0.10
-      - libuv0.10-dev
+before_install:
+  - sudo apt-get update -q
+  - sudo apt-get install -y libuv0.10 libuv0.10-dev
 install:
   - make install
 script:
