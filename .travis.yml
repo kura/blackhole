@@ -7,8 +7,8 @@ sudo: false
 addons:
   apt:
     packages:
-      - libuv1
-      - libuv1-dev
+      - libuv0.10
+      - libuv0.10-dev
 install:
   - make install
 script:
