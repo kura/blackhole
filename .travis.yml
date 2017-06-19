@@ -10,8 +10,16 @@ before_install:
   - sudo apt-get install -y libuv0.10
 install:
   - make install
-script:
-  - make testall
+jobs:
+  include:
+    - stage: test std asyncio
+      script: make test
+    - stage: test uvloop
+      script: make testuv
+    - stage: test man
+      script: make man
+    - stage: test docs
+      script: make docs
 after_success:
   - make cov
   - codecov

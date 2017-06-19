@@ -1,4 +1,4 @@
-.PHONY: clean install uninstall tox test autodocs docs manpages release testssl
+.PHONY: clean install uninstall tox test autodocs docs man release testssl
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
@@ -17,7 +17,7 @@ tox:
 
 test: _test_deps _test
 
-testall: test uvtest docs manpages cov
+testall: clean test uvtest docs man
 
 _test_deps:
 	pip install pytest \
@@ -41,13 +41,12 @@ _test:
 			blackhole tests
 	radon mi -nc blackhole
 
-uvtest: _test_deps
+uvtest: clean _test_deps
 	pip install uvloop
 	make _test
 	pip uninstall -y uvloop
 
 cov:
-	coverage combine
 	./codecov.sh
 
 autodocs: clean docs
@@ -59,7 +58,7 @@ docs: clean
 	rm -rf docs/build
 	sphinx-build -j 4 docs/source/ docs/build/
 
-manpages: clean
+man: clean
 	pip install docutils
 	mkdir -p man/build
 	rst2man.py man/source/blackhole.rst man/build/blackhole.1
