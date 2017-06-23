@@ -35,8 +35,8 @@ test: clean docs manpages
 				pytest \
 				pytest-cov \
 				pytest-asyncio \
-				radon \
-				setproctitle
+				setproctitle \
+				radon
 	py.test --cov ./blackhole \
 			--cov ./tests \
 			--cov-report xml \
