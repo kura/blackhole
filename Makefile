@@ -1,4 +1,4 @@
-.PHONY: clean install uninstall tox test autodocs docs man release testssl
+.PHONY: clean install uninstall tox test autodocs docs manpages release testssl
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
@@ -15,22 +15,17 @@ tox:
 	pip install tox detox
 	detox
 
-test: _test_deps _test
-
-testall: clean test uvtest docs man
-
-_test_deps:
-	pip install pytest \
-				pytest-cov \
-				pytest-asyncio \
-				pylama \
-				pyflakes \
+test: clean docs manpages
+	pip install codecov \
 				pycodestyle \
 				pydocstyle==1.1.1 \
+				pyflakes \
+				pylama \
+				pytest \
+				pytest-cov \
+				pytest-asyncio \
 				radon \
-				codecov
-
-_test:
+				uvloop
 	py.test --cov ./blackhole \
 			--cov ./tests \
 			--cov-report xml \
@@ -40,13 +35,6 @@ _test:
 			--cache-clear \
 			blackhole tests
 	radon mi -nc blackhole
-
-uvtest: clean _test_deps
-	pip install uvloop
-	make _test
-	pip uninstall -y uvloop
-
-cov:
 	./codecov.sh
 
 autodocs: clean docs
@@ -58,7 +46,7 @@ docs: clean
 	rm -rf docs/build
 	sphinx-build -j 4 docs/source/ docs/build/
 
-man: clean
+manpages: clean
 	pip install docutils
 	mkdir -p man/build
 	rst2man.py man/source/blackhole.rst man/build/blackhole.1

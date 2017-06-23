@@ -1,7 +1,7 @@
 language: python
-cache: pip
 python:
   - "3.6"
+cache: pip
 dist: trusty
 sudo: true
 group: edge
@@ -10,25 +10,21 @@ before_install:
   - sudo apt-get install -y libuv0.10
 install:
   - make install
-jobs:
-  include:
-    - stage: test std asyncio
-      script: make test
-    - stage: test uvloop
-      script: make uvtest
-    - stage: test man
-      script: make man
-    - stage: test docs
-      script: make docs
-    - stage: deploy
-      script: skip
-      deploy:
-        provider: pages
-        skip_cleanup: true
-        github_token: $GITHUB_TOKEN
-        local_dir: docs/build
-        on:
-          branch: master
+script:
+  - make test
 after_success:
-  - make cov
   - codecov
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/1ad06d2b30bf0712f90e
+    on_success: always
+    on_failure: always
+    on_start: always
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: docs/build
+  on:
+    branch: master
