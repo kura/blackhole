@@ -414,21 +414,6 @@ possible, the STARTTLS verb returns a ``500 Not implemented`` response
 until it's possible to implement. --`https://bugs.python.org/review/23749/
 <https://bugs.python.org/review/23749/>`_
 
-setproctitle
-------------
-
-setproctitle is a simple library that allows Blackhole to set a more
-`ps aux`-friendly output for the blackhole processes.
-
-.. code:: bash
-
-    # without setproctitle
-    python3.6 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
-    python3.6 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
-    # with setproctitle
-    blackhole: master
-    blackhole: worker
-
 
 Optional features (you should probably use)
 ===========================================
@@ -442,7 +427,8 @@ uvloop
     uvloop is a fast, drop-in replacement of the built-in asyncio event loop.
     uvloop is implemented in Cython and uses libuv under the hood.
 
-Using uvloop with Blackhole is as simple as installing libuv and the Python
+Using `uvloop <https://github.com/MagicStack/uvloop>`_ with Blackhole is as
+simple as installing `libuv <https://github.com/libuv/libuv>`_ and the Python
 library.
 
 On Debian/Ubuntu it's as simple as installing via APT and Pip respectively.
@@ -451,6 +437,22 @@ On Debian/Ubuntu it's as simple as installing via APT and Pip respectively.
 
     apt-get install libuv1 libuv1-dev python-dev
     pip install uvloop
+
+setproctitle
+------------
+
+`setproctitle <https://pypi.python.org/pypi/setproctitle>`_ is a simple library
+that allows Blackhole to set a more `ps aux`-friendly output for the blackhole
+processes.
+
+.. code:: bash
+
+    # without setproctitle
+    python3.6 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
+    python3.6 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
+    # with setproctitle
+    blackhole: master
+    blackhole: worker
 
 
 Installing the init.d/rc.d scripts
