@@ -3,11 +3,8 @@ python:
   - "3.6"
 cache: pip
 dist: trusty
-sudo: true
+sudo: false
 group: edge
-before_install:
-  - sudo apt-get update -q
-  - sudo apt-get install -y libuv0.10
 install:
   - make install
 script:
