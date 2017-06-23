@@ -35,6 +35,12 @@ from .utils import Singleton
 from .worker import Worker
 
 
+try:
+    import setproctitle
+except ImportError:
+    setproctitle = None
+
+
 __all__ = ('Supervisor', )
 """Tuple all the things."""
 
@@ -68,6 +74,8 @@ class Supervisor(metaclass=Singleton):
         self.loop = loop if loop is not None else asyncio.get_event_loop()
         self.socks = []
         self.workers = []
+        if setproctitle:
+            setproctitle.setproctitle('blackhole: master')
         try:
             self.generate_servers()
         except BlackholeRuntimeException:

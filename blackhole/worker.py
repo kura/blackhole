@@ -35,6 +35,12 @@ from .control import setgid, setuid
 from .streams import StreamProtocol
 
 
+try:
+    import setproctitle
+except ImportError:
+    setproctitle = None
+
+
 __all__ = ('Worker', )
 
 
@@ -89,6 +95,8 @@ class Worker:
         setgid()
         setuid()
         asyncio.set_event_loop(None)
+        if setproctitle:
+            setproctitle.setproctitle('blackhole: worker')
         process = Child(self.up_read, self.down_write, self.socks,
                         self.idx)
         process.start()
