@@ -24,7 +24,8 @@ test: clean docs manpages
 				pycodestyle \
 				pydocstyle==1.1.1 \
 				radon \
-				codecov
+				codecov \
+				setproctitle
 	py.test --cov ./blackhole \
 			--cov ./tests \
 			--cov-report xml \

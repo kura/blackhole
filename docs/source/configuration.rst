@@ -414,6 +414,21 @@ possible, the STARTTLS verb returns a ``500 Not implemented`` response
 until it's possible to implement. --`https://bugs.python.org/review/23749/
 <https://bugs.python.org/review/23749/>`_
 
+setproctitle
+------------
+
+setproctitle is a simple library that allows Blackhole to set a more
+`ps aux`-friendly output for the blackhole processes.
+
+.. code:: bash
+
+    # without setproctitle
+    python3.6 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
+    python3.6 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
+    # with setproctitle
+    blackhole: master
+    blackhole: worker
+
 
 Installing the init.d/rc.d scripts
 ==================================
