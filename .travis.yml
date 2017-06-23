@@ -1,9 +1,10 @@
 language: python
-cache: pip
 python:
   - "3.6"
+cache: pip
 dist: trusty
 sudo: false
+group: edge
 install:
   - make install
 script:

@@ -97,7 +97,6 @@ class Child:
         finally stops the process and exits.
         """
         self._started = False
-        self.loop.stop()
         for _ in range(len(self.clients)):
             client = self.clients.pop()
             client.close()
@@ -108,6 +107,7 @@ class Child:
         self.server_task.cancel()
         for task in asyncio.Task.all_tasks(self.loop):
             task.cancel()
+        self.loop.stop()
         self._started = False
         os._exit(os.EX_OK)
 

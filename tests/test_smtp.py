@@ -24,11 +24,11 @@
 
 import asyncio
 import inspect
+from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
 import socket
 import threading
 import time
 import unittest
-from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
 from unittest import mock
 
 import pytest
@@ -38,6 +38,14 @@ from blackhole.control import _socket
 from blackhole.smtp import Smtp
 
 from ._utils import (Args, cleandir, create_config, create_file, reset)
+
+
+try:
+    import asyncio
+    import uvloop
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+except ImportError:
+    pass
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
@@ -119,24 +127,14 @@ def test_unknown_handlers():
 @pytest.mark.usefixtures('reset', 'cleandir')
 class Controller:
 
-    def __init__(self, sock=None, loop=None):
+    def __init__(self, sock=None):
         if sock is not None:
             self.sock = sock
         else:
             self.sock = _socket('127.0.0.1', 0, socket.AF_INET)
+        self.loop = asyncio.new_event_loop()
         self.server = None
-        self.loop = asyncio.new_event_loop() if loop is None else loop
-        self.thread = None
-        self._rsock, self._wsock = socket.socketpair()
-        self.loop.add_reader(self._rsock, self._reader)
-
-    def _reader(self):
-        self.loop.remove_reader(self._rsock)
-        self.loop.stop()
-        for task in asyncio.Task.all_tasks(self.loop):
-            task.cancel()
-        self._rsock.close()
-        self._wsock.close()
+        self._thread = None
 
     def _run(self, ready_event):
         asyncio.set_event_loop(self.loop)
@@ -149,19 +147,26 @@ class Controller:
         self.loop.run_forever()
         self.server.close()
         self.loop.run_until_complete(self.server.wait_closed())
-        self.sock.close()
         self.loop.close()
+        self.server = None
 
     def start(self):
         ready_event = threading.Event()
-        self.thread = threading.Thread(target=self._run, args=(ready_event, ))
-        self.thread.daemon = True
-        self.thread.start()
+        self._thread = threading.Thread(target=self._run, args=(ready_event, ))
+        self._thread.daemon = True
+        self._thread.start()
         ready_event.wait()
 
     def stop(self):
-        self._wsock.send(b'x')
-        self.thread.join()
+        assert self._thread is not None, 'SMTP daemon not running'
+        self.loop.call_soon_threadsafe(self._stop)
+        self._thread.join()
+        self._thread = None
+
+    def _stop(self):
+        self.loop.stop()
+        for task in asyncio.Task.all_tasks(self.loop):
+            task.cancel()
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')

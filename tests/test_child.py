@@ -37,6 +37,13 @@ from blackhole.streams import StreamProtocol
 from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
+try:
+    import uvloop
+    _LOOP = 'uvloop.Loop'
+except ImportError:
+    _LOOP = 'asyncio.unix_events._UnixSelectorEventLoop'
+
+
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_initiation():
     Child('', '', [], '1')
@@ -48,7 +55,7 @@ def test_start():
     child = Child('', '', socks, '1')
     with mock.patch('asyncio.Task'), \
         mock.patch('blackhole.child.Child.heartbeat'), \
-        mock.patch('asyncio.unix_events._UnixSelectorEventLoop.run_forever'), \
+        mock.patch('{0}.run_forever'.format(_LOOP)), \
         mock.patch('blackhole.child.Child.stop'), \
             mock.patch('os._exit') as mock_exit:
         child.start()
@@ -66,8 +73,7 @@ def test_stop():
     child.server_task = mock.MagicMock()
 
     with mock.patch('os._exit') as mock_exit, \
-            mock.patch('asyncio.unix_events._UnixSelectorEventLoop.'
-                       'run_until_complete'):
+            mock.patch('{0}.run_until_complete'.format(_LOOP)):
         child.stop()
     assert mock_exit.called is True
 
@@ -83,8 +89,7 @@ def test_stop_runtime_exception():
     child.server_task = mock.MagicMock()
 
     with mock.patch('os._exit') as mock_exit, \
-            mock.patch('asyncio.unix_events._UnixSelectorEventLoop.'
-                       'stop', side_effect=RuntimeError):
+            mock.patch('{0}.stop'.format(_LOOP), side_effect=RuntimeError):
         child.stop()
     assert mock_exit.called is True
 

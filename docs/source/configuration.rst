@@ -414,6 +414,29 @@ possible, the STARTTLS verb returns a ``500 Not implemented`` response
 until it's possible to implement. --`https://bugs.python.org/review/23749/
 <https://bugs.python.org/review/23749/>`_
 
+
+Optional features (you should probably use)
+===========================================
+
+Blackhole has builtin support for the following features. While these are not
+required for the service to run, they do improve it the server in various ways.
+
+uvloop
+------
+
+    uvloop is a fast, drop-in replacement of the built-in asyncio event loop.
+    uvloop is implemented in Cython and uses libuv under the hood.
+
+Using uvloop with Blackhole is as simple as installing libuv and the Python
+library.
+
+On Debian/Ubuntu it's as simple as installing via APT and Pip respectively.
+
+.. code:: bash
+
+    apt-get install libuv1 libuv1-dev python-dev
+    pip install uvloop
+
 setproctitle
 ------------
 
