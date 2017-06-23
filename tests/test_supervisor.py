@@ -34,13 +34,17 @@ from blackhole.supervisor import Supervisor
 
 from ._utils import (Args, cleandir, create_config, create_file, reset)
 
+
 try:
     import ssl
 except ImportError:
     ssl = None
 
-
-
+try:
+    import uvloop
+    _LOOP = 'uvloop.Loop'
+except ImportError:
+    _LOOP = 'asyncio.unix_events._UnixSelectorEventLoop'
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
@@ -278,8 +282,7 @@ def test_run():
     with mock.patch('socket.socket.bind'), \
             mock.patch('blackhole.worker.Worker.start'):
         supervisor = Supervisor(loop)
-        with mock.patch('asyncio.unix_events._UnixSelectorEventLoop.'
-                        'run_forever'):
+        with mock.patch('{0}.run_forever'.format(_LOOP)):
             supervisor.run()
         assert len(supervisor.workers) == 2
     supervisor.loop.stop()
@@ -316,8 +319,7 @@ def test_stop_runtime_error():
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
         with mock.patch('blackhole.worker.Worker.stop') as mock_stop, \
-                mock.patch('asyncio.unix_events._UnixSelectorEventLoop.'
-                           'stop',
+                mock.patch('{0}.stop'.format(_LOOP),
                            side_effect=RuntimeError) as mock_rt, \
                 pytest.raises(SystemExit) as err:
             supervisor.stop()

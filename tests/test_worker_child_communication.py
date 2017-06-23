@@ -36,6 +36,14 @@ from blackhole.worker import Worker
 from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 
+try:
+    import asyncio
+    import uvloop
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+except ImportError:
+    pass
+
+
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_worker_ping_pong(unused_tcp_port):
