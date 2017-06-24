@@ -97,4 +97,8 @@ setup(name='blackhole',
       cmdclass={'test': PyTest},
       entry_points=entry_points,
       classifiers=classifiers,
+      extras_require={
+        'setproctitle': ['setproctitle', ],
+        'uvloop': ['uvloop', ],
+      },
       )

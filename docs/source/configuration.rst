@@ -428,15 +428,15 @@ uvloop
     uvloop is implemented in Cython and uses libuv under the hood.
 
 Using `uvloop <https://github.com/MagicStack/uvloop>`_ with Blackhole is as
-simple as installing `libuv <https://github.com/libuv/libuv>`_ and the Python
-library.
+simple as installing `libuv <https://github.com/libuv/libuv>`_ and the
+Blackhole extra package.
 
 On Debian/Ubuntu it's as simple as installing via APT and Pip respectively.
 
 .. code:: bash
 
     apt-get install libuv1 libuv1-dev python-dev
-    pip install uvloop
+    pip install blackhole[uvloop]
 
 setproctitle
 ------------
@@ -453,6 +453,12 @@ processes.
     # with setproctitle
     blackhole: master
     blackhole: worker
+
+You can install setproctitle with the Blackhole extra package.
+
+.. code:: bash
+
+    pip install blackhole[setproctitle]
 
 
 Installing the init.d/rc.d scripts
