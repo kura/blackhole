@@ -1,9 +1,5 @@
 .PHONY: autodocs clean docs install manpages release test testssl tox uninstall
 
-	autodocs: clean docs
-	pip install sphinx-autobuild
-	sphinx-autobuild -z blackhole docs/source docs/build
-
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
@@ -21,7 +17,7 @@ docs: clean
 install:
 	python setup.py install
 
-manpages: clean
+man: clean
 	pip install docutils
 	mkdir -p man/build
 	rst2man.py man/source/blackhole.rst man/build/blackhole.1
@@ -30,7 +26,7 @@ manpages: clean
 release:
 	./release.sh
 
-test: clean docs manpages
+test: clean docs man
 	pip install pycodestyle \
 				pydocstyle==1.1.1 \
 				pyflakes \
