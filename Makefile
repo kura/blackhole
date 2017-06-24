@@ -11,9 +11,12 @@ clean:
 	rm -rf man/build
 
 docs: clean
-	pip install sphinx guzzle_sphinx_theme
+	pip install sphinx guzzle_sphinx_theme cssmin jsmin htmlmin
 	rm -rf docs/build
 	sphinx-build -j 4 docs/source/ docs/build/
+	./htmlmin.sh
+	./cssmin.sh
+	./jsmin.sh
 
 install:
 	python setup.py install
