@@ -25,6 +25,16 @@ the functionality yourself.
 Current release
 ---------------
 
+2.1.9
+=====
+
+- Fixed/reintroduced support for `uvloop <https://github.com/MagicStack/uvloop>`_.
+- Added support for `setproctitle <https://pypi.python.org/pypi/setproctitle>`_.
+
+-------------
+Past releases
+-------------
+
 2.1.8
 =====
 
@@ -33,10 +43,6 @@ Current release
 - Mostly a bugfix release.
 - Added new command ``blackhole_config`` to display config options on command
   line.
-
--------------
-Past releases
--------------
 
 .. _2.1.7:
 .. _2.1.6:
