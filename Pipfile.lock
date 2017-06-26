@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d352f52171d30cbc122c324fee9ecf30d159a13a9dae20ac5d38da8ad8b080be"
+            "sha256": "226548425afcfd75db15edf4d7ad9f007dc39e7a7b5c0c4b4e3b8dac3539fc95"
         },
         "requires": {
             "python_version": "3.6"
@@ -85,7 +85,7 @@
             "version": "==2.2.0"
         },
         "pylama": {
-            "version": "==7.3.3"
+            "version": "==7.4.0"
         },
         "pytest": {
             "version": "==3.1.2"

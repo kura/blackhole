@@ -28,7 +28,7 @@ release:
 
 test: clean docs man
 	pip install pycodestyle \
-				pydocstyle==1.1.1 \
+				pydocstyle \
 				pyflakes \
 				pylama \
 				pytest \
