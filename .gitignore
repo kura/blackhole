@@ -1,6 +1,5 @@
 *.log
 *.pyc
-docs/build
 *.egg-info
 .eggs/*
 build/*
@@ -19,3 +18,4 @@ coverage.*
 sendmail.py
 imap.py
 dns.py
+!man/build
