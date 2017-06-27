@@ -18,4 +18,6 @@ coverage.*
 sendmail.py
 imap.py
 dns.py
+docs/build
 !man/build
+
