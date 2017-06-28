@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "226548425afcfd75db15edf4d7ad9f007dc39e7a7b5c0c4b4e3b8dac3539fc95"
+            "sha256": "188b56ba1747b3966191ea42b79bee4c722291c633e064f27c6d6eb6e0c51c56"
         },
         "requires": {
             "python_version": "3.6"
@@ -13,7 +13,14 @@
             }
         ]
     },
-    "default": {},
+    "default": {
+        "setproctitle": {
+            "version": "==1.1.10"
+        },
+        "uvloop": {
+            "version": "==0.8.0"
+        }
+    },
     "develop": {
         "alabaster": {
             "version": "==0.7.10"
@@ -85,7 +92,7 @@
             "version": "==2.2.0"
         },
         "pylama": {
-            "version": "==7.4.0"
+            "version": "==7.4.1"
         },
         "pytest": {
             "version": "==3.1.2"
