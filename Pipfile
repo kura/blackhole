@@ -20,5 +20,6 @@ pylama = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
+pytest-pride = { git = 'git://github.com/kura/pytest-pride.git' }
 radon = "*"
 Sphinx = "*"

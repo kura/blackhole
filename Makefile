@@ -35,7 +35,7 @@ test: clean docs man pipfile
 				pytest \
 				pytest-asyncio \
 				pytest-cov \
-				pytest-pride \
+				git+git://github.com/kura/pytest-pride.git#egg=pytest-pride \
 				setproctitle \
 				radon
 	py.test --cov ./blackhole \

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "188b56ba1747b3966191ea42b79bee4c722291c633e064f27c6d6eb6e0c51c56"
+            "sha256": "0de961990506f4b13a4b38576f106e01849d4cdee55b4471598512dd679fc7d3"
         },
         "requires": {
             "python_version": "3.6"
@@ -102,6 +102,9 @@
         },
         "pytest-cov": {
             "version": "==2.5.1"
+        },
+        "pytest-pride": {
+            "git": "git://github.com/kura/pytest-pride.git"
         },
         "pytz": {
             "version": "==2017.2"
