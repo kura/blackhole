@@ -5,6 +5,10 @@ verify_ssl = true
 [requires]
 python_version = "3.6"
 
+[packages]
+setproctitle = { extras = ['setproctitle'] }
+uvloop = { extras = ['uvloop'] }
+
 [dev-packages]
 codecov = "*"
 guzzle_sphinx_theme = "*"
