@@ -27,7 +27,8 @@ release:
 	./release.sh
 
 test: clean docs man pipfile
-	pip install pycodestyle \
+	pip install codecov \
+				pycodestyle \
 				pydocstyle \
 				pyflakes \
 				pylama \
