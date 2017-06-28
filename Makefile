@@ -33,14 +33,16 @@ test: clean docs man pipfile
 				pyflakes \
 				pylama \
 				pytest \
-				pytest-cov \
 				pytest-asyncio \
+				pytest-cov \
+				pytest-pride \
 				setproctitle \
 				radon
 	py.test --cov ./blackhole \
 			--cov ./tests \
 			--cov-report xml \
 			--cov-report term-missing \
+			-q \
 			--pylama \
 			--verbose \
 			--cache-clear \
