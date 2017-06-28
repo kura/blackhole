@@ -44,7 +44,6 @@ test: clean docs man pipfile
 			--cov-report term-missing \
 			-q \
 			--pylama \
-			--verbose \
 			--cache-clear \
 			blackhole tests
 	radon mi -nc blackhole
