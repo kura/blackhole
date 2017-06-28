@@ -1,4 +1,4 @@
-.PHONY: autodocs clean docs install manpages release test testssl tox uninstall
+.PHONY: autodocs clean docs install manpages pipenv release test pipenv testssl tox uninstall
 
 clean:
 	find . -name "*.pyc" -delete
@@ -26,7 +26,7 @@ man: clean
 release:
 	./release.sh
 
-test: clean docs man
+test: clean docs man pipfile
 	pip install pycodestyle \
 				pydocstyle \
 				pyflakes \
@@ -46,6 +46,11 @@ test: clean docs man
 			blackhole tests
 	radon mi -nc blackhole
 	./codecov.sh
+
+pipfile:
+	pip install pipenv
+	pipenv check
+	pipenv install
 
 testssl:
 	sudo apt-get install -y aha
