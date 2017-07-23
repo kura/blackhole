@@ -8,8 +8,11 @@ clean:
 
 docs: clean
 	pip install sphinx guzzle_sphinx_theme cssmin jsmin htmlmin
+	npm install htmlhint stylelint
 	rm -rf docs/build
 	sphinx-build -j 4 docs/source/ docs/build/
+	node_modules/.bin/htmlhint --ignore **/source-serif-pro/** docs/build/
+	node_modules/.bin/stylelint "docs/build/_static/blackhole.css"
 	scripts/htmlmin.sh
 	scripts/cssmin.sh
 	scripts/jsmin.sh

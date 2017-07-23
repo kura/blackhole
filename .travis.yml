@@ -1,7 +1,10 @@
 language: python
 python:
   - "3.6"
-cache: pip
+cache:
+  pip: true
+  directories:
+    - "node_modules"
 dist: trusty
 sudo: false
 group: edge

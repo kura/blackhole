@@ -1,36 +1,11 @@
-*/
-(The MIT License)
-
-Copyright (c) 2013-2017 Kura
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the 'Software'), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
-
-/* Sphinx themes
--------------------------------------------------- */
-
 body {
   background-color: #edf0f2;
   margin: 0;
   padding: 0;
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans",
+Helvetica,
+Arial,
+sans-serif;
   font-size: 16px;
   color: #333;
   line-height: 1.5;
@@ -70,18 +45,30 @@ dt:hover > a.headerlink {
   visibility: visible;
 }
 
-h1 > a, h2 > a, h3 > a, h4 > a, h5 > a, h6 > a {
+h1 > a,
+h2 > a,
+h3 > a,
+h4 > a,
+h5 > a,
+h6 > a {
   color: #5C7C98;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: black;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #000000;
   font-weight: normal;
   padding: 0;
   font-family: "Source Serif Pro", "serif";
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   margin-top: 30px;
   margin-bottom: 20px;
 }
@@ -90,7 +77,7 @@ h1 {
   font-size: 38px;
   padding: 10px 10px 10px 45px;
   margin: 20px 0 35px -45px;
-  background-color: aliceblue;
+  background-color: #f0f8ff;
   width: calc(100% + 90px);
   border-bottom: 1px solid #D8E4EF;
 }
@@ -125,10 +112,6 @@ div.clearer {
   position: relative;
 }
 
-div.related {
-  display: none;
-}
-
 p {
   padding: 0;
   font-family: inherit;
@@ -136,12 +119,15 @@ p {
   color: #333;
 }
 
-code, pre, tt {
+code,
+pre,
+tt {
   font-size: 15px;
   font-family: Consolas, monospace;
 }
 
-code, tt {
+code,
+tt {
   color: #8D1A38;
 }
 
@@ -149,7 +135,8 @@ tt {
   padding: 0 2px;
 }
 
-code, pre {
+code,
+pre {
   line-height: 23px;
   margin: 20px 0;
   word-wrap: normal;
@@ -169,7 +156,7 @@ pre {
 }
 
 div.highlight {
-  background-color: white;
+  background-color: #fff;
 }
 
 a.internal em {
@@ -191,7 +178,7 @@ dl.method {
 }
 
 blockquote {
-  border-width: .1em 0 .1em 0;
+  border-width: .1em 0;
   border-color: #e5eef2;
   border-style: solid;
   background-color: #f3f8f9;
@@ -200,9 +187,6 @@ blockquote {
   padding: 15px 20px;
   font-size: 16px;
 }
-
-/* Sphinx sidebar
--------------------------------------------------- */
 
 div.sphinxsidebar {
   word-wrap: break-word;
@@ -239,7 +223,7 @@ div.sphinxsidebar p {
 }
 
 div.sphinxsidebar .sidebar-toc ul {
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
   list-style-type: none;
   color: #000;
 }
@@ -309,15 +293,15 @@ div.sphinxsidebar input {
 
 .sidebar-block {
   padding: 0;
-  margin: 14px 0 30px 0;
+  margin: 14px 0 30px;
 }
 
 .sidebar-block h2 {
   border-bottom: none;
-  margin: 0 0 17px 0;
+  margin: 0 0 17px;
   font-size: 14px;
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
-  padding: 0 0 6px 0;
+  padding: 0 0 6px;
   font-weight: bold;
   text-transform: uppercase;
   color: #606060;
@@ -328,10 +312,10 @@ div.sphinxsidebar input {
 }
 
 .sphinxsidebar > .sidebar-block:not(:last-child):after {
-    content: '';
-    display:block;
+    content: "";
+    display: block;
     border-top: 1px solid #ccc;
-    margin: 24px 22px 0 22px;
+    margin: 24px 22px 0;
 }
 
 .text-logo {
@@ -341,7 +325,7 @@ div.sphinxsidebar input {
   padding: 8px;
   color: #fff;
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  margin: 0 0 20px 0;
+  margin: 0 0 20px;
   font-weight: bold;
   background-color: #337ab7;
   border-bottom: 1px solid #fff;
@@ -351,12 +335,9 @@ div.sphinxsidebar input {
   color: #fff;
 }
 
-/* Left-nav search box
--------------------------------------------------- */
-
 #main-search form .input-group {
   width: 100%;
-  margin: 0 0 12px 0;
+  margin: 0 0 12px;
   padding: 0;
   border: none;
 }
@@ -373,9 +354,6 @@ div.sphinxsidebar input {
   width: 350px;
 }
 
-/* Two-pane table list
--------------------------------------------------- */
-
 .table-bordered>thead>tr>th,
 .table-bordered>tbody>tr>th,
 .table-bordered>tfoot>tr>th,
@@ -386,7 +364,7 @@ table.two-column.table-bordered caption+thead tr:first-child th:first-child,
 table.two-column.table-bordered caption+tbody tr:first-child td:first-child,
 table.two-column.table-bordered colgroup+thead tr:first-child th:first-child,
 table.two-column.table-bordered colgroup+tbody tr:first-child td:first-child,
-table.two-column tbody td
+table.two-column tbody td {
   border: 0 0 1px 0 solid #eee;
   border-left: none;
   padding: 8px 4px;
@@ -399,15 +377,9 @@ table.two-column {
   box-shadow: none;
 }
 
-/* Disqus comments styles
--------------------------------------------------- */
-
 .comment-container {
   margin: 24px auto;
 }
-
-/* Next and previous links
--------------------------------------------------- */
 
 .footer-relations {
   display: relative;
@@ -420,9 +392,6 @@ table.two-column {
 .rel-spacer {
   height: 40px;
 }
-
-/* Footer styling
--------------------------------------------------- */
 
 div.footer {
   padding: 25px;
@@ -437,9 +406,8 @@ div.footer a {
   color: #888;
 }
 
-/* -- relbar ---------------------------------------------------------------- */
-
 div.related {
+  display: none;
   width: 100%;
   font-size: 90%;
 }
@@ -463,8 +431,6 @@ div.related li.right {
   margin-right: 5px;
 }
 
-/* -- search page ----------------------------------------------------------- */
-
 ul.search {
   margin: 10px 0 0 20px;
   padding: 0;
@@ -472,7 +438,7 @@ ul.search {
 
 ul.search li {
   padding: 5px 0 5px 20px;
-  background: url(file.png) no-repeat 0 7px;
+  background: url("file.png") no-repeat 0 7px;
 }
 
 ul.search li a {
@@ -489,8 +455,6 @@ ul.keywordmatches li.goodmatch a {
   font-weight: bold;
 }
 
-/* -- general index --------------------------------------------------------- */
-
 table {
   margin-bottom: 20px;
 }
@@ -504,7 +468,8 @@ table.indextable td {
   vertical-align: top;
 }
 
-table.indextable dl, table.indextable dd {
+table.indextable dl,
+table.indextable dd {
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -527,18 +492,16 @@ img.toggler {
 div.modindex-jumpbox {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  margin: 1em 0 1em 0;
-  padding: 0.4em;
+  margin: 1em 0;
+  padding: .4em;
 }
 
 div.genindex-jumpbox {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  margin: 1em 0 1em 0;
-  padding: 0.4em;
+  margin: 1em 0;
+  padding: .4em;
 }
-
-/* -- general body styles --------------------------------------------------- */
 
 .body {
   padding: 0 45px;
@@ -563,10 +526,6 @@ table.field-list th {
   line-height: 1.4;
 }
 
-.field-list ul {
-  padding-left: 1em;
-}
-
 .first {
   margin-top: 0 !important;
 }
@@ -576,19 +535,25 @@ p.rubric {
   font-weight: bold;
 }
 
-img.align-left, .figure.align-left, object.align-left {
+img.align-left,
+.figure.align-left,
+object.align-left {
   clear: left;
   float: left;
   margin-right: 1em;
 }
 
-img.align-right, .figure.align-right, object.align-right {
+img.align-right,
+.figure.align-right,
+object.align-right {
   clear: right;
   float: right;
   margin-left: 1em;
 }
 
-img.align-center, .figure.align-center, object.align-center {
+img.align-center,
+.figure.align-center,
+object.align-center {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -606,12 +571,10 @@ img.align-center, .figure.align-center, object.align-center {
   text-align: right;
 }
 
-/* -- topics ---------------------------------------------------------------- */
-
 div.topic {
   border: 1px solid #e8e8e8;
-  padding: 7px 7px 0 7px;
-  margin: 10px 0 10px 0;
+  padding: 7px 7px 0;
+  margin: 10px 0;
   background-color: #f8f8f8;
 }
 
@@ -621,19 +584,15 @@ p.topic-title {
   margin-top: 10px;
 }
 
-/* -- contents-------------------------------------------------------------- */
-
 div.topic.contents {
     display: inline-block;
     border-radius: 3px;
-    padding: 24px 36px 18px 36px;
+    padding: 24px 36px 18px;
 }
 
 div.topic.contents > ul {
     padding-left: 20px;
 }
-
-/* -- admonitions ----------------------------------------------------------- */
 
 .admonition {
   margin: 20px 0;
@@ -713,15 +672,14 @@ div.seealso {
   border: 1px solid #ff6;
 }
 
-div.admonition tt.xref, div.admonition a tt {
+div.admonition tt.xref,
+div.admonition a tt {
   border-bottom: 1px solid #fafafa;
 }
 
 div.admonition p.last {
   margin-bottom: 0;
 }
-
-/* -- other body styles ----------------------------------------------------- */
 
 ol.arabic {
   list-style: decimal;
@@ -772,7 +730,7 @@ dl.glossary dt {
 .system-message {
   background-color: #fda;
   padding: 5px;
-  border: 3px solid red;
+  border: 3px solid #FF0000;
 }
 
 .footnote:target  {
@@ -791,7 +749,8 @@ dl.glossary dt {
   margin-left: 1.5em;
 }
 
-.guilabel, .menuselection {
+.guilabel,
+.menuselection {
   font-family: sans-serif;
 }
 
@@ -803,16 +762,16 @@ dl.glossary dt {
   font-style: oblique;
 }
 
-abbr, acronym {
+abbr,
+acronym {
   border-bottom: dotted 1px;
   cursor: help;
 }
 
-dt:target, .highlight {
+dt:target,
+.highlight {
   background: #FAF3E8;
 }
-
-/* -- code displays --------------------------------------------------------- */
 
 td.linenos pre {
   padding: 5px 0px;
@@ -822,33 +781,40 @@ td.linenos pre {
 }
 
 table.highlighttable {
-  margin-left: 0.5em;
+  margin-left: .5em;
 }
 
 table.highlighttable td {
-  padding: 0 0.5em 0 0.5em;
+  padding: 0 .5em;
 }
 
 tt.descname {
   background-color: transparent;
   font-weight: bold;
-  padding-right: 0.08em;
+  padding-right: .08em;
 }
 
 tt.descclassname {
   background-color: transparent;
 }
 
-tt.descname, tt.descclassname {
-  font-size: 0.95em;
+tt.descname,
+tt.descclassname {
+  font-size: .95em;
 }
 
-tt.xref, a tt {
+tt.xref,
+a tt {
   background-color: transparent;
   font-weight: bold;
 }
 
-h1 tt, h2 tt, h3 tt, h4 tt, h5 tt, h6 tt {
+h1 tt,
+h2 tt,
+h3 tt,
+h4 tt,
+h5 tt,
+h6 tt {
   background-color: transparent;
 }
 
@@ -866,8 +832,6 @@ div.viewcode-block:target {
   padding: 0 10px;
 }
 
-/* -- math display ---------------------------------------------------------- */
-
 img.math {
   vertical-align: middle;
 }
@@ -880,8 +844,6 @@ span.eqno {
   float: right;
 }
 
-/* -- Theme specific classes - */
-
 .overflow-height-500px {
   overflow: auto;
   height: 500px;
@@ -891,9 +853,6 @@ span.eqno {
   overflow: auto;
   height: 250px;
 }
-
-/* Toggle mobile view
--------------------------------------------------- */
 
 #mobile-toggle {
   height: 40px;
@@ -907,9 +866,6 @@ span.eqno {
   background-color: #fff;
   z-index: 1;
 }
-
-/* Small screen styles
--------------------------------------------------- */
 
 @media screen and (max-width: 768px) {
 
@@ -933,7 +889,7 @@ span.eqno {
     display: none;
     width: 100%;
     float: none;
-    margin: 40px 0 0 0;
+    margin: 40px 0 0;
   }
 
   .footer-relations {
@@ -943,7 +899,7 @@ span.eqno {
   #right-column {
     margin-left: 0;
     margin-top: 0;
-    padding: 50px 20px 8px 20px;
+    padding: 50px 20px 8px;
     width: 100%;
     float: none;
   }
@@ -967,17 +923,11 @@ span.eqno {
   }
 }
 
-/* Account for when the left column is closed then page is expanded.
--------------------------------------------------- */
-
 @media screen and (min-width: 769px) {
   #left-column {
     display: block !important;
   }
 }
-
-/* Syntax highlighting
--------------------------------------------------- */
 
 .hll { background-color: #ffffcc }
 .c { color: #999988; font-style: italic } /* Comment */
