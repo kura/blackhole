@@ -10,9 +10,9 @@ docs: clean
 	pip install sphinx guzzle_sphinx_theme cssmin jsmin htmlmin
 	rm -rf docs/build
 	sphinx-build -j 4 docs/source/ docs/build/
-	./htmlmin.sh
-	./cssmin.sh
-	./jsmin.sh
+	scripts/htmlmin.sh
+	scripts/cssmin.sh
+	scripts/jsmin.sh
 
 install:
 	python setup.py install
@@ -24,7 +24,7 @@ man: clean
 	rst2man.py man/source/blackhole_config.rst man/build/blackhole_config.1
 
 release:
-	./release.sh
+	scripts/release.sh
 
 test: clean docs man pipfile
 	pip install codecov \
@@ -47,7 +47,7 @@ test: clean docs man pipfile
 			--cache-clear \
 			blackhole tests
 	radon mi -nc blackhole
-	./codecov.sh
+	scripts/codecov.sh
 
 pipfile:
 	pip install pipenv
