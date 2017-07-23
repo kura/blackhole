@@ -35,17 +35,19 @@ test: clean docs man pipfile
 				pytest \
 				pytest-asyncio \
 				pytest-cov \
+				radon \
 				setproctitle \
-				radon
+				tox
 	py.test --cov ./blackhole \
 			--cov ./tests \
 			--cov-report xml \
 			--cov-report term-missing \
-			-q \
+			--verbose \
 			--pylama \
 			--cache-clear \
 			blackhole tests
 	radon mi -nc blackhole
+	tox -e pipfile
 	scripts/codecov.sh
 
 pipfile:
