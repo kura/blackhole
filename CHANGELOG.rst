@@ -35,10 +35,10 @@ Current release
 Past releases
 -------------
 
+.. _2.1.8:
+
 2.1.8
 =====
-
-.. _2.1.8:
 
 - Mostly a bugfix release.
 - Added new command ``blackhole_config`` to display config options on command
