@@ -46,7 +46,7 @@ def parse_cmd_args(args):
     """
     Parse arguments from the command line.
 
-    https://blackhole.io/command-line-options.html
+    https://kura.github.io/blackhole/configuration.html#command-line-options
 
     :param list args: Command line arguments.
     :returns: Parsed command line arguments.
@@ -313,7 +313,7 @@ class Config(metaclass=Singleton):
         """
         Address and port and socket family for SSL/TLS connections.
 
-        https://kura.github.io/blackhole/configuration.html#tls_listen
+        https://kura.github.io/blackhole/configuration.html#tls-listen
 
         :returns: TLS listeners. Default: ``[]``
         :rtype: :py:obj:`list`
@@ -390,7 +390,7 @@ class Config(metaclass=Singleton):
         """
         TLS key file.
 
-        https://kura.github.io/blackhole/configuration.html#tls_key
+        https://kura.github.io/blackhole/configuration.html#tls-key
 
         :returns: Path to a TLS key file. Default: ``None``
         :rtype: :py:class:`pathlib.PurePath` or :py:obj:`None`
@@ -407,7 +407,7 @@ class Config(metaclass=Singleton):
         """
         TLS certificate file.
 
-        https://kura.github.io/blackhole/configuration.html#tls_cert
+        https://kura.github.io/blackhole/configuration.html#tls-cert
 
         :returns: Path to a TLS certificate. Default: ``None``
         :rtype: :py:class:`pathlib.PurePath` or :py:obj:`None`
@@ -424,7 +424,7 @@ class Config(metaclass=Singleton):
         """
         Diffie Hellman ephemeral parameters.
 
-        https://kura.github.io/blackhole/configuration.html#tls_dhparams
+        https://kura.github.io/blackhole/configuration.html#tls-dhparams
 
         :returns: Path to a file containing dhparams. Default: ``None``
         :rtype: :py:class:`pathlib.PurePath` or :py:obj:`None`
@@ -502,7 +502,7 @@ class Config(metaclass=Singleton):
         """
         Maximum size, in bytes, of a message.
 
-        https://kura.github.io/blackhole/configuration.html#max_message_size
+        https://kura.github.io/blackhole/configuration.html#max-message-size
 
         :returns: Maximum message size in bytes. Default: ``512000``.
         :rtype: :py:obj:`int`
@@ -523,7 +523,7 @@ class Config(metaclass=Singleton):
         """
         Enable or disable dynamic switches.
 
-        https://kura.github.io/blackhole/configuration.html#dynamic_switch
+        https://kura.github.io/blackhole/configuration.html#dynamic-switch
 
         :returns: Whether dynamic switches are enabled or not. Default:
                   ``True``.

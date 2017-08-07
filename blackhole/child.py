@@ -128,7 +128,7 @@ class Child:
 
            These message values are defined in the :mod:`blackhole.protocols`
            schema. Documentation is available at --
-           https://kura.github.io/blackhole/api-protocols.html#blackhole.protocols
+           https://kura.github.io/blackhole/api-protocols.html
         """
         read_fd = os.fdopen(self.up_read, 'rb')
         r_trans, r_proto = await self.loop.connect_read_pipe(StreamProtocol,
