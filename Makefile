@@ -6,13 +6,16 @@ clean:
 	rm -rf docs/build
 	rm -rf man/build
 
-docs: clean
+docs: clean linkcheck
 	pip install sphinx guzzle_sphinx_theme cssmin jsmin htmlmin
 	rm -rf docs/build
 	sphinx-build -j 4 docs/source/ docs/build/
 	scripts/htmlmin.sh
 	scripts/cssmin.sh
 	scripts/jsmin.sh
+
+linkcheck:
+	sphinx-build -j 4 -b linkcheck docs/source/ docs/build
 
 install:
 	python setup.py install

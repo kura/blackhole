@@ -74,7 +74,7 @@ def _context(use_tls=False):
        If the ``-ls`` or ``--less-secure`` option is provided,
        :py:obj:`ssl.OP_SINGLE_DH_USE` and :py:obj:`ssl.OP_SINGLE_ECDH_USE`
        will be omitted from the context. --
-       https://blackhole.io/command-line-options.html#command-line-options --
+       https://kura.github.io/blackhole/configuration.html#command-line-options --
        added in :ref:`2.0.13`
     """
     if use_tls is False:

@@ -123,7 +123,7 @@ Getting started
 
 Getting started is very similar to installing blackhole yourself. You should
 familarise yourself with the documentation,
-`PEP8 <http://www.python.org/dev/peps/pep-0008/>`_ Python style guide and
+`PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ Python style guide and
 `PEP257 <https://www.python.org/dev/peps/pep-0257/>`_ docstring conventions.
 
 Writing some code
@@ -167,7 +167,7 @@ You can find the latest tests against the source code on `travis
 Running tests manually is pretty simple, there is a `Makefile` target dedicated
 to it.
 
-The test suite relies on `py.test <http://pytest.org/latest/>`_ and is
+The test suite relies on `py.test <https://docs.pytest.org/en/latest/>`_ and is
 installed via the `Makefile` target and the `setup.py test` target.
 
 The test suite takes a while to run, there are a lot of parts that require
@@ -184,7 +184,7 @@ To use the `setup.py test` target.
 
     python setup.py test
 
-You can also test using `tox <https://tox.readthedocs.org/en/latest/>`_, this
+You can also test using `tox <https://tox.readthedocs.io/en/latest/>`_, this
 will use the `detox <https://pypi.python.org/pypi/detox/>`_ library for
 parallelising the tests. The `Makefile` target will install `py.test`, `tox`
 and `detox` automatically.

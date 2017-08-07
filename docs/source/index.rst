@@ -62,7 +62,7 @@ User Guide
     :alt: Latest version released on PyPi
 
 .. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=flat-square&label=build
-    :target: http://travis-ci.org/kura/blackhole
+    :target: https://travis-ci.org/kura/blackhole
     :alt: Build status of the master branch
 
 .. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
