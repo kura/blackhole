@@ -1,0 +1,53 @@
+version: 2.0
+jobs:
+  build:
+    docker:
+      - image: kuramanga/blackhole:0.0.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install
+          command: make install
+      - run:
+          name: Test code
+          command: |
+            pip install codecov \
+                        pycodestyle \
+                        pydocstyle \
+                        pyflakes \
+                        pylama \
+                        pytest \
+                        pytest-asyncio \
+                        pytest-cov \
+                        radon \
+                        setproctitle
+            py.test --cov ./blackhole \
+                    --cov ./tests \
+                    --cov-report xml \
+                    --cov-report term-missing \
+                    --verbose \
+                    --pylama \
+                    --cache-clear \
+                    blackhole tests
+            radon mi -nc blackhole
+      - run:
+          name: Test linkcheck
+          command: make linkcheck
+      - run:
+          name: Test docs
+          command: |
+            pip install sphinx guzzle_sphinx_theme cssmin jsmin htmlmin
+            sphinx-build -j 4 docs/source/ docs/build/
+            scripts/htmlmin.sh
+            scripts/cssmin.sh
+            scripts/jsmin.sh
+      - run:
+          name: Test manpages
+          command: make man
+      - run:
+          name: Test Pipfile
+          command: make pipfile
+      - run:
+          name: Deploy
+          command: echo "deploy"
