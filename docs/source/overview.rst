@@ -114,7 +114,7 @@ need to feel daunted. You can contribute in a variety of ways:
 - add additional support i.e. new versions of Python or PyPy.
 
 Please make sure that you read, understand and accept the `Code of Conduct
-<https://github.com/kura/blackhole/blob/master/CODE_OF_CONDUCT.md>`__.
+<https://github.com/kura/blackhole/blob/master/CODE_OF_CONDUCT.rst>`__.
 
 You can view a list of tasks that need work on the :ref:`todo` page.
 
