@@ -12,8 +12,7 @@ build:
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
-	rm -rf docs/build
-	rm -rf man/build
+	rm -rf docs/build man/build .tox build dist
 
 .PHONY: docs
 docs: clean linkcheck
@@ -70,7 +69,7 @@ test: clean
 	radon mi -nc blackhole
 
 .PHONY: testall
-testall: clean test docs man pipfile
+testall: tox
 
 .PHONY: testssl
 testssl:
