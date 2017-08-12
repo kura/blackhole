@@ -25,6 +25,17 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.11:
+
+2.1.11
+======
+
+- Version bump release.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.10:
 
 2.1.10
@@ -33,10 +44,6 @@ Current release
 - This is a small release that brings improvements to the test system and has
   no changes that will impact users. It only has changes that affect Travis CI
   and updates for `make` targets and `tox`.
-
--------------
-Past releases
--------------
 
 .. _2.1.9:
 
