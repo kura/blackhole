@@ -105,13 +105,16 @@ Contributing
 If you're thinking about contributing, it's really quite simple. There is no
 need to feel daunted. You can contribute in a variety of ways:
 
-- `Report bugs <https://github.com/kura/blackhole/issues>`_
-- Bug fixes
-- New behaviour
-- Improve the documentation
-- Write tests
-- Improve performance
-- Add additional support i.e. new versions of Python or PyPy
+- `Report bugs <https://github.com/kura/blackhole/issues>`_,
+- fix bugs,
+- add new behaviour,
+- improve the documentation,
+- write tests,
+- improve performance, and
+- add additional support i.e. new versions of Python or PyPy.
+
+Please make sure that you read, understand and accept the `Code of Conduct
+<https://github.com/kura/blackhole/blob/master/CODE_OF_CONDUCT.md>`__.
 
 You can view a list of tasks that need work on the :ref:`todo` page.
 
