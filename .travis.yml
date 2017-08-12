@@ -9,17 +9,20 @@ install:
 - make install
 after_success:
 - codecov
+env:
+    global:
+        - TWINE_USERNAME: kura
+        # TWINE_PASSWORD:
+        - secure: "eHG6IOa71vyILd9M/09+z8zO9mcpSy12eNW2EIVJixuknDY+Q3othsHwYUP8p/T2rGyUGOzJkUdAArNtOQ3+MMUur4hnexcDmCntw/sNzJru2bl7AJR7m+sPZ4H35JBtLf68po4lS4qTRYfPbpmvWFzhWxJDCifOy5dq3BfeYN4="
+
 matrix:
   fast_finish: true
   include:
   # asyncio
   - script: make test
     deploy:
-      provider: pypi
-      user: kura
-      password:
-        secure: "ChI5wKe2VVD5EmQjNMt1IuqpzhIToY/PEXpEf+4LRv/RyPrm5fyOjnYew2/KCOwBydqKNuijxf1G6oFHWG5WaiAyS5ebobkB0CY4EllC6hxIP9dy5WGW4Z9lqlp+U33Ter3YgGwdKt5084vhPRhapTtHfXd7ZXZFmM1l5pQJrsA="
-      distributions: "sdist bdist_wheel"
+      provider: script
+      script: scripts/release.sh
       on:
         tags: true
   # uvloop
