@@ -13,6 +13,14 @@ matrix:
   fast_finish: true
   include:
   - script: make test
+    deploy:
+      provider: pypi
+      user: kura
+      password:
+        secure: "ChI5wKe2VVD5EmQjNMt1IuqpzhIToY/PEXpEf+4LRv/RyPrm5fyOjnYew2/KCOwBydqKNuijxf1G6oFHWG5WaiAyS5ebobkB0CY4EllC6hxIP9dy5WGW4Z9lqlp+U33Ter3YgGwdKt5084vhPRhapTtHfXd7ZXZFmM1l5pQJrsA="
+      distributions: "sdist bdist_wheel"
+      on:
+        tags: true
   - sudo: true
     before_install:
     - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
@@ -28,24 +36,17 @@ matrix:
     - pip install uvloop
     script: make test
   - script: make docs
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      github_token:
+        secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
+      local_dir: docs/build
+      on:
+        branch: master
   - install: skip
     script: make man
   - install: skip
     script: make build
   - install: skip
     script: make pipfile
-deploy:
-  - provider: pages
-    skip_cleanup: true
-    github_token:
-      secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
-    local_dir: docs/build
-    on:
-      branch: master
-  - provider: pypi
-    user: kura
-    password:
-      secure: "ChI5wKe2VVD5EmQjNMt1IuqpzhIToY/PEXpEf+4LRv/RyPrm5fyOjnYew2/KCOwBydqKNuijxf1G6oFHWG5WaiAyS5ebobkB0CY4EllC6hxIP9dy5WGW4Z9lqlp+U33Ter3YgGwdKt5084vhPRhapTtHfXd7ZXZFmM1l5pQJrsA="
-    distributions: "sdist bdist_wheel"
-    on:
-      tags: true
