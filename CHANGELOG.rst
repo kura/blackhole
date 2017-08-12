@@ -25,15 +25,26 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.10:
+
+2.1.10
+======
+
+- This is a small release that brings improvements to the test system and has
+  no changes that will impact users. It only has changes that affect Travis CI
+  and updates for `make` targets and `tox`.
+
+-------------
+Past releases
+-------------
+
+.. _2.1.9:
+
 2.1.9
 =====
 
 - Fixed/reintroduced support for `uvloop <https://github.com/MagicStack/uvloop>`_.
 - Added support for `setproctitle <https://pypi.python.org/pypi/setproctitle>`_.
-
--------------
-Past releases
--------------
 
 .. _2.1.8:
 
