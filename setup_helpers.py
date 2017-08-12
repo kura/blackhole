@@ -17,7 +17,6 @@
 
 """setup.py helper functions."""
 
-import codecs
 import os
 import sys
 
