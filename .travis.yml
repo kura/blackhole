@@ -60,7 +60,9 @@ matrix:
   - install: skip
     script: make pipfile
   # shellcheck
-  - addons:
+  - language: generic
+    install: skip
+    addons:
       apt:
         sources:
         - debian-sid
