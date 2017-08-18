@@ -62,6 +62,8 @@ matrix:
   # shellcheck
   - addons:
       apt:
+        sources:
+        - debian-sid
         packages:
         - shellcheck
     script: make shellcheck
