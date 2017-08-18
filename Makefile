@@ -74,7 +74,7 @@ test: clean
 	radon mi -nc blackhole
 
 .PHONY: testall
-testall: tox
+testall: tox shellcheck
 
 .PHONY: testssl
 testssl:
