@@ -46,6 +46,11 @@ pipfile:
 release:
 	scripts/release.sh
 
+.PHONY: shellcheck
+shellcheck:
+	shellcheck -x scripts/*.sh bash-completion/blackhole-completion.bash \
+		init.d/debian-ubuntu/blackhole
+
 .PHONY: test
 test: clean
 	pip install codecov \

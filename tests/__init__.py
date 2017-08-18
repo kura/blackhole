@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # (The MIT License)
 #
 # Copyright (c) 2013-2017 Kura

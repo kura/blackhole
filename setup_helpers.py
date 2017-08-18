@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2017 Kura
 # Copyright (C) 2009-2015 Barry A. Warsaw
 #

@@ -47,31 +47,32 @@ SCRIPTNAME=/etc/init.d/$NAME
 
 if test -f $CONF
 then
+  # shellcheck source=/dev/null
   . $CONF
 else
-  echo "Failed to open conf: ${CONF}"
+  echo "Failed to open conf: $CONF"
   exit 1
 fi
 
-SDAEMON_OPTS="${DAEMON_OPTS} -c ${CONF} -b"
+SDAEMON_OPTS="$DAEMON_OPTS -c $CONF -b"
 
 . /lib/lsb/init-functions
 
 start() {
-  start-stop-daemon --start --quiet --pidfile $pidfile --exec $DAEMON -- $SDAEMON_OPTS
+  start-stop-daemon --start --quiet --pidfile "$pidfile" --exec "$DAEMON" -- "$SDAEMON_OPTS"
 }
 
 stop() {
-  start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $pidfile --exec $DAEMON
+  start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile "$pidfile" --exec "$DAEMON"
 }
 
 configtest() {
-  $DAEMON -c ${CONF} -t
+  $DAEMON -c $CONF -t
 }
 
 case "$1" in
   start)
-    log_daemon_msg "Starting" $DESC
+    log_daemon_msg "Starting" "$DESC"
     start
     case "$?" in
       0) log_end_msg 0 ;;
@@ -81,7 +82,7 @@ case "$1" in
     esac
     ;;
   stop)
-    log_daemon_msg "Stopping" $DESC
+    log_daemon_msg "Stopping" "$DESC"
     stop
     case "$?" in
       0) log_end_msg 0 ;;
@@ -95,13 +96,13 @@ case "$1" in
     $0 start
     ;;
   status)
-    status_of_proc -p $pidfile $DAEMON $NAME && exit 0 || exit $?
+    status_of_proc -p "$pidfile" "$DAEMON" "$NAME" && exit 0 || exit $?
     ;;
   configtest)
     configtest
     ;;
   *)
-    log_action_msg "Usage: ${SCRIPTNAME} {start|stop|restart|status|configtest}"
+    log_action_msg "Usage: $SCRIPTNAME {start|stop|restart|status|configtest}"
     exit 1
     ;;
 esac
