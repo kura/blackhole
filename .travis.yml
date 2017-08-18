@@ -20,6 +20,7 @@ matrix:
   include:
   # asyncio
   - script: make test
+    env: NAME="asyncio"
     deploy:
       provider: script
       script: scripts/release.sh
@@ -27,6 +28,7 @@ matrix:
         tags: true
   # uvloop
   - sudo: true
+    env: NAME="uvloop"
     before_install:
     - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
     - tar xvzf libuv.tar.gz
@@ -42,6 +44,7 @@ matrix:
     script: make test
   # docs
   - script: make docs
+    env: NAME="docs"
     deploy:
       provider: pages
       skip_cleanup: true
@@ -52,15 +55,19 @@ matrix:
         branch: master
   # man
   - install: skip
+    env: NAME="man"
     script: make man
   # build sdist/wheel
   - install: skip
+    env: NAME="build sdist/wheel"
     script: make build
   # pipfile
   - install: skip
+    env: NAME="pipfile"
     script: make pipfile
   # shellcheck
   - language: generic
+    env: NAME="shellcheck"
     install: skip
     addons:
       apt:
