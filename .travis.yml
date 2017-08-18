@@ -18,17 +18,17 @@ env:
 matrix:
   fast_finish: true
   include:
-  # asyncio
+  # cpython/asyncio
   - script: make test
-    env: NAME="asyncio"
+    env: NAME="cpython/asyncio"
     deploy:
       provider: script
       script: scripts/release.sh
       on:
         tags: true
-  # uvloop
+  # cpython/uvloop
   - sudo: true
-    env: NAME="uvloop"
+    env: NAME="cpython/uvloop"
     before_install:
     - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
     - tar xvzf libuv.tar.gz
