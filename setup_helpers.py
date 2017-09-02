@@ -19,6 +19,7 @@
 
 """setup.py helper functions."""
 
+import io
 import os
 import sys
 
@@ -65,7 +66,9 @@ def require_python(minimum):
 def include_file(filename):
     """Include contents of specified file."""
     fpath = os.path.join(os.path.dirname(__file__), filename)
-    return open(fpath).read()
+    with io.open(fpath, encoding='utf-8') as f:
+        c = f.read()
+    return c
 
 
 def get_version(filepath):

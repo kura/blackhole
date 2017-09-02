@@ -5,6 +5,7 @@ autodoc:
 
 .PHONY: build
 build:
+	rm -rf build dist
 	pip install wheel
 	python setup.py sdist bdist_wheel
 
@@ -12,7 +13,7 @@ build:
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
-	rm -rf docs/build man/build .tox build dist
+	rm -rf .tox build dist docs/build man/build
 
 .PHONY: docs
 docs: clean linkcheck
