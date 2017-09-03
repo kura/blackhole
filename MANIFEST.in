@@ -6,5 +6,6 @@ include CONTRIBUTORS.rst
 include example.conf
 include LICENSE
 include README.rst
+include setup_helpers.py
 include THANKS.rst
 include TODO.rst
