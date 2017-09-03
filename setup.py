@@ -40,6 +40,11 @@ entry_points = {
     )
 }
 
+extras_require = {
+    'setproctitle': ['setproctitle', ],
+    'uvloop': ['uvloop', ],
+}
+
 tests_require = ('codecov',
                  'guzzle_sphinx_theme',
                  'isort',
@@ -88,10 +93,7 @@ setup(
     cmdclass={'test': PyTest},
     description=description,
     entry_points=entry_points,
-    extras_require={
-        'setproctitle': ['setproctitle', ],
-        'uvloop': ['uvloop', ],
-    },
+    extras_require=extras_require,
     install_requires=[],
     keywords=' '.join(keywords),
     license='MIT',
