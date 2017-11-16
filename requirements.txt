@@ -1,0 +1,15 @@
+codecov
+guzzle_sphinx_theme
+isort
+pycodestyle
+pydocstyle
+pyflakes
+pylama
+pytest
+pytest-asyncio
+pytest-cov
+pytest-pride
+radon
+setproctitle 
+Sphinx
+uvloop
