@@ -2,19 +2,19 @@
 Blackhole
 =========
 
-.. image:: https://img.shields.io/pypi/v/blackhole.svg?style=flat-square&label=version
+.. image:: https://img.shields.io/pypi/v/blackhole.svg?style=for-the-badge&label=version
     :target: https://pypi.python.org/pypi/blackhole
     :alt: Latest version released on PyPi
 
-.. image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=flat-square&label=build
+.. image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=build
     :target: http://travis-ci.org/kura/blackhole
     :alt: Build status of the master branch
 
-.. image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
+.. image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
 
-.. image:: https://requires.io/github/kura/blackhole/requirements.svg?branch=master
+.. image:: https://img.shields.io/requires/github/blackhole/blackhole.svg?style=for-the-badge
     :target: https://requires.io/github/kura/blackhole/requirements/?branch=master
     :alt: Requirements Status
 

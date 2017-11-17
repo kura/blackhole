@@ -13,6 +13,7 @@ uvloop = { extras = ['uvloop'] }
 codecov = "*"
 guzzle_sphinx_theme = "*"
 isort = "*"
+pipenv = "*"
 pycodestyle = "*"
 pydocstyle = "*"
 pyflakes = "*"

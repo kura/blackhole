@@ -26,7 +26,7 @@
 
 from setuptools import find_packages, setup
 
-from setup_helpers import (get_version, include_file, PyTest,
+from setup_helpers import (PyTest, get_version, include_file,
                            require_python)
 
 
@@ -38,6 +38,11 @@ entry_points = {
         'blackhole = blackhole.application:run',
         'blackhole_config = blackhole.application:blackhole_config',
     )
+}
+
+extras_require = {
+    'setproctitle': ['setproctitle', ],
+    'uvloop': ['uvloop', ],
 }
 
 tests_require = ('codecov',
@@ -81,26 +86,25 @@ classifiers = ['Development Status :: 5 - Production/Stable',
                'Topic :: System :: Systems Administration',
                'Topic :: Utilities', ]
 
-setup(name='blackhole',
-      version=__version__,
-      url='https://blackhole.io/',
-      author='Kura',
-      author_email='kura@kura.io',
-      maintainer='Kura',
-      maintainer_email='kura@kura.io',
-      description=description,
-      long_description=include_file('README.rst'),
-      keywords=' '.join(keywords),
-      license='MIT',
-      platforms=['linux'],
-      packages=find_packages(exclude=["*.tests"]),
-      install_requires=[],
-      tests_require=tests_require,
-      cmdclass={'test': PyTest},
-      entry_points=entry_points,
-      classifiers=classifiers,
-      extras_require={
-        'setproctitle': ['setproctitle', ],
-        'uvloop': ['uvloop', ],
-      },
-      )
+setup(
+    author='Kura',
+    author_email='kura@kura.io',
+    classifiers=classifiers,
+    cmdclass={'test': PyTest},
+    description=description,
+    entry_points=entry_points,
+    extras_require=extras_require,
+    install_requires=[],
+    keywords=' '.join(keywords),
+    license='MIT',
+    long_description='\n' + include_file('README.rst'),
+    maintainer='Kura',
+    maintainer_email='kura@kura.io',
+    name='blackhole',
+    packages=find_packages(exclude=('tests',)),
+    platforms=['linux'],
+    tests_require=tests_require,
+    url='https://blackhole.io/',
+    version=__version__,
+    zip_safe=False,  # this is probably not correct, but I've never tested it.
+)

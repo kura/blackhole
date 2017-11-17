@@ -58,16 +58,16 @@ def parse_cmd_args(args):
                'Reduces CPU overhead at the expense of security -- Don\'t '
                'use this option unless you really need to.')
 
-    decription = ('Blackhole is an MTA (mail transfer agent) that '
-                  '(figuratively) pipes all mail to /dev/null. Blackhole is '
-                  'built on top of asyncio and utilises async def and await '
-                  'statements available in Python 3.5 and above.')
+    description = ('Blackhole is an MTA (mail transfer agent) that '
+                   '(figuratively) pipes all mail to /dev/null. Blackhole is '
+                   'built on top of asyncio and utilises async def and await '
+                   'statements available in Python 3.5 and above.')
 
     epilog = ('An explanation of all command line and all configuration '
               'options is provided here -- '
               'https://kura.github.io/blackhole/configuration.html')
 
-    parser = argparse.ArgumentParser('blackhole', description=decription,
+    parser = argparse.ArgumentParser('blackhole', description=description,
                                      epilog=epilog)
     parser.add_argument('-v', '--version', action='version',
                         version=get_version())

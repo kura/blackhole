@@ -21,9 +21,9 @@
     # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     # SOFTWARE.
 
-====================================
-Blackhole |pypi| |travis| |coverage|
-====================================
+===============================================
+Blackhole |pypi| |travis| |coverage| |requires|
+===============================================
 
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
@@ -68,3 +68,7 @@ User Guide
 .. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
+
+.. |requires| image:: https://img.shields.io/requires/github/blackhole/blackhole.svg?style=for-the-badge
+    :target: https://requires.io/github/kura/blackhole/requirements/?branch=master
+    :alt: Requirements Status

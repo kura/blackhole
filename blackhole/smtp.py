@@ -160,12 +160,12 @@ class Smtp(asyncio.StreamReaderProtocol):
         :param exc exc: Exception.
         """
         logger.debug('Peer disconnected')
+        super().connection_lost(exc)
+        self.connection_closed, self._connection_closed = True, True
         try:
             self.clients.remove(self._writer)
         except ValueError:
             pass
-        super().connection_lost(exc)
-        self._connection_closed = True
 
     async def _handle_client(self):
         """

@@ -1,8 +1,11 @@
 include bash-completion/blackhole-completion.bash
-include example.conf
 include CHANGELOG.rst
+include CODE_OF_CONDUCT.rst
+include CONTRIBUTING.rst
 include CONTRIBUTORS.rst
+include example.conf
 include LICENSE
 include README.rst
+include setup_helpers.py
 include THANKS.rst
 include TODO.rst
