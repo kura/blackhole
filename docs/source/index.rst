@@ -34,13 +34,12 @@ and `await
 available in `Python 3.5 <https://docs.python.org/3/whatsnew/3.5.html>`_.
 
 While Blackhole is an MTA, none of the actions performed via SMTP or SMTPS are
-actually processed and no email is delivered.
+actually processed, and no email is delivered. You can tell Blackhole how to
+handle mail that it receives. It can accept all of it, bounce it all, or
+randomly do either of those two actions.
 
-You can tell Blackhole how to handle mail that it receives. It can accept all
-of it, bounce it all or randomly do either of those two actions.
-
-Think of Blackhole sort of like a honeypot in terms of how it handles mail,
-but it's specifically designed with testing in mind.
+Think of Blackhole sort of like a honeypot in terms of how it handles mail, but
+it's specifically designed with testing in mind.
 
 
 User Guide
