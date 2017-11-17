@@ -69,6 +69,6 @@ User Guide
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
 
-.. |requires| image:: https://img.shields.io/requires/github/blackhole/blackhole.svg?style=for-the-badge
+.. |requires| image:: https://img.shields.io/requires/github/kura/blackhole.svg?style=for-the-badge
     :target: https://requires.io/github/kura/blackhole/requirements/?branch=master
     :alt: Requirements Status
