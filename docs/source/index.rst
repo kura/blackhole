@@ -57,15 +57,15 @@ User Guide
     api
 
 
-.. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=flat-square&label=version
+.. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=for-the-badge&label=version
     :target: https://pypi.python.org/pypi/blackhole
     :alt: Latest version released on PyPi
 
-.. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=flat-square&label=build
+.. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=build
     :target: https://travis-ci.org/kura/blackhole
     :alt: Build status of the master branch
 
-.. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=flat-square&label=coverage
+.. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
 
