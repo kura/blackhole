@@ -55,6 +55,7 @@ shellcheck:
 .PHONY: test
 test: clean
 	pip install codecov \
+				pyannotate \
 				pycodestyle \
 				pydocstyle \
 				pyflakes \

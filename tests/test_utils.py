@@ -27,6 +27,7 @@
 from io import StringIO
 from unittest import mock
 
+from pyannotate_runtime import collect_types
 import pytest
 
 from blackhole.utils import get_version, mailname, message_id
@@ -36,44 +37,62 @@ from ._utils import (Args, cleandir, create_config, create_file, reset)
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_mail_name_file():
+    collect_types.init_types_collection()
+    collect_types.resume()
     check_value = 'file.blackhole.io'
     with mock.patch('os.access', return_value=True), \
             mock.patch('codecs.open', return_value=StringIO(check_value)):
         mn = mailname()
         assert mn == check_value
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_mail_name_socket():
+    collect_types.init_types_collection()
+    collect_types.resume()
     check_value = 'socket.blackhole.io'
     with mock.patch('os.access', return_value=False), \
             mock.patch('socket.getfqdn', return_value='socket.blackhole.io'):
         mn = mailname()
     assert mn == check_value
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_mail_name_file_length_0():
+    collect_types.init_types_collection()
+    collect_types.resume()
     mnfile = create_file('mailname')
     check_value = 'socket.blackhole.io'
     with mock.patch('os.access', return_value=True), \
             mock.patch('socket.getfqdn', return_value='socket.blackhole.io'):
         mn = mailname(mnfile)
     assert mn == check_value
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_mail_name_file_garbage():
+    collect_types.init_types_collection()
+    collect_types.resume()
     mnfile = create_file('mailname', '            \n     ')
     check_value = 'socket.blackhole.io'
     with mock.patch('os.access', return_value=True), \
             mock.patch('socket.getfqdn', return_value='socket.blackhole.io'):
         mn = mailname(mnfile)
     assert mn == check_value
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_message_id():
+    collect_types.init_types_collection()
+    collect_types.resume()
     with mock.patch('time.monotonic',
                     return_value=1463290829.4173775) as mock_time, \
         mock.patch('os.getpid', return_value=9000) as mock_getpid, \
@@ -86,34 +105,50 @@ def test_message_id():
     assert mock_time.called is True
     assert mock_getpid.called is True
     assert mock_randbits.called is True
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version():
+    collect_types.init_types_collection()
+    collect_types.resume()
     version_file = create_file('version.py', '__version__ = "9.9.9"')
     with mock.patch('os.path.join', return_value=version_file):
         assert get_version() == '9.9.9'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version_no_access():
+    collect_types.init_types_collection()
+    collect_types.resume()
     with mock.patch('os.access', return_value=False), \
             pytest.raises(OSError) as err:
         get_version()
     assert str(err.value) == 'Cannot open __init__.py file for reading'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version_invalid_version_split():
+    collect_types.init_types_collection()
+    collect_types.resume()
     version_file = create_file('version.py', '__version__')
     with mock.patch('os.path.join', return_value=version_file), \
             pytest.raises(AssertionError) as err:
         get_version()
     assert str(err.value) == 'Cannot extract version from __version__'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version_invalid_version():
+    collect_types.init_types_collection()
+    collect_types.resume()
     version_file_a = create_file('versiona.py', '__version__ = a.1')
     with mock.patch('os.path.join', return_value=version_file_a), \
             pytest.raises(AssertionError) as err:
@@ -134,12 +169,18 @@ def test_get_version_invalid_version():
             pytest.raises(AssertionError) as err:
         get_version()
     assert str(err.value) == '1.1.a is not a valid version number'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_get_version_version_not_found():
+    collect_types.init_types_collection()
+    collect_types.resume()
     version_file = create_file('version.py', 'version = "abc"')
     with mock.patch('os.path.join', return_value=version_file), \
             pytest.raises(AssertionError) as err:
         get_version()
     assert str(err.value) == 'No __version__ assignment found'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
