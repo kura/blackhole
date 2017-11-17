@@ -29,8 +29,8 @@ Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
 pipes all mail to /dev/null, built on top of `asyncio
 <https://docs.python.org/3/library/asyncio.html>`_ and utilises `async def <https://docs.python.org/3/reference/compound_stmts.html#async-def>`_
-and `await <https://docs.python.org/3/reference/expressions.html#await>`_
-statements available in `Python 3.5
+ and `await <https://docs.python.org/3/reference/expressions.html#await>`_
+ statements available in `Python 3.5
 <https://docs.python.org/3/whatsnew/3.5.html>`_.
 
 While Blackhole is an MTA, none of the actions performed via SMTP or SMTPS are
