@@ -30,7 +30,7 @@ matrix:
   - sudo: true
     env: NAME="cpython/uvloop"
     before_install:
-    - wget https://api.github.com/repos/boxbilling/boxbilling/tarball -O libuv.tar.gz
+    - wget https://api.github.com/repos/libuv/libuv/tarball -O libuv.tar.gz
     - mkdir libuv
     - tar xvzf libuv.tar.gz -C libuv --strip-components 1
     - pushd libuv/
