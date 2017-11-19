@@ -43,7 +43,7 @@ __all__ = ('run', )
 """Tuple all the things."""
 
 
-def blackhole_config():
+def blackhole_config() -> None:
     """
     Print the config help to the console with man-style formatting.
 
@@ -56,7 +56,7 @@ def blackhole_config():
     raise SystemExit(os.EX_OK)
 
 
-def run():
+def run() -> None:
     """
     Create the asyncio loop and start the server.
 

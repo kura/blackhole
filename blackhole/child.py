@@ -29,6 +29,7 @@ import asyncio
 import logging
 import os
 import signal
+from typing import List
 
 from . import protocols
 from .smtp import Smtp
@@ -58,7 +59,8 @@ class Child:
     clients = []
     """List of clients connected to this process."""
 
-    def __init__(self, up_read, down_write, socks, idx):
+    def __init__(self, up_read: int, down_write: int, socks: List,
+                 idx: str) -> None:
         """
         Initialise a child process.
 
@@ -71,7 +73,7 @@ class Child:
         self.socks = socks
         self.idx = idx
 
-    def start(self):
+    def start(self) -> None:
         """Start the child process."""
         logger.debug('Starting child %s', self.idx)
         self._started = True
@@ -90,7 +92,7 @@ class Child:
                                                    **sock)
             self.servers.append(server)
 
-    def stop(self, *args, **kwargs):
+    def stop(self, *args, **kwargs) -> None:
         """
         Stop the child process.
 

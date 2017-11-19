@@ -26,7 +26,6 @@
 
 
 import argparse
-from argparse import Namespace
 import getpass
 import grp
 import inspect
@@ -36,7 +35,7 @@ import os
 import pathlib
 import pwd
 import socket
-from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import Dict, List, Optional, Tuple
 
 from .exceptions import ConfigException
 from .utils import (get_version, mailname, Singleton)
@@ -46,7 +45,7 @@ __all__ = ('parse_cmd_args', 'warn_options', 'config_test', 'Config')
 """Tuple all the things."""
 
 
-def parse_cmd_args(args: list) -> Optional[Namespace]:
+def parse_cmd_args(args: list) -> Optional[argparse.Namespace]:
     """
     Parse arguments from the command line.
 
@@ -107,7 +106,7 @@ def warn_options(config: type) -> None:
     _compare_uid_and_gid(config)
 
 
-def config_test(args: Namespace) -> None:
+def config_test(args: argparse.Namespace) -> None:
     """
     Test the validity of the configuration file content.
 
@@ -568,8 +567,7 @@ class Config(metaclass=Singleton):
             msg = '{0} is not a valid port number.'.format(port)
             raise ConfigException(msg)
 
-    def _listeners(self, listeners):
-        # type: (str) -> Any
+    def _listeners(self, listeners: str) -> Optional[List]:
         """
         Convert listeners lines from the configuration to usable values.
 
@@ -599,8 +597,7 @@ class Config(metaclass=Singleton):
             clisteners.append(host)
         return clisteners
 
-    def flags_from_listener(self, addr, port):
-        # type: (str, int) -> Dict[str, str]
+    def flags_from_listener(self, addr: str, port: int) -> Dict[str, str]:
         """
         Get a list of flags defined for the provided listener.
 
@@ -644,10 +641,7 @@ class Config(metaclass=Singleton):
                 return lflags
         return {}
 
-    def create_flags(self,
-                     parts  # type: List[str]
-                     ):
-        # type: (...) -> Union[Dict[str, Any], Dict[str, Tuple[str, str]], Dict[str, str]]
+    def create_flags(self, parts: List[str]) -> Dict[str, str]:
         """
         Create a set of flags from a listener directive.
 
@@ -667,8 +661,7 @@ class Config(metaclass=Singleton):
                         flags.update(self._flag_delay(flag, value))
         return flags
 
-    def _flag_mode(self, flag, value):
-        # type: (str, str) -> Dict[str, str]
+    def _flag_mode(self, flag: str, value: str) -> Dict[str, str]:
         """
         Create a flag for the mode directive.
 
@@ -685,8 +678,7 @@ class Config(metaclass=Singleton):
                                   'are: \'accept\', \'bounce\' and '
                                   '\'random\'.'.format(value))
 
-    def _flag_delay(self, flag, value):
-        # type: (str, str) -> Union[Dict[str, Tuple[str, str]], Dict[str, str]]
+    def _flag_delay(self, flag: str, value: str) -> Dict[str, str]:
         """
         Create a delay flag, delay can be an int or a range.
 
@@ -713,8 +705,7 @@ class Config(metaclass=Singleton):
                               'either a single value or a range i.e. 5-10 and '
                               'must be less than 60.'.format(value))
 
-    def test(self):
-        # type: () -> Optional[Config]
+    def test(self) -> type:
         r"""
         Test configuration validity.
 
@@ -732,8 +723,7 @@ class Config(metaclass=Singleton):
                 getattr(self, name)()
         return self
 
-    def test_workers(self):
-        # type: () -> None
+    def test_workers(self) -> None:
         """
         Validate the number of workers.
 
@@ -750,8 +740,7 @@ class Config(metaclass=Singleton):
             msg.format(self.workers, cpus)
             raise ConfigException(msg)
 
-    def test_ipv6_support(self):
-        # type: () -> None
+    def test_ipv6_support(self) -> None:
         """
         If an IPv6 listener is configured, confirm IPv6 is supported.
 
@@ -765,8 +754,7 @@ class Config(metaclass=Singleton):
                            'available on this platform.')
                     raise ConfigException(msg)
 
-    def test_tls_ipv6_support(self):
-        # type: () -> None
+    def test_tls_ipv6_support(self) -> None:
         """
         If an IPv6 listener is configured, confirm IPv6 is supported.
 
@@ -780,8 +768,7 @@ class Config(metaclass=Singleton):
                            'available on this platform.')
                     raise ConfigException(msg)
 
-    def test_same_listeners(self):
-        # type: () -> None
+    def test_same_listeners(self) -> None:
         """
         Test that multiple listeners are not configured on the same port.
 
@@ -807,8 +794,7 @@ class Config(metaclass=Singleton):
                    'port.')
             raise ConfigException(msg)
 
-    def test_no_listeners(self):
-        # type: () -> None
+    def test_no_listeners(self) -> None:
         """
         Test that at least one listener is configured.
 
@@ -818,8 +804,7 @@ class Config(metaclass=Singleton):
             msg = 'You need to define at least one listener.'
             raise ConfigException(msg)
 
-    def _min_max_port(self, port):
-        # type: (int) -> None
+    def _min_max_port(self, port: int) -> None:
         """
         Minimum and maximum allowed port.
 
@@ -842,8 +827,7 @@ class Config(metaclass=Singleton):
             msg.format(port, max_port)
             raise ConfigException(msg)
 
-    def test_port(self):
-        # type: () -> None
+    def test_port(self) -> None:
         """
         Validate port number.
 
@@ -853,8 +837,7 @@ class Config(metaclass=Singleton):
         for host, port, family, flags in self.listen:
             self._port_permissions(host, port, family)
 
-    def _port_permissions(self, address, port, family):
-        # type: (str, int, AddressFamily) -> None
+    def _port_permissions(self, address: str, port: int, family: int) -> None:
         """
         Validate that we have permission to use the port and it's not in use.
 
@@ -887,8 +870,7 @@ class Config(metaclass=Singleton):
             sock.close()
             del sock
 
-    def test_user(self):
-        # type: () -> None
+    def test_user(self) -> None:
         """
         Validate user exists in UNIX password database.
 
@@ -905,8 +887,7 @@ class Config(metaclass=Singleton):
             msg = '{0} is not a valid user.'.format(self._user)
             raise ConfigException(msg)
 
-    def test_group(self):
-        # type: () -> None
+    def test_group(self) -> None:
         """
         Validate group exists in UNIX group database.
 
@@ -924,8 +905,7 @@ class Config(metaclass=Singleton):
             msg = '{0} is a not a valid group.'.format(self._group)
             raise ConfigException(msg)
 
-    def test_timeout(self):
-        # type: () -> None
+    def test_timeout(self) -> None:
         """
         Validate timeout - only allow a valid integer value in seconds.
 
@@ -942,8 +922,7 @@ class Config(metaclass=Singleton):
                    '(denial of service).')
             raise ConfigException(msg)
 
-    def test_tls_port(self):
-        # type: () -> None
+    def test_tls_port(self) -> None:
         """
         Validate TLS port number.
 
@@ -955,8 +934,7 @@ class Config(metaclass=Singleton):
         for host, port, af, flags in self.tls_listen:
             self._port_permissions(host, port, af)
 
-    def test_tls_settings(self):
-        # type: () -> None
+    def test_tls_settings(self) -> None:
         """
         Validate TLS configuration.
 
@@ -978,8 +956,7 @@ class Config(metaclass=Singleton):
                    'and key file.')
             raise ConfigException(msg)
 
-    def test_tls_dhparams(self):
-        # type: () -> None
+    def test_tls_dhparams(self) -> None:
         """
         Validate Diffie Hellman ephemeral parameters.
 
@@ -994,8 +971,7 @@ class Config(metaclass=Singleton):
                    'valid dhparams file.')
             raise ConfigException(msg)
 
-    def test_delay(self):
-        # type: () -> None
+    def test_delay(self) -> None:
         """
         Validate the delay period.
 
@@ -1014,8 +990,7 @@ class Config(metaclass=Singleton):
                    'service).')
             raise ConfigException(msg)
 
-    def test_mode(self):
-        # type: () -> None
+    def test_mode(self) -> None:
         """
         Validate the response mode.
 
@@ -1029,8 +1004,7 @@ class Config(metaclass=Singleton):
             msg = 'Mode must be accept, bounce or random.'
             raise ConfigException(msg)
 
-    def test_max_message_size(self):
-        # type: () -> None
+    def test_max_message_size(self) -> None:
         """
         Validate max_message size is an integer.
 
@@ -1043,8 +1017,7 @@ class Config(metaclass=Singleton):
             msg = '{0} is not a valid number of bytes.'.format(size)
             raise ConfigException(msg)
 
-    def test_pidfile(self):
-        # type: () -> None
+    def test_pidfile(self) -> None:
         """
         Validate that the pidfile can be written to.
 
@@ -1061,8 +1034,7 @@ class Config(metaclass=Singleton):
             msg = 'The path to the pidfile does not exist.'
             raise ConfigException(msg)
 
-    def test_dynamic_switch(self):
-        # type: () -> None
+    def test_dynamic_switch(self) -> None:
         """
         Validate that the dynamic_switch value is correct.
 
