@@ -26,6 +26,7 @@
 
 
 import argparse
+from argparse import Namespace
 import getpass
 import grp
 import inspect
@@ -35,6 +36,7 @@ import os
 import pathlib
 import pwd
 import socket
+from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 
 from .exceptions import ConfigException
 from .utils import (get_version, mailname, Singleton)
@@ -44,7 +46,7 @@ __all__ = ('parse_cmd_args', 'warn_options', 'config_test', 'Config')
 """Tuple all the things."""
 
 
-def parse_cmd_args(args):
+def parse_cmd_args(args: list) -> Optional[Namespace]:
     """
     Parse arguments from the command line.
 
@@ -89,7 +91,7 @@ def parse_cmd_args(args):
     return parser.parse_args(args)
 
 
-def warn_options(config):
+def warn_options(config: type) -> None:
     """
     Warn the user when using certain options.
 
@@ -105,7 +107,7 @@ def warn_options(config):
     _compare_uid_and_gid(config)
 
 
-def config_test(args):
+def config_test(args: Namespace) -> None:
     """
     Test the validity of the configuration file content.
 
@@ -132,7 +134,7 @@ def config_test(args):
     raise SystemExit(os.EX_OK)
 
 
-def _compare_uid_and_gid(config):
+def _compare_uid_and_gid(config: type) -> None:
     """
     Compare the current user and group and conf settings.
 
@@ -177,7 +179,7 @@ class Config(metaclass=Singleton):
     _max_message_size = 512000
     _dynamic_switch = None
 
-    def __init__(self, config_file=None):
+    def __init__(self, config_file: Optional[str] = None) -> None:
         """
         Initialise the configuration.
 
@@ -191,7 +193,7 @@ class Config(metaclass=Singleton):
         # in os.fork
         self.mailname = mailname()
 
-    def load(self):
+    def load(self) -> type:
         """
         Load the configuration file and parse.
 
@@ -232,7 +234,7 @@ class Config(metaclass=Singleton):
                 self.validate_option(line)
         return self
 
-    def validate_option(self, key):
+    def validate_option(self, key: str) -> None:
         """
         Validate config option is actually... valid...
 
@@ -256,7 +258,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     @property
-    def workers(self):
+    def workers(self) -> int:
         """
         How many workers to spawn to handle incoming connections.
 
@@ -274,11 +276,11 @@ class Config(metaclass=Singleton):
         return int(self._workers) or 1
 
     @workers.setter
-    def workers(self, workers):
+    def workers(self, workers: str) -> None:
         self._workers = workers
 
     @property
-    def listen(self):
+    def listen(self) -> List[Tuple[str, int, int, Dict]]:
         """
         Address, port and socket family.
 
@@ -307,11 +309,11 @@ class Config(metaclass=Singleton):
         return self._listen or default
 
     @listen.setter
-    def listen(self, addrs):
+    def listen(self, addrs: str) -> None:
         self._listen = self._listeners(addrs)
 
     @property
-    def tls_listen(self):
+    def tls_listen(self) -> List[Tuple[str, int, int, Dict]]:
         """
         Address and port and socket family for SSL/TLS connections.
 
@@ -323,11 +325,11 @@ class Config(metaclass=Singleton):
         return self._tls_listen or []
 
     @tls_listen.setter
-    def tls_listen(self, addrs):
+    def tls_listen(self, addrs: str) -> None:
         self._tls_listen = self._listeners(addrs)
 
     @property
-    def user(self):
+    def user(self) -> str:
         """
         UNIX user.
 
@@ -343,11 +345,11 @@ class Config(metaclass=Singleton):
         return self._user
 
     @user.setter
-    def user(self, user):
+    def user(self, user: str) -> None:
         self._user = user
 
     @property
-    def group(self):
+    def group(self) -> str:
         """
         UNIX group.
 
@@ -363,11 +365,11 @@ class Config(metaclass=Singleton):
         return self._group
 
     @group.setter
-    def group(self, group):
+    def group(self, group: str) -> None:
         self._group = group
 
     @property
-    def timeout(self):
+    def timeout(self) -> int:
         """
         Timeout in seconds.
 
@@ -384,11 +386,11 @@ class Config(metaclass=Singleton):
         return int(self._timeout)
 
     @timeout.setter
-    def timeout(self, timeout):
+    def timeout(self, timeout: str) -> int:
         self._timeout = timeout
 
     @property
-    def tls_key(self):
+    def tls_key(self) -> str:
         """
         TLS key file.
 
@@ -400,12 +402,12 @@ class Config(metaclass=Singleton):
         return self._tls_key
 
     @tls_key.setter
-    def tls_key(self, tls_key):
+    def tls_key(self, tls_key: str) -> None:
         if tls_key is not None:
             self._tls_key = pathlib.PurePath(tls_key)
 
     @property
-    def tls_cert(self):
+    def tls_cert(self) -> str:
         """
         TLS certificate file.
 
@@ -417,12 +419,12 @@ class Config(metaclass=Singleton):
         return self._tls_cert
 
     @tls_cert.setter
-    def tls_cert(self, tls_cert):
+    def tls_cert(self, tls_cert: str) -> None:
         if tls_cert is not None:
             self._tls_cert = pathlib.PurePath(tls_cert)
 
     @property
-    def tls_dhparams(self):
+    def tls_dhparams(self) -> str:
         """
         Diffie Hellman ephemeral parameters.
 
@@ -434,12 +436,12 @@ class Config(metaclass=Singleton):
         return self._tls_dhparams
 
     @tls_dhparams.setter
-    def tls_dhparams(self, tls_dhparams):
+    def tls_dhparams(self, tls_dhparams: str) -> None:
         if tls_dhparams is not None:
             self._tls_dhparams = pathlib.PurePath(tls_dhparams)
 
     @property
-    def pidfile(self):
+    def pidfile(self) -> str:
         """
         Path to store the pid.
 
@@ -451,12 +453,12 @@ class Config(metaclass=Singleton):
         return self._pidfile
 
     @pidfile.setter
-    def pidfile(self, pidfile):
+    def pidfile(self, pidfile: str) -> None:
         if pidfile is not None:
             self._pidfile = pathlib.PurePath(pidfile)
 
     @property
-    def delay(self):
+    def delay(self) -> Optional[int]:
         """
         Delay in seconds.
 
@@ -475,11 +477,11 @@ class Config(metaclass=Singleton):
         return None
 
     @delay.setter
-    def delay(self, delay):
+    def delay(self, delay: str) -> None:
         self._delay = delay
 
     @property
-    def mode(self):
+    def mode(self) -> str:
         """
         Mode with which to respond.
 
@@ -496,11 +498,11 @@ class Config(metaclass=Singleton):
         return self._mode
 
     @mode.setter
-    def mode(self, mode):
+    def mode(self, mode: str) -> None:
         self._mode = mode.lower()
 
     @property
-    def max_message_size(self):
+    def max_message_size(self) -> Optional[int]:
         """
         Maximum size, in bytes, of a message.
 
@@ -517,11 +519,11 @@ class Config(metaclass=Singleton):
             return int(self._max_message_size)
 
     @max_message_size.setter
-    def max_message_size(self, size):
+    def max_message_size(self, size: str) -> None:
         self._max_message_size = size
 
     @property
-    def dynamic_switch(self):
+    def dynamic_switch(self) -> bool:
         """
         Enable or disable dynamic switches.
 
@@ -541,7 +543,7 @@ class Config(metaclass=Singleton):
         return self._dynamic_switch
 
     @dynamic_switch.setter
-    def dynamic_switch(self, switch):
+    def dynamic_switch(self, switch: str) -> None:
         if switch.lower() == 'false':
             self._dynamic_switch = False
         elif switch.lower() == 'true':
@@ -550,7 +552,7 @@ class Config(metaclass=Singleton):
             msg = '{0} is not valid. Options are true or false.'.format(switch)
             raise ConfigException(msg)
 
-    def _convert_port(self, port):
+    def _convert_port(self, port: str) -> int:
         """
         Convert a port from the configuration files' string to an integer.
 
@@ -567,6 +569,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def _listeners(self, listeners):
+        # type: (str) -> Any
         """
         Convert listeners lines from the configuration to usable values.
 
@@ -597,6 +600,7 @@ class Config(metaclass=Singleton):
         return clisteners
 
     def flags_from_listener(self, addr, port):
+        # type: (str, int) -> Dict[str, str]
         """
         Get a list of flags defined for the provided listener.
 
@@ -640,7 +644,10 @@ class Config(metaclass=Singleton):
                 return lflags
         return {}
 
-    def create_flags(self, parts):
+    def create_flags(self,
+                     parts  # type: List[str]
+                     ):
+        # type: (...) -> Union[Dict[str, Any], Dict[str, Tuple[str, str]], Dict[str, str]]
         """
         Create a set of flags from a listener directive.
 
@@ -661,6 +668,7 @@ class Config(metaclass=Singleton):
         return flags
 
     def _flag_mode(self, flag, value):
+        # type: (str, str) -> Dict[str, str]
         """
         Create a flag for the mode directive.
 
@@ -678,6 +686,7 @@ class Config(metaclass=Singleton):
                                   '\'random\'.'.format(value))
 
     def _flag_delay(self, flag, value):
+        # type: (str, str) -> Union[Dict[str, Tuple[str, str]], Dict[str, str]]
         """
         Create a delay flag, delay can be an int or a range.
 
@@ -705,6 +714,7 @@ class Config(metaclass=Singleton):
                               'must be less than 60.'.format(value))
 
     def test(self):
+        # type: () -> Optional[Config]
         r"""
         Test configuration validity.
 
@@ -723,6 +733,7 @@ class Config(metaclass=Singleton):
         return self
 
     def test_workers(self):
+        # type: () -> None
         """
         Validate the number of workers.
 
@@ -740,6 +751,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_ipv6_support(self):
+        # type: () -> None
         """
         If an IPv6 listener is configured, confirm IPv6 is supported.
 
@@ -754,6 +766,7 @@ class Config(metaclass=Singleton):
                     raise ConfigException(msg)
 
     def test_tls_ipv6_support(self):
+        # type: () -> None
         """
         If an IPv6 listener is configured, confirm IPv6 is supported.
 
@@ -768,6 +781,7 @@ class Config(metaclass=Singleton):
                     raise ConfigException(msg)
 
     def test_same_listeners(self):
+        # type: () -> None
         """
         Test that multiple listeners are not configured on the same port.
 
@@ -794,6 +808,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_no_listeners(self):
+        # type: () -> None
         """
         Test that at least one listener is configured.
 
@@ -804,6 +819,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def _min_max_port(self, port):
+        # type: (int) -> None
         """
         Minimum and maximum allowed port.
 
@@ -827,6 +843,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_port(self):
+        # type: () -> None
         """
         Validate port number.
 
@@ -837,6 +854,7 @@ class Config(metaclass=Singleton):
             self._port_permissions(host, port, family)
 
     def _port_permissions(self, address, port, family):
+        # type: (str, int, AddressFamily) -> None
         """
         Validate that we have permission to use the port and it's not in use.
 
@@ -870,6 +888,7 @@ class Config(metaclass=Singleton):
             del sock
 
     def test_user(self):
+        # type: () -> None
         """
         Validate user exists in UNIX password database.
 
@@ -887,6 +906,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_group(self):
+        # type: () -> None
         """
         Validate group exists in UNIX group database.
 
@@ -905,6 +925,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_timeout(self):
+        # type: () -> None
         """
         Validate timeout - only allow a valid integer value in seconds.
 
@@ -922,6 +943,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_tls_port(self):
+        # type: () -> None
         """
         Validate TLS port number.
 
@@ -934,6 +956,7 @@ class Config(metaclass=Singleton):
             self._port_permissions(host, port, af)
 
     def test_tls_settings(self):
+        # type: () -> None
         """
         Validate TLS configuration.
 
@@ -956,6 +979,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_tls_dhparams(self):
+        # type: () -> None
         """
         Validate Diffie Hellman ephemeral parameters.
 
@@ -971,6 +995,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_delay(self):
+        # type: () -> None
         """
         Validate the delay period.
 
@@ -990,6 +1015,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_mode(self):
+        # type: () -> None
         """
         Validate the response mode.
 
@@ -1004,6 +1030,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_max_message_size(self):
+        # type: () -> None
         """
         Validate max_message size is an integer.
 
@@ -1017,6 +1044,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_pidfile(self):
+        # type: () -> None
         """
         Validate that the pidfile can be written to.
 
@@ -1034,6 +1062,7 @@ class Config(metaclass=Singleton):
             raise ConfigException(msg)
 
     def test_dynamic_switch(self):
+        # type: () -> None
         """
         Validate that the dynamic_switch value is correct.
 
