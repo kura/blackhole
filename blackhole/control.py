@@ -34,6 +34,7 @@ import logging
 import os
 import pwd
 import socket
+from typing import Dict
 
 from .config import Config
 from .exceptions import BlackholeRuntimeException
@@ -52,7 +53,7 @@ ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
 """Strong default TLS ciphers."""
 
 
-def _context(use_tls=False):
+def _context(use_tls: bool = False) -> ssl.SSLContext:
     """
     Create a TLS context using the certificate, key and dhparams file.
 
@@ -97,7 +98,8 @@ def _context(use_tls=False):
     return ctx
 
 
-def _socket(addr, port, family):
+def _socket(addr: str, port: int,
+            family: socket.AddressFamily) -> socket.socket:
     """
     Create a socket, bind and listen.
 
@@ -130,7 +132,8 @@ def _socket(addr, port, family):
     return sock
 
 
-def server(addr, port, family, use_tls=False):
+def server(addr: str,  port: int, family: int,
+           use_tls: bool = False) -> Dict['socket.socket', 'ssl.SSLContext']:
     """
     Socket and possibly a TLS context.
 
@@ -151,7 +154,7 @@ def server(addr, port, family, use_tls=False):
     return {'sock': sock, 'ssl': ctx}
 
 
-def pid_permissions():
+def pid_permissions() -> None:
     """
     Change the pid file ownership.
 
@@ -172,7 +175,7 @@ def pid_permissions():
         raise SystemExit(os.EX_USAGE)
 
 
-def setgid():
+def setgid() -> None:
     """
     Change group.
 
@@ -200,7 +203,7 @@ def setgid():
         raise SystemExit(os.EX_NOPERM)
 
 
-def setuid():
+def setuid() -> None:
     """
     Change user.
 

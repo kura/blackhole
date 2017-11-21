@@ -29,7 +29,7 @@ import asyncio
 import logging
 import os
 import signal
-from typing import List
+from typing import List, Tuple
 
 from . import protocols
 from .smtp import Smtp
@@ -85,14 +85,14 @@ class Child:
         self.stop()
         os._exit(os.EX_OK)
 
-    async def _start(self):
+    async def _start(self) -> None:
         """Create an asyncio server for each socket."""
         for sock in self.socks:
             server = await self.loop.create_server(lambda: Smtp(self.clients),
                                                    **sock)
             self.servers.append(server)
 
-    def stop(self, *args, **kwargs) -> None:
+    def stop(self, *args: Tuple, **kwargs: Tuple) -> None:
         """
         Stop the child process.
 
@@ -115,7 +115,7 @@ class Child:
         self._started = False
         os._exit(os.EX_OK)
 
-    async def heartbeat(self):
+    async def heartbeat(self) -> None:
         """
         Handle heartbeat between a worker and child.
 

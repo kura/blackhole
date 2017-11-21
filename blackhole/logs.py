@@ -25,6 +25,7 @@
 """Configure logging."""
 
 
+from argparse import Namespace
 import logging
 from logging.config import dictConfig
 
@@ -58,7 +59,7 @@ DEFAULT_HANDLER = {'class': 'logging.StreamHandler',
                    'level': logging.INFO}
 
 
-def configure_logs(args):
+def configure_logs(args: Namespace) -> None:
     """
     Configure the logging module.
 
