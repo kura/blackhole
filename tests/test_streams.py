@@ -29,6 +29,7 @@ import os
 import socket
 from unittest import mock
 
+from pyannotate_runtime import collect_types
 import pytest
 
 from blackhole.streams import StreamProtocol
@@ -39,16 +40,24 @@ from ._utils import (Args, cleandir, create_config, create_file, reset)
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_client_not_connected():
+    collect_types.init_types_collection()
+    collect_types.resume()
     sp = StreamProtocol()
     assert sp.is_connected() is False
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_client_connected(event_loop):
+    collect_types.init_types_collection()
+    collect_types.resume()
     sp = StreamProtocol(loop=event_loop)
     sp.connection_made(asyncio.Transport())
     assert sp.is_connected() is True
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 # @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

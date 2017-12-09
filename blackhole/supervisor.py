@@ -29,6 +29,8 @@ import asyncio
 import logging
 import os
 import signal
+import socket
+from typing import List, NoReturn, Optional, Tuple
 
 from .config import Config
 from .control import server
@@ -58,7 +60,7 @@ class Supervisor(metaclass=Singleton):
     internal map of workers and the children they manage.
     """
 
-    def __init__(self, loop=None):
+    def __init__(self, loop: Optional[asyncio.BaseEventLoop] = None) -> None:
         """
         Initialise the supervisor.
 
@@ -84,7 +86,7 @@ class Supervisor(metaclass=Singleton):
             self.close_socks()
             raise BlackholeRuntimeException()
 
-    def generate_servers(self):
+    def generate_servers(self) -> None:
         """Spawn all of the required sockets and TLS contexts."""
         logger.debug('Attaching sockets to the supervisor')
         self.create_socket(self.config.listen)
@@ -92,7 +94,9 @@ class Supervisor(metaclass=Singleton):
         if len(self.config.tls_listen) > 0 and all(tls_conf):
             self.create_socket(self.config.tls_listen, use_tls=True)
 
-    def create_socket(self, listeners, use_tls=False):
+    def create_socket(self, listeners: List[Tuple[str, int,
+                                                  socket.AddressFamily]],
+                      use_tls: bool = False) -> None:
         """Create supervisor socket."""
         msg = 'Attaching %s:%s with flags %s'
         if use_tls:
@@ -102,7 +106,7 @@ class Supervisor(metaclass=Singleton):
             self.socks.append(aserver)
             logger.debug(msg, host, port, flags)
 
-    def run(self):
+    def run(self) -> None:
         """
         Start all workers and their children.
 
@@ -113,7 +117,7 @@ class Supervisor(metaclass=Singleton):
         signal.signal(signal.SIGINT, self.stop)
         self.loop.run_forever()
 
-    def start_workers(self):
+    def start_workers(self) -> None:
         """Start each worker and it's child process."""
         logger.debug('Starting workers')
         for idx in range(self.config.workers):
@@ -121,7 +125,7 @@ class Supervisor(metaclass=Singleton):
             logger.debug('Creating worker: %s', num)
             self.workers.append(Worker(num, self.socks, self.loop))
 
-    def stop_workers(self):
+    def stop_workers(self) -> None:
         """Stop the workers and their respective child process."""
         logger.debug('Stopping workers')
         worker_num = 1
@@ -130,12 +134,12 @@ class Supervisor(metaclass=Singleton):
             worker.stop()
             worker_num += 1
 
-    def close_socks(self):
+    def close_socks(self) -> None:
         """Close all opened sockets."""
         for sock in self.socks:
             sock['sock'].close()
 
-    def stop(self, *args, **kwargs):
+    def stop(self, *args: Tuple, **kwargs: Tuple) -> NoReturn:
         """
         Terminate all of the workers.
 

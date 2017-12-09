@@ -28,6 +28,7 @@
 import logging
 import os
 import sys
+from typing import NoReturn
 
 from .config import Config, config_test, parse_cmd_args, warn_options
 from .control import pid_permissions, setgid, setuid
@@ -43,7 +44,7 @@ __all__ = ('run', )
 """Tuple all the things."""
 
 
-def blackhole_config():
+def blackhole_config() -> NoReturn:
     """
     Print the config help to the console with man-style formatting.
 
@@ -56,7 +57,7 @@ def blackhole_config():
     raise SystemExit(os.EX_OK)
 
 
-def run():
+def run() -> NoReturn:
     """
     Create the asyncio loop and start the server.
 

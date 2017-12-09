@@ -48,6 +48,7 @@ extras_require = {
 tests_require = ('codecov',
                  'guzzle_sphinx_theme',
                  'isort',
+                 'pyannotate',
                  'pycodestyle',
                  'pydocstyle',
                  'pyflakes',
@@ -61,7 +62,7 @@ tests_require = ('codecov',
 description = ('Blackhole is an MTA (message transfer agent) that '
                '(figuratively) pipes all mail to /dev/null.')
 
-keywords = ('blackhole', 'mta', 'email')
+keywords = ('blackhole', 'asyncio', 'smtp', 'mta', 'email')
 
 classifiers = ['Development Status :: 5 - Production/Stable',
                'Environment :: Console',
