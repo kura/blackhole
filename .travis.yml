@@ -85,7 +85,7 @@ matrix:
       - pip install uvloop
     script: make test
 
-  # cpython/uvloop
+  # cpython-nightly/uvloop
   - python: 'nightly'
     sudo: true
     env: NAME="cpython/uvloop"
@@ -147,8 +147,21 @@ matrix:
     env: NAME="man"
     script: make man
 
-  # build sdist/wheel
-  - install: skip
+  # build sdist/wheel 3.6
+  - python: '3.6'
+    install: skip
+    env: NAME="build sdist/wheel"
+    script: make build
+
+  # build sdist/wheel 3.7-dev
+  - python: '3.7-dev'
+    install: skip
+    env: NAME="build sdist/wheel"
+    script: make build
+
+  # build sdist/wheel nightly
+  - python: 'nightly'
+    install: skip
     env: NAME="build sdist/wheel"
     script: make build
 
