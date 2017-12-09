@@ -1,6 +1,8 @@
 language: python
 python:
   - '3.6'
+  - '3.7-dev'
+  - 'nightly'
 cache: pip
 dist: trusty
 sudo: false
@@ -21,6 +23,7 @@ matrix:
   # cpython3.6/asyncio
   - script: make test
     env: NAME="cpython3.6/asyncio"
+    python: '3.6'
     deploy:
       provider: script
       script: scripts/release.sh
@@ -30,6 +33,7 @@ matrix:
 # cpython3.7-dev/asyncio
 - script: make test
   env: NAME="cpython3.7-dev/asyncio"
+  python: '3.7-dev'
   deploy:
     provider: script
     script: scripts/release.sh
@@ -39,6 +43,7 @@ matrix:
 # cpython-nightly/asyncio
 - script: make test
   env: NAME="cpython-nightly/asyncio"
+  python: 'nightly'
   deploy:
     provider: script
     script: scripts/release.sh
@@ -48,6 +53,7 @@ matrix:
   # cpython3.6/uvloop
   - sudo: true
     env: NAME="cpython3.6/uvloop"
+    python: '3.6'
     before_install:
       - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
       - tar xvzf libuv.tar.gz
@@ -65,6 +71,7 @@ matrix:
   # cpython3.7-dev/uvloop
   - sudo: true
     env: NAME="cpython3.7-dev/uvloop"
+    python: '3.7-dev'
     before_install:
       - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
       - tar xvzf libuv.tar.gz
@@ -82,6 +89,7 @@ matrix:
   # cpython-nightly/uvloop
   - sudo: true
     env: NAME="cpython-nightly/uvloop"
+    python: 'nightly'
     before_install:
       - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
       - tar xvzf libuv.tar.gz
