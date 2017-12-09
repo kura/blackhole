@@ -17,40 +17,30 @@ matrix:
   fast_finish: true
   include:
 
-  # cpython-3.6/asyncio
+  # cpython/asyncio (3.6)
   - python: '3.6'
     script: make test
-    env: NAME="cpython/asyncio"
+    env: NAME="cpython/asyncio (3.6)"
     deploy:
       provider: script
       script: scripts/release.sh
       on:
         tags: true
 
-  # cpython-3.7-dev/asyncio
+  # cpython/asyncio (3.7-dev)
   - python: '3.7-dev'
     script: make test
-    env: NAME="cpython/asyncio"
+    env: NAME="cpython/asyncio (3.7-dev)"
     deploy:
       provider: script
       script: scripts/release.sh
       on:
         tags: true
 
-  # cpython-nightly/asyncio
-  - python: 'nightly'
-    script: make test
-    env: NAME="cpython/asyncio"
-    deploy:
-      provider: script
-      script: scripts/release.sh
-      on:
-        tags: true
-
-  # cpython-3.6/uvloop
+  # cpython/uvloop (3.6)
   - python: '3.6'
     sudo: true
-    env: NAME="cpython/uvloop"
+    env: NAME="cpython/uvloop (3.6)"
     before_install:
       - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
       - tar xvzf libuv.tar.gz
@@ -65,10 +55,10 @@ matrix:
       - pip install uvloop
     script: make test
 
-  # cpython-3.7-dev/uvloop
+  # cpython/uvloop (3.7-dev)
   - python: '3.7-dev'
     sudo: true
-    env: NAME="cpython/uvloop"
+    env: NAME="cpython/uvloop (3.7-dev)"
     before_install:
       - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
       - tar xvzf libuv.tar.gz
@@ -83,28 +73,10 @@ matrix:
       - pip install uvloop
     script: make test
 
-  # cpython-nightly/uvloop
-  - python: 'nightly'
-    sudo: true
-    env: NAME="cpython/uvloop"
-    before_install:
-      - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
-      - tar xvzf libuv.tar.gz
-      - pushd libuv-1.13.1/
-      - sh autogen.sh
-      - "./configure"
-      - make
-      - sudo make install
-      - popd
-    install:
-      - make install
-      - pip install uvloop
-    script: make test
-
-  # docs-3.6
+  # docs (3.6)
   - python: '3.6'
     script: make docs
-    env: NAME="docs"
+    env: NAME="docs (3.6)"
     deploy:
       provider: pages
       skip_cleanup: true
@@ -114,23 +86,10 @@ matrix:
       on:
         branch: master
 
-  # docs-3.7-dev
+  # docs (3.7-dev)
   - python: '3.7-dev'
     script: make docs
-    env: NAME="docs"
-    deploy:
-      provider: pages
-      skip_cleanup: true
-      github_token:
-        secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
-      local_dir: docs/build
-      on:
-        branch: master
-
-  # docs-nightly
-  - python: 'nightly'
-    script: make docs
-    env: NAME="docs"
+    env: NAME="docs (3.7-dev)"
     deploy:
       provider: pages
       skip_cleanup: true
@@ -145,40 +104,28 @@ matrix:
     env: NAME="man"
     script: make man
 
-  # build sdist/wheel 3.6
+  # build sdist/wheel (3.6)
   - python: '3.6'
     install: skip
-    env: NAME="build sdist/wheel"
+    env: NAME="build sdist/wheel (3.6)"
     script: make build
 
-  # build sdist/wheel 3.7-dev
+  # build sdist/wheel (3.7-dev)
   - python: '3.7-dev'
     install: skip
-    env: NAME="build sdist/wheel"
+    env: NAME="build sdist/wheel (3.7-dev)"
     script: make build
 
-  # build sdist/wheel nightly
-  - python: 'nightly'
-    install: skip
-    env: NAME="build sdist/wheel"
-    script: make build
-
-  # pipfile 3.6
+  # pipfile (3.6)
   - python: '3.6'
     install: skip
-    env: NAME="pipfile"
+    env: NAME="pipfile (3.6)"
     script: make pipfile
 
-  # pipfile 3.7-dev
+  # pipfile (3.7-dev)
   - python: '3.7-dev'
     install: skip
-    env: NAME="pipfile"
-    script: make pipfile
-
-  # pipfile nightly
-  - python: 'nightly'
-    install: skip
-    env: NAME="pipfile"
+    env: NAME="pipfile (3.7-dev)"
     script: make pipfile
 
   # shellcheck
