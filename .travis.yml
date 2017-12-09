@@ -1,20 +1,19 @@
 language: python
 python:
-- '3.7-dev'
-- '3.6'
+  - '3.6'
 cache: pip
 dist: trusty
 sudo: false
 group: edge
 install:
-- make install
+  - make install
 after_success:
-- codecov
+  - codecov
 env:
     global:
-        - TWINE_USERNAME: kura
-        # TWINE_PASSWORD:
-        - secure: "eHG6IOa71vyILd9M/09+z8zO9mcpSy12eNW2EIVJixuknDY+Q3othsHwYUP8p/T2rGyUGOzJkUdAArNtOQ3+MMUur4hnexcDmCntw/sNzJru2bl7AJR7m+sPZ4H35JBtLf68po4lS4qTRYfPbpmvWFzhWxJDCifOy5dq3BfeYN4="
+      - TWINE_USERNAME: kura
+      # TWINE_PASSWORD:
+      - secure: "eHG6IOa71vyILd9M/09+z8zO9mcpSy12eNW2EIVJixuknDY+Q3othsHwYUP8p/T2rGyUGOzJkUdAArNtOQ3+MMUur4hnexcDmCntw/sNzJru2bl7AJR7m+sPZ4H35JBtLf68po4lS4qTRYfPbpmvWFzhWxJDCifOy5dq3BfeYN4="
 
 matrix:
   fast_finish: true
