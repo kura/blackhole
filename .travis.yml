@@ -20,7 +20,7 @@ matrix:
   include:
 
   # cpython3.6/asyncio
-  - python: 3.6
+  - python: '3.6'
     script: make test
     env: NAME="cpython3.6/asyncio"
     deploy:
@@ -30,7 +30,7 @@ matrix:
         tags: true
 
 # cpython3.7-dev/asyncio
-- python: 3.7-dev
+- python: '3.7-dev'
   script: make test
   env: NAME="cpython3.6-dev/asyncio"
   deploy:
