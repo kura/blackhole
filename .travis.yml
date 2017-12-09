@@ -1,6 +1,4 @@
 language: python
-python:
-  - '3.6'
 cache: pip
 dist: trusty
 sudo: false
@@ -19,7 +17,7 @@ matrix:
   fast_finish: true
   include:
 
-  # cpython3.6/asyncio
+  # cpython-3.6/asyncio
   - python: '3.6'
     script: make test
     env: NAME="cpython/asyncio"
@@ -29,7 +27,7 @@ matrix:
       on:
         tags: true
 
-  # cpython3.7-dev/asyncio
+  # cpython-3.7-dev/asyncio
   - python: '3.7-dev'
     script: make test
     env: NAME="cpython/asyncio"
@@ -40,7 +38,7 @@ matrix:
         tags: true
 
   # cpython-nightly/asyncio
-  - python: '3.7-nightly'
+  - python: 'nightly'
     script: make test
     env: NAME="cpython/asyncio"
     deploy:
@@ -49,7 +47,7 @@ matrix:
       on:
         tags: true
 
-  # cpython3.6/uvloop
+  # cpython-3.6/uvloop
   - python: '3.6'
     sudo: true
     env: NAME="cpython/uvloop"
@@ -67,7 +65,7 @@ matrix:
       - pip install uvloop
     script: make test
 
-  # cpython3.7-dev/uvloop
+  # cpython-3.7-dev/uvloop
   - python: '3.7-dev'
     sudo: true
     env: NAME="cpython/uvloop"
@@ -103,7 +101,7 @@ matrix:
       - pip install uvloop
     script: make test
 
-  # docs3.6
+  # docs-3.6
   - python: '3.6'
     script: make docs
     env: NAME="docs"
@@ -116,7 +114,7 @@ matrix:
       on:
         branch: master
 
-  # docs3.7-dev
+  # docs-3.7-dev
   - python: '3.7-dev'
     script: make docs
     env: NAME="docs"
@@ -165,8 +163,21 @@ matrix:
     env: NAME="build sdist/wheel"
     script: make build
 
-  # pipfile
-  - install: skip
+  # pipfile 3.6
+  - python: '3.6'
+    install: skip
+    env: NAME="pipfile"
+    script: make pipfile
+
+  # pipfile 3.7-dev
+  - python: '3.7-dev'
+    install: skip
+    env: NAME="pipfile"
+    script: make pipfile
+
+  # pipfile nightly
+  - python: 'nightly'
+    install: skip
     env: NAME="pipfile"
     script: make pipfile
 
