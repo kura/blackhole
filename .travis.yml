@@ -42,9 +42,10 @@ matrix:
     sudo: true
     env: NAME="cpython/uvloop (3.6)"
     before_install:
-      - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
-      - tar xvzf libuv.tar.gz
-      - pushd libuv-1.13.1/
+      - wget https://api.github.com/repos/libuv/libuv/tarball -O libuv.tar.gz
+      - mkdir libuv
+      - tar xvzf libuv.tar.gz -C libuv --strip-components 1
+      - pushd libuv/
       - sh autogen.sh
       - "./configure"
       - make
@@ -60,9 +61,10 @@ matrix:
     sudo: true
     env: NAME="cpython/uvloop (3.7-dev)"
     before_install:
-      - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
-      - tar xvzf libuv.tar.gz
-      - pushd libuv-1.13.1/
+      - wget https://api.github.com/repos/libuv/libuv/tarball -O libuv.tar.gz
+      - mkdir libuv
+      - tar xvzf libuv.tar.gz -C libuv --strip-components 1
+      - pushd libuv/
       - sh autogen.sh
       - "./configure"
       - make
