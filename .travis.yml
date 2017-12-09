@@ -1,86 +1,78 @@
 language: python
 python:
-  - '3.6'
+- '3.6'
 cache: pip
 dist: trusty
 sudo: false
 group: edge
 install:
-  - make install
- after_success:
-  - codecov
+- make install
+after_success:
+- codecov
 env:
-  global:
-    - TWINE_USERNAME: kura
-    # TWINE_PASSWORD
-    - secure: "eHG6IOa71vyILd9M/09+z8zO9mcpSy12eNW2EIVJixuknDY+Q3othsHwYUP8p/T2rGyUGOzJkUdAArNtOQ3+MMUur4hnexcDmCntw/sNzJru2bl7AJR7m+sPZ4H35JBtLf68po4lS4qTRYfPbpmvWFzhWxJDCifOy5dq3BfeYN4="
+    global:
+        - TWINE_USERNAME: kura
+        # TWINE_PASSWORD:
+        - secure: "eHG6IOa71vyILd9M/09+z8zO9mcpSy12eNW2EIVJixuknDY+Q3othsHwYUP8p/T2rGyUGOzJkUdAArNtOQ3+MMUur4hnexcDmCntw/sNzJru2bl7AJR7m+sPZ4H35JBtLf68po4lS4qTRYfPbpmvWFzhWxJDCifOy5dq3BfeYN4="
 
 matrix:
   fast_finish: true
   include:
-
-    # cpython/asyncio
-    - script: make test
-      env: NAME="cpython/asyncio"
-      deploy:
-        provider: script
-        script: scripts/release.sh
-        on:
-          tags: true
-
-    # cpython/uvloop
-    - sudo: true
-      env: NAME="cpython/uvloop"
-      before_install:
-        - wget https://api.github.com/repos/libuv/libuv/tarball -O libuv.tar.gz
-        - mkdir libuv
-        - tar xvzf libuv.tar.gz -C libuv --strip-components 1
-        - pushd libuv/
-        - sh autogen.sh
-        - "./configure"
-        - make
-        - sudo make install
-        - popd
-      install:
-        - make install
-        - pip install uvloop
-      script: make test
-
-    # docs
-    - script: make docs
-      env: NAME="docs"
-      deploy:
-        provider: pages
-        skip_cleanup: true
-        github_token:
-          secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
-        local_dir: docs/build
-        on:
-          branch: master
-
-    # man
-    - install: skip
-      env: NAME="man"
-      script: make man
-
-    # build sdist/wheel
-    - install: skip
-      env: NAME="build sdist/wheel"
-      script: make build
-
-    # pipfile
-    - install: skip
-      env: NAME="pipfile"
-      script: make pipfile
-
-    # shellcheck
-    - language: generic
-      env: NAME="shellcheck"
-      install: skip
-      addons:
-        apt:
-          sources:
-            - debian-sid
-          packages:
-            - shellcheck
-      script: make shellcheck
+  # cpython/asyncio
+  - script: make test
+    env: NAME="cpython/asyncio"
+    deploy:
+      provider: script
+      script: scripts/release.sh
+      on:
+        tags: true
+  # cpython/uvloop
+  - sudo: true
+    env: NAME="cpython/uvloop"
+    before_install:
+    - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
+    - tar xvzf libuv.tar.gz
+    - pushd libuv-1.13.1/
+    - sh autogen.sh
+    - "./configure"
+    - make
+    - sudo make install
+    - popd
+    install:
+    - make install
+    - pip install uvloop
+    script: make test
+  # docs
+  - script: make docs
+    env: NAME="docs"
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      github_token:
+        secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
+      local_dir: docs/build
+      on:
+        branch: master
+  # man
+  - install: skip
+    env: NAME="man"
+    script: make man
+  # build sdist/wheel
+  - install: skip
+    env: NAME="build sdist/wheel"
+    script: make build
+  # pipfile
+  - install: skip
+    env: NAME="pipfile"
+    script: make pipfile
+  # shellcheck
+  - language: generic
+    env: NAME="shellcheck"
+    install: skip
+    addons:
+      apt:
+        sources:
+        - debian-sid
+        packages:
+        - shellcheck
+    script: make shellcheck
