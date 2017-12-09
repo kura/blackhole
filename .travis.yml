@@ -21,6 +21,10 @@ matrix:
   # cpython/asyncio
   - script: make test
     env: NAME="cpython/asyncio"
+    python:
+      - '3.6'
+      - '3.7-dev'
+      - 'nightly'
     deploy:
       provider: script
       script: scripts/release.sh
@@ -29,6 +33,10 @@ matrix:
   # cpython/uvloop
   - sudo: true
     env: NAME="cpython/uvloop"
+    python:
+      - '3.6'
+      - '3.7-dev'
+      - 'nightly'
     before_install:
       - wget https://github.com/libuv/libuv/archive/v1.13.1.tar.gz -O libuv.tar.gz
       - tar xvzf libuv.tar.gz
@@ -72,7 +80,7 @@ matrix:
     addons:
       apt:
         sources:
-        - debian-sid
+          - debian-sid
         packages:
-        - shellcheck
+          - shellcheck
     script: make shellcheck
