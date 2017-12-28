@@ -40,7 +40,7 @@ from .utils import blackhole_config_help
 from .supervisor import Supervisor
 
 
-__all__ = ('run', )
+__all__ = ('blackhole_config', 'run')
 """Tuple all the things."""
 
 
