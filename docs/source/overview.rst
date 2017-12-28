@@ -106,10 +106,11 @@ If you're thinking about contributing, it's really quite simple. There is no
 need to feel daunted. You can contribute in a variety of ways:
 
 - `Report bugs <https://github.com/kura/blackhole/issues>`_,
-- fix bugs,
-- add new behaviour,
-- improve the documentation,
-- write tests,
+- `fix bugs <https://github.com/kura/blackhole/issues>`_,
+- `add new behaviour <https://kura.github.io/blackhole/todo.html>`_,
+- `improve the documentation
+  <https://github.com/kura/blackhole/tree/master/docs/source>`_,
+- `write tests <https://github.com/kura/blackhole/tree/master/tests>`_,
 - improve performance, and
 - add additional support i.e. new versions of Python or PyPy.
 
