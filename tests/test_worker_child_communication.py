@@ -29,6 +29,7 @@ import socket
 import time
 from unittest import mock
 
+from pyannotate_runtime import collect_types
 import pytest
 
 from blackhole.child import Child
@@ -49,6 +50,8 @@ except ImportError:
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_worker_ping_pong(unused_tcp_port):
+    collect_types.init_types_collection()
+    collect_types.resume()
     aserver = server('127.0.0.1', unused_tcp_port, socket.AF_INET)
     started = time.monotonic()
     worker = Worker('1', [aserver, ])
@@ -58,11 +61,15 @@ async def test_worker_ping_pong(unused_tcp_port):
     assert worker._started is False
     assert worker.ping > started
     assert worker.ping_count == 2
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_restart(unused_tcp_port):
+    collect_types.init_types_collection()
+    collect_types.resume()
     aserver = server('127.0.0.1', unused_tcp_port, socket.AF_INET)
     started = time.monotonic()
     worker = Worker('1', [aserver, ])
@@ -75,4 +82,6 @@ async def test_restart(unused_tcp_port):
     worker.stop()
     assert worker._started is False
     assert worker.ping > started
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
     assert worker.ping_count == 0

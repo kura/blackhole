@@ -30,6 +30,7 @@ import time
 from io import BytesIO
 from unittest import mock
 
+from pyannotate_runtime import collect_types
 import pytest
 
 from blackhole import protocols
@@ -50,15 +51,21 @@ except ImportError:
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_start_stop():
+    collect_types.init_types_collection()
+    collect_types.resume()
     worker = Worker(1, [])
     assert worker._started is True
     await asyncio.sleep(10)
     worker.stop()
     assert worker._started is False
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_child_start_setgid_fails_invalid_group():
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
     Config(cfile).load()
@@ -69,10 +76,14 @@ def test_child_start_setgid_fails_invalid_group():
             pytest.raises(SystemExit) as err:
         Worker([], [])
     assert str(err.value) == '64'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_child_start_setgid_fails_permissions():
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
     Config(cfile).load()
@@ -83,10 +94,14 @@ def test_child_start_setgid_fails_permissions():
             pytest.raises(SystemExit) as err:
         Worker([], [])
     assert str(err.value) == '64'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_child_start_setuid_fails_invalid_user():
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
     Config(cfile).load()
@@ -97,10 +112,14 @@ def test_child_start_setuid_fails_invalid_user():
             pytest.raises(SystemExit) as err:
         Worker([], [])
     assert str(err.value) == '64'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_child_start_setuid_fails_permissions():
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('user=fgqewgreghrehgerhehw',
                            'group=fgqewgreghrehgerhehw'))
     Config(cfile).load()
@@ -111,3 +130,5 @@ def test_child_start_setuid_fails_permissions():
             pytest.raises(SystemExit) as err:
         Worker([], [])
     assert str(err.value) == '64'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')

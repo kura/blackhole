@@ -30,11 +30,20 @@ import os
 import pathlib
 import tempfile
 
+from pyannotate_runtime import collect_types
 import pytest
 
 from blackhole.utils import Singleton
 
 logging.getLogger('blackhole').addHandler(logging.NullHandler())
+
+
+def annotate(func):
+    def wrapper(*args, **kwargs):
+        collect_types.resume()
+        output = func(*args, **kwargs)
+        collect_types.pause()
+    return wrapper
 
 
 @pytest.fixture()

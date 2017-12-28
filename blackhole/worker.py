@@ -29,7 +29,9 @@ import asyncio
 import logging
 import os
 import signal
+import socket
 import time
+from typing import Dict, List, Optional
 
 from . import protocols
 from .child import Child
@@ -62,7 +64,9 @@ class Worker:
     _started = False
     ping_count = 0
 
-    def __init__(self, idx, socks, loop=None):
+    def __init__(self, idx: str,
+                 socks: List[Dict[str, Optional[socket.socket]]],
+                 loop: Optional[asyncio.BaseEventLoop] = None) -> None:
         """
         Initialise the worker.
 
@@ -78,7 +82,7 @@ class Worker:
         self.idx = idx
         self.start()
 
-    def start(self):
+    def start(self) -> None:
         """Create and fork off a child process for the current worker."""
         assert not self._started
         self._started = True
@@ -92,7 +96,7 @@ class Worker:
         else:  # Child
             self.setup_child()
 
-    def setup_child(self):
+    def setup_child(self) -> None:
         """Basic setup for the child process and starting it."""
         setgid()
         setuid()
@@ -103,7 +107,7 @@ class Worker:
                         self.idx)
         process.start()
 
-    def restart_child(self):
+    def restart_child(self) -> None:
         """Restart the child process."""
         self.kill_child()
         self.pid = os.fork()
@@ -113,7 +117,7 @@ class Worker:
         else:
             self.setup_child()
 
-    def kill_child(self):
+    def kill_child(self) -> None:
         """Kill the child process."""
         try:
             os.kill(self.pid, signal.SIGTERM)
@@ -121,7 +125,7 @@ class Worker:
         except ProcessLookupError:
             pass
 
-    async def heartbeat(self, writer):
+    async def heartbeat(self, writer: asyncio.StreamWriter) -> None:
         """
         Handle heartbeat between a worker and child.
 
@@ -157,7 +161,7 @@ class Worker:
                                  'Restarting worker', self.idx)
                     self.restart_child()
 
-    async def chat(self, reader):
+    async def chat(self, reader: asyncio.StreamReader) -> None:
         """
         Communicate between a worker and child.
 
@@ -193,7 +197,7 @@ class Worker:
                 self.stop()
             await asyncio.sleep(5)
 
-    async def connect(self):
+    async def connect(self) -> None:
         """
         Connect the child and worker so they can communicate.
 
@@ -214,7 +218,7 @@ class Worker:
         self.chat_task = asyncio.ensure_future(self.chat(reader))
         self.heartbeat_task = asyncio.ensure_future(self.heartbeat(writer))
 
-    def stop(self):
+    def stop(self) -> None:
         """Terminate the worker and it's respective child process."""
         self.kill_child()
         self._started = False

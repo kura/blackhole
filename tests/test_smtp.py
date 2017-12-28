@@ -33,13 +33,15 @@ import time
 import unittest
 from unittest import mock
 
+from pyannotate_runtime import collect_types
 import pytest
 
 from blackhole.config import Config
 from blackhole.control import _socket
 from blackhole.smtp import Smtp
 
-from ._utils import (Args, cleandir, create_config, create_file, reset)
+from ._utils import (Args, annotate, cleandir, create_config, create_file,
+                     reset)
 
 
 try:
@@ -52,6 +54,8 @@ except ImportError:
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_initiation():
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('', ))
     with mock.patch('os.access', return_value=False), \
             mock.patch('socket.getfqdn', return_value='a.blackhole.io'):
@@ -59,16 +63,24 @@ def test_initiation():
     conf.load()
     smtp = Smtp([])
     assert smtp.fqdn == 'a.blackhole.io'
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_auth_mechanisms():
+    collect_types.init_types_collection()
+    collect_types.resume()
     smtp = Smtp([])
     assert smtp.get_auth_members() == ['CRAM-MD5', 'LOGIN', 'PLAIN']
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_handler_lookup():
+    collect_types.init_types_collection()
+    collect_types.resume()
     smtp = Smtp([])
     assert smtp.lookup_handler('AUTH CRAM-MD5') == smtp.auth_CRAM_MD5
     assert smtp.lookup_handler('AUTH LOGIN') == smtp.auth_LOGIN
@@ -103,10 +115,14 @@ def test_handler_lookup():
     assert smtp.lookup_handler('HELP RSET') == smtp.help_RSET
     assert smtp.lookup_handler('HELP VRFY') == smtp.help_VRFY
     assert smtp.lookup_handler('HELP KURA') == smtp.help_UNKNOWN
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 def test_unknown_handlers():
+    collect_types.init_types_collection()
+    collect_types.resume()
     # Protection against adding/removing without updating tests
     verbs = ['do_DATA', 'do_EHLO', 'do_ETRN', 'do_EXPN', 'do_HELO', 'do_HELP',
              'do_MAIL', 'do_NOOP', 'do_NOT_IMPLEMENTED', 'do_QUIT', 'do_RCPT',
@@ -124,6 +140,8 @@ def test_unknown_handlers():
             assert f in helps
         if f.startswith('auth_'):
             assert f in auths
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
@@ -174,6 +192,8 @@ class Controller:
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_mode_directive(event_loop, unused_tcp_port):
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('listen=:{} mode=bounce'.format(unused_tcp_port), ))
     conf = Config(cfile).load()
     sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
@@ -192,11 +212,15 @@ async def test_mode_directive(event_loop, unused_tcp_port):
         assert code in [450, 451, 452, 458, 521, 550, 551, 552, 553, 571]
         assert round(stop - start) in (0, 1)
     controller.stop()
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_delay_directive(event_loop, unused_tcp_port):
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('listen=:{} delay=5'.format(unused_tcp_port), ))
     conf = Config(cfile).load()
     sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
@@ -215,11 +239,15 @@ async def test_delay_directive(event_loop, unused_tcp_port):
         assert code == 250
         assert round(stop - start) in (4, 5, 6)
     controller.stop()
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('listen=:{} delay=5 mode=bounce'.format(unused_tcp_port), ))
     conf = Config(cfile).load()
     sock = _socket('127.0.0.1', unused_tcp_port, socket.AF_INET)
@@ -238,11 +266,15 @@ async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
         assert code in [450, 451, 452, 458, 521, 550, 551, 552, 553, 571]
         assert round(stop - start) in (4, 5, 6)
     controller.stop()
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_timeout(event_loop):
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('timeout=5', ))
     Config(cfile).load()
     controller = Controller()
@@ -254,11 +286,15 @@ async def test_timeout(event_loop):
         assert code == 421
         assert resp == b'Timeout'
     controller.stop()
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_delay(event_loop):
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('timeout=10', ))
     Config(cfile).load()
     controller = Controller()
@@ -276,11 +312,15 @@ async def test_delay(event_loop):
         assert resp.startswith(b'2.0.0 OK: queued as')
         assert round(stop - start) in (4, 5, 6)
     controller.stop()
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_delayed_bounce(event_loop):
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('timeout=10', ))
     Config(cfile).load()
     controller = Controller()
@@ -297,11 +337,15 @@ async def test_delayed_bounce(event_loop):
         assert code in [450, 451, 452, 458, 521, 550, 551, 552, 553, 571]
         assert round(stop - start) in (4, 5, 6)
     controller.stop()
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 @pytest.mark.asyncio
 async def test_delay_range(event_loop):
+    collect_types.init_types_collection()
+    collect_types.resume()
     cfile = create_config(('timeout=10', ))
     Config(cfile).load()
     controller = Controller()
@@ -319,12 +363,18 @@ async def test_delay_range(event_loop):
         assert resp.startswith(b'2.0.0 OK: queued as')
         assert round(stop - start) in (2, 3, 4)
     controller.stop()
+    collect_types.pause()
+    collect_types.dump_stats('/tmp/annotations')
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 class TestSmtp(unittest.TestCase):
 
+    def tearDown(self):
+        collect_types.dump_stats('/tmp/annotations')
+
     def setUp(self):
+        collect_types.init_types_collection()
         cfile = create_config(('timeout=5', 'max_message_size=102400'))
         Config(cfile).load()
         controller = Controller()
@@ -332,12 +382,14 @@ class TestSmtp(unittest.TestCase):
         self.host, self.port = controller.sock.getsockname()
         self.addCleanup(controller.stop)
 
+    @annotate
     def test_helo(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.helo('example.com')
             assert code == 250
             assert resp == b'OK'
 
+    @annotate
     def test_ehlo(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.ehlo('example.com')
@@ -349,18 +401,21 @@ class TestSmtp(unittest.TestCase):
                      'EXPN', 'DSN')
             assert resp == '\n'.join(eresp).encode('utf-8')
 
+    @annotate
     def test_mail(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.mail('kura@example.com')
             assert code == 250
             assert resp == b'2.1.0 OK'
 
+    @annotate
     def test_mail_size_ok(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.mail('kura@example.com SIZE=1')
             assert code == 250
             assert resp == b'2.1.0 OK'
 
+    @annotate
     def test_mail_size_ok_and_mime(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.mail('kura@example.com SMTPUTF8 SIZE=1024')
@@ -376,6 +431,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 250
             assert resp == b'2.1.0 OK'
 
+    @annotate
     def test_mail_size_too_large(self):
         with SMTP(self.host, self.port) as client:
             msg = 'MAIL FROM: kura@example.com SIZE=10240000000'
@@ -383,6 +439,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 552
             assert resp == b'Message size exceeds fixed maximum message size'
 
+    @annotate
     def test_mail_size_too_large_and_mime(self):
         with SMTP(self.host, self.port) as client:
             msg = 'MAIL FROM: kura@example.com SMTPUTF8 SIZE=10240000000'
@@ -400,18 +457,21 @@ class TestSmtp(unittest.TestCase):
             assert code == 552
             assert resp == b'Message size exceeds fixed maximum message size'
 
+    @annotate
     def test_mail_smtputf8(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('MAIL FROM: kura@example.com SMTPUTF8')
             assert code == 250
             assert resp == b'2.1.0 OK'
 
+    @annotate
     def test_mail_7bit(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('MAIL FROM: kura@example.com BODY=7BIT')
             assert code == 250
             assert resp == b'2.1.0 OK'
 
+    @annotate
     def test_mail_8bitmime(self):
         with SMTP(self.host, self.port) as client:
             msg = 'MAIL FROM: kura@example.com BODY=8BITMIME'
@@ -419,18 +479,21 @@ class TestSmtp(unittest.TestCase):
             assert code == 250
             assert resp == b'2.1.0 OK'
 
+    @annotate
     def test_rcpt(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.rcpt('kura@example.com')
             assert code == 250
             assert resp == b'2.1.5 OK'
 
+    @annotate
     def test_data(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.data(b'testing 1, 2, 3')
             assert code == 250
             assert resp.startswith(b'2.0.0 OK: queued as')
 
+    @annotate
     def test_data_fail(self):
         with SMTP(self.host, self.port) as client:
             msg = ['From: kura@example.com', 'To: kura@example.com',
@@ -440,6 +503,7 @@ class TestSmtp(unittest.TestCase):
             code, resp = client.data(msg.encode('utf-8'))
             assert code in [450, 451, 452, 458, 521, 550, 551, 552, 553, 571]
 
+    @annotate
     def test_data_random(self):
         with SMTP(self.host, self.port) as client:
             msg = ['From: kura@example.com', 'To: kura@example.com',
@@ -450,6 +514,7 @@ class TestSmtp(unittest.TestCase):
             assert code in [250, 450, 451, 452, 458, 521, 550, 551, 552, 553,
                             571]
 
+    @annotate
     def test_data_accept(self):
         with SMTP(self.host, self.port) as client:
             msg = ['From: kura@example.com', 'To: kura@example.com',
@@ -460,48 +525,56 @@ class TestSmtp(unittest.TestCase):
             assert code == 250
             assert resp.startswith(b'2.0.0 OK: queued as')
 
+    @annotate
     def test_rset(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.rset()
             assert code == 250
             assert resp == b'2.0.0 OK'
 
+    @annotate
     def test_noop(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.noop()
             assert code == 250
             assert resp == b'2.0.0 OK'
 
+    @annotate
     def test_vrfy(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.verify('kura@example.com')
             assert code == 252
             assert resp == b'2.0.0 Will attempt delivery'
 
+    @annotate
     def test_vrfy_pass(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.verify('pass=kura@example.com')
             assert code == 250
             assert resp == b'2.0.0 <pass=kura@example.com> OK'
 
+    @annotate
     def test_vrfy_fail(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.verify('fail=kura@example.com')
             assert code == 550
             assert resp == b'5.7.1 <fail=kura@example.com> unknown'
 
+    @annotate
     def test_expn_no_list(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.expn('')
             assert code == 550
             assert resp == b'Not authorised'
 
+    @annotate
     def test_expn_fail(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.expn('fail=kura@example.com')
             assert code == 550
             assert resp == b'Not authorised'
 
+    @annotate
     def test_expn_list1(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.expn('list1')
@@ -511,6 +584,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 250
             assert resp == '\n'.join(eresp).encode('utf-8')
 
+    @annotate
     def test_expn_list2(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.expn('list2')
@@ -521,6 +595,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 250
             assert resp == '\n'.join(eresp).encode('utf-8')
 
+    @annotate
     def test_expn_list3(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.expn('list3')
@@ -533,6 +608,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 250
             assert resp == '\n'.join(eresp).encode('utf-8')
 
+    @annotate
     def test_expn_all(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.expn('all')
@@ -553,18 +629,21 @@ class TestSmtp(unittest.TestCase):
             resps = resp.decode('utf-8').split('\n')
             assert sorted(resps) == sorted(eresp)
 
+    @annotate
     def test_etrn(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('ETRN')
             assert code == 250
             assert resp == b'Queueing started'
 
+    @annotate
     def test_quit(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.quit()
             assert code == 221
             assert resp == b'2.0.0 Goodbye'
 
+    @annotate
     def test_starttls(self):
         with SMTP(self.host, self.port) as client:
             with pytest.raises(SMTPNotSupportedError):
@@ -573,73 +652,87 @@ class TestSmtp(unittest.TestCase):
             assert code == 500
             assert resp == b'Not implemented'
 
+    @annotate
     def test_unknown(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('KURA')
             assert code == 502
             assert resp == b'5.5.2 Command not recognised'
 
+    @annotate
     def test_help(self):
         with SMTP(self.host, self.port) as client:
             eresp = ('Supported commands: AUTH DATA EHLO ETRN EXPN HELO MAIL '
                      'NOOP QUIT RCPT RSET VRFY')
             assert client.help() == eresp.encode('utf-8')
 
+    @annotate
     def test_help_auth(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('AUTH')
             assert resp == b'Syntax: AUTH CRAM-MD5 LOGIN PLAIN'
 
+    @annotate
     def test_help_data(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('DATA')
             assert resp == b'Syntax: DATA'
 
+    @annotate
     def test_help_ehlo(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('EHLO')
             assert resp == b'Syntax: EHLO domain.tld'
 
+    @annotate
     def test_help_etrn(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('ETRN')
             assert resp == b'Syntax: ETRN'
 
+    @annotate
     def test_help_expn(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('EXPN')
             assert resp == b'Syntax: EXPN <list1 | list2 | list3 | all>'
 
+    @annotate
     def test_help_helo(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('HELO')
             assert resp == b'Syntax: HELO domain.tld'
 
+    @annotate
     def test_help_mail(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('MAIL')
             assert resp == b'Syntax: MAIL FROM: <address>'
 
+    @annotate
     def test_help_noop(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('NOOP')
             assert resp == b'Syntax: NOOP'
 
+    @annotate
     def test_help_quit(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('QUIT')
             assert resp == b'Syntax: QUIT'
 
+    @annotate
     def test_help_rcpt(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('RCPT')
             assert resp == b'Syntax: RCPT TO: <address>'
 
+    @annotate
     def test_help_rset(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('RSET')
             assert resp == b'Syntax: RSET'
 
+    @annotate
     def test_help_unknown(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('HELP', 'KURA')
@@ -648,11 +741,13 @@ class TestSmtp(unittest.TestCase):
             assert code == 501
             assert resp == eresp.encode('utf-8')
 
+    @annotate
     def test_help_vrfy(self):
         with SMTP(self.host, self.port) as client:
             resp = client.help('VRFY')
             assert resp == b'Syntax: VRFY <address>'
 
+    @annotate
     def test_auth_login(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('AUTH', 'LOGIN')
@@ -662,6 +757,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 235
             assert resp == b'2.7.0 Authentication successful'
 
+    @annotate
     def test_auth_login_fail(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('AUTH', 'LOGIN')
@@ -671,6 +767,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 535
             assert resp == b'5.7.8 Authentication failed'
 
+    @annotate
     def test_auth_login_pass(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('AUTH', 'LOGIN')
@@ -680,6 +777,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 235
             assert resp == b'2.7.0 Authentication successful'
 
+    @annotate
     def test_auth_cram_md5(self):
         with SMTP(self.host, self.port) as client:
             client.user = 'test'
@@ -688,6 +786,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 235
             assert resp == b'2.7.0 Authentication successful'
 
+    @annotate
     def test_auth_cram_md5_fail(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('AUTH', 'CRAM-MD5')
@@ -696,6 +795,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 535
             assert resp == b'5.7.8 Authentication failed'
 
+    @annotate
     def test_auth_cram_md5_pass(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('AUTH', 'CRAM-MD5')
@@ -704,6 +804,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 235
             assert resp == b'2.7.0 Authentication successful'
 
+    @annotate
     def test_auth_plain(self):
         with SMTP(self.host, self.port) as client:
             client.user = 'test'
@@ -712,6 +813,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 235
             assert resp == b'2.7.0 Authentication successful'
 
+    @annotate
     def test_auth_plain_fail(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('AUTH', 'PLAIN')
@@ -720,6 +822,7 @@ class TestSmtp(unittest.TestCase):
             assert code == 535
             assert resp == b'5.7.8 Authentication failed'
 
+    @annotate
     def test_auth_plain_pass(self):
         with SMTP(self.host, self.port) as client:
             with SMTP(self.host, self.port) as client:
@@ -729,12 +832,14 @@ class TestSmtp(unittest.TestCase):
                 assert code == 235
                 assert resp == b'2.7.0 Authentication successful'
 
+    @annotate
     def test_auth_plain_fail_oneline(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('AUTH', 'PLAIN fail=test')
             assert code == 535
             assert resp == b'5.7.8 Authentication failed'
 
+    @annotate
     def test_auth_plain_pass_oneline(self):
         with SMTP(self.host, self.port) as client:
             with SMTP(self.host, self.port) as client:
@@ -742,12 +847,14 @@ class TestSmtp(unittest.TestCase):
                 assert code == 235
                 assert resp == b'2.7.0 Authentication successful'
 
+    @annotate
     def test_auth_unknown(self):
         with SMTP(self.host, self.port) as client:
             code, resp = client.docmd('AUTH', 'KURA')
             assert code == 501
             assert resp == b'5.5.4 Syntax: AUTH mechanism'
 
+    @annotate
     def test_too_many_unknown_commands(self):
         with SMTP(self.host, self.port) as client, \
                 pytest.raises(SMTPServerDisconnected):

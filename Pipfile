@@ -2,9 +2,6 @@
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 
-[requires]
-python_version = "3.6"
-
 [packages]
 setproctitle = { extras = ['setproctitle'] }
 uvloop = { extras = ['uvloop'] }
@@ -14,6 +11,7 @@ codecov = "*"
 guzzle_sphinx_theme = "*"
 isort = "*"
 pipenv = "*"
+pyannotate = "*"
 pycodestyle = "*"
 pydocstyle = "*"
 pyflakes = "*"

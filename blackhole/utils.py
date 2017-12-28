@@ -30,6 +30,7 @@ import pathlib
 import random
 import socket
 import time
+from typing import Optional, Tuple
 
 
 __all__ = ('blackhole_config_help', 'mailname', 'message_id', 'get_version')
@@ -40,7 +41,7 @@ class Singleton(type):
 
     _instances = {}
 
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args: Tuple, **kwargs: Tuple) -> 'Singleton':
         """Override the __call__ method."""
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
@@ -48,7 +49,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-def mailname(mailname_file='/etc/mailname'):
+def mailname(mailname_file: str = '/etc/mailname') -> str:
     """
     Fully qualified domain name for HELO and EHLO.
 
@@ -75,7 +76,7 @@ def mailname(mailname_file='/etc/mailname'):
     return socket.getfqdn()
 
 
-def message_id(domain):
+def message_id(domain: str) -> str:
     """
     Return a string suitable for RFC 2822 compliant Message-ID.
 
@@ -89,7 +90,7 @@ def message_id(domain):
     return '<{0}.{1}.{2}@{3}>'.format(timeval, pid, randint, domain)
 
 
-def get_version():
+def get_version() -> Optional[str]:
     """
     Extract the __version__ from a file without importing it.
 
