@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2017 Kura
+# Copyright (c) 2018 Kura
 # Copyright (C) 2009-2015 Barry A. Warsaw
 #
 # This file is part of setup_helpers.py
