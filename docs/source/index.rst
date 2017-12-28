@@ -21,9 +21,9 @@
     # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     # SOFTWARE.
 
-===============================================
-Blackhole |pypi| |travis| |coverage| |requires|
-===============================================
+=================================================
+Blackhole |travis| |coverage| |codacy| |requires|
+=================================================
 
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
@@ -55,10 +55,6 @@ User Guide
     api
 
 
-.. |pypi| image:: https://img.shields.io/pypi/v/blackhole.svg?style=for-the-badge&label=version
-    :target: https://pypi.python.org/pypi/blackhole
-    :alt: Latest version released on PyPi
-
 .. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=build
     :target: https://travis-ci.org/kura/blackhole
     :alt: Build status of the master branch
@@ -66,6 +62,10 @@ User Guide
 .. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
+
+.. |codacy| image:: https://img.shields.io/codacy/grade/fa797b3c1c18495aa2331d327c04bb9c.svg?style=for-the-badge
+    :target: https://www.codacy.com/app/kura/blackhole/dashboard
+    :alt: Codacy grade
 
 .. |requires| image:: https://img.shields.io/requires/github/kura/blackhole.svg?style=for-the-badge
     :target: https://requires.io/github/kura/blackhole/requirements/?branch=master

@@ -2,17 +2,17 @@
 Blackhole
 =========
 
-.. image:: https://img.shields.io/pypi/v/blackhole.svg?style=for-the-badge&label=version
-    :target: https://pypi.python.org/pypi/blackhole
-    :alt: Latest version released on PyPi
-
-.. image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=build
+.. image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=tests
     :target: http://travis-ci.org/kura/blackhole
     :alt: Build status of the master branch
 
 .. image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
+
+.. image:: https://img.shields.io/codacy/grade/fa797b3c1c18495aa2331d327c04bb9c.svg?style=for-the-badge
+    :target: https://www.codacy.com/app/kura/blackhole/dashboard
+    :alt: Codacy grade
 
 .. image:: https://img.shields.io/requires/github/kura/blackhole.svg?style=for-the-badge
     :target: https://requires.io/github/kura/blackhole/requirements/?branch=master
