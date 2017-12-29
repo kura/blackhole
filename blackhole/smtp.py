@@ -33,6 +33,7 @@ import random
 from typing import Any, Callable, List, Optional
 
 from .config import Config
+from .protocols import StreamReaderProtocol
 from .utils import message_id
 
 
@@ -43,7 +44,7 @@ __all__ = ('Smtp', )
 logger = logging.getLogger('blackhole.smtp')
 
 
-class Smtp(asyncio.StreamReaderProtocol):
+class Smtp(StreamReaderProtocol):
     """The class responsible for handling SMTP/SMTPS commands."""
 
     _bounce_responses = {
@@ -91,7 +92,6 @@ class Smtp(asyncio.StreamReaderProtocol):
         """
         Initialise the SMTP protocol.
 
-        :param Child parent: The parent worker.
         :param list clients: A list of connected clients.
         :param loop: The event loop to use.
         :type loop: :py:obj:`None` or
@@ -102,32 +102,8 @@ class Smtp(asyncio.StreamReaderProtocol):
            Loads the configuration, defines the server's FQDN and generates
            an RFC 2822 Message-ID.
         """
-        self.loop = loop if loop is not None else asyncio.get_event_loop()
-        super().__init__(asyncio.StreamReader(loop=self.loop),
-                         client_connected_cb=self._client_connected_cb,
-                         loop=self.loop)
-        self.clients = clients
-        self.config = Config()
-        # This is not a nice way to do this but, socket.getfqdn silently fails
-        # and craches inbound connections when called after os.fork
-        self.fqdn = self.config.mailname
+        super().__init__(clients, loop)
         self.message_id = message_id(self.fqdn)
-
-    def flags_from_transport(self) -> None:
-        """Adapt internal flags for the transport in use."""
-        # This has to be done here since passing it as part of init causes
-        # flags to become garbled and mixed up. Artifact of loop.create_server
-        sock = self.transport.get_extra_info('socket')
-        # Ideally this would use transport.get_extra_info('sockname') but that
-        # crashes the child process for some weird reason. Getting the socket
-        # and interacting directly does not cause a crash, hence...
-        sock_name = sock.getsockname()
-        flags = self.config.flags_from_listener(sock_name[0], sock_name[1])
-        if len(flags.keys()) > 0:
-            self._flags = flags
-            self._disable_dynamic_switching = True
-            logger.debug('Flags enabled, disabling dynamic switching')
-            logger.debug('Flags for this connection: %s', self._flags)
 
     def connection_made(self, transport: asyncio.transports.Transport) -> None:
         """
@@ -142,33 +118,15 @@ class Smtp(asyncio.StreamReaderProtocol):
         self.connection_closed = False
         self._handler_coroutine = self.loop.create_task(self._handle_client())
 
-    def _client_connected_cb(self, reader: asyncio.streams.StreamReader,
-                             writer: asyncio.streams.StreamWriter) -> None:
+    async def push(self, code: int, msg: str) -> None:
         """
-        Bind a stream reader and writer to the SMTP Protocol.
+        Write a response code and message to the client.
 
-        :param asyncio.streams.StreamReader reader: An object for reading
-                                                    incoming data.
-        :param asyncio.streams.StreamWriter writer: An object for writing
-                                                    outgoing data.
+        :param int code: SMTP code, i.e. 250.
+        :param str msg: The message for the SMTP code
         """
-        self._reader = reader
-        self._writer = writer
-        self.clients.append(writer)
-
-    def connection_lost(self, exc: Any) -> None:
-        """
-        Client connection is closed or lost.
-
-        :param exc exc: Exception.
-        """
-        logger.debug('Peer disconnected')
-        super().connection_lost(exc)
-        self.connection_closed, self._connection_closed = True, True
-        try:
-            self.clients.remove(self._writer)
-        except ValueError:
-            pass
+        n_msg = "{0} {1}".format(code, msg)
+        await super().push(n_msg)
 
     async def _handle_client(self) -> None:
         """
@@ -347,28 +305,6 @@ class Smtp(asyncio.StreamReaderProtocol):
         """Send an authentication failure response."""
         await self.push(535, '5.7.8 Authentication failed')
 
-    async def wait(self) -> Optional[str]:
-        """
-        Wait for data from the client.
-
-        :returns: A line of received data.
-        :rtype: :py:obj:`str`
-
-        .. note::
-
-           Also handles client timeouts if they wait too long before sending
-           data. -- https://kura.github.io/blackhole/configuration.html#timeout
-        """
-        while not self.connection_closed:
-            try:
-                line = await asyncio.wait_for(self._reader.readline(),
-                                              self.config.timeout,
-                                              loop=self.loop)
-            except asyncio.TimeoutError:
-                await self.timeout()
-                return None
-            return line
-
     async def timeout(self) -> None:
         """
         Timeout a client connection.
@@ -381,18 +317,6 @@ class Smtp(asyncio.StreamReaderProtocol):
                      self.config.timeout)
         await self.push(421, 'Timeout')
         await self.close()
-
-    async def close(self) -> None:
-        """Close the connection from the client."""
-        logger.debug('Closing connection')
-        if self._writer:
-            try:
-                self.clients.remove(self._writer)
-            except ValueError:
-                pass
-            self._writer.close()
-            await self._writer.drain()
-        self._connection_closed = True
 
     def lookup_handler(self, line: str) -> Callable:
         """
@@ -440,18 +364,6 @@ class Smtp(asyncio.StreamReaderProtocol):
         :rtype: `blackhole.smtp.Smtp.do_VERB`
         """
         return getattr(self, 'do_{0}'.format(verb.upper()), self.do_UNKNOWN)
-
-    async def push(self, code: int, msg: str) -> None:
-        """
-        Write a response code and message to the client.
-
-        :param int code: SMTP code, i.e. 250.
-        :param str msg: The message for the SMTP code
-        """
-        response = "{0} {1}\r\n".format(code, msg).encode('utf-8')
-        logger.debug('SEND %s', response)
-        self._writer.write(response)
-        await self._writer.drain()
 
     async def greet(self) -> None:
         """Send a greeting to the client."""

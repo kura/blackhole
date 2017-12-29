@@ -25,8 +25,18 @@
 """Communication protocols used by the worker and child processes."""
 
 
-__all__ = ('PING', 'PONG')
+import asyncio
+import logging
+from typing import Any, List, Optional
+
+from .config import Config
+
+
+__all__ = ('StreamReaderProtocol', 'PING', 'PONG')
 """Tuple all the things."""
+
+
+logger = logging.getLogger('blackhole.protocols')
 
 
 PING = b'x01'
@@ -34,3 +44,120 @@ PING = b'x01'
 
 PONG = b'x02'
 """Protocol message used by the worker and child processes to communicate."""
+
+
+class StreamReaderProtocol(asyncio.StreamReaderProtocol):
+    """The class responsible for handling connections commands."""
+
+    def __init__(self, clients: List,
+                 loop: Optional[asyncio.BaseEventLoop] = None) -> None:
+        """
+        Initialise the protocol.
+
+        :param list clients: A list of connected clients.
+        :param loop: The event loop to use.
+        :type loop: :py:obj:`None` or
+                    :py:class:`syncio.unix_events._UnixSelectorEventLoop`
+        """
+        logger.debug('init')
+        self.loop = loop if loop is not None else asyncio.get_event_loop()
+        logger.debug('loop')
+        super().__init__(asyncio.StreamReader(loop=self.loop),
+                         client_connected_cb=self._client_connected_cb,
+                         loop=self.loop)
+        logger.debug('super')
+        self.clients = clients
+        self.config = Config()
+        logger.debug(self.config)
+        # This is not a nice way to do this but, socket.getfqdn silently fails
+        # and craches inbound connections when called after os.fork
+        self.fqdn = self.config.mailname
+
+    def flags_from_transport(self) -> None:
+        """Adapt internal flags for the transport in use."""
+        # This has to be done here since passing it as part of init causes
+        # flags to become garbled and mixed up. Artifact of loop.create_server
+        sock = self.transport.get_extra_info('socket')
+        # Ideally this would use transport.get_extra_info('sockname') but that
+        # crashes the child process for some weird reason. Getting the socket
+        # and interacting directly does not cause a crash, hence...
+        sock_name = sock.getsockname()
+        flags = self.config.flags_from_listener(sock_name[0], sock_name[1])
+        if len(flags.keys()) > 0:
+            self._flags = flags
+            self._disable_dynamic_switching = True
+            logger.debug('Flags enabled, disabling dynamic switching')
+            logger.debug('Flags for this connection: %s', self._flags)
+
+    def _client_connected_cb(self, reader: asyncio.streams.StreamReader,
+                             writer: asyncio.streams.StreamWriter) -> None:
+        """
+        Bind a stream reader and writer to the SMTP Protocol.
+
+        :param asyncio.streams.StreamReader reader: An object for reading
+                                                    incoming data.
+        :param asyncio.streams.StreamWriter writer: An object for writing
+                                                    outgoing data.
+        """
+        self._reader = reader
+        self._writer = writer
+        self.clients.append(writer)
+
+    def connection_lost(self, exc: Any) -> None:
+        """
+        Client connection is closed or lost.
+
+        :param exc exc: Exception.
+        """
+        logger.debug('Peer disconnected')
+        super().connection_lost(exc)
+        self.connection_closed, self._connection_closed = True, True
+        try:
+            self.clients.remove(self._writer)
+        except ValueError:
+            pass
+
+    async def wait(self) -> Optional[str]:
+        """
+        Wait for data from the client.
+
+        :returns: A line of received data.
+        :rtype: :py:obj:`str`
+
+        .. note::
+
+           Also handles client timeouts if they wait too long before sending
+           data. -- https://kura.github.io/blackhole/configuration.html#timeout
+        """
+        while not self.connection_closed:
+            try:
+                line = await asyncio.wait_for(self._reader.readline(),
+                                              self.config.timeout,
+                                              loop=self.loop)
+            except asyncio.TimeoutError:
+                await self.timeout()
+                return None
+            return line
+
+    async def close(self) -> None:
+        """Close the connection from the client."""
+        logger.debug('Closing connection')
+        if self._writer:
+            try:
+                self.clients.remove(self._writer)
+            except ValueError:
+                pass
+            self._writer.close()
+            await self._writer.drain()
+        self._connection_closed = True
+
+    async def push(self, msg: str) -> None:
+        """
+        Write a response message to the client.
+
+        :param str msg: The message for the SMTP code
+        """
+        response = "{0}\r\n".format(msg).encode('utf-8')
+        logger.debug('SEND %s', response)
+        self._writer.write(response)
+        await self._writer.drain()
