@@ -41,19 +41,24 @@ logger = logging.getLogger('blackhole.imap')
 
 
 class Imap(StreamReaderProtocol):
-    CAPABILITY = ['CAPABILITY', 'IMAP4rev1', 'LITERAL+', 'SASL-IR',
-                  'LOGIN-REFERRALS', 'ID', 'ENABLE', 'IDLE', 'SORT',
-                  'SORT=DISPLAY', 'THREAD=REFERENCES', 'THREAD=REFS',
-                  'THREAD=ORDEREDSUBJECT', 'MULTIAPPEND', 'URL-PARTIAL',
-                  'CATENATE', 'UNSELECT', 'CHILDREN', 'NAMESPACE',
-                  'UIDPLUS', 'LIST-EXTENDED', 'I18NLEVEL=1', 'CONDSTORE',
-                  'QRESYNC', 'ESEARCH', 'ESORT', 'SEARCHRES', 'WITHIN',
-                  'CONTEXT=SEARCH', 'LIST-STATUS', 'BINARY', 'MOVE',
-                  'SPECIAL-USE', ]
+    CAPABILITY = ('CAPABILITY', 'IMAP4rev1', 'LITERAL+', 'SASL-IR',
+                  'LOGIN-REFERRALS', 'ID', 'ENABLE', 'IDLE', 'AUTH=PLAIN',
+                  'AUTH=LOGIN', )
+    LOGIN_CAPABILITY = ('CAPABILITY', 'IMAP4rev1', 'LITERAL+', 'SASL-IR',
+                        'LOGIN-REFERRALS', 'ID', 'ENABLE', 'IDLE', 'SORT',
+                        'SORT=DISPLAY', 'THREAD=REFERENCES', 'THREAD=REFS',
+                        'THREAD=ORDEREDSUBJECT', 'MULTIAPPEND', 'URL-PARTIAL',
+                        'CATENATE', 'UNSELECT', 'CHILDREN', 'NAMESPACE',
+                        'UIDPLUS', 'LIST-EXTENDED', 'I18NLEVEL=1', 'CONDSTORE',
+                        'QRESYNC', 'ESEARCH', 'ESORT', 'SEARCHRES', 'WITHIN',
+                        'CONTEXT=SEARCH', 'LIST-STATUS', 'BINARY', 'MOVE',
+                        'SPECIAL-USE', )
 
     _var = None
     _verb = None
     _ext = None
+    _logged_in = False
+    _failed_commands = 0
 
     def __init__(self, clients: List,
                  loop: Optional[asyncio.BaseEventLoop] = None) -> None:
@@ -99,60 +104,87 @@ class Imap(StreamReaderProtocol):
 
     def lookup_handler(self) -> Callable:
         logger.debug('looking up do_%s', self._verb)
-        return getattr(self, 'do_{}'.format(self._verb.upper()),
+        if self._var is None or self._verb is None:
+            return self.do_UNKNOWN
+        return getattr(self, 'do_{0}'.format(self._verb.upper()),
                        self.do_UNKNOWN)
 
     async def greet(self) -> None:
-        capability = ['CAPABILITY', 'IMAP4rev1', 'LITERAL+', 'SASL-IR',
-                      'LOGIN-REFERRALS', 'ID', 'ENABLE', 'IDLE', 'AUTH=PLAIN',
-                      'AUTH=LOGIN', ]
-        capability = ' '.join(capability)
-        await self.push('* OK [{}] Blackhole ready'.format(capability))
+        capability = ' '.join(self.CAPABILITY)
+        await self.push('* OK [{0}] Blackhole ready'.format(capability))
+
+    async def do_CAPABILITY(self) -> None:
+        if self._logged_in is False:
+            capability = ' '.join(self.CAPABILITY)
+            msg = ('{0} OK Pre-login capabilities listed, post-login '
+                   'capabilities have more').format(self._var)
+        else:
+            capability = ' '.join(self.LOGIN_CAPABILITY)
+            msg = '{0} OK Capability completed'.format(self._var)
+        await self.push('* {0}'.format(capability))
+        await self.push(msg)
+
+    async def do_CLOSE(self) -> None:
+        await self.push('{0} OK Close completed'.format(self._var))
+
+    async def do_ENABLE(self) -> None:
+        await self.push('{0} OK Enabled'.format(self._var))
+
+    async def do_ID(self) -> None:
+        await self.push('{0} ("name" "Blackhole")'.format(self._var))
+
+    async def do_IDLE(self) -> None:
+        await self.push('+ idling')
+
+    async def do_LIST(self) -> None:
+        await self.push(r'* LIST (\HasNoChildren) "." "INBOX"')
+        await self.push('{0} OK List completed'.format(self._var))
+
+    async def do_LOGIN(self) -> None:
+        msg = ' '.join(self.LOGIN_CAPABILITY)
+        self._logged_in = True
+        await self.push('{0} OK {1} Logged in'.format(self._var, msg))
+
+    async def do_LOGOUT(self) -> None:
+        self._logged_in = False
+        await self.push('* BYE Logging out')
+        await self.push('{0} OK Logout complete'.format(self._var))
+        self._handler_coroutine.cancel()
+        await self.close()
 
     async def do_QUIT(self) -> None:
         await self.push('DONE')
         self._handler_coroutine.cancel()
         await self.close()
 
+    async def do_SEARCH(self) -> None:
+        await self.push('* SEARCH')
+        await self.push('{0} OK Search completed'.format(self._var))
+
     async def do_SELECT(self) -> None:
         # mailbox = self._line.split(' ')[2]
         await self.push(r'* FLAGS (\Draft \Answered \Flagged \Deleted \Seen '
                         '\Recent)')
-        await self.push(r'* OK [PERMANENTFLAGS (\Draft \Answered \Flagged  '
-                        '\Deleted \Seen)] Limited')
+        await self.push(r'* OK [PERMANENTFLAGS (\Draft \Answered \Flagged '
+                        '\Deleted \Seen \*)] Limited')
         await self.push('* 10 EXISTS')
         await self.push('* 1 RECENT')
         await self.push('* OK [UIDVALIDITY 1021381622] OK')
         await self.push('* OK [UIDNEXT 11] Predicted next UID')
-        await self.push('{} OK [READ-WRITE OK]'.format(self._var))
+        await self.push('{0} OK [READ-WRITE OK]'.format(self._var))
 
-    async def do_SEARCH(self) -> None:
-        await self.push('* SEARCH')
-        await self.push('{} OK Search completed'.format(self._var))
-
-    async def do_LIST(self) -> None:
-        await self.push(r'* LIST (\HasNoChildren) "." "INBOX"')
-        await self.push('{} OK List completed'.format(self._var))
-
-    async def do_CAPABILITY(self) -> None:
-        capability = ' '.join(self.CAPABILITY)
-        await self.push('* {}'.format(capability))
-        await self.push('{} OK Pre-login capabilities listed, post-login'
-                        'capabilities have more'.format(self._var))
-
-    async def do_CLOSE(self) -> None:
-        await self.push('{} OK Close completed'.format(self._var))
-
-    async def do_LOGIN(self) -> None:
-        msg = ' '.join(self.CAPABILITY)
-        await self.push('{} OK [{}] Logged in'.format(self._var, msg))
-
-    async def do_LOGOUT(self) -> None:
-        await self.push('* BYE Logging out')
-        await self.push('{} OK Logout complete'.format(self._var))
-        self._handler_coroutine.cancel()
+    async def timeout(self) -> None:
+        await self.push('* BYE Timeout')
         await self.close()
 
     async def do_UNKNOWN(self) -> None:
-        await self.push('{} BAD Error in IMAP command received by '
-                        'server'.format(self._verb))
+        self._failed_commands += 1
+        msg = 'BAD Error in IMAP command'
+        if self._failed_commands == 3:
+            await self.push('* BYE Too many invalid IMAP commands.')
+            await self.close()
+            return
+        if self._verb:
+            await self.push('{0} {1}'.format(msg, self._verb))
+        else:
+            await self.push(msg)
