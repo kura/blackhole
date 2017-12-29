@@ -41,6 +41,16 @@ logger = logging.getLogger('blackhole.imap')
 
 
 class Imap(StreamReaderProtocol):
+    CAPABILITY = ['CAPABILITY', 'IMAP4rev1', 'LITERAL+', 'SASL-IR',
+                  'LOGIN-REFERRALS', 'ID', 'ENABLE', 'IDLE', 'SORT',
+                  'SORT=DISPLAY', 'THREAD=REFERENCES', 'THREAD=REFS',
+                  'THREAD=ORDEREDSUBJECT', 'MULTIAPPEND', 'URL-PARTIAL',
+                  'CATENATE', 'UNSELECT', 'CHILDREN', 'NAMESPACE',
+                  'UIDPLUS', 'LIST-EXTENDED', 'I18NLEVEL=1', 'CONDSTORE',
+                  'QRESYNC', 'ESEARCH', 'ESORT', 'SEARCHRES', 'WITHIN',
+                  'CONTEXT=SEARCH', 'LIST-STATUS', 'BINARY', 'MOVE',
+                  'SPECIAL-USE', ]
+
     _var = None
     _verb = None
     _ext = None
@@ -49,18 +59,23 @@ class Imap(StreamReaderProtocol):
                  loop: Optional[asyncio.BaseEventLoop] = None) -> None:
         super().__init__(clients, loop)
 
-    def connection_made(self, transport):
+    def connection_made(self, transport: asyncio.transports.Transport) -> None:
+        """
+        Tie a connection to blackhole to the IMAP protocol.
+
+        :param asyncio.transports.Transport transport: The transport class.
+        """
         super().connection_made(transport)
-        self.peer = transport.get_extra_info('peername')
-        logger.debug('Peer %s connected', repr(self.peer))
+        logger.debug('Peer connected')
         self.transport = transport
+        self.flags_from_transport()
         self.connection_closed = False
         self._handler_coroutine = self.loop.create_task(self._handle_client())
 
-    def reset(self):
+    def reset(self) -> None:
         self._verb, self._var = None, None
 
-    async def _handle_client(self):
+    async def _handle_client(self) -> None:
         await self.greet()
         while not self.connection_closed:
             self.reset()
@@ -75,31 +90,31 @@ class Imap(StreamReaderProtocol):
             else:
                 await self.do_UNKNOWN()
 
-    def deconstruct(self, line):
+    def deconstruct(self, line: str) -> None:
         parts = line.split(' ', 2)
         if len(parts) == 2:
             self._var, self._verb = parts
         elif len(parts) > 2:
             self._var, self._verb = parts[0], parts[1], self._ext = parts[2:]
 
-    def lookup_handler(self):
+    def lookup_handler(self) -> Callable:
         logger.debug('looking up do_%s', self._verb)
         return getattr(self, 'do_{}'.format(self._verb.upper()),
                        self.do_UNKNOWN)
 
-    async def greet(self):
+    async def greet(self) -> None:
         capability = ['CAPABILITY', 'IMAP4rev1', 'LITERAL+', 'SASL-IR',
                       'LOGIN-REFERRALS', 'ID', 'ENABLE', 'IDLE', 'AUTH=PLAIN',
                       'AUTH=LOGIN', ]
         capability = ' '.join(capability)
         await self.push('* OK [{}] Blackhole ready'.format(capability))
 
-    async def do_QUIT(self):
+    async def do_QUIT(self) -> None:
         await self.push('DONE')
         self._handler_coroutine.cancel()
         await self.close()
 
-    async def do_SELECT(self):
+    async def do_SELECT(self) -> None:
         # mailbox = self._line.split(' ')[2]
         await self.push(r'* FLAGS (\Draft \Answered \Flagged \Deleted \Seen '
                         '\Recent)')
@@ -111,42 +126,33 @@ class Imap(StreamReaderProtocol):
         await self.push('* OK [UIDNEXT 11] Predicted next UID')
         await self.push('{} OK [READ-WRITE OK]'.format(self._var))
 
-    async def do_SEARCH(self):
+    async def do_SEARCH(self) -> None:
         await self.push('* SEARCH')
         await self.push('{} OK Search completed'.format(self._var))
 
-    async def do_LIST(self):
+    async def do_LIST(self) -> None:
         await self.push(r'* LIST (\HasNoChildren) "." "INBOX"')
         await self.push('{} OK List completed'.format(self._var))
 
-    async def do_CAPABILITY(self):
+    async def do_CAPABILITY(self) -> None:
         capability = ' '.join(self.CAPABILITY)
         await self.push('* {}'.format(capability))
         await self.push('{} OK Pre-login capabilities listed, post-login'
                         'capabilities have more'.format(self._var))
 
-    async def do_CLOSE(self):
+    async def do_CLOSE(self) -> None:
         await self.push('{} OK Close completed'.format(self._var))
 
-    async def do_LOGIN(self):
-        capability = ['CAPABILITY', 'IMAP4rev1', 'LITERAL+', 'SASL-IR',
-                      'LOGIN-REFERRALS', 'ID', 'ENABLE', 'IDLE', 'SORT',
-                      'SORT=DISPLAY', 'THREAD=REFERENCES', 'THREAD=REFS',
-                      'THREAD=ORDEREDSUBJECT', 'MULTIAPPEND', 'URL-PARTIAL',
-                      'CATENATE', 'UNSELECT', 'CHILDREN', 'NAMESPACE',
-                      'UIDPLUS', 'LIST-EXTENDED', 'I18NLEVEL=1', 'CONDSTORE',
-                      'QRESYNC', 'ESEARCH', 'ESORT', 'SEARCHRES', 'WITHIN',
-                      'CONTEXT=SEARCH', 'LIST-STATUS', 'BINARY', 'MOVE',
-                      'SPECIAL-USE', ]
-        msg = ' '.join(capability)
+    async def do_LOGIN(self) -> None:
+        msg = ' '.join(self.CAPABILITY)
         await self.push('{} OK [{}] Logged in'.format(self._var, msg))
 
-    async def do_LOGOUT(self):
+    async def do_LOGOUT(self) -> None:
         await self.push('* BYE Logging out')
         await self.push('{} OK Logout complete'.format(self._var))
         self._handler_coroutine.cancel()
         await self.close()
 
-    async def do_UNKNOWN(self):
+    async def do_UNKNOWN(self) -> None:
         await self.push('{} BAD Error in IMAP command received by '
                         'server'.format(self._verb))
