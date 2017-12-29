@@ -107,6 +107,7 @@ test.conf
 .codecov
 sendmail.py
 imap.py
+!blackhole/imap.py
 dns.py
 docs/build
 !man/build
