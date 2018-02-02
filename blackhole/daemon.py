@@ -26,6 +26,7 @@
 
 
 import atexit
+import logging
 import os
 from typing import Optional, Tuple
 
@@ -35,6 +36,9 @@ from .utils import Singleton
 
 __all__ = ('Daemon', )
 """Tuple all the things."""
+
+
+logger = logging.getLogger('blackhole.daemon')
 
 
 class Daemon(metaclass=Singleton):
@@ -53,7 +57,6 @@ class Daemon(metaclass=Singleton):
         """
         self.pidfile = pidfile
         self.pid = os.getpid()
-        atexit.register(self._exit)
 
     def daemonize(self) -> None:
         """Daemonize the process."""
@@ -62,6 +65,7 @@ class Daemon(metaclass=Singleton):
         os.setsid()
         os.umask(0)
         self.pid = os.getpid()
+        atexit.register(self._exit)
 
     def _exit(self, *args: Tuple, **kwargs: Tuple) -> None:
         """Call on exit using :py:func:`atexit.register` or via a signal."""
@@ -124,5 +128,7 @@ class Daemon(metaclass=Singleton):
     @pid.deleter
     def pid(self) -> None:
         """Delete the pid from the filesystem."""
-        if os.path.exists(self.pidfile):
+        try:
             os.remove(self.pidfile)
+        except (IOError, FileNotFoundError, PermissionError):
+            logger.debug('Failed to remove pidfile')

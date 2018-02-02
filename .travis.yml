@@ -27,6 +27,16 @@ matrix:
       on:
         tags: true
 
+  # pypy/asyncio (3.5)
+  - python: 'pypy3'
+    script: make test
+    env: NAME="cpython/asyncio (3.7-dev)"
+    deploy:
+      provider: script
+      script: scripts/release.sh
+      on:
+        tags: true
+
   # cpython/asyncio (3.7-dev)
   - python: '3.7-dev'
     script: make test
