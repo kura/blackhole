@@ -30,7 +30,7 @@ matrix:
   # pypy/asyncio (3.5)
   - python: 'pypy3'
     script: make test
-    env: NAME="cpython/asyncio (3.7-dev)"
+    env: NAME="pypy/asyncio (3.5)"
     deploy:
       provider: script
       script: scripts/release.sh
