@@ -27,16 +27,6 @@ matrix:
       on:
         tags: true
 
-  # pypy/asyncio (3.5)
-  - python: 'pypy3'
-    script: make test
-    env: NAME="pypy/asyncio (3.5)"
-    deploy:
-      provider: script
-      script: scripts/release.sh
-      on:
-        tags: true
-
   # cpython/uvloop (3.6)
   - python: '3.6'
     sudo: true
