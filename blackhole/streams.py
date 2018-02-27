@@ -26,7 +26,7 @@
 
 import asyncio
 import logging
-from typing import Any, Optional
+from typing import Any, Optional, Type
 
 
 __all__ = ('StreamProtocol', )
@@ -39,11 +39,11 @@ logger = logging.getLogger('blackhole.streams')
 class StreamProtocol(asyncio.streams.FlowControlMixin, asyncio.Protocol):
     """Helper class to adapt between Protocol and StreamReader."""
 
-    def __init__(self, *, loop: Optional[asyncio.BaseEventLoop] = None,
-                 disconnect_error: RuntimeError = RuntimeError,
+    def __init__(self, *, loop: Optional['asyncio.BaseEventLoop'] = None,
+                 disconnect_error: Type[RuntimeError] = RuntimeError,
                  **kwargs) -> None:
         """Stream protocol."""
-        super().__init__(loop=loop)
+        asyncio.streams.FlowControlMixin.__init__(loop=loop)
         self.transport = None
         self.writer = None
         self.reader = asyncio.StreamReader(loop=loop)
@@ -52,7 +52,7 @@ class StreamProtocol(asyncio.streams.FlowControlMixin, asyncio.Protocol):
         """Client is connected."""
         return self.transport is not None
 
-    def connection_made(self, transport: asyncio.transports.Transport) -> None:
+    def connection_made(self, transport: Optional['asyncio.transports.Transport']) -> None:
         """Client connection made callback."""
         self.transport = transport
         self.reader.set_transport(transport)

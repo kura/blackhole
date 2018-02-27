@@ -32,10 +32,9 @@ import inspect
 import logging
 import multiprocessing
 import os
-import pathlib
 import pwd
 import socket
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from .exceptions import ConfigException
 from .utils import (get_version, mailname, Singleton)
@@ -125,7 +124,7 @@ def config_test(args: Optional[argparse.Namespace]) -> None:
         conf = Config(args.config_file).load().test()
         conf.args = args
     except ConfigException as err:
-        logger.fatal(err)
+        logger.critical('Config error')
         raise SystemExit(os.EX_USAGE)
     logger.info('blackhole: %s syntax is OK.', args.config_file)
     logger.info('blackhole: %s test was successful.', args.config_file)
@@ -163,7 +162,7 @@ class Config(metaclass=Singleton):
     config_file = None  # type: Optional[str]
     """A file containing configuration values."""
 
-    _workers = 1  # type: str
+    _workers = 1  # type: int
     _listen = []  # type: List
     _tls_listen = []  # type: List
     _user = None  # type: Any
@@ -172,7 +171,7 @@ class Config(metaclass=Singleton):
     _tls_key = None  # type: Any
     _tls_cert = None  # type: Any
     _tls_dhparams = None  # type: Any
-    _pidfile = pathlib.PurePath('/tmp/blackhole.pid')
+    _pidfile = '/tmp/blackhole.pid'
     _delay = None  # type: None
     _mode = 'accept'  # type: str
     _max_message_size = 512000  # type: int
@@ -185,7 +184,7 @@ class Config(metaclass=Singleton):
         :param str config_file: The configuration file path. Default: ``None``
         """
         if config_file:
-            self.config_file = pathlib.PurePath(config_file)
+            self.config_file = config_file
         self.user = getpass.getuser()
         self.group = grp.getgrgid(os.getgid()).gr_name
         # this has to be cached here due to the socket.getfqdn call failing
@@ -396,14 +395,14 @@ class Config(metaclass=Singleton):
         https://kura.github.io/blackhole/configuration.html#tls-key
 
         :returns: Path to a TLS key file. Default: ``None``
-        :rtype: :py:class:`pathlib.PurePath` or :py:obj:`None`
+        :rtype: :py:obj:`str`
         """
         return self._tls_key
 
     @tls_key.setter
     def tls_key(self, tls_key: str) -> None:
         if tls_key is not None:
-            self._tls_key = pathlib.PurePath(tls_key)
+            self._tls_key = tls_key
 
     @property
     def tls_cert(self) -> str:
@@ -413,14 +412,14 @@ class Config(metaclass=Singleton):
         https://kura.github.io/blackhole/configuration.html#tls-cert
 
         :returns: Path to a TLS certificate. Default: ``None``
-        :rtype: :py:class:`pathlib.PurePath` or :py:obj:`None`
+        :rtype: :py:obj:`str`
         """
         return self._tls_cert
 
     @tls_cert.setter
     def tls_cert(self, tls_cert: str) -> None:
         if tls_cert is not None:
-            self._tls_cert = pathlib.PurePath(tls_cert)
+            self._tls_cert = tls_cert
 
     @property
     def tls_dhparams(self) -> str:
@@ -430,14 +429,14 @@ class Config(metaclass=Singleton):
         https://kura.github.io/blackhole/configuration.html#tls-dhparams
 
         :returns: Path to a file containing dhparams. Default: ``None``
-        :rtype: :py:class:`pathlib.PurePath` or :py:obj:`None`
+        :rtype: :py:obj:`str`
         """
         return self._tls_dhparams
 
     @tls_dhparams.setter
     def tls_dhparams(self, tls_dhparams: str) -> None:
         if tls_dhparams is not None:
-            self._tls_dhparams = pathlib.PurePath(tls_dhparams)
+            self._tls_dhparams = tls_dhparams
 
     @property
     def pidfile(self) -> str:
@@ -447,14 +446,14 @@ class Config(metaclass=Singleton):
         https://kura.github.io/blackhole/configuration.html#pidfile
 
         :returns: Path to a pid file. Default: ``/tmp/blackhole.pid``.
-        :rtype: :py:class:`pathlib.PurePath`
+        :rtype: :py:obj:`str`
         """
         return self._pidfile
 
     @pidfile.setter
     def pidfile(self, pidfile: str) -> None:
         if pidfile is not None:
-            self._pidfile = pathlib.PurePath(pidfile)
+            self._pidfile = pidfile
 
     @property
     def delay(self) -> Optional[int]:
@@ -516,6 +515,7 @@ class Config(metaclass=Singleton):
         """
         if self._max_message_size is not None:
             return int(self._max_message_size)
+        return None
 
     @max_message_size.setter
     def max_message_size(self, size: str) -> None:
@@ -580,7 +580,7 @@ class Config(metaclass=Singleton):
         clisteners = []
         _listeners = listeners.split(',')
         if len(_listeners) == 0:
-            return
+            return None
         for listener in _listeners:
             listener = listener.strip()
             parts = listener.split(' ')
@@ -590,7 +590,7 @@ class Config(metaclass=Singleton):
             family = socket.AF_INET
             if ':' in addr:
                 family = socket.AF_INET6
-            flags = {}
+            flags = {}  # type: Dict
             if len(parts) > 1:
                 flags = self.create_flags(parts[1:])
             host = (addr, self._convert_port(port), family, flags)

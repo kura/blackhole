@@ -34,7 +34,7 @@ import logging
 import os
 import pwd
 import socket
-from typing import Dict
+from typing import Dict, Union
 
 from .config import Config
 from .exceptions import BlackholeRuntimeException
@@ -99,7 +99,7 @@ def _context(use_tls: bool = False) -> ssl.SSLContext:
 
 
 def _socket(addr: str, port: int,
-            family: socket.AddressFamily) -> socket.socket:
+            family: 'socket.AddressFamily') -> socket.socket:
     """
     Create a socket, bind and listen.
 
@@ -123,7 +123,7 @@ def _socket(addr: str, port: int,
         sock.bind((addr, port))
     except OSError:
         msg = 'Cannot bind to {0}:{1}.'.format(addr, port)
-        logger.fatal(msg)
+        logger.critical(msg)
         sock.close()
         raise BlackholeRuntimeException(msg)
     os.set_inheritable(sock.fileno(), True)
@@ -132,8 +132,8 @@ def _socket(addr: str, port: int,
     return sock
 
 
-def server(addr: str,  port: int, family: int,
-           use_tls: bool = False) -> Dict['socket.socket', 'ssl.SSLContext']:
+def server(addr: str,  port: int, family: 'socket.AddressFamily',
+           use_tls: bool = False) -> Dict[str, Union['socket.socket', 'ssl.SSLContext']]:
     """
     Socket and possibly a TLS context.
 

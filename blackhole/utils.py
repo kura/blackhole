@@ -26,11 +26,10 @@
 
 import codecs
 import os
-import pathlib
 import random
 import socket
 import time
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 
 __all__ = ('blackhole_config_help', 'mailname', 'message_id', 'get_version')
@@ -64,15 +63,14 @@ def mailname(mailname_file: str = '/etc/mailname') -> str:
        :py:func:`socket.getfqdn` if `mailname_file` does not exist or cannot be
        opened for reading.
     """
-    mailname_file = pathlib.PurePath(mailname_file)
     if os.access(mailname_file, os.R_OK):
         mailname_content = codecs.open(mailname_file,
                                        encoding='utf-8').readlines()
         if len(mailname_content) == 0:
             return socket.getfqdn()
-        mailname_content = mailname_content[0].strip()
-        if mailname_content != '':
-            return mailname_content
+        nmailname_content = mailname_content[0].strip()
+        if nmailname_content != '':
+            return str(nmailname_content)
     return socket.getfqdn()
 
 
@@ -99,8 +97,7 @@ def get_version() -> Optional[str]:
     :raises AssertionError: When a version cannot be determined.
     """
     path = os.path.dirname(os.path.abspath(__file__))
-    filepath = os.path.join(pathlib.PurePath(path),
-                            pathlib.PurePath('__init__.py'))
+    filepath = os.path.join(path,'__init__.py')
     if not os.access(filepath, os.R_OK):
         raise OSError('Cannot open __init__.py file for reading')
     with codecs.open(filepath, encoding='utf-8') as fp:

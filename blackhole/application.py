@@ -81,17 +81,17 @@ def run() -> NoReturn:
         setgid()
         setuid()
     except (ConfigException, DaemonException) as err:
-        logger.fatal(err)
+        logger.critical(err)
         raise SystemExit(os.EX_USAGE)
     except BlackholeRuntimeException as err:
-        logger.fatal(err)
+        logger.critical(err)
         raise SystemExit(os.EX_NOPERM)
     if args.background:
         try:
             daemon.daemonize()
         except DaemonException as err:
             supervisor.close_socks()
-            logger.fatal(err)
+            logger.critical(err)
             raise SystemExit(os.EX_NOPERM)
     try:
         supervisor.run()
