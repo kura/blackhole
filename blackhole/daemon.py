@@ -57,6 +57,7 @@ class Daemon(metaclass=Singleton):
         """
         self.pidfile = pidfile
         self.pid = os.getpid()
+        atexit.register(self._exit)
 
     def daemonize(self) -> None:
         """Daemonize the process."""
@@ -65,7 +66,6 @@ class Daemon(metaclass=Singleton):
         os.setsid()
         os.umask(0)
         self.pid = os.getpid()
-        atexit.register(self._exit)
 
     def _exit(self, *args: Tuple, **kwargs: Tuple) -> None:
         """Call on exit using :py:func:`atexit.register` or via a signal."""

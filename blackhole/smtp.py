@@ -30,9 +30,8 @@ import base64
 import inspect
 import logging
 import random
-from typing import Any, Callable, List, Optional
+from typing import Callable, List, Optional
 
-from .config import Config
 from .protocols import StreamReaderProtocol
 from .utils import message_id
 
