@@ -26,6 +26,7 @@
 
 
 import atexit
+import logging
 import os
 from typing import Optional, Tuple
 
@@ -35,6 +36,9 @@ from .utils import Singleton
 
 __all__ = ('Daemon', )
 """Tuple all the things."""
+
+
+logger = logging.getLogger('blackhole.daemon')
 
 
 class Daemon(metaclass=Singleton):
