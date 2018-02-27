@@ -63,6 +63,7 @@ test: clean
 				pytest \
 				pytest-asyncio \
 				pytest-cov \
+				pytest-mypy \
 				radon \
 				setproctitle
 	py.test --cov ./blackhole \
@@ -71,6 +72,7 @@ test: clean
 			--cov-report term-missing \
 			--verbose \
 			--pylama \
+			--mypy \
 			--cache-clear \
 			blackhole tests
 	radon mi -nc blackhole
