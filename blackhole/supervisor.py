@@ -76,8 +76,8 @@ class Supervisor(metaclass=Singleton):
         logger.debug('Initiating the supervisor')
         self.config = Config()
         self.loop = loop if loop is not None else asyncio.get_event_loop()
-        self.socks = []
-        self.workers = []
+        self.socks = []  # type: List
+        self.workers = []  # type: List
         if setproctitle:
             setproctitle.setproctitle('blackhole: master')
         try:

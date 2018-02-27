@@ -30,7 +30,7 @@ import pathlib
 import random
 import socket
 import time
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 
 __all__ = ('blackhole_config_help', 'mailname', 'message_id', 'get_version')
@@ -39,7 +39,7 @@ __all__ = ('blackhole_config_help', 'mailname', 'message_id', 'get_version')
 class Singleton(type):
     """Singleton."""
 
-    _instances = {}
+    _instances = {}  # type: Dict
 
     def __call__(cls, *args: Tuple, **kwargs: Tuple) -> 'Singleton':
         """Override the __call__ method."""
