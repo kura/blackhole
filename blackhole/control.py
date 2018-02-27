@@ -34,7 +34,6 @@ import logging
 import os
 import pwd
 import socket
-from typing import Dict
 
 from .config import Config
 from .exceptions import BlackholeRuntimeException
@@ -53,7 +52,7 @@ ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
 """Strong default TLS ciphers."""
 
 
-def _context(use_tls: bool = False) -> ssl.SSLContext:
+def _context(use_tls=False):
     """
     Create a TLS context using the certificate, key and dhparams file.
 
@@ -98,8 +97,7 @@ def _context(use_tls: bool = False) -> ssl.SSLContext:
     return ctx
 
 
-def _socket(addr: str, port: int,
-            family: socket.AddressFamily) -> socket.socket:
+def _socket(addr, port, family):
     """
     Create a socket, bind and listen.
 
@@ -123,7 +121,7 @@ def _socket(addr: str, port: int,
         sock.bind((addr, port))
     except OSError:
         msg = 'Cannot bind to {0}:{1}.'.format(addr, port)
-        logger.fatal(msg)
+        logger.critical(msg)
         sock.close()
         raise BlackholeRuntimeException(msg)
     os.set_inheritable(sock.fileno(), True)
@@ -132,8 +130,7 @@ def _socket(addr: str, port: int,
     return sock
 
 
-def server(addr: str,  port: int, family: int,
-           use_tls: bool = False) -> Dict['socket.socket', 'ssl.SSLContext']:
+def server(addr, port, family, use_tls=False):
     """
     Socket and possibly a TLS context.
 
@@ -154,7 +151,7 @@ def server(addr: str,  port: int, family: int,
     return {'sock': sock, 'ssl': ctx}
 
 
-def pid_permissions() -> None:
+def pid_permissions():
     """
     Change the pid file ownership.
 
@@ -175,7 +172,7 @@ def pid_permissions() -> None:
         raise SystemExit(os.EX_USAGE)
 
 
-def setgid() -> None:
+def setgid():
     """
     Change group.
 
@@ -203,7 +200,7 @@ def setgid() -> None:
         raise SystemExit(os.EX_NOPERM)
 
 
-def setuid() -> None:
+def setuid():
     """
     Change user.
 

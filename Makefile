@@ -91,3 +91,7 @@ tox:
 .PHONY: uninstall
 uninstall:
 	pip uninstall blackhole
+
+.PHONY: update-libuv
+update-libuv:
+	scripts/update-libuv.sh

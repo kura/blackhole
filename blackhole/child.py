@@ -29,7 +29,6 @@ import asyncio
 import logging
 import os
 import signal
-from typing import List, Tuple
 
 from . import protocols
 from .smtp import Smtp
@@ -59,8 +58,7 @@ class Child:
     clients = []  # type: List
     """List of clients connected to this process."""
 
-    def __init__(self, up_read: int, down_write: int, socks: List,
-                 idx: str) -> None:
+    def __init__(self, up_read, down_write, socks, idx):
         """
         Initialise a child process.
 
@@ -73,7 +71,7 @@ class Child:
         self.socks = socks
         self.idx = idx
 
-    def start(self) -> None:
+    def start(self):
         """Start the child process."""
         logger.debug('Starting child %s', self.idx)
         self._started = True
@@ -85,14 +83,14 @@ class Child:
         self.stop()
         os._exit(os.EX_OK)
 
-    async def _start(self) -> None:
+    async def _start(self):
         """Create an asyncio server for each socket."""
         for sock in self.socks:
             server = await self.loop.create_server(lambda: Smtp(self.clients),
                                                    **sock)
             self.servers.append(server)
 
-    def stop(self, *args: Tuple, **kwargs: Tuple) -> None:
+    def stop(self, *args, **kwargs):
         """
         Stop the child process.
 
@@ -115,7 +113,7 @@ class Child:
         self._started = False
         os._exit(os.EX_OK)
 
-    async def heartbeat(self) -> None:
+    async def heartbeat(self):
         """
         Handle heartbeat between a worker and child.
 
