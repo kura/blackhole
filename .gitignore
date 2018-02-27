@@ -111,3 +111,5 @@ dns.py
 docs/build
 !man/build
 node_modules
+.pytest_cache
+blackhole-test.pid
