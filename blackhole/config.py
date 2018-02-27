@@ -35,7 +35,7 @@ import os
 import pathlib
 import pwd
 import socket
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 from .exceptions import ConfigException
 from .utils import (get_version, mailname, Singleton)
@@ -90,7 +90,7 @@ def parse_cmd_args(args: list) -> Optional[argparse.Namespace]:
     return parser.parse_args(args)
 
 
-def warn_options(config: type) -> None:
+def warn_options(config: 'Config') -> None:
     """
     Warn the user when using certain options.
 
@@ -106,7 +106,7 @@ def warn_options(config: type) -> None:
     _compare_uid_and_gid(config)
 
 
-def config_test(args: argparse.Namespace) -> None:
+def config_test(args: Optional[argparse.Namespace]) -> None:
     """
     Test the validity of the configuration file content.
 
@@ -133,7 +133,7 @@ def config_test(args: argparse.Namespace) -> None:
     raise SystemExit(os.EX_OK)
 
 
-def _compare_uid_and_gid(config: type) -> None:
+def _compare_uid_and_gid(config: 'Config') -> None:
     """
     Compare the current user and group and conf settings.
 
@@ -157,26 +157,26 @@ class Config(metaclass=Singleton):
     https://kura.github.io/blackhole/configuration.html#configuration-options
     """
 
-    args = None
+    args = None  # type: Optional[argparse.Namespace]
     """Arguments parsed from the command line."""
 
-    config_file = None
+    config_file = None  # type: Optional[str]
     """A file containing configuration values."""
 
-    _workers = 1
-    _listen = []
-    _tls_listen = []
-    _user = None
-    _group = None
-    _timeout = 60
-    _tls_key = None
-    _tls_cert = None
-    _tls_dhparams = None
+    _workers = 1  # type: str
+    _listen = []  # type: List
+    _tls_listen = []  # type: List
+    _user = None  # type: Any
+    _group = None  # type: Any
+    _timeout = 60  # type: int
+    _tls_key = None  # type: Any
+    _tls_cert = None  # type: Any
+    _tls_dhparams = None  # type: Any
     _pidfile = pathlib.PurePath('/tmp/blackhole.pid')
-    _delay = None
-    _mode = 'accept'
-    _max_message_size = 512000
-    _dynamic_switch = None
+    _delay = None  # type: None
+    _mode = 'accept'  # type: str
+    _max_message_size = 512000  # type: int
+    _dynamic_switch = None  # type: None
 
     def __init__(self, config_file: Optional[str] = None) -> None:
         """
@@ -192,7 +192,7 @@ class Config(metaclass=Singleton):
         # in os.fork
         self.mailname = mailname()
 
-    def load(self) -> type:
+    def load(self) -> 'Config':
         """
         Load the configuration file and parse.
 
@@ -275,7 +275,7 @@ class Config(metaclass=Singleton):
         return int(self._workers) or 1
 
     @workers.setter
-    def workers(self, workers: str) -> None:
+    def workers(self, workers: Union[str, int]) -> None:
         self._workers = workers
 
     @property
@@ -301,9 +301,9 @@ class Config(metaclass=Singleton):
                 ('127.0.0.1', 587, socket.AF_INET), ]
         """
         ipv4 = [('127.0.0.1', 25, socket.AF_INET, {}),
-                ('127.0.0.1', 587, socket.AF_INET, {})]
+                ('127.0.0.1', 587, socket.AF_INET, {})]  # type: List
         ipv6 = [('::', 25, socket.AF_INET6, {}),
-                ('::', 587, socket.AF_INET6, {})]
+                ('::', 587, socket.AF_INET6, {})]  # type: List
         default = ipv4 + ipv6 if socket.has_ipv6 else ipv4
         return self._listen or default
 
@@ -385,7 +385,7 @@ class Config(metaclass=Singleton):
         return int(self._timeout)
 
     @timeout.setter
-    def timeout(self, timeout: str) -> int:
+    def timeout(self, timeout: str) -> None:
         self._timeout = timeout
 
     @property
@@ -705,7 +705,7 @@ class Config(metaclass=Singleton):
                               'either a single value or a range i.e. 5-10 and '
                               'must be less than 60.'.format(value))
 
-    def test(self) -> type:
+    def test(self) -> 'Config':
         r"""
         Test configuration validity.
 

@@ -128,7 +128,5 @@ class Daemon(metaclass=Singleton):
     @pid.deleter
     def pid(self) -> None:
         """Delete the pid from the filesystem."""
-        try:
+        if os.path.exists(self.pidfile):
             os.remove(self.pidfile)
-        except (IOError, FileNotFoundError, PermissionError):
-            logger.debug('Failed to remove pidfile')
