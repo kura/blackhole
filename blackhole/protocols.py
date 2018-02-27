@@ -27,7 +27,6 @@
 
 import asyncio
 import logging
-from typing import Any, List, Optional
 
 from .config import Config
 
@@ -49,8 +48,7 @@ PONG = b'x02'
 class StreamReaderProtocol(asyncio.StreamReaderProtocol):
     """The class responsible for handling connections commands."""
 
-    def __init__(self, clients: List,
-                 loop: Optional[asyncio.BaseEventLoop] = None) -> None:
+    def __init__(self, clients, loop=None):
         """
         Initialise the protocol.
 
@@ -73,7 +71,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         # and craches inbound connections when called after os.fork
         self.fqdn = self.config.mailname
 
-    def flags_from_transport(self) -> None:
+    def flags_from_transport(self):
         """Adapt internal flags for the transport in use."""
         # This has to be done here since passing it as part of init causes
         # flags to become garbled and mixed up. Artifact of loop.create_server
@@ -89,8 +87,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
             logger.debug('Flags enabled, disabling dynamic switching')
             logger.debug('Flags for this connection: %s', self._flags)
 
-    def _client_connected_cb(self, reader: asyncio.streams.StreamReader,
-                             writer: asyncio.streams.StreamWriter) -> None:
+    def _client_connected_cb(self, reader, writer):
         """
         Bind a stream reader and writer to the SMTP Protocol.
 
@@ -103,7 +100,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         self._writer = writer
         self.clients.append(writer)
 
-    def connection_lost(self, exc: Any) -> None:
+    def connection_lost(self, exc):
         """
         Client connection is closed or lost.
 
@@ -117,7 +114,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         except ValueError:
             pass
 
-    async def wait(self) -> Optional[str]:
+    async def wait(self):
         """
         Wait for data from the client.
 
@@ -139,7 +136,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
                 return None
             return line
 
-    async def close(self) -> None:
+    async def close(self):
         """Close the connection from the client."""
         logger.debug('Closing connection')
         if self._writer:
@@ -151,7 +148,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
             await self._writer.drain()
         self._connection_closed = True
 
-    async def push(self, msg: str) -> None:
+    async def push(self, msg):
         """
         Write a response message to the client.
 

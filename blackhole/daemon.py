@@ -28,7 +28,6 @@
 import atexit
 import logging
 import os
-from typing import Optional, Tuple
 
 from .exceptions import DaemonException
 from .utils import Singleton
@@ -44,7 +43,7 @@ logger = logging.getLogger('blackhole.daemon')
 class Daemon(metaclass=Singleton):
     """An object for handling daemonisation."""
 
-    def __init__(self, pidfile: str) -> None:
+    def __init__(self, pidfile):
         """
         Create an instance of :class:`Daemon`.
 
@@ -59,7 +58,7 @@ class Daemon(metaclass=Singleton):
         self.pid = os.getpid()
         atexit.register(self._exit)
 
-    def daemonize(self) -> None:
+    def daemonize(self):
         """Daemonize the process."""
         self.fork()
         os.chdir(os.path.sep)
@@ -67,11 +66,11 @@ class Daemon(metaclass=Singleton):
         os.umask(0)
         self.pid = os.getpid()
 
-    def _exit(self, *args: Tuple, **kwargs: Tuple) -> None:
+    def _exit(self, *args, **kwargs):
         """Call on exit using :py:func:`atexit.register` or via a signal."""
         del self.pid
 
-    def fork(self) -> None:
+    def fork(self):
         """
         Fork off the process.
 
@@ -87,7 +86,7 @@ class Daemon(metaclass=Singleton):
             raise DaemonException(err.strerror)
 
     @property
-    def pid(self) -> Optional[int]:
+    def pid(self):
         """
         Pid of the process, if it's been daemonised.
 
@@ -111,7 +110,7 @@ class Daemon(metaclass=Singleton):
         return None
 
     @pid.setter
-    def pid(self, pid) -> None:
+    def pid(self, pid):
         """
         Write the pid to the filesystem.
 
@@ -126,7 +125,7 @@ class Daemon(metaclass=Singleton):
             raise DaemonException(err.strerror)
 
     @pid.deleter
-    def pid(self) -> None:
+    def pid(self):
         """Delete the pid from the filesystem."""
         if os.path.exists(self.pidfile):
             os.remove(self.pidfile)

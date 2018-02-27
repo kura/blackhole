@@ -30,7 +30,6 @@ import base64
 import inspect
 import logging
 import random
-from typing import Callable, List, Optional
 
 from .protocols import StreamReaderProtocol
 from .utils import message_id
@@ -86,8 +85,7 @@ class Smtp(StreamReaderProtocol):
     _failed_commands = 0
     """An internal counter of failed commands for a client."""
 
-    def __init__(self, clients: List,
-                 loop: Optional[asyncio.BaseEventLoop] = None) -> None:
+    def __init__(self, clients, loop=None):
         """
         Initialise the SMTP protocol.
 
@@ -104,7 +102,7 @@ class Smtp(StreamReaderProtocol):
         super().__init__(clients, loop)
         self.message_id = message_id(self.fqdn)
 
-    def connection_made(self, transport: asyncio.transports.Transport) -> None:
+    def connection_made(self, transport):
         """
         Tie a connection to blackhole to the SMTP protocol.
 
@@ -117,7 +115,7 @@ class Smtp(StreamReaderProtocol):
         self.connection_closed = False
         self._handler_coroutine = self.loop.create_task(self._handle_client())
 
-    async def push(self, code: int, msg: str) -> None:
+    async def push(self, code, msg):
         """
         Write a response code and message to the client.
 
@@ -127,7 +125,7 @@ class Smtp(StreamReaderProtocol):
         n_msg = "{0} {1}".format(code, msg)
         await super().push(n_msg)
 
-    async def _handle_client(self) -> None:
+    async def _handle_client(self):
         """
         Handle a client connection.
 
@@ -149,7 +147,7 @@ class Smtp(StreamReaderProtocol):
             else:
                 await self.push(502, '5.5.2 Command not recognised')
 
-    def get_auth_members(self) -> List[str]:
+    def get_auth_members(self):
         """
         Get a list of available AUTH mechanisms.
 
@@ -164,7 +162,7 @@ class Smtp(StreamReaderProtocol):
                 cmds.append(cmd)
         return cmds
 
-    def lookup_auth_handler(self, line: str) -> Callable:
+    def lookup_auth_handler(self, line):
         """
         Look up a handler for the received AUTH mechanism.
 
@@ -193,11 +191,11 @@ class Smtp(StreamReaderProtocol):
         return getattr(self, 'auth_{0}'.format(mechanism.upper()),
                        self.auth_UNKNOWN)
 
-    async def auth_UNKNOWN(self) -> None:
+    async def auth_UNKNOWN(self):
         """Response to an unknown auth mechamism."""
         await self.push(501, '5.5.4 Syntax: AUTH mechanism')
 
-    async def help_AUTH(self) -> None:
+    async def help_AUTH(self):
         """
         Send help for AUTH mechanisms.
 
@@ -206,7 +204,7 @@ class Smtp(StreamReaderProtocol):
         mechanisms = ' '.join(self.get_auth_members())
         await self.push(250, 'Syntax: AUTH {0}'.format(mechanisms))
 
-    async def auth_LOGIN(self) -> None:
+    async def auth_LOGIN(self):
         """
         Handle an AUTH LOGIN request.
 
@@ -234,7 +232,7 @@ class Smtp(StreamReaderProtocol):
         else:
             await self._auth_success()
 
-    async def auth_CRAM_MD5(self) -> None:
+    async def auth_CRAM_MD5(self):
         """
         Handle an AUTH CRAM-MD5 request.
 
@@ -263,7 +261,7 @@ class Smtp(StreamReaderProtocol):
         else:
             await self._auth_success()
 
-    async def auth_PLAIN(self) -> None:
+    async def auth_PLAIN(self):
         """Handle an AUTH PLAIN request.
 
             >>> AUTH PLAIN
@@ -296,15 +294,15 @@ class Smtp(StreamReaderProtocol):
         else:
             await self._auth_success()
 
-    async def _auth_success(self) -> None:
+    async def _auth_success(self):
         """Send an authentication successful response."""
         await self.push(235, '2.7.0 Authentication successful')
 
-    async def _auth_failure(self) -> None:
+    async def _auth_failure(self):
         """Send an authentication failure response."""
         await self.push(535, '5.7.8 Authentication failed')
 
-    async def timeout(self) -> None:
+    async def timeout(self):
         """
         Timeout a client connection.
 
@@ -317,7 +315,7 @@ class Smtp(StreamReaderProtocol):
         await self.push(421, 'Timeout')
         await self.close()
 
-    def lookup_handler(self, line: str) -> Callable:
+    def lookup_handler(self, line):
         """
         Look up the SMTP VERB against a handler.
 
@@ -338,7 +336,7 @@ class Smtp(StreamReaderProtocol):
                 return self.lookup_verb_handler(parts[0])
         return self.do_UNKNOWN
 
-    def lookup_help_handler(self, parts: List[str]) -> Callable:
+    def lookup_help_handler(self, parts):
         """
         Look up a help handler for the SMTP VERB.
 
@@ -354,7 +352,7 @@ class Smtp(StreamReaderProtocol):
             cmd = 'do_HELP'
         return getattr(self, cmd, self.help_UNKNOWN)
 
-    def lookup_verb_handler(self, verb: str) -> Callable:
+    def lookup_verb_handler(self, verb):
         """
         Look up a handler for the SMTP VERB.
 
@@ -364,11 +362,11 @@ class Smtp(StreamReaderProtocol):
         """
         return getattr(self, 'do_{0}'.format(verb.upper()), self.do_UNKNOWN)
 
-    async def greet(self) -> None:
+    async def greet(self):
         """Send a greeting to the client."""
         await self.push(220, '{0} ESMTP'.format(self.fqdn))
 
-    def get_help_members(self) -> List[str]:
+    def get_help_members(self):
         """
         Get a list of HELP handlers for verbs.
 
@@ -384,7 +382,7 @@ class Smtp(StreamReaderProtocol):
                 cmds.append(cmd.replace('help_', ''))
         return cmds
 
-    async def do_HELP(self) -> None:
+    async def do_HELP(self):
         """
         Send a response to the HELP verb.
 
@@ -393,7 +391,7 @@ class Smtp(StreamReaderProtocol):
         msg = ' '.join(self.get_help_members())
         await self.push(250, 'Supported commands: {0}'.format(msg))
 
-    async def help_HELO(self) -> None:
+    async def help_HELO(self):
         """
         Send help for HELO verb.
 
@@ -401,11 +399,11 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: HELO domain.tld')
 
-    async def do_HELO(self) -> None:
+    async def do_HELO(self):
         """Send response to HELO verb."""
         await self.push(250, 'OK')
 
-    async def help_EHLO(self) -> None:
+    async def help_EHLO(self):
         """
         Send help for the EHLO verb.
 
@@ -413,7 +411,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: EHLO domain.tld')
 
-    async def do_EHLO(self) -> None:
+    async def do_EHLO(self):
         """Send response to EHLO verb."""
         response = "250-{0}\r\n".format(self.fqdn).encode('utf-8')
         self._writer.write(response)
@@ -429,7 +427,7 @@ class Smtp(StreamReaderProtocol):
             self._writer.write(response)
         await self._writer.drain()
 
-    async def help_MAIL(self) -> None:
+    async def help_MAIL(self):
         """
         Send help for the MAIL TO verb.
 
@@ -437,7 +435,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: MAIL FROM: <address>')
 
-    async def _size_in_mail(self) -> None:
+    async def _size_in_mail(self):
         """
         Handle ``SIZE=`` being passed in ``MAIL`` verb.
 
@@ -456,7 +454,7 @@ class Smtp(StreamReaderProtocol):
         else:
             await self.push(250, '2.1.0 OK')
 
-    async def do_MAIL(self) -> None:
+    async def do_MAIL(self):
         """
         Send response to MAIL TO verb.
 
@@ -470,7 +468,7 @@ class Smtp(StreamReaderProtocol):
         else:
             await self.push(250, '2.1.0 OK')
 
-    async def help_RCPT(self) -> None:
+    async def help_RCPT(self):
         """
         Send response to the RCPT TO verb.
 
@@ -478,11 +476,11 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: RCPT TO: <address>')
 
-    async def do_RCPT(self) -> None:
+    async def do_RCPT(self):
         """Send response to RCPT TO verb."""
         await self.push(250, '2.1.5 OK')
 
-    async def help_DATA(self) -> None:
+    async def help_DATA(self):
         """
         Send help for the DATA verb.
 
@@ -490,7 +488,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: DATA')
 
-    def process_header(self, line: str) -> None:
+    def process_header(self, line):
         """
         Process dynamic switch email headers.
 
@@ -515,7 +513,7 @@ class Smtp(StreamReaderProtocol):
         if key == 'x-blackhole-mode':
             self.mode = value
 
-    async def response_from_mode(self) -> None:
+    async def response_from_mode(self):
         """
         Send a response based on the configured response mode.
 
@@ -538,7 +536,7 @@ class Smtp(StreamReaderProtocol):
             msg = '2.0.0 OK: queued as {0}'.format(self.message_id)
             await self.push(250, msg)
 
-    async def do_DATA(self) -> None:
+    async def do_DATA(self):
         r"""
         Send response to DATA verb and wait for mail data.
 
@@ -575,13 +573,13 @@ class Smtp(StreamReaderProtocol):
             await asyncio.sleep(self.delay)
         await self.response_from_mode()
 
-    async def do_STARTTLS(self) -> None:
+    async def do_STARTTLS(self):
         """STARTTLS is not implemented."""
         # It's currently not possible to implement STARTTLS due to lack of
         # support in asyncio. - https://bugs.python.org/review/23749/
         await self.do_NOT_IMPLEMENTED()
 
-    async def help_NOOP(self) -> None:
+    async def help_NOOP(self):
         """
         Send help for the NOOP verb.
 
@@ -589,11 +587,11 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: NOOP')
 
-    async def do_NOOP(self) -> None:
+    async def do_NOOP(self):
         """Send response to the NOOP verb."""
         await self.push(250, '2.0.0 OK')
 
-    async def help_RSET(self) -> None:
+    async def help_RSET(self):
         """
         Send help for the RSET verb.
 
@@ -601,7 +599,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: RSET')
 
-    async def do_RSET(self) -> None:
+    async def do_RSET(self):
         """
         Send response to the RSET verb.
 
@@ -612,7 +610,7 @@ class Smtp(StreamReaderProtocol):
         logger.debug('%s is now %s', old_msg_id, self.message_id)
         await self.push(250, '2.0.0 OK')
 
-    async def help_VRFY(self) -> None:
+    async def help_VRFY(self):
         """
         Send help for the VRFY verb.
 
@@ -620,7 +618,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: VRFY <address>')
 
-    async def do_VRFY(self) -> None:
+    async def do_VRFY(self):
         """
         Send response to the VRFY verb.
 
@@ -648,7 +646,7 @@ class Smtp(StreamReaderProtocol):
         else:
             await self.push(252, '2.0.0 Will attempt delivery')
 
-    async def help_EXPN(self) -> None:
+    async def help_EXPN(self):
         """
         Send help for the EXPN verb.
 
@@ -656,7 +654,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: EXPN <list1 | list2 | list3 | all>')
 
-    async def _expn_value_to_list(self) -> List[str]:
+    async def _expn_value_to_list(self):
         """
         Look up and return a mailing list or generate one for EXPN all.
 
@@ -681,7 +679,7 @@ class Smtp(StreamReaderProtocol):
         else:
             return lists[expn]
 
-    async def _expn_response(self) -> str:
+    async def _expn_response(self):
         """
         Generate response for an EXPN query.
 
@@ -700,7 +698,7 @@ class Smtp(StreamReaderProtocol):
             i += 1
         return resp
 
-    async def do_EXPN(self) -> None:
+    async def do_EXPN(self):
         """
         Handle the EXPN verb.
 
@@ -768,7 +766,7 @@ class Smtp(StreamReaderProtocol):
             self._writer.write(response)
         await self._writer.drain()
 
-    async def help_ETRN(self) -> None:
+    async def help_ETRN(self):
         """
         Send help for the ETRN verb.
 
@@ -776,11 +774,11 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: ETRN')
 
-    async def do_ETRN(self) -> None:
+    async def do_ETRN(self):
         """Send response to the ETRN verb."""
         await self.push(250, 'Queueing started')
 
-    async def help_QUIT(self) -> None:
+    async def help_QUIT(self):
         """
         Send help for the QUIT verb.
 
@@ -788,7 +786,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(250, 'Syntax: QUIT')
 
-    async def do_QUIT(self) -> None:
+    async def do_QUIT(self):
         """
         Send response to the QUIT verb.
 
@@ -798,7 +796,7 @@ class Smtp(StreamReaderProtocol):
         self._handler_coroutine.cancel()
         await self.close()
 
-    async def do_NOT_IMPLEMENTED(self) -> None:
+    async def do_NOT_IMPLEMENTED(self):
         """Send a not implemented response."""
         await self.push(500, 'Not implemented')
 
@@ -807,7 +805,7 @@ class Smtp(StreamReaderProtocol):
         msg = ' '.join(self.get_help_members())
         await self.push(501, 'Supported commands: {0}'.format(msg))
 
-    async def do_UNKNOWN(self) -> None:
+    async def do_UNKNOWN(self):
         """Send response to unknown verb."""
         self._failed_commands += 1
         if self._failed_commands > 9:
@@ -817,7 +815,7 @@ class Smtp(StreamReaderProtocol):
             await self.push(502, '5.5.2 Command not recognised')
 
     @property
-    def delay(self) -> Optional[int]:
+    def delay(self):
         """
         Delay after the DATA command completes.
 
@@ -842,7 +840,7 @@ class Smtp(StreamReaderProtocol):
         return None
 
     @delay.setter
-    def delay(self, values: str) -> None:
+    def delay(self, values):
         logger.debug('DELAY: Dymanic delay enabled')
         value = values.split(',')
         if len(value) == 2:
@@ -853,7 +851,7 @@ class Smtp(StreamReaderProtocol):
             logger.debug('DELAY: Invalid value(s): %s. Skipping', values)
             return
 
-    def _delay_range(self, value: List[str]) -> None:
+    def _delay_range(self, value):
         """
         Generate a delay from a range provided in the email header.
 
@@ -896,7 +894,7 @@ class Smtp(StreamReaderProtocol):
                      min_delay, max_delay)
         return
 
-    def _delay_single(self, value: str) -> None:
+    def _delay_single(self, value):
         """
         Generate a delay from a value provided in an email header.
 
@@ -931,7 +929,7 @@ class Smtp(StreamReaderProtocol):
         self._delay = value
 
     @property
-    def mode(self) -> str:
+    def mode(self):
         """
         How to respond to an email, based on configuration.
 
@@ -951,7 +949,7 @@ class Smtp(StreamReaderProtocol):
         return self.config.mode
 
     @mode.setter
-    def mode(self, value: str) -> None:
+    def mode(self, value):
         if value not in ('accept', 'bounce', 'random'):
             logger.debug('MODE: %s is an invalid. Allowed modes: (accept, '
                          'bounce, random)', value)

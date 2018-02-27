@@ -29,7 +29,6 @@ import os
 import random
 import socket
 import time
-from typing import Dict, Optional, Tuple
 
 
 __all__ = ('blackhole_config_help', 'mailname', 'message_id', 'get_version')
@@ -38,9 +37,9 @@ __all__ = ('blackhole_config_help', 'mailname', 'message_id', 'get_version')
 class Singleton(type):
     """Singleton."""
 
-    _instances = {}  # type: Dict
+    _instances = {}
 
-    def __call__(cls, *args: Tuple, **kwargs: Tuple) -> 'Singleton':
+    def __call__(cls, *args, **kwargs):
         """Override the __call__ method."""
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args,
@@ -48,7 +47,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 
-def mailname(mailname_file: str = '/etc/mailname') -> str:
+def mailname(mailname_file='/etc/mailname'):
     """
     Fully qualified domain name for HELO and EHLO.
 
@@ -74,7 +73,7 @@ def mailname(mailname_file: str = '/etc/mailname') -> str:
     return socket.getfqdn()
 
 
-def message_id(domain: str) -> str:
+def message_id(domain):
     """
     Return a string suitable for RFC 2822 compliant Message-ID.
 
@@ -88,7 +87,7 @@ def message_id(domain: str) -> str:
     return '<{0}.{1}.{2}@{3}>'.format(timeval, pid, randint, domain)
 
 
-def get_version() -> Optional[str]:
+def get_version():
     """
     Extract the __version__ from a file without importing it.
 
@@ -97,7 +96,7 @@ def get_version() -> Optional[str]:
     :raises AssertionError: When a version cannot be determined.
     """
     path = os.path.dirname(os.path.abspath(__file__))
-    filepath = os.path.join(path,'__init__.py')
+    filepath = os.path.join(path, '__init__.py')
     if not os.access(filepath, os.R_OK):
         raise OSError('Cannot open __init__.py file for reading')
     with codecs.open(filepath, encoding='utf-8') as fp:
