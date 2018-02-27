@@ -22,7 +22,7 @@ Things on the todo list, in no particular order.
 - :strikethrough:`Improve TLS by adding load_dh_params` -- :ref:`2.0.4`
 - :strikethrough:`Add AUTH mechanism` -- :ref:`2.0.4`
 - POP & IMAP -- started, progress available at
-  `<https://github.com/kura/blackhole/tree/imap4>`_
+  `<https://github.com/kura/blackhole/tree/feature/imap>`_
 - :strikethrough:`Add SMTP Submission to default interfaces` -- :ref:`2.0.14`
 - :strikethrough:`Add more lists to EXPN and combine for EXPN all` --
   :ref:`2.0.14`
