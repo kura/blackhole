@@ -30,7 +30,7 @@ import pathlib
 import random
 import socket
 import time
-from typing import Dict, Optional, Tuple
+from typing import Optional, Tuple
 
 
 __all__ = ('blackhole_config_help', 'mailname', 'message_id', 'get_version')
