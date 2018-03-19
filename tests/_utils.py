@@ -27,7 +27,6 @@
 import asyncio
 import logging
 import os
-import pathlib
 import tempfile
 
 from pyannotate_runtime import collect_types
@@ -59,8 +58,7 @@ def reset():
 
 def create_config(data):
     cwd = os.getcwd()
-    path = os.path.join(pathlib.Path(cwd),
-                        pathlib.Path('test.conf'))
+    path = os.path.join(cwd, 'test.conf')
     with open(path, 'w') as cfile:
         cfile.write('\n'.join(data))
     return path
@@ -68,7 +66,7 @@ def create_config(data):
 
 def create_file(name, data=''):
     cwd = os.getcwd()
-    path = os.path.join(pathlib.Path(cwd), pathlib.Path(name))
+    path = os.path.join(cwd, name)
     with open(path, 'w') as ffile:
         ffile.write(str(data))
     return path
