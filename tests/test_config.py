@@ -697,7 +697,7 @@ class TestTls(unittest.TestCase):
         with pytest.raises(ConfigException):
             conf.test_tls_settings()
         assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
-        assert conf.tls_cert == key
+        assert conf.tls_cert == cert
         assert conf.tls_key is None
 
     @annotate
@@ -722,7 +722,7 @@ class TestTls(unittest.TestCase):
         conf = Config(cfile).load()
         conf.test_tls_settings()
         assert conf.tls_listen == [('127.0.0.1', 123, socket.AF_INET, {})]
-        assert conf.tls_cert == key
+        assert conf.tls_cert == cert
         assert conf.tls_key == key
 
     @annotate
