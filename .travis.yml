@@ -11,7 +11,7 @@ env:
     global:
       - TWINE_USERNAME: kura
       # TWINE_PASSWORD:
-      - secure: "eHG6IOa71vyILd9M/09+z8zO9mcpSy12eNW2EIVJixuknDY+Q3othsHwYUP8p/T2rGyUGOzJkUdAArNtOQ3+MMUur4hnexcDmCntw/sNzJru2bl7AJR7m+sPZ4H35JBtLf68po4lS4qTRYfPbpmvWFzhWxJDCifOy5dq3BfeYN4="
+      - secure: "Bd63ijidRb6vsEnMEDI1lUKNlSegrorisBttzXyucEisl0cu0FfahIuFoXmXL0NeTSpDKYb5HZoqC0J+7LXZep8ZkuV/8H/8j//J1ja3qCIsbfqqklNEYkfe0nO7uGyYkg/exLLZGqJVXeS5+xedPyW+LsDJ5XFYe/dMx6FAfZI="
 
 matrix:
   fast_finish: true
@@ -32,10 +32,9 @@ matrix:
     sudo: true
     env: NAME="cpython/uvloop (3.6)"
     before_install:
-      - wget https://api.github.com/repos/libuv/libuv/tarball -O libuv.tar.gz
-      - mkdir libuv
-      - tar xvzf libuv.tar.gz -C libuv --strip-components 1
+      - git clone https://github.com/libuv/libuv.git
       - pushd libuv/
+      - git checkout $(git describe --tags)
       - sh autogen.sh
       - "./configure"
       - make
