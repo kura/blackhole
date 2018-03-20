@@ -11,7 +11,7 @@ env:
     global:
       - TWINE_USERNAME: kura
       # TWINE_PASSWORD:
-      - secure: "eHG6IOa71vyILd9M/09+z8zO9mcpSy12eNW2EIVJixuknDY+Q3othsHwYUP8p/T2rGyUGOzJkUdAArNtOQ3+MMUur4hnexcDmCntw/sNzJru2bl7AJR7m+sPZ4H35JBtLf68po4lS4qTRYfPbpmvWFzhWxJDCifOy5dq3BfeYN4="
+      - secure: "WCA2T8TnFQjCZEzKoxCJSGrSQdPsAbZHnk1Z9CtoU9Suwwh9qv/ovcDPB6lFs0yjbCzOdiZimcC2Tj8YkIeiGxTPYyqNbqaGNJPFvBZ3qNQe/XIkgcqR1HRcAq6UmhQcOvoPV9asr5350vQ/FUNP1tF+vX5qBnYkyxrmL18gkvY="
 
 matrix:
   fast_finish: true
