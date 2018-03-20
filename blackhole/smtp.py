@@ -609,7 +609,7 @@ class Smtp(StreamReaderProtocol):
         will be sent to the client.
         """
         if self.starttls_available:
-            ctx = _context()
+            ctx = _context(use_tls=True)
             transport = await self.loop.start_tls(self.transport, self, ctx)
             self.transport = transport
         else:
