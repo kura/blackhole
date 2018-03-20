@@ -528,8 +528,8 @@ class Config(metaclass=Singleton):
         https://kura.github.io/blackhole/configuration.html#dynamic-switch
 
         :returns: Whether dynamic switches are enabled or not. Default:
-                  ``True``.
-        :rtype: :py:obj:`bool`
+                  :py:obj:`True`.
+        :rtype bool: :py:obj:`True` if enabled, otherwise :py:obj:`False`.
 
         .. note::
 

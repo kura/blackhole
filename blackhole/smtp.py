@@ -30,7 +30,9 @@ import base64
 import inspect
 import logging
 import random
+import sys
 
+from .control import _context
 from .protocols import StreamReaderProtocol
 from .utils import message_id
 
@@ -90,12 +92,20 @@ class Smtp(StreamReaderProtocol):
         """
         Is everything configured correctly for STARTTLS to be available.
 
-        :rtype bool: True if everything is configured correctly, otherwise
-                     False.
+        STARTTLS is only available on Python version 3.7 and above due to
+        the lack of support in Python version 3.6 and lower --
+        https://bugs.python.org/review/23749/
+
+        This will always return :py:obj:`False` if running on Python 3.6 or
+        lower.
+
+        :rtype bool: :py:obj:`True` if everything is configured correctly,
+                      otherwise :py:obj:`False`.
         """
-        if self.config.tls_listen != [] and self.config.tls_key and \
-                self.config.tls_cert:
-            return True
+        if sys.version_info.major >= 3 and sys.version_info.minor >= 7:
+            if self.config.tls_listen != [] and self.config.tls_key and \
+                    self.config.tls_cert:
+                return True
         return False
 
     def __init__(self, clients, loop=None):
@@ -588,11 +598,19 @@ class Smtp(StreamReaderProtocol):
         await self.response_from_mode()
 
     async def do_STARTTLS(self):
-        """STARTTLS is not implemented."""
-        # It's currently not possible to implement STARTTLS due to lack of
-        # support in asyncio. - https://bugs.python.org/review/23749/
+        """
+        Handle a call to STARTTLS.
+
+        STARTTLS is only available on Python version 3.7 and above due to
+        the lack of support in Python version 3.6 and lower --
+        https://bugs.python.org/review/23749/
+
+        For any Python version lower than 3.7, a "Not implemented" response
+        will be sent to the client.
+        """
         if self.starttls_available:
-            transport = await self.loop.start_tls(self.transport, self)
+            ctx = _context()
+            transport = await self.loop.start_tls(self.transport, self, ctx)
             self.transport = transport
         else:
             await self.push(500, 'Not implemented')

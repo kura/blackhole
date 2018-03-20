@@ -57,7 +57,7 @@ def _context(use_tls=False):
     Create a TLS context using the certificate, key and dhparams file.
 
     :param bool use_tls: Whether to create a TLS context or not.
-                         Default: ``False``.
+                         Default: :py:obj:`False`.
     :returns: A TLS context or ``None``.
     :rtype: :py:class:`ssl.SSLContext` or :py:obj:`None`.
 
@@ -142,7 +142,7 @@ def server(addr, port, family, use_tls=False):
     :param family: The type of socket to use.
     :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`.
     :param bool use_tls: Whether to create a TLS context or not.
-                         Default: ``False``.
+                         Default: :py:obj:`False`.
     :returns: Bound socket, a TLS context if configured.
     :rtype: :py:obj:`dict`
     """
