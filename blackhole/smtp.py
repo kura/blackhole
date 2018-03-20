@@ -426,19 +426,16 @@ class Smtp(StreamReaderProtocol):
 
     async def do_EHLO(self):
         """Send response to EHLO verb."""
-        response = "250-{0}\r\n".format(self.fqdn).encode('utf-8')
-        self._writer.write(response)
-        logger.debug('SENT %s', response)
+        fqdn = ['250-{0}'.format(self.fqdn), ]
+        starttls = []
         if self.starttls_available:
-            response = "250-STARTTLS\r\n"
-            self._writer.write(response)
-            logger.debug('SENT %s', response)
+            starttls = ['250-STARTTLS', ]
         auth = ' '.join(self.get_auth_members())
-        responses = ('250-HELP', '250-PIPELINING', '250-AUTH {0}'.format(auth),
+        responses = ['250-HELP', '250-PIPELINING', '250-AUTH {0}'.format(auth),
                      '250-SIZE {0}'.format(self.config.max_message_size),
                      '250-VRFY', '250-ETRN', '250-ENHANCEDSTATUSCODES',
-                     '250-8BITMIME', '250-SMTPUTF8', '250-EXPN', '250 DSN', )
-        for response in responses:
+                     '250-8BITMIME', '250-SMTPUTF8', '250-EXPN', '250 DSN', ]
+        for response in fqdn + starttls + responses:
             response = "{0}\r\n".format(response).encode('utf-8')
             logger.debug("SENT %s", response)
             self._writer.write(response)
