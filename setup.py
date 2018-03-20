@@ -98,7 +98,7 @@ setup(
     install_requires=[],
     keywords=' '.join(keywords),
     license='MIT',
-    long_description='\n' + include_file('README.rst'),
+    long_description="\n" + include_file('README.rst'),
     maintainer='Kura',
     maintainer_email='kura@kura.io',
     name='blackhole',
