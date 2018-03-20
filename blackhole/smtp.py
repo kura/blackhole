@@ -592,7 +592,7 @@ class Smtp(StreamReaderProtocol):
         # It's currently not possible to implement STARTTLS due to lack of
         # support in asyncio. - https://bugs.python.org/review/23749/
         if self.starttls_available:
-            transport = self.loop.start_tls(self.transport, self)
+            transport = await self.loop.start_tls(self.transport, self)
             self.transport = transport
         else:
             await self.push(500, 'Not implemented')
