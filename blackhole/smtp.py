@@ -610,8 +610,10 @@ class Smtp(StreamReaderProtocol):
         """
         if self.starttls_available:
             ctx = _context(use_tls=True)
-            transport = await self.loop.start_tls(self.transport, self, ctx)
+            logger.debug(ctx)
+            transport = await self.loop.start_tls(self.transport, self, ctx, server_side=True)
             self.transport = transport
+            await self.push(250, '2.0.0 OK')
         else:
             await self.push(500, 'Not implemented')
 
