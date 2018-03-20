@@ -85,6 +85,19 @@ class Smtp(StreamReaderProtocol):
     _failed_commands = 0
     """An internal counter of failed commands for a client."""
 
+    @property
+    def starttls_available(self):
+        """
+        Is everything configured correctly for STARTTLS to be available.
+
+        :rtype bool: True if everything is configured correctly, otherwise
+                     False.
+        """
+        if self.config.tls_listen != [] and self.config.tls_key and \
+                self.config.tls_cert:
+            return True
+        return False
+
     def __init__(self, clients, loop=None):
         """
         Initialise the SMTP protocol.
@@ -416,6 +429,10 @@ class Smtp(StreamReaderProtocol):
         response = "250-{0}\r\n".format(self.fqdn).encode('utf-8')
         self._writer.write(response)
         logger.debug('SENT %s', response)
+        if self.starttls_available:
+            response = "250-STARTTLS\r\n"
+            self._writer.write(response)
+            logger.debug('SENT %s', response)
         auth = ' '.join(self.get_auth_members())
         responses = ('250-HELP', '250-PIPELINING', '250-AUTH {0}'.format(auth),
                      '250-SIZE {0}'.format(self.config.max_message_size),
@@ -577,7 +594,11 @@ class Smtp(StreamReaderProtocol):
         """STARTTLS is not implemented."""
         # It's currently not possible to implement STARTTLS due to lack of
         # support in asyncio. - https://bugs.python.org/review/23749/
-        await self.do_NOT_IMPLEMENTED()
+        if self.starttls_available:
+            transport = self.loop.start_tls(self.transport, self)
+            self.transport = transport
+        else:
+            await self.push(500, 'Not implemented')
 
     async def help_NOOP(self):
         """
