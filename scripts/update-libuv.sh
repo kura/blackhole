@@ -1,7 +1,7 @@
 #!/bin/sh
 git clone https://github.com/libuv/libuv.git
 cd libuv || return
-git checkout $(git describe --tags)
+git checkout "$(git describe --tags)"
 ./autogen.sh
 ./configure
 make
