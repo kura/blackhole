@@ -56,9 +56,9 @@ shellcheck:
 test: clean
 	pip install codecov \
 				pyannotate \
-				pycodestyle \
+				'pycodestyle<2.4.0,>=2.0.0' \
 				pydocstyle \
-				pyflakes \
+				'pyflakes<1.7.0,>=1.5.0' \
 				pylama \
 				pytest \
 				pytest-asyncio \
