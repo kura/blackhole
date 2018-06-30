@@ -7,6 +7,8 @@ install:
   - make install
 after_success:
   - codecov
+after_failure:
+  - pip freeze
 env:
     global:
       - TWINE_USERNAME: kura
