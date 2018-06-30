@@ -82,10 +82,13 @@ def _context(use_tls=False):
     if use_tls is False:
         return None
     config = Config()
-    ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    # ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
     ctx.load_cert_chain(config.tls_cert, config.tls_key)
     ctx.options |= ssl.OP_NO_SSLv2
     ctx.options |= ssl.OP_NO_SSLv3
+    ctx.options |= ssl.OP_NO_TLSv1
+    ctx.options |= ssl.OP_NO_TLSv1_1
     ctx.options |= ssl.OP_NO_COMPRESSION
     ctx.options |= ssl.OP_CIPHER_SERVER_PREFERENCE
     if not config.args.less_secure:
