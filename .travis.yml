@@ -1,8 +1,7 @@
 language: python
 cache: pip
-dist: trusty
-sudo: false
-group: edge
+dist: xenial
+sudo: required
 install:
   - make install
 after_success:
@@ -46,6 +45,35 @@ matrix:
       - make install
       - pip install uvloop
     script: make test
+
+  # cpython/asyncio (3.7)
+  - python: '3.7-dev'
+    script: make test
+    env: NAME="cpython/asyncio (3.7)"
+    deploy:
+      provider: script
+      script: scripts/release.sh
+      on:
+        tags: true
+
+  # cpython/uvloop (3.7)
+  - python: '3.7-dev'
+    sudo: true
+    env: NAME="cpython/uvloop (3.7)"
+    before_install:
+      - git clone https://github.com/libuv/libuv.git
+      - pushd libuv/
+      - git checkout $(git describe --tags)
+      - sh autogen.sh
+      - "./configure"
+      - make
+      - sudo make install
+      - popd
+    install:
+      - make install
+      - pip install uvloop
+    script: make test
+
 
   # docs (3.6)
   - python: '3.6'
