@@ -47,7 +47,12 @@ matrix:
     script: make test
 
   # cpython/asyncio (3.7)
-  - python: '3.7-dev'
+  - python: '3.7'
+    addons:
+      apt:
+        packages:
+          - python3.7
+          - python3.7-dev
     script: make test
     env: NAME="cpython/asyncio (3.7)"
     deploy:
@@ -57,9 +62,14 @@ matrix:
         tags: true
 
   # cpython/uvloop (3.7)
-  - python: '3.7-dev'
+  - python: '3.7'
     sudo: true
     env: NAME="cpython/uvloop (3.7)"
+    addons:
+      apt:
+        packages:
+          - python3.7
+          - python3.7-dev
     before_install:
       - git clone https://github.com/libuv/libuv.git
       - pushd libuv/
@@ -75,10 +85,10 @@ matrix:
     script: make test
 
 
-  # docs (3.6)
+  # docs
   - python: '3.6'
     script: make docs
-    env: NAME="docs (3.6)"
+    env: NAME="docs"
     deploy:
       provider: pages
       skip_cleanup: true
@@ -93,16 +103,16 @@ matrix:
     env: NAME="man"
     script: make man
 
-  # build sdist/wheel (3.6)
+  # build sdist/wheel
   - python: '3.6'
     install: skip
-    env: NAME="build sdist/wheel (3.6)"
+    env: NAME="build sdist/wheel"
     script: make build
 
-  # pipfile (3.6)
+  # pipfile
   - python: '3.6'
     install: skip
-    env: NAME="pipfile (3.6)"
+    env: NAME="pipfile"
     script: make pipfile
 
   # shellcheck
