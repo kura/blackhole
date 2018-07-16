@@ -3,12 +3,26 @@ cache: pip
 dist: xenial
 sudo: false
 group: travis_latest
+
 install:
   - pip install codecov tox detox
 script: tox
 after_success:
   - tox -e coverage-report
   - codecov
+deploy:
+  - provider: script
+    script: scripts/release.sh
+    on:
+      tags: true:
+  - provider: pages
+    skip_cleanup: true
+    github_token:
+      secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
+    local_dir: .tox/docs/tmp/html
+    on:
+      branch: master
+
 env:
     global:
       - TWINE_USERNAME: kura
@@ -35,11 +49,6 @@ matrix:
       - tox -e py36
       - tox -e py36-setproctitle
       - tox -e py36-uvloop
-    deploy:
-      provider: script
-      script: scripts/release.sh
-      on:
-        tags: true
 
   - python: '3.7'
     env: NAME=py37,py37-{setproctitle,uvloop}
@@ -53,22 +62,15 @@ matrix:
       - make
       - sudo make install
       - popd
-    script: make test_py37
+    script:
+      - tox -e py37
+      - tox -e py37-setproctitle
+      - tox -e py37-uvloop
 
   - python: "3.6"
     env: TOXENV=lint
-
   - python: '3.6'
     env: TOXENV=docs
-    deploy:
-      provider: pages
-      skip_cleanup: true
-      github_token:
-        secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
-      local_dir: .tox/docs/tmp/html
-      on:
-        branch: master
-
   - python: "3.6"
     env: TOXENV=build
   - python: "3.6"
