@@ -25,8 +25,9 @@
 """Configure logging."""
 
 
-from argparse import Namespace
 import logging
+
+from argparse import Namespace
 from logging.config import dictConfig
 
 

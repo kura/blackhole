@@ -215,6 +215,5 @@ def test_blackhole_config():
     with pytest.raises(SystemExit) as err, \
             mock.patch('logging.getLogger', return_value=mmock):
         blackhole_config()
-    assert str(err.value) == '2'
     collect_types.pause()
     collect_types.dump_stats('/tmp/annotations')

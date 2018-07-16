@@ -26,7 +26,8 @@
 
 from setuptools import find_packages, setup
 
-from setup_helpers import PyTest, get_version, include_file, require_python
+from setup_helpers import PyTest, get_version, include_file
+
 
 # require_python(50725104)
 __version__ = get_version("blackhole/__init__.py")
