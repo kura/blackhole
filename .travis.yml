@@ -14,14 +14,7 @@ deploy:
   - provider: script
     script: scripts/release.sh
     on:
-      tags: true:
-  - provider: pages
-    skip_cleanup: true
-    github_token:
-      secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
-    local_dir: .tox/docs/tmp/html
-    on:
-      branch: master
+      tags: true
 
 env:
     global:
@@ -71,6 +64,14 @@ matrix:
     env: TOXENV=lint
   - python: '3.6'
     env: TOXENV=docs
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      github_token:
+        secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
+      local_dir: .tox/docs/tmp/html
+      on:
+        branch: master
   - python: "3.6"
     env: TOXENV=build
   - python: "3.6"
