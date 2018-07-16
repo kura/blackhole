@@ -31,7 +31,10 @@ matrix:
       - make
       - sudo make install
       - popd
-    script: make test_py36
+    script:
+      - tox -e py36
+      - tox -e py36-setproctitle
+      - tox -e py36-uvloop
     deploy:
       provider: script
       script: scripts/release.sh
