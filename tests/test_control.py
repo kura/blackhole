@@ -27,17 +27,26 @@
 import os
 import socket
 import unittest
+
 from unittest import mock
 
-from pyannotate_runtime import collect_types
 import pytest
 
+from pyannotate_runtime import collect_types
+
 from blackhole.config import Config
-from blackhole.control import (_context, _socket, pid_permissions, server,
-                               setgid, setuid)
+from blackhole.control import (
+    _context,
+    _socket,
+    pid_permissions,
+    server,
+    setgid,
+    setuid,
+)
 from blackhole.exceptions import BlackholeRuntimeException
 
-from ._utils import (Args, cleandir, create_config, create_file, reset)
+from ._utils import Args, cleandir, create_config, create_file, reset
+
 
 try:
     import ssl

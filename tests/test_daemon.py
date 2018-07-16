@@ -25,14 +25,16 @@
 # pylama:skip=1
 
 import os
+
 from unittest import mock
 
-from pyannotate_runtime import collect_types
 import pytest
+
+from pyannotate_runtime import collect_types
 
 from blackhole.daemon import Daemon, DaemonException
 
-from ._utils import (Args, cleandir, create_config, create_file, reset)
+from ._utils import Args, cleandir, create_config, create_file, reset
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')

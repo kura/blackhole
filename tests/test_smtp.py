@@ -26,22 +26,23 @@
 
 import asyncio
 import inspect
-from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
 import socket
 import threading
 import time
 import unittest
+
+from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
 from unittest import mock
 
-from pyannotate_runtime import collect_types
 import pytest
+
+from pyannotate_runtime import collect_types
 
 from blackhole.config import Config
 from blackhole.control import _socket
 from blackhole.smtp import Smtp
 
-from ._utils import (Args, annotate, cleandir, create_config, create_file,
-                     reset)
+from ._utils import Args, annotate, cleandir, create_config, create_file, reset
 
 
 try:

@@ -20,6 +20,7 @@ matrix:
   include:
 
   - python: '3.6'
+    env: NAME=py36,py36-{setproctitle,uvloop}
     sudo: true
     before_install:
       - git clone https://github.com/libuv/libuv.git
@@ -38,6 +39,7 @@ matrix:
         tags: true
 
   - python: '3.7'
+    env: NAME=py37,py37-{setproctitle,uvloop}
     sudo: true
     before_install:
       - git clone https://github.com/libuv/libuv.git

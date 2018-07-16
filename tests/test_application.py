@@ -26,18 +26,23 @@
 
 import logging
 import os
+
 from unittest import mock
 
-from pyannotate_runtime import collect_types
 import pytest
+
+from pyannotate_runtime import collect_types
 
 from blackhole.application import blackhole_config, run
 from blackhole.config import Config
-from blackhole.exceptions import (BlackholeRuntimeException, ConfigException,
-                                  DaemonException)
+from blackhole.exceptions import (
+    BlackholeRuntimeException,
+    ConfigException,
+    DaemonException,
+)
 from blackhole.logs import configure_logs
 
-from ._utils import (Args, cleandir, create_config, create_file, reset)
+from ._utils import Args, cleandir, create_config, create_file, reset
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')

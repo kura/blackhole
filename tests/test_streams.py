@@ -27,14 +27,16 @@
 import asyncio
 import os
 import socket
+
 from unittest import mock
 
-from pyannotate_runtime import collect_types
 import pytest
+
+from pyannotate_runtime import collect_types
 
 from blackhole.streams import StreamProtocol
 
-from ._utils import (Args, cleandir, create_config, create_file, reset)
+from ._utils import Args, cleandir, create_config, create_file, reset
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')
