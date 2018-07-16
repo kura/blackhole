@@ -77,6 +77,12 @@ matrix:
     env: NAME="pipfile (3.6)"
     script: make pipfile
 
+  # setup.py
+  - python: '3.6'
+    install: skip
+    env: NAME="setup.py"
+    script: make setuppy
+
   # shellcheck
   - language: generic
     env: NAME="shellcheck"

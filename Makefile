@@ -47,6 +47,11 @@ pipfile:
 release:
 	scripts/release.sh
 
+.PHONY: setuppy
+setuppy:
+	pip install docutils
+	python setup.py check -r -s -m
+
 .PHONY: shellcheck
 shellcheck:
 	shellcheck -x scripts/*.sh bash-completion/blackhole-completion.bash \
