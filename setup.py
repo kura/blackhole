@@ -26,86 +26,86 @@
 
 from setuptools import find_packages, setup
 
-from setup_helpers import (PyTest, get_version, include_file,
-                           require_python)
-
+from setup_helpers import PyTest, get_version, include_file, require_python
 
 # require_python(50725104)
-__version__ = get_version('blackhole/__init__.py')
+__version__ = get_version("blackhole/__init__.py")
 
 entry_points = {
-    'console_scripts': (
-        'blackhole = blackhole.application:run',
-        'blackhole_config = blackhole.application:blackhole_config',
+    "console_scripts": (
+        "blackhole = blackhole.application:run",
+        "blackhole_config = blackhole.application:blackhole_config",
     )
 }
 
-extras_require = {
-    'setproctitle': ['setproctitle', ],
-    'uvloop': ['uvloop', ],
-}
+extras_require = {"setproctitle": ["setproctitle"], "uvloop": ["uvloop"]}
 
-tests_require = ('codecov',
-                 'guzzle_sphinx_theme',
-                 'isort',
-                 'pyannotate',
-                 'pycodestyle',
-                 'pydocstyle',
-                 'pyflakes',
-                 'pylama',
-                 'pytest',
-                 'pytest-asyncio',
-                 'pytest-cov',
-                 'radon',
-                 'sphinx', )
+tests_require = (
+    "codecov",
+    "guzzle_sphinx_theme",
+    "isort",
+    "pyannotate",
+    "pycodestyle<2.4.0,>=2.0.0",
+    "pydocstyle",
+    "pyflakes<1.7.0,>=1.5.0",
+    "pylama",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "radon",
+    "sphinx",
+)
 
-description = ('Blackhole is an MTA (message transfer agent) that '
-               '(figuratively) pipes all mail to /dev/null.')
+description = (
+    "Blackhole is an MTA (message transfer agent) that "
+    "(figuratively) pipes all mail to /dev/null."
+)
 
-keywords = ('blackhole', 'asyncio', 'smtp', 'mta', 'email')
+keywords = ("blackhole", "asyncio", "smtp", "mta", "email")
 
-classifiers = ['Development Status :: 5 - Production/Stable',
-               'Environment :: Console',
-               'Intended Audience :: Developers',
-               'Intended Audience :: Information Technology',
-               'Intended Audience :: System Administrators',
-               'License :: OSI Approved :: MIT License',
-               'Operating System :: POSIX :: Linux',
-               'Operating System :: Unix',
-               'Programming Language :: Python',
-               'Programming Language :: Python :: 3.6',
-               'Programming Language :: Python :: 3 :: Only',
-               'Topic :: Communications :: Email',
-               'Topic :: Communications :: Email :: Mail Transport Agents',
-               'Topic :: Education :: Testing',
-               'Topic :: Internet',
-               'Topic :: Software Development',
-               'Topic :: Software Development :: Testing',
-               ('Topic :: Software Development :: Testing :: '
-                'Traffic Generation'),
-               'Topic :: System :: Networking',
-               'Topic :: System :: Systems Administration',
-               'Topic :: Utilities', ]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Communications :: Email",
+    "Topic :: Communications :: Email :: Mail Transport Agents",
+    "Topic :: Education :: Testing",
+    "Topic :: Internet",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Testing",
+    ("Topic :: Software Development :: Testing :: " "Traffic Generation"),
+    "Topic :: System :: Networking",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+]
 
 setup(
-    author='Kura',
-    author_email='kura@kura.io',
+    author="Kura",
+    author_email="kura@kura.io",
     classifiers=classifiers,
-    cmdclass={'test': PyTest},
+    cmdclass={"test": PyTest},
     description=description,
     entry_points=entry_points,
     extras_require=extras_require,
     install_requires=[],
-    keywords=' '.join(keywords),
-    license='MIT',
-    long_description="\n" + include_file('README.rst'),
-    maintainer='Kura',
-    maintainer_email='kura@kura.io',
-    name='blackhole',
-    packages=find_packages(exclude=('tests',)),
-    platforms=['linux'],
+    keywords=" ".join(keywords),
+    license="MIT",
+    long_description="\n" + include_file("README.rst"),
+    maintainer="Kura",
+    maintainer_email="kura@kura.io",
+    name="blackhole",
+    packages=find_packages(exclude=("tests",)),
+    platforms=["linux"],
     tests_require=tests_require,
-    url='https://blackhole.io/',
+    url="https://blackhole.io/",
     version=__version__,
     zip_safe=False,  # this is probably not correct, but I've never tested it.
 )
