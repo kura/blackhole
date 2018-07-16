@@ -8,6 +8,7 @@ TODO
 
 Things on the todo list, in no particular order.
 
+- Make ``tests/`` flake8/isort compliant.
 - Implement logging to a file.
 - :strikethrough:`Add pidfile tests for config to config_test and pytest.` --
   :ref:`2.0.4`
