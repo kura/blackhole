@@ -30,7 +30,7 @@ matrix:
       - make
       - sudo make install
       - popd
-    script: make py36
+    script: make test_py36
     deploy:
       provider: script
       script: scripts/release.sh
@@ -48,7 +48,7 @@ matrix:
       - make
       - sudo make install
       - popd
-    script: make py37
+    script: make test_py37
 
   - python: "3.6"
     env: TOXENV=lint
