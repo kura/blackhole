@@ -39,22 +39,18 @@ entry_points = {
     )
 }
 
-extras_require = {"setproctitle": ["setproctitle"], "uvloop": ["uvloop"]}
-
-tests_require = (
-    "codecov",
-    "guzzle_sphinx_theme",
-    "isort",
-    "pyannotate",
-    "pycodestyle<2.4.0,>=2.0.0",
-    "pydocstyle",
-    "pyflakes<1.7.0,>=1.5.0",
-    "pylama",
-    "pytest",
-    "pytest-asyncio",
-    "pytest-cov",
-    "radon",
-    "sphinx",
+extras_require = {
+    "setproctitle": ["setproctitle"],
+    "uvloop": ["uvloop"],
+    "docs": ["sphinx", "guzzle_sphinx_theme"],
+    "tests": [
+        "pyannotate",
+        "pytest",
+        "pytest-asyncio",
+    ],
+}
+extras_require["dev"] = (
+    extras_require["docs"] + extras_require["tests"] + ["tox", "pre-commit"]
 )
 
 description = (
@@ -75,6 +71,7 @@ classifiers = [
     "Operating System :: Unix",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Communications :: Email",
     "Topic :: Communications :: Email :: Mail Transport Agents",
@@ -105,7 +102,6 @@ setup(
     name="blackhole",
     packages=find_packages(exclude=("tests",)),
     platforms=["linux"],
-    tests_require=tests_require,
     url="https://blackhole.io/",
     version=__version__,
     zip_safe=False,  # this is probably not correct, but I've never tested it.
