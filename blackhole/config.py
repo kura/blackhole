@@ -36,7 +36,7 @@ import pwd
 import socket
 
 from .exceptions import ConfigException
-from .utils import (get_version, mailname, Singleton)
+from .utils import Singleton, get_version, mailname
 
 
 __all__ = ('parse_cmd_args', 'warn_options', 'config_test', 'Config')

@@ -1,0 +1,12 @@
+[run]
+branch = True
+source =
+    blackhole
+
+[paths]
+source =
+   blackhole
+   .tox/*/lib/python*/site-packages/blackhole
+
+[report]
+show_missing = True

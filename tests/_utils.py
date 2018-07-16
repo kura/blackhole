@@ -29,10 +29,12 @@ import logging
 import os
 import tempfile
 
-from pyannotate_runtime import collect_types
 import pytest
 
+from pyannotate_runtime import collect_types
+
 from blackhole.utils import Singleton
+
 
 logging.getLogger('blackhole').addHandler(logging.NullHandler())
 

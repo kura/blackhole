@@ -13,7 +13,7 @@ build:
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
-	rm -rf .tox build dist docs/build man/build
+	rm -rf build dist docs/build man/build
 
 .PHONY: docs
 docs: clean linkcheck
@@ -25,10 +25,13 @@ docs: clean linkcheck
 install:
 	python setup.py install
 
-.PHONY: linkcheck
-linkcheck: clean
-	pip install sphinx guzzle_sphinx_theme
-	sphinx-build -j 4 -b linkcheck docs/source/ docs/build
+.PHONY: install_tox
+install_tox:
+	pip install tox detox
+
+.PHONY: lint
+lint: install_tox
+	tox -e lint
 
 .PHONY: man
 man: clean
@@ -37,46 +40,48 @@ man: clean
 	rst2man.py man/source/blackhole.rst man/build/blackhole.1
 	rst2man.py man/source/blackhole_config.rst man/build/blackhole_config.1
 
-.PHONY: pipfile
-pipfile:
-	pip install pipenv
-	pipenv check
-	pipenv install
-
 .PHONY: release
 release:
 	scripts/release.sh
 
 .PHONY: shellcheck
-shellcheck:
-	shellcheck -x scripts/*.sh bash-completion/blackhole-completion.bash \
-		init.d/debian-ubuntu/blackhole
+shellcheck: install_tox
+	tox -e shellcheck
 
 .PHONY: test
-test: clean
-	pip install codecov \
-				pyannotate \
-				'pycodestyle<2.4.0,>=2.0.0' \
-				pydocstyle \
-				'pyflakes<1.7.0,>=1.5.0' \
-				pylama \
-				pytest \
-				pytest-asyncio \
-				pytest-cov \
-				radon \
-				setproctitle
-	py.test --cov ./blackhole \
-			--cov ./tests \
-			--cov-report xml \
-			--cov-report term-missing \
-			--verbose \
-			--pylama \
-			--cache-clear \
-			blackhole tests
-	radon mi -nc blackhole
+test: install_tox
+	tox -e py36
+
+.PHONY: test_py36
+test_py36: install_tox
+	detox -e py36,py36-setproctitle,py36-uvloop
+
+.PHONY: test_py37
+test_py37: install_tox
+	detox -e py37,py37-setproctitle,py37-uvloop
+
+.PHONY: test_build
+test_build: install_tox
+	tox -e build
+
+.PHONY: test_docs
+test_docs: install_tox
+	tox -e docs
+
+.PHONY: test_man
+test_man: install_tox
+	tox -e man
+
+.PHONY: test_pipfile
+test_pipfile: install_tox
+	tox -e pipfile
+
+.PHONY: test_setuppy
+test_setuppy: install_tox
+	tox -e setuppy
 
 .PHONY: testall
-testall: tox shellcheck
+testall: tox
 
 .PHONY: testssl
 testssl:

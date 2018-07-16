@@ -26,14 +26,15 @@
 
 import unittest
 
-from pyannotate_runtime import collect_types
 import pytest
+
+from pyannotate_runtime import collect_types
 
 from blackhole.config import Config
 from blackhole.smtp import Smtp
 
-from ._utils import (Args, annotate, cleandir, create_config, create_file,
-                     reset)
+from ._utils import Args, annotate, cleandir, create_config, create_file, reset
+
 
 @pytest.mark.usefixtures('reset', 'cleandir')
 class TestHeadersSwitchDisabled(unittest.TestCase):

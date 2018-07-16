@@ -31,16 +31,17 @@ import os
 import socket
 import time
 import unittest
+
 from unittest import mock
 
-from pyannotate_runtime import collect_types
 import pytest
+
+from pyannotate_runtime import collect_types
 
 from blackhole.config import Config, config_test, parse_cmd_args, warn_options
 from blackhole.exceptions import ConfigException
 
-from ._utils import (Args, annotate, cleandir, create_config, create_file,
-                     reset)
+from ._utils import Args, annotate, cleandir, create_config, create_file, reset
 
 
 @pytest.mark.usefixtures('reset', 'cleandir')

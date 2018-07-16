@@ -32,11 +32,14 @@ import sys
 from .config import Config, config_test, parse_cmd_args, warn_options
 from .control import pid_permissions, setgid, setuid
 from .daemon import Daemon
-from .exceptions import (BlackholeRuntimeException, ConfigException,
-                         DaemonException)
+from .exceptions import (
+    BlackholeRuntimeException,
+    ConfigException,
+    DaemonException,
+)
 from .logs import configure_logs
-from .utils import blackhole_config_help
 from .supervisor import Supervisor
+from .utils import blackhole_config_help
 
 
 __all__ = ('blackhole_config', 'run')
