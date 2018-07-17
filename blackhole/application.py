@@ -42,7 +42,7 @@ from .supervisor import Supervisor
 from .utils import blackhole_config_help
 
 
-__all__ = ('blackhole_config', 'run')
+__all__ = ("blackhole_config", "run")
 """Tuple all the things."""
 
 
@@ -54,7 +54,7 @@ def blackhole_config():
     """
     args = parse_cmd_args(sys.argv[1:])
     configure_logs(args)
-    logger = logging.getLogger('blackhole.blackhole_config')
+    logger = logging.getLogger("blackhole.blackhole_config")
     logger.info(blackhole_config_help)
     raise SystemExit(os.EX_OK)
 
@@ -70,7 +70,7 @@ def run():
     """
     args = parse_cmd_args(sys.argv[1:])
     configure_logs(args)
-    logger = logging.getLogger('blackhole')
+    logger = logging.getLogger("blackhole")
     if args.test:
         config_test(args)
     try:

@@ -31,33 +31,35 @@ from argparse import Namespace
 from logging.config import dictConfig
 
 
-__all__ = ('configure_logs', )
+__all__ = ("configure_logs",)
 """Tuple all the things."""
 
 
-DEBUG_FORMAT = ('[%(asctime)s] [%(levelname)s] blackhole.%(module)s: '
-                '%(message)s')
+DEBUG_FORMAT = (
+    "[%(asctime)s] [%(levelname)s] blackhole.%(module)s: " "%(message)s"
+)
 
 LOG_CONFIG = {
-    'formatters': {
-        'console': {'format': '%(message)s'},
-        'debug': {'format': DEBUG_FORMAT},
+    "formatters": {
+        "console": {"format": "%(message)s"},
+        "debug": {"format": DEBUG_FORMAT},
     },
-    'handlers': {
-    },
-    'loggers': {
-        'blackhole': {'handlers': [], 'level': logging.INFO},
-    },
-    'version': 1,
+    "handlers": {},
+    "loggers": {"blackhole": {"handlers": [], "level": logging.INFO}},
+    "version": 1,
 }
 
-DEBUG_HANDLER = {'class': 'logging.StreamHandler',
-                 'formatter': 'debug',
-                 'level': logging.DEBUG}
+DEBUG_HANDLER = {
+    "class": "logging.StreamHandler",
+    "formatter": "debug",
+    "level": logging.DEBUG,
+}
 
-DEFAULT_HANDLER = {'class': 'logging.StreamHandler',
-                   'formatter': 'console',
-                   'level': logging.INFO}
+DEFAULT_HANDLER = {
+    "class": "logging.StreamHandler",
+    "formatter": "console",
+    "level": logging.INFO,
+}
 
 
 def configure_logs(args: Namespace) -> None:
@@ -66,18 +68,18 @@ def configure_logs(args: Namespace) -> None:
 
     :param argparse.Namespace args: Parameters parsed from :py:mod:`argparse`.
     """
-    logger_handlers = LOG_CONFIG['loggers']['blackhole']['handlers']
+    logger_handlers = LOG_CONFIG["loggers"]["blackhole"]["handlers"]
     if args.debug:
-        LOG_CONFIG['loggers']['blackhole']['level'] = logging.DEBUG
-        LOG_CONFIG['handlers']['default_handler'] = DEBUG_HANDLER
-        logger_handlers.append('default_handler')
+        LOG_CONFIG["loggers"]["blackhole"]["level"] = logging.DEBUG
+        LOG_CONFIG["handlers"]["default_handler"] = DEBUG_HANDLER
+        logger_handlers.append("default_handler")
     elif args.quiet:
-        LOG_CONFIG['loggers']['blackhole']['level'] = logging.ERROR
-        LOG_CONFIG['handlers']['default_handler'] = DEFAULT_HANDLER
-        LOG_CONFIG['handlers']['default_handler']['level'] = logging.ERROR
-        logger_handlers.append('default_handler')
+        LOG_CONFIG["loggers"]["blackhole"]["level"] = logging.ERROR
+        LOG_CONFIG["handlers"]["default_handler"] = DEFAULT_HANDLER
+        LOG_CONFIG["handlers"]["default_handler"]["level"] = logging.ERROR
+        logger_handlers.append("default_handler")
     else:
-        LOG_CONFIG['loggers']['blackhole']['level'] = logging.INFO
-        LOG_CONFIG['handlers']['default_handler'] = DEFAULT_HANDLER
-        logger_handlers.append('default_handler')
+        LOG_CONFIG["loggers"]["blackhole"]["level"] = logging.INFO
+        LOG_CONFIG["handlers"]["default_handler"] = DEFAULT_HANDLER
+        logger_handlers.append("default_handler")
     dictConfig(LOG_CONFIG)

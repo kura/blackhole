@@ -31,17 +31,17 @@ import logging
 from .config import Config
 
 
-__all__ = ('StreamReaderProtocol', 'PING', 'PONG')
+__all__ = ("StreamReaderProtocol", "PING", "PONG")
 """Tuple all the things."""
 
 
-logger = logging.getLogger('blackhole.protocols')
+logger = logging.getLogger("blackhole.protocols")
 
 
-PING = b'x01'
+PING = b"x01"
 """Protocol message used by the worker and child processes to communicate."""
 
-PONG = b'x02'
+PONG = b"x02"
 """Protocol message used by the worker and child processes to communicate."""
 
 
@@ -57,13 +57,15 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         :type loop: :py:obj:`None` or
                     :py:class:`syncio.unix_events._UnixSelectorEventLoop`
         """
-        logger.debug('init')
+        logger.debug("init")
         self.loop = loop if loop is not None else asyncio.get_event_loop()
-        logger.debug('loop')
-        super().__init__(asyncio.StreamReader(loop=self.loop),
-                         client_connected_cb=self._client_connected_cb,
-                         loop=self.loop)
-        logger.debug('super')
+        logger.debug("loop")
+        super().__init__(
+            asyncio.StreamReader(loop=self.loop),
+            client_connected_cb=self._client_connected_cb,
+            loop=self.loop,
+        )
+        logger.debug("super")
         self.clients = clients
         self.config = Config()
         logger.debug(self.config)
@@ -75,7 +77,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         """Adapt internal flags for the transport in use."""
         # This has to be done here since passing it as part of init causes
         # flags to become garbled and mixed up. Artifact of loop.create_server
-        sock = self.transport.get_extra_info('socket')
+        sock = self.transport.get_extra_info("socket")
         # Ideally this would use transport.get_extra_info('sockname') but that
         # crashes the child process for some weird reason. Getting the socket
         # and interacting directly does not cause a crash, hence...
@@ -84,8 +86,8 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         if len(flags.keys()) > 0:
             self._flags = flags
             self._disable_dynamic_switching = True
-            logger.debug('Flags enabled, disabling dynamic switching')
-            logger.debug('Flags for this connection: %s', self._flags)
+            logger.debug("Flags enabled, disabling dynamic switching")
+            logger.debug("Flags for this connection: %s", self._flags)
 
     def _client_connected_cb(self, reader, writer):
         """
@@ -106,7 +108,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
 
         :param exc exc: Exception.
         """
-        logger.debug('Peer disconnected')
+        logger.debug("Peer disconnected")
         super().connection_lost(exc)
         self.connection_closed, self._connection_closed = True, True
         try:
@@ -128,9 +130,11 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         """
         while not self.connection_closed:
             try:
-                line = await asyncio.wait_for(self._reader.readline(),
-                                              self.config.timeout,
-                                              loop=self.loop)
+                line = await asyncio.wait_for(
+                    self._reader.readline(),
+                    self.config.timeout,
+                    loop=self.loop,
+                )
             except asyncio.TimeoutError:
                 await self.timeout()
                 return None
@@ -138,7 +142,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
 
     async def close(self):
         """Close the connection from the client."""
-        logger.debug('Closing connection')
+        logger.debug("Closing connection")
         if self._writer:
             try:
                 self.clients.remove(self._writer)
@@ -154,7 +158,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
 
         :param str msg: The message for the SMTP code
         """
-        response = "{0}\r\n".format(msg).encode('utf-8')
-        logger.debug('SEND %s', response)
+        response = "{0}\r\n".format(msg).encode("utf-8")
+        logger.debug("SEND %s", response)
         self._writer.write(response)
         await self._writer.drain()

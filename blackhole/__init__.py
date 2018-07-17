@@ -48,34 +48,37 @@ from .utils import __all__ as __utils_all__
 from .worker import __all__ as __worker_all__
 
 
-__author__ = 'Kura'
-__copyright__ = 'None'
-__credits__ = ('Kura', )
-__license__ = 'MIT'
-__version__ = '2.1.13'
-__maintainer__ = 'Kura'
-__email__ = 'kura@kura.io'
-__status__ = 'Stable'
+__author__ = "Kura"
+__copyright__ = "None"
+__credits__ = ("Kura",)
+__license__ = "MIT"
+__version__ = "2.1.13"
+__maintainer__ = "Kura"
+__email__ = "kura@kura.io"
+__status__ = "Stable"
 
 
-__all__ = (__application_all__ +
-           __child_all__ +
-           __config_all__ +
-           __control_all__ +
-           __daemon_all__ +
-           __exceptions_all__ +
-           __logs_all__ +
-           __protocols_all__ +
-           __smtp_all__ +
-           __streams_all__ +
-           __supervisor_all__ +
-           __utils_all__ +
-           __worker_all__)
+__all__ = (
+    __application_all__
+    + __child_all__
+    + __config_all__
+    + __control_all__
+    + __daemon_all__
+    + __exceptions_all__
+    + __logs_all__
+    + __protocols_all__
+    + __smtp_all__
+    + __streams_all__
+    + __supervisor_all__
+    + __utils_all__
+    + __worker_all__
+)
 """Tuple all the things."""
 
 try:
     import asyncio
     import uvloop
+
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 except ImportError:
     pass

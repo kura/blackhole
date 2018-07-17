@@ -39,16 +39,23 @@ from .config import Config
 from .exceptions import BlackholeRuntimeException
 
 
-__all__ = ('pid_permissions', 'server', 'setgid', 'setuid')
+__all__ = ("pid_permissions", "server", "setgid", "setuid")
 """Tuple all the things."""
 
 
-logger = logging.getLogger('blackhole.control')
-ciphers = ['ECDHE-ECDSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES256-GCM-SHA384',
-           'ECDHE-ECDSA-CHACHA20-POLY1305', 'ECDHE-RSA-CHACHA20-POLY1305',
-           'ECDHE-ECDSA-AES128-GCM-SHA256', 'ECDHE-RSA-AES128-GCM-SHA256',
-           'ECDHE-ECDSA-AES256-SHA384', 'ECDHE-RSA-AES256-SHA384',
-           'ECDHE-ECDSA-AES128-SHA256', 'ECDHE-RSA-AES128-SHA256']
+logger = logging.getLogger("blackhole.control")
+ciphers = [
+    "ECDHE-ECDSA-AES256-GCM-SHA384",
+    "ECDHE-RSA-AES256-GCM-SHA384",
+    "ECDHE-ECDSA-CHACHA20-POLY1305",
+    "ECDHE-RSA-CHACHA20-POLY1305",
+    "ECDHE-ECDSA-AES128-GCM-SHA256",
+    "ECDHE-RSA-AES128-GCM-SHA256",
+    "ECDHE-ECDSA-AES256-SHA384",
+    "ECDHE-RSA-AES256-SHA384",
+    "ECDHE-ECDSA-AES128-SHA256",
+    "ECDHE-RSA-AES128-SHA256",
+]
 """Strong default TLS ciphers."""
 
 
@@ -91,7 +98,7 @@ def _context(use_tls=False):
     if not config.args.less_secure:
         ctx.options |= ssl.OP_SINGLE_DH_USE
         ctx.options |= ssl.OP_SINGLE_ECDH_USE
-    ctx.set_ciphers(':'.join(ciphers))
+    ctx.set_ciphers(":".join(ciphers))
     if config.tls_dhparams:
         ctx.load_dh_params(config.tls_dhparams)
     return ctx
@@ -120,7 +127,7 @@ def _socket(addr, port, family):
     try:
         sock.bind((addr, port))
     except OSError:
-        msg = 'Cannot bind to {0}:{1}.'.format(addr, port)
+        msg = "Cannot bind to {0}:{1}.".format(addr, port)
         logger.critical(msg)
         sock.close()
         raise BlackholeRuntimeException(msg)
@@ -148,7 +155,7 @@ def server(addr, port, family, use_tls=False):
     """
     sock = _socket(addr, port, family)
     ctx = _context(use_tls=use_tls)
-    return {'sock': sock, 'ssl': ctx}
+    return {"sock": sock, "ssl": ctx}
 
 
 def pid_permissions():
@@ -168,7 +175,7 @@ def pid_permissions():
         group = grp.getgrnam(config.group)
         os.chown(config.pidfile, user.pw_uid, group.gr_gid)
     except (KeyError, PermissionError):
-        logger.error('Unable to change pidfile ownership permissions.')
+        logger.error("Unable to change pidfile ownership permissions.")
         raise SystemExit(os.EX_USAGE)
 
 
@@ -192,11 +199,12 @@ def setgid():
         gid = grp.getgrnam(config.group).gr_gid
         os.setgid(gid)
     except KeyError:
-        logger.error('Group \'%s\' does not exist.', config.group)
+        logger.error("Group '%s' does not exist.", config.group)
         raise SystemExit(os.EX_USAGE)
     except PermissionError:
-        logger.error('You do not have permission to switch to group \'%s\'.',
-                     config.group)
+        logger.error(
+            "You do not have permission to switch to group '%s'.", config.group
+        )
         raise SystemExit(os.EX_NOPERM)
 
 
@@ -220,9 +228,10 @@ def setuid():
         uid = pwd.getpwnam(config.user).pw_uid
         os.setuid(uid)
     except KeyError:
-        logger.error('User \'%s\' does not exist.', config.user)
+        logger.error("User '%s' does not exist.", config.user)
         raise SystemExit(os.EX_USAGE)
     except PermissionError:
-        logger.error('You do not have permission to switch to user \'%s\'.',
-                     config.user)
+        logger.error(
+            "You do not have permission to switch to user '%s'.", config.user
+        )
         raise SystemExit(os.EX_NOPERM)

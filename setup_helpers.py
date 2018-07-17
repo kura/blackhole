@@ -26,7 +26,7 @@ import sys
 from setuptools.command.test import test as TestCommand
 
 
-__all__ = ('get_version', 'include_file', 'require_python', 'PyTest')
+__all__ = ("get_version", "include_file", "require_python", "PyTest")
 
 
 class PyTest(TestCommand):
@@ -35,12 +35,13 @@ class PyTest(TestCommand):
     def finalize_options(self):
         """Build options."""
         TestCommand.finalize_options(self)
-        self.test_args = ['--pylama', '-q', './blackhole', './tests']
+        self.test_args = ["--pylama", "-q", "./blackhole", "./tests"]
         self.test_suite = True
 
     def run_tests(self):
         """Run ze tests."""
         import pytest
+
         sys.exit(pytest.main(self.test_args))
 
 
@@ -49,32 +50,38 @@ def require_python(minimum):
     if sys.hexversion < minimum:
         hversion = hex(minimum)[2:]
         if len(hversion) % 2 != 0:
-            hversion = '0' + hversion
+            hversion = "0" + hversion
         split = list(hversion)
         parts = []
         while split:
-            parts.append(int(''.join((split.pop(0), split.pop(0))), 16))
+            parts.append(int("".join((split.pop(0), split.pop(0))), 16))
         major, minor, micro, release = parts
         if release == 0xf0:
-            print('Python {0}.{1}.{2} or higher is required'.format(
-                major, minor, micro))
+            print(
+                "Python {0}.{1}.{2} or higher is required".format(
+                    major, minor, micro
+                )
+            )
         else:
-            print('Python {0}.{1}.{2} ({3}) or higher is required'.format(
-                major, minor, micro, hex(release)[2:]))
+            print(
+                "Python {0}.{1}.{2} ({3}) or higher is required".format(
+                    major, minor, micro, hex(release)[2:]
+                )
+            )
         sys.exit(1)
 
 
 def include_file(filename):
     """Include contents of specified file."""
     fpath = os.path.join(os.path.dirname(__file__), filename)
-    with io.open(fpath, encoding='utf-8') as f:
+    with io.open(fpath, encoding="utf-8") as f:
         c = f.read()
     return c
 
 
 def get_version(filepath):
     """Return program version."""
-    for line in include_file(filepath).split('\n'):
-        if line.startswith('__version__'):
-            _, vers = line.split('=')
-            return vers.strip().replace('"', '').replace("'", '')
+    for line in include_file(filepath).split("\n"):
+        if line.startswith("__version__"):
+            _, vers = line.split("=")
+            return vers.strip().replace('"', "").replace("'", "")

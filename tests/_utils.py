@@ -36,7 +36,7 @@ from pyannotate_runtime import collect_types
 from blackhole.utils import Singleton
 
 
-logging.getLogger('blackhole').addHandler(logging.NullHandler())
+logging.getLogger("blackhole").addHandler(logging.NullHandler())
 
 
 def annotate(func):
@@ -44,6 +44,7 @@ def annotate(func):
         collect_types.resume()
         output = func(*args, **kwargs)
         collect_types.pause()
+
     return wrapper
 
 
@@ -60,16 +61,16 @@ def reset():
 
 def create_config(data):
     cwd = os.getcwd()
-    path = os.path.join(cwd, 'test.conf')
-    with open(path, 'w') as cfile:
-        cfile.write('\n'.join(data))
+    path = os.path.join(cwd, "test.conf")
+    with open(path, "w") as cfile:
+        cfile.write("\n".join(data))
     return path
 
 
-def create_file(name, data=''):
+def create_file(name, data=""):
     cwd = os.getcwd()
     path = os.path.join(cwd, name)
-    with open(path, 'w') as ffile:
+    with open(path, "w") as ffile:
         ffile.write(str(data))
     return path
 

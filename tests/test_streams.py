@@ -39,7 +39,7 @@ from blackhole.streams import StreamProtocol
 from ._utils import Args, cleandir, create_config, create_file, reset
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_client_not_connected():
     collect_types.init_types_collection()
@@ -47,10 +47,10 @@ async def test_client_not_connected():
     sp = StreamProtocol()
     assert sp.is_connected() is False
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_client_connected(event_loop):
     collect_types.init_types_collection()
@@ -59,7 +59,7 @@ async def test_client_connected(event_loop):
     sp.connection_made(asyncio.Transport())
     assert sp.is_connected() is True
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
 # @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',

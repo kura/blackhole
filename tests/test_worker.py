@@ -45,12 +45,13 @@ from ._utils import Args, cleandir, create_config, create_file, reset
 try:
     import asyncio
     import uvloop
+
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 except ImportError:
     pass
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_start_stop():
     collect_types.init_types_collection()
@@ -61,76 +62,88 @@ async def test_start_stop():
     worker.stop()
     assert worker._started is False
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 def test_child_start_setgid_fails_invalid_group():
     collect_types.init_types_collection()
     collect_types.resume()
-    cfile = create_config(('user=fgqewgreghrehgerhehw',
-                           'group=fgqewgreghrehgerhehw'))
+    cfile = create_config(
+        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
+    )
     Config(cfile).load()
-    with mock.patch('os.pipe', return_value=('', '')), \
-        mock.patch('os.fork', return_value=False), \
-        mock.patch('os.close'), \
-        mock.patch('os.setgid', side_effect=KeyError), \
-            pytest.raises(SystemExit) as err:
+    with mock.patch("os.pipe", return_value=("", "")), mock.patch(
+        "os.fork", return_value=False
+    ), mock.patch("os.close"), mock.patch(
+        "os.setgid", side_effect=KeyError
+    ), pytest.raises(
+        SystemExit
+    ) as err:
         Worker([], [])
-    assert str(err.value) == '64'
+    assert str(err.value) == "64"
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 def test_child_start_setgid_fails_permissions():
     collect_types.init_types_collection()
     collect_types.resume()
-    cfile = create_config(('user=fgqewgreghrehgerhehw',
-                           'group=fgqewgreghrehgerhehw'))
+    cfile = create_config(
+        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
+    )
     Config(cfile).load()
-    with mock.patch('os.pipe', return_value=('', '')), \
-        mock.patch('os.fork', return_value=False), \
-        mock.patch('os.close'), \
-        mock.patch('os.setgid', side_effect=PermissionError), \
-            pytest.raises(SystemExit) as err:
+    with mock.patch("os.pipe", return_value=("", "")), mock.patch(
+        "os.fork", return_value=False
+    ), mock.patch("os.close"), mock.patch(
+        "os.setgid", side_effect=PermissionError
+    ), pytest.raises(
+        SystemExit
+    ) as err:
         Worker([], [])
-    assert str(err.value) == '64'
+    assert str(err.value) == "64"
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 def test_child_start_setuid_fails_invalid_user():
     collect_types.init_types_collection()
     collect_types.resume()
-    cfile = create_config(('user=fgqewgreghrehgerhehw',
-                           'group=fgqewgreghrehgerhehw'))
+    cfile = create_config(
+        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
+    )
     Config(cfile).load()
-    with mock.patch('os.pipe', return_value=('', '')), \
-        mock.patch('os.fork', return_value=False), \
-        mock.patch('os.close'), \
-        mock.patch('os.setuid', side_effect=KeyError), \
-            pytest.raises(SystemExit) as err:
+    with mock.patch("os.pipe", return_value=("", "")), mock.patch(
+        "os.fork", return_value=False
+    ), mock.patch("os.close"), mock.patch(
+        "os.setuid", side_effect=KeyError
+    ), pytest.raises(
+        SystemExit
+    ) as err:
         Worker([], [])
-    assert str(err.value) == '64'
+    assert str(err.value) == "64"
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 def test_child_start_setuid_fails_permissions():
     collect_types.init_types_collection()
     collect_types.resume()
-    cfile = create_config(('user=fgqewgreghrehgerhehw',
-                           'group=fgqewgreghrehgerhehw'))
+    cfile = create_config(
+        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
+    )
     Config(cfile).load()
-    with mock.patch('os.pipe', return_value=('', '')), \
-        mock.patch('os.fork', return_value=False), \
-        mock.patch('os.close'), \
-        mock.patch('os.setuid', side_effect=PermissionError), \
-            pytest.raises(SystemExit) as err:
+    with mock.patch("os.pipe", return_value=("", "")), mock.patch(
+        "os.fork", return_value=False
+    ), mock.patch("os.close"), mock.patch(
+        "os.setuid", side_effect=PermissionError
+    ), pytest.raises(
+        SystemExit
+    ) as err:
         Worker([], [])
-    assert str(err.value) == '64'
+    assert str(err.value) == "64"
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
