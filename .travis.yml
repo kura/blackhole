@@ -10,17 +10,6 @@ script: tox
 after_success:
   - tox -e coverage-report
   - codecov
-deploy:
-  - provider: script
-    script: scripts/release.sh
-    on:
-      tags: true
-
-env:
-    global:
-      - TWINE_USERNAME: kura
-      # TWINE_PASSWORD:
-      - secure: "Bd63ijidRb6vsEnMEDI1lUKNlSegrorisBttzXyucEisl0cu0FfahIuFoXmXL0NeTSpDKYb5HZoqC0J+7LXZep8ZkuV/8H/8j//J1ja3qCIsbfqqklNEYkfe0nO7uGyYkg/exLLZGqJVXeS5+xedPyW+LsDJ5XFYe/dMx6FAfZI="
 
 matrix:
   fast_finish: true
