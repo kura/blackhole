@@ -7,17 +7,10 @@ setproctitle = { extras = ['setproctitle'] }
 uvloop = { extras = ['uvloop'] }
 
 [dev-packages]
-codecov = "*"
+sphinx = "*"
 guzzle_sphinx_theme = "*"
-isort = "*"
-pipenv = "*"
 pyannotate = "*"
-pycodestyle = "<2.4.0,>=2.0.0"
-pydocstyle = "*"
-pyflakes = "<1.7.0,>=1.5.0"
-pylama = "*"
 pytest = "*"
 pytest-asyncio = "*"
-pytest-cov = "*"
-radon = "*"
-Sphinx = "*"
+pre-commit = "*"
+tox = "*"

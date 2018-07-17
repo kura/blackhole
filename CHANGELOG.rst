@@ -25,16 +25,23 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.13:
+
+2.1.13
+======
+
+- Blackhole now officially supports Python 3.7.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.11:
 
 2.1.11
 ======
 
 - Version bump release.
-
--------------
-Past releases
--------------
 
 .. _2.1.10:
 
