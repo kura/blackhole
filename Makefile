@@ -13,7 +13,7 @@ build:
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
-	rm -rf build dist docs/build man/build
+	rm -rf build dist docs/build man/build t coverage.xml
 
 .PHONY: docs
 docs: clean linkcheck
@@ -41,8 +41,9 @@ man: clean
 	rst2man.py man/source/blackhole_config.rst man/build/blackhole_config.1
 
 .PHONY: release
-release:
-	scripts/release.sh
+release: clean install_tox
+	tox -e build
+	twine upload dist/*.whl dist/*.tar.*
 
 .PHONY: shellcheck
 shellcheck: install_tox
