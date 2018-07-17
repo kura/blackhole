@@ -16,7 +16,7 @@ matrix:
   include:
 
   - python: '3.6'
-    env: TOXENV=py36,py36-{setproctitle,uvloop}
+    env: TOXENV=py36,py36-setproctitle,py36-uvloop
     sudo: true
     before_install:
       - git clone https://github.com/libuv/libuv.git
@@ -30,7 +30,7 @@ matrix:
     script: detox
 
   - python: '3.7'
-    env: TOXENV=py37,py37-{setproctitle,uvloop}
+    env: TOXENV=py37,py37-setproctitle,py37-uvloop
     sudo: true
     before_install:
       - git clone https://github.com/libuv/libuv.git
