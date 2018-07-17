@@ -16,7 +16,7 @@ matrix:
   include:
 
   - python: '3.6'
-    env: NAME=py36,py36-{setproctitle,uvloop}
+    env: TOXENV=py36,py36-setproctitle,py36-uvloop
     sudo: true
     before_install:
       - git clone https://github.com/libuv/libuv.git
@@ -27,13 +27,10 @@ matrix:
       - make
       - sudo make install
       - popd
-    script:
-      - tox -e py36
-      - tox -e py36-setproctitle
-      - tox -e py36-uvloop
+    script: detox
 
   - python: '3.7'
-    env: NAME=py37,py37-{setproctitle,uvloop}
+    env: TOXENV=py37,py37-setproctitle,py37-uvloop
     sudo: true
     before_install:
       - git clone https://github.com/libuv/libuv.git
@@ -44,10 +41,7 @@ matrix:
       - make
       - sudo make install
       - popd
-    script:
-      - tox -e py37
-      - tox -e py37-setproctitle
-      - tox -e py37-uvloop
+    script: detox
 
   - python: "3.6"
     env: TOXENV=lint
