@@ -43,11 +43,7 @@ extras_require = {
     "setproctitle": ["setproctitle"],
     "uvloop": ["uvloop"],
     "docs": ["sphinx", "guzzle_sphinx_theme"],
-    "tests": [
-        "pyannotate",
-        "pytest",
-        "pytest-asyncio",
-    ],
+    "tests": ["pyannotate", "pytest", "pytest-asyncio"],
 }
 extras_require["dev"] = (
     extras_require["docs"] + extras_require["tests"] + ["tox", "pre-commit"]

@@ -44,95 +44,100 @@ from ._utils import Args, cleandir, create_config, create_file, reset
 
 try:
     import uvloop
-    _LOOP = 'uvloop.Loop'
+
+    _LOOP = "uvloop.Loop"
 except ImportError:
-    _LOOP = 'asyncio.unix_events._UnixSelectorEventLoop'
+    _LOOP = "asyncio.unix_events._UnixSelectorEventLoop"
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 def test_initiation():
     collect_types.init_types_collection()
     collect_types.resume()
-    Child('', '', [], '1')
+    Child("", "", [], "1")
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 def test_start():
     collect_types.init_types_collection()
     collect_types.resume()
-    socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
-    child = Child('', '', socks, '1')
-    with mock.patch('asyncio.Task'), \
-        mock.patch('blackhole.child.Child.heartbeat'), \
-        mock.patch('{0}.run_forever'.format(_LOOP)), \
-        mock.patch('blackhole.child.Child.stop'), \
-            mock.patch('os._exit') as mock_exit:
+    socks = [{"sock": None, "ssl": None}, {"sock": None, "ssl": "abc"}]
+    child = Child("", "", socks, "1")
+    with mock.patch("asyncio.Task"), mock.patch(
+        "blackhole.child.Child.heartbeat"
+    ), mock.patch("{0}.run_forever".format(_LOOP)), mock.patch(
+        "blackhole.child.Child.stop"
+    ), mock.patch(
+        "os._exit"
+    ) as mock_exit:
         child.start()
     assert mock_exit.called is True
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 def test_stop():
     collect_types.init_types_collection()
     collect_types.resume()
-    socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
-    child = Child('', '', socks, '1')
+    socks = [{"sock": None, "ssl": None}, {"sock": None, "ssl": "abc"}]
+    child = Child("", "", socks, "1")
     child.loop = mock.MagicMock()
     child.clients.append(mock.MagicMock())
     child.servers.append(mock.MagicMock())
     child.heartbeat_task = mock.MagicMock()
     child.server_task = mock.MagicMock()
 
-    with mock.patch('os._exit') as mock_exit, \
-            mock.patch('{0}.run_until_complete'.format(_LOOP)):
+    with mock.patch("os._exit") as mock_exit, mock.patch(
+        "{0}.run_until_complete".format(_LOOP)
+    ):
         child.stop()
     assert mock_exit.called is True
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 def test_stop_runtime_exception():
     collect_types.init_types_collection()
     collect_types.resume()
-    socks = [{'sock': None, 'ssl': None}, {'sock': None, 'ssl': 'abc'}]
-    child = Child('', '', socks, '1')
+    socks = [{"sock": None, "ssl": None}, {"sock": None, "ssl": "abc"}]
+    child = Child("", "", socks, "1")
     child.loop = mock.MagicMock()
     child.clients.append(mock.MagicMock())
     child.servers.append(mock.MagicMock())
     child.heartbeat_task = mock.MagicMock()
     child.server_task = mock.MagicMock()
 
-    with mock.patch('os._exit') as mock_exit, \
-            mock.patch('{0}.stop'.format(_LOOP), side_effect=RuntimeError):
+    with mock.patch("os._exit") as mock_exit, mock.patch(
+        "{0}.stop".format(_LOOP), side_effect=RuntimeError
+    ):
         child.stop()
     assert mock_exit.called is True
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_start_child_loop(event_loop):
     collect_types.init_types_collection()
     collect_types.resume()
-    sock = _socket('127.0.0.1', 0, socket.AF_INET)
-    socks = ({'sock': sock, 'ssl': None}, )
-    child = Child('', '', socks, '1')
+    sock = _socket("127.0.0.1", 0, socket.AF_INET)
+    socks = ({"sock": sock, "ssl": None},)
+    child = Child("", "", socks, "1")
     child.loop = event_loop
     await child._start()
     assert len(child.servers) == 1
     for server in child.servers:
         server.close()
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_child_heartbeat_not_started(event_loop):
     collect_types.init_types_collection()
@@ -141,21 +146,21 @@ async def test_child_heartbeat_not_started(event_loop):
     down_read, down_write = os.pipe()
     os.close(up_write)
     os.close(down_read)
-    child = Child(up_read, down_write, [], '1')
+    child = Child(up_read, down_write, [], "1")
     child.loop = event_loop
     child._started = False
-    with mock.patch('asyncio.Task') as mock_task, \
-        mock.patch('blackhole.child.Child._start') as mock_start, \
-            mock.patch('blackhole.child.Child.stop') as mock_stop:
+    with mock.patch("asyncio.Task") as mock_task, mock.patch(
+        "blackhole.child.Child._start"
+    ) as mock_start, mock.patch("blackhole.child.Child.stop") as mock_stop:
         await child.heartbeat()
     assert mock_task.called is True
     assert mock_start.called is True
     assert mock_stop.called is True
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_child_heartbeat_started(event_loop):
     collect_types.init_types_collection()
@@ -164,7 +169,7 @@ async def test_child_heartbeat_started(event_loop):
     down_read, down_write = os.pipe()
     os.close(up_write)
     os.close(down_read)
-    child = Child(up_read, down_write, [], '1')
+    child = Child(up_read, down_write, [], "1")
     child.loop = event_loop
     child._started = True
     sp = StreamProtocol()
@@ -173,15 +178,19 @@ async def test_child_heartbeat_started(event_loop):
     async def reset():
         sp.reader.feed_data(protocols.PING)
         child._started = False
+
     reset_task = asyncio.Task(reset())
-    with mock.patch('blackhole.streams.StreamProtocol', return_value=sp), \
-        mock.patch('asyncio.Task') as mock_task, \
-        mock.patch('blackhole.child.Child._start') as mock_start, \
-            mock.patch('blackhole.child.Child.stop') as mock_stop:
+    with mock.patch(
+        "blackhole.streams.StreamProtocol", return_value=sp
+    ), mock.patch("asyncio.Task") as mock_task, mock.patch(
+        "blackhole.child.Child._start"
+    ) as mock_start, mock.patch(
+        "blackhole.child.Child.stop"
+    ) as mock_stop:
         await child.heartbeat()
     reset_task.cancel()
     assert mock_task.called is True
     assert mock_start.called is True
     assert mock_stop.called is True
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")

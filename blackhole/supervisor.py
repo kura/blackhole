@@ -43,11 +43,11 @@ except ImportError:
     setproctitle = None
 
 
-__all__ = ('Supervisor', )
+__all__ = ("Supervisor",)
 """Tuple all the things."""
 
 
-logger = logging.getLogger('blackhole.supervisor')
+logger = logging.getLogger("blackhole.supervisor")
 
 
 class Supervisor(metaclass=Singleton):
@@ -71,13 +71,13 @@ class Supervisor(metaclass=Singleton):
         :raises BlackholeRuntimeException: When an error occurs generating
                                            servers.
         """
-        logger.debug('Initiating the supervisor')
+        logger.debug("Initiating the supervisor")
         self.config = Config()
         self.loop = loop if loop is not None else asyncio.get_event_loop()
         self.socks = []  # type: List
         self.workers = []  # type: List
         if setproctitle:
-            setproctitle.setproctitle('blackhole: master')
+            setproctitle.setproctitle("blackhole: master")
         try:
             self.generate_servers()
         except BlackholeRuntimeException:
@@ -86,7 +86,7 @@ class Supervisor(metaclass=Singleton):
 
     def generate_servers(self):
         """Spawn all of the required sockets and TLS contexts."""
-        logger.debug('Attaching sockets to the supervisor')
+        logger.debug("Attaching sockets to the supervisor")
         self.create_socket(self.config.listen)
         tls_conf = (self.config.tls_cert, self.config.tls_key)
         if len(self.config.tls_listen) > 0 and all(tls_conf):
@@ -94,9 +94,9 @@ class Supervisor(metaclass=Singleton):
 
     def create_socket(self, listeners, use_tls=False):
         """Create supervisor socket."""
-        msg = 'Attaching %s:%s with flags %s'
+        msg = "Attaching %s:%s with flags %s"
         if use_tls:
-            msg = 'Attaching %s:%s (TLS) with flags %s'
+            msg = "Attaching %s:%s (TLS) with flags %s"
         for host, port, family, flags in listeners:
             aserver = server(host, port, family, use_tls=use_tls)
             self.socks.append(aserver)
@@ -115,25 +115,25 @@ class Supervisor(metaclass=Singleton):
 
     def start_workers(self):
         """Start each worker and it's child process."""
-        logger.debug('Starting workers')
+        logger.debug("Starting workers")
         for idx in range(self.config.workers):
-            num = '{0}'.format(idx + 1)
-            logger.debug('Creating worker: %s', num)
+            num = "{0}".format(idx + 1)
+            logger.debug("Creating worker: %s", num)
             self.workers.append(Worker(num, self.socks, self.loop))
 
     def stop_workers(self):
         """Stop the workers and their respective child process."""
-        logger.debug('Stopping workers')
+        logger.debug("Stopping workers")
         worker_num = 1
         for worker in self.workers:
-            logger.debug('Stopping worker: %s', worker_num)
+            logger.debug("Stopping worker: %s", worker_num)
             worker.stop()
             worker_num += 1
 
     def close_socks(self):
         """Close all opened sockets."""
         for sock in self.socks:
-            sock['sock'].close()
+            sock["sock"].close()
 
     def stop(self, *args, **kwargs):
         """
@@ -145,7 +145,7 @@ class Supervisor(metaclass=Singleton):
         """
         self.stop_workers()
         self.close_socks()
-        logger.debug('Stopping supervisor')
+        logger.debug("Stopping supervisor")
         try:
             self.loop.stop()
         except RuntimeError:

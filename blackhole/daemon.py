@@ -33,11 +33,11 @@ from .exceptions import DaemonException
 from .utils import Singleton
 
 
-__all__ = ('Daemon', )
+__all__ = ("Daemon",)
 """Tuple all the things."""
 
 
-logger = logging.getLogger('blackhole.daemon')
+logger = logging.getLogger("blackhole.daemon")
 
 
 class Daemon(metaclass=Singleton):
@@ -101,11 +101,15 @@ class Daemon(metaclass=Singleton):
         """
         if os.path.exists(self.pidfile):
             try:
-                pid = open(self.pidfile, 'r').read().strip()
-                if pid != '':
+                pid = open(self.pidfile, "r").read().strip()
+                if pid != "":
                     return int(pid)
-            except (FileNotFoundError, IOError, PermissionError,
-                    OSError) as err:
+            except (
+                FileNotFoundError,
+                IOError,
+                PermissionError,
+                OSError,
+            ) as err:
                 raise DaemonException(err.strerror)
         return None
 
@@ -119,7 +123,7 @@ class Daemon(metaclass=Singleton):
         """
         pid = str(pid)
         try:
-            with open(self.pidfile, 'w+') as pidfile:
+            with open(self.pidfile, "w+") as pidfile:
                 pidfile.write("{0}\n".format(pid))
         except (IOError, FileNotFoundError, PermissionError) as err:
             raise DaemonException(err.strerror)

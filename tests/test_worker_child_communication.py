@@ -44,19 +44,20 @@ from ._utils import Args, cleandir, create_config, create_file, reset
 try:
     import asyncio
     import uvloop
+
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 except ImportError:
     pass
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_worker_ping_pong(unused_tcp_port):
     collect_types.init_types_collection()
     collect_types.resume()
-    aserver = server('127.0.0.1', unused_tcp_port, socket.AF_INET)
+    aserver = server("127.0.0.1", unused_tcp_port, socket.AF_INET)
     started = time.monotonic()
-    worker = Worker('1', [aserver, ])
+    worker = Worker("1", [aserver])
     assert worker._started is True
     await asyncio.sleep(35)
     worker.stop()
@@ -64,17 +65,17 @@ async def test_worker_ping_pong(unused_tcp_port):
     assert worker.ping > started
     assert worker.ping_count == 2
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
 
 
-@pytest.mark.usefixtures('reset', 'cleandir')
+@pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_restart(unused_tcp_port):
     collect_types.init_types_collection()
     collect_types.resume()
-    aserver = server('127.0.0.1', unused_tcp_port, socket.AF_INET)
+    aserver = server("127.0.0.1", unused_tcp_port, socket.AF_INET)
     started = time.monotonic()
-    worker = Worker('1', [aserver, ])
+    worker = Worker("1", [aserver])
     assert worker._started is True
     await asyncio.sleep(25)
     worker.ping = time.monotonic() - 120
@@ -85,5 +86,5 @@ async def test_restart(unused_tcp_port):
     assert worker._started is False
     assert worker.ping > started
     collect_types.pause()
-    collect_types.dump_stats('/tmp/annotations')
+    collect_types.dump_stats("/tmp/annotations")
     assert worker.ping_count == 0

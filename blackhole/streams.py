@@ -28,11 +28,11 @@ import asyncio
 import logging
 
 
-__all__ = ('StreamProtocol', )
+__all__ = ("StreamProtocol",)
 """Tuple all the things."""
 
 
-logger = logging.getLogger('blackhole.streams')
+logger = logging.getLogger("blackhole.streams")
 
 
 class StreamProtocol(asyncio.streams.FlowControlMixin, asyncio.Protocol):
@@ -53,8 +53,9 @@ class StreamProtocol(asyncio.streams.FlowControlMixin, asyncio.Protocol):
         """Client connection made callback."""
         self.transport = transport
         self.reader.set_transport(transport)
-        self.writer = asyncio.StreamWriter(transport, self, self.reader,
-                                           self._loop)
+        self.writer = asyncio.StreamWriter(
+            transport, self, self.reader, self._loop
+        )
 
     def connection_lost(self, exc):
         """Client connection lost callback."""

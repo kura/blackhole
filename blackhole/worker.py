@@ -43,10 +43,10 @@ except ImportError:
     setproctitle = None
 
 
-__all__ = ('Worker', )
+__all__ = ("Worker",)
 
 
-logger = logging.getLogger('blackhole.worker')
+logger = logging.getLogger("blackhole.worker")
 
 
 class Worker:
@@ -98,9 +98,8 @@ class Worker:
         setuid()
         asyncio.set_event_loop(None)
         if setproctitle:
-            setproctitle.setproctitle('blackhole: worker')
-        process = Child(self.up_read, self.down_write, self.socks,
-                        self.idx)
+            setproctitle.setproctitle("blackhole: worker")
+        process = Child(self.up_read, self.down_write, self.socks, self.idx)
         process.start()
 
     def restart_child(self):
@@ -153,8 +152,11 @@ class Worker:
                 writer.write(protocols.PING)
             else:
                 if self._started:
-                    logger.debug('worker.%s.heartbeat: Communication failed. '
-                                 'Restarting worker', self.idx)
+                    logger.debug(
+                        "worker.%s.heartbeat: Communication failed. "
+                        "Restarting worker",
+                        self.idx,
+                    )
                     self.restart_child()
 
     async def chat(self, reader):
@@ -185,8 +187,9 @@ class Worker:
             try:
                 msg = await reader.read(3)
                 if msg == protocols.PONG:
-                    logger.debug('worker.%s.chat: Pong received from child',
-                                 self.idx)
+                    logger.debug(
+                        "worker.%s.chat: Pong received from child", self.idx
+                    )
                     self.ping = time.monotonic()
                     self.ping_count += 1
             except:  # noqa
@@ -200,12 +203,14 @@ class Worker:
         :param int up_write: A file descriptor.
         :param int down_read: A file descriptor.
         """
-        read_fd = os.fdopen(self.down_read, 'rb')
-        r_trans, r_proto = await self.loop.connect_read_pipe(StreamProtocol,
-                                                             read_fd)
-        write_fd = os.fdopen(self.up_write, 'wb')
-        w_trans, w_proto = await self.loop.connect_write_pipe(StreamProtocol,
-                                                              write_fd)
+        read_fd = os.fdopen(self.down_read, "rb")
+        r_trans, r_proto = await self.loop.connect_read_pipe(
+            StreamProtocol, read_fd
+        )
+        write_fd = os.fdopen(self.up_write, "wb")
+        w_trans, w_proto = await self.loop.connect_write_pipe(
+            StreamProtocol, write_fd
+        )
         reader = r_proto.reader
         writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)
         self.ping = time.monotonic()

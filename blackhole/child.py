@@ -35,11 +35,11 @@ from .smtp import Smtp
 from .streams import StreamProtocol
 
 
-__all__ = ('Child', )
+__all__ = ("Child",)
 """Tuple all the things."""
 
 
-logger = logging.getLogger('blackhole.child')
+logger = logging.getLogger("blackhole.child")
 
 
 class Child:
@@ -73,7 +73,7 @@ class Child:
 
     def start(self):
         """Start the child process."""
-        logger.debug('Starting child %s', self.idx)
+        logger.debug("Starting child %s", self.idx)
         self._started = True
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
@@ -86,8 +86,9 @@ class Child:
     async def _start(self):
         """Create an asyncio server for each socket."""
         for sock in self.socks:
-            server = await self.loop.create_server(lambda: Smtp(self.clients),
-                                                   **sock)
+            server = await self.loop.create_server(
+                lambda: Smtp(self.clients), **sock
+            )
             self.servers.append(server)
 
     def stop(self, *args, **kwargs):
@@ -132,12 +133,14 @@ class Child:
            schema. Documentation is available at --
            https://kura.github.io/blackhole/api-protocols.html
         """
-        read_fd = os.fdopen(self.up_read, 'rb')
-        r_trans, r_proto = await self.loop.connect_read_pipe(StreamProtocol,
-                                                             read_fd)
-        write_fd = os.fdopen(self.down_write, 'wb')
-        w_trans, w_proto = await self.loop.connect_write_pipe(StreamProtocol,
-                                                              write_fd)
+        read_fd = os.fdopen(self.up_read, "rb")
+        r_trans, r_proto = await self.loop.connect_read_pipe(
+            StreamProtocol, read_fd
+        )
+        write_fd = os.fdopen(self.down_write, "wb")
+        w_trans, w_proto = await self.loop.connect_write_pipe(
+            StreamProtocol, write_fd
+        )
         reader = r_proto.reader
         writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)
         self.server_task = asyncio.Task(self._start())
@@ -148,8 +151,10 @@ class Child:
             except:  # noqa
                 break
             if msg == protocols.PING:
-                logger.debug('child.%s.heartbeat: Ping request received from '
-                             'parent', self.idx)
+                logger.debug(
+                    "child.%s.heartbeat: Ping request received from " "parent",
+                    self.idx,
+                )
                 writer.write(protocols.PONG)
             await asyncio.sleep(5)
         r_trans.close()

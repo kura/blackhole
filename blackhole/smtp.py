@@ -35,27 +35,27 @@ from .protocols import StreamReaderProtocol
 from .utils import message_id
 
 
-__all__ = ('Smtp', )
+__all__ = ("Smtp",)
 """Tuple all the things."""
 
 
-logger = logging.getLogger('blackhole.smtp')
+logger = logging.getLogger("blackhole.smtp")
 
 
 class Smtp(StreamReaderProtocol):
     """The class responsible for handling SMTP/SMTPS commands."""
 
     _bounce_responses = {
-        450: 'Requested mail action not taken: mailbox unavailable',
-        451: 'Requested action aborted: local error in processing',
-        452: 'Requested action not taken: insufficient system storage',
-        458: 'Unable to queue message',
-        521: 'Machine does not accept mail',
-        550: 'Requested action not taken: mailbox unavailable',
-        551: 'User not local',
-        552: 'Requested mail action aborted: exceeded storage allocation',
-        553: 'Requested action not taken: mailbox name not allowed',
-        571: 'Blocked',
+        450: "Requested mail action not taken: mailbox unavailable",
+        451: "Requested action aborted: local error in processing",
+        452: "Requested action not taken: insufficient system storage",
+        458: "Unable to queue message",
+        521: "Machine does not accept mail",
+        550: "Requested action not taken: mailbox unavailable",
+        551: "User not local",
+        552: "Requested mail action aborted: exceeded storage allocation",
+        553: "Requested action not taken: mailbox name not allowed",
+        571: "Blocked",
     }
     """The response code and message for each bounce type."""
 
@@ -109,7 +109,7 @@ class Smtp(StreamReaderProtocol):
         :param asyncio.transports.Transport transport: The transport class.
         """
         super().connection_made(transport)
-        logger.debug('Peer connected')
+        logger.debug("Peer connected")
         self.transport = transport
         self.flags_from_transport()
         self.connection_closed = False
@@ -138,14 +138,14 @@ class Smtp(StreamReaderProtocol):
             if line is None:
                 await self.close()
                 return
-            logger.debug('RECV %s', line)
-            line = line.decode('utf-8').rstrip('\r\n')
+            logger.debug("RECV %s", line)
+            line = line.decode("utf-8").rstrip("\r\n")
             self._line = line
             handler = self.lookup_handler(line)
             if handler:
                 await handler()
             else:
-                await self.push(502, '5.5.2 Command not recognised')
+                await self.push(502, "5.5.2 Command not recognised")
 
     def get_auth_members(self):
         """
@@ -157,8 +157,8 @@ class Smtp(StreamReaderProtocol):
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
         for cmd, _ in members:
-            if cmd.startswith('auth_') and cmd != 'auth_UNKNOWN':
-                cmd = cmd.replace('auth_', '').replace('_', '-')
+            if cmd.startswith("auth_") and cmd != "auth_UNKNOWN":
+                cmd = cmd.replace("auth_", "").replace("_", "-")
                 cmds.append(cmd)
         return cmds
 
@@ -176,24 +176,25 @@ class Smtp(StreamReaderProtocol):
            authentication pass, using ``fail=`` will trigger an authentication
            failure.
         """
-        parts = line.split(' ')
+        parts = line.split(" ")
         if len(parts) < 2:
             return self.auth_UNKNOWN
         mechanism = parts[1].upper()
-        if mechanism == 'CRAM-MD5':
+        if mechanism == "CRAM-MD5":
             return self.auth_CRAM_MD5
         if mechanism not in self.get_auth_members():
             return self.auth_UNKNOWN
-        if len(parts) == 3 and mechanism == 'PLAIN':
-            if 'fail=' in line:
+        if len(parts) == 3 and mechanism == "PLAIN":
+            if "fail=" in line:
                 return self._auth_failure
             return self._auth_success
-        return getattr(self, 'auth_{0}'.format(mechanism.upper()),
-                       self.auth_UNKNOWN)
+        return getattr(
+            self, "auth_{0}".format(mechanism.upper()), self.auth_UNKNOWN
+        )
 
     async def auth_UNKNOWN(self):
         """Response to an unknown auth mechamism."""
-        await self.push(501, '5.5.4 Syntax: AUTH mechanism')
+        await self.push(501, "5.5.4 Syntax: AUTH mechanism")
 
     async def help_AUTH(self):
         """
@@ -201,8 +202,8 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        mechanisms = ' '.join(self.get_auth_members())
-        await self.push(250, 'Syntax: AUTH {0}'.format(mechanisms))
+        mechanisms = " ".join(self.get_auth_members())
+        await self.push(250, "Syntax: AUTH {0}".format(mechanisms))
 
     async def auth_LOGIN(self):
         """
@@ -224,10 +225,10 @@ class Smtp(StreamReaderProtocol):
            authentication pass, using ``fail=`` will trigger an authentication
            failure.
         """
-        await self.push(334, 'VXNlcm5hbWU6')
+        await self.push(334, "VXNlcm5hbWU6")
         line = await self.wait()
-        logger.debug('RECV %s', line)
-        if b'fail=' in line.lower():
+        logger.debug("RECV %s", line)
+        if b"fail=" in line.lower():
             await self._auth_failure()
         else:
             await self._auth_success()
@@ -252,11 +253,11 @@ class Smtp(StreamReaderProtocol):
            authentication pass, using ``fail=`` will trigger an authentication
            failure.
         """
-        emessage_id = base64.b64encode(self.message_id.encode('utf-8'), b'==')
-        await self.push(334, emessage_id.decode('utf-8'))
+        emessage_id = base64.b64encode(self.message_id.encode("utf-8"), b"==")
+        await self.push(334, emessage_id.decode("utf-8"))
         line = await self.wait()
-        logger.debug('RECV %s', line)
-        if b'fail=' in line.lower():
+        logger.debug("RECV %s", line)
+        if b"fail=" in line.lower():
             await self._auth_failure()
         else:
             await self._auth_success()
@@ -286,21 +287,21 @@ class Smtp(StreamReaderProtocol):
            authentication pass, using ``fail=`` will trigger an authentication
            failure.
         """
-        await self.push(334, ' ')
+        await self.push(334, " ")
         line = await self.wait()
-        logger.debug('RECV %s', line)
-        if b'fail=' in line.lower():
+        logger.debug("RECV %s", line)
+        if b"fail=" in line.lower():
             await self._auth_failure()
         else:
             await self._auth_success()
 
     async def _auth_success(self):
         """Send an authentication successful response."""
-        await self.push(235, '2.7.0 Authentication successful')
+        await self.push(235, "2.7.0 Authentication successful")
 
     async def _auth_failure(self):
         """Send an authentication failure response."""
-        await self.push(535, '5.7.8 Authentication failed')
+        await self.push(535, "5.7.8 Authentication failed")
 
     async def timeout(self):
         """
@@ -310,9 +311,11 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/configuration.html#timeout
         """
-        logger.debug('Peer timed out, no data received for %d seconds',
-                     self.config.timeout)
-        await self.push(421, 'Timeout')
+        logger.debug(
+            "Peer timed out, no data received for %d seconds",
+            self.config.timeout,
+        )
+        await self.push(421, "Timeout")
         await self.close()
 
     def lookup_handler(self, line):
@@ -328,9 +331,9 @@ class Smtp(StreamReaderProtocol):
         """
         parts = line.split(None, 1)
         if parts:
-            if parts[0].lower() == 'help':
+            if parts[0].lower() == "help":
                 return self.lookup_help_handler(parts)
-            if parts[0].lower() == 'auth':
+            if parts[0].lower() == "auth":
                 return self.lookup_auth_handler(line)
             else:
                 return self.lookup_verb_handler(parts[0])
@@ -347,9 +350,9 @@ class Smtp(StreamReaderProtocol):
         :rtype: `blackhole.smtp.Smtp.help_VERB`
         """
         if len(parts) > 1:
-            cmd = 'help_{0}'.format(parts[1].upper())
+            cmd = "help_{0}".format(parts[1].upper())
         else:
-            cmd = 'do_HELP'
+            cmd = "do_HELP"
         return getattr(self, cmd, self.help_UNKNOWN)
 
     def lookup_verb_handler(self, verb):
@@ -360,11 +363,11 @@ class Smtp(StreamReaderProtocol):
         :returns: A callable command handler.
         :rtype: `blackhole.smtp.Smtp.do_VERB`
         """
-        return getattr(self, 'do_{0}'.format(verb.upper()), self.do_UNKNOWN)
+        return getattr(self, "do_{0}".format(verb.upper()), self.do_UNKNOWN)
 
     async def greet(self):
         """Send a greeting to the client."""
-        await self.push(220, '{0} ESMTP'.format(self.fqdn))
+        await self.push(220, "{0} ESMTP".format(self.fqdn))
 
     def get_help_members(self):
         """
@@ -378,8 +381,8 @@ class Smtp(StreamReaderProtocol):
         members = inspect.getmembers(self, predicate=inspect.ismethod)
         cmds = []
         for cmd, _ in members:
-            if cmd.startswith('help_') and not cmd == 'help_UNKNOWN':
-                cmds.append(cmd.replace('help_', ''))
+            if cmd.startswith("help_") and not cmd == "help_UNKNOWN":
+                cmds.append(cmd.replace("help_", ""))
         return cmds
 
     async def do_HELP(self):
@@ -388,8 +391,8 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        msg = ' '.join(self.get_help_members())
-        await self.push(250, 'Supported commands: {0}'.format(msg))
+        msg = " ".join(self.get_help_members())
+        await self.push(250, "Supported commands: {0}".format(msg))
 
     async def help_HELO(self):
         """
@@ -397,11 +400,11 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: HELO domain.tld')
+        await self.push(250, "Syntax: HELO domain.tld")
 
     async def do_HELO(self):
         """Send response to HELO verb."""
-        await self.push(250, 'OK')
+        await self.push(250, "OK")
 
     async def help_EHLO(self):
         """
@@ -409,20 +412,29 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: EHLO domain.tld')
+        await self.push(250, "Syntax: EHLO domain.tld")
 
     async def do_EHLO(self):
         """Send response to EHLO verb."""
-        response = "250-{0}\r\n".format(self.fqdn).encode('utf-8')
+        response = "250-{0}\r\n".format(self.fqdn).encode("utf-8")
         self._writer.write(response)
-        logger.debug('SENT %s', response)
-        auth = ' '.join(self.get_auth_members())
-        responses = ('250-HELP', '250-PIPELINING', '250-AUTH {0}'.format(auth),
-                     '250-SIZE {0}'.format(self.config.max_message_size),
-                     '250-VRFY', '250-ETRN', '250-ENHANCEDSTATUSCODES',
-                     '250-8BITMIME', '250-SMTPUTF8', '250-EXPN', '250 DSN', )
+        logger.debug("SENT %s", response)
+        auth = " ".join(self.get_auth_members())
+        responses = (
+            "250-HELP",
+            "250-PIPELINING",
+            "250-AUTH {0}".format(auth),
+            "250-SIZE {0}".format(self.config.max_message_size),
+            "250-VRFY",
+            "250-ETRN",
+            "250-ENHANCEDSTATUSCODES",
+            "250-8BITMIME",
+            "250-SMTPUTF8",
+            "250-EXPN",
+            "250 DSN",
+        )
         for response in responses:
-            response = "{0}\r\n".format(response).encode('utf-8')
+            response = "{0}\r\n".format(response).encode("utf-8")
             logger.debug("SENT %s", response)
             self._writer.write(response)
         await self._writer.drain()
@@ -433,7 +445,7 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: MAIL FROM: <address>')
+        await self.push(250, "Syntax: MAIL FROM: <address>")
 
     async def _size_in_mail(self):
         """
@@ -442,17 +454,21 @@ class Smtp(StreamReaderProtocol):
         Send a 552 response if the size provided is larger than
         max_message_size.
         """
-        parts = self._line.lower().split(' ')
+        parts = self._line.lower().split(" ")
         size = None
         for part in parts:
-            if part.startswith('size='):
-                size = part.split('=')[1]
-        if (size is not None and size.isdigit() and
-                int(size) > self.config.max_message_size):
-            await self.push(552, 'Message size exceeds fixed maximum '
-                                 'message size')
+            if part.startswith("size="):
+                size = part.split("=")[1]
+        if (
+            size is not None
+            and size.isdigit()
+            and int(size) > self.config.max_message_size
+        ):
+            await self.push(
+                552, "Message size exceeds fixed maximum " "message size"
+            )
         else:
-            await self.push(250, '2.1.0 OK')
+            await self.push(250, "2.1.0 OK")
 
     async def do_MAIL(self):
         """
@@ -463,10 +479,10 @@ class Smtp(StreamReaderProtocol):
            Checks to see if ``SIZE=`` is passed, pass function off to have it's
            size handled.
         """
-        if 'size=' in self._line.lower():
+        if "size=" in self._line.lower():
             await self._size_in_mail()
         else:
-            await self.push(250, '2.1.0 OK')
+            await self.push(250, "2.1.0 OK")
 
     async def help_RCPT(self):
         """
@@ -474,11 +490,11 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: RCPT TO: <address>')
+        await self.push(250, "Syntax: RCPT TO: <address>")
 
     async def do_RCPT(self):
         """Send response to RCPT TO verb."""
-        await self.push(250, '2.1.5 OK')
+        await self.push(250, "2.1.5 OK")
 
     async def help_DATA(self):
         """
@@ -486,7 +502,7 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: DATA')
+        await self.push(250, "Syntax: DATA")
 
     def process_header(self, line):
         """
@@ -499,18 +515,18 @@ class Smtp(StreamReaderProtocol):
 
         :param str line: An email header.
         """
-        logger.debug('HEADER RECV: %s', line)
+        logger.debug("HEADER RECV: %s", line)
         if self.config.dynamic_switch is False:
-            logger.debug('Dynamic switches disabled, ignoring')
+            logger.debug("Dynamic switches disabled, ignoring")
             return
         if self._disable_dynamic_switching is True:
-            logger.debug('Dynamic switches are disabled by flags option.')
+            logger.debug("Dynamic switches are disabled by flags option.")
             return
-        key, value = line.split(':')
+        key, value = line.split(":")
         key, value = key.lower().strip(), value.lower().strip()
-        if key == 'x-blackhole-delay':
+        if key == "x-blackhole-delay":
             self.delay = value
-        if key == 'x-blackhole-mode':
+        if key == "x-blackhole-mode":
             self.mode = value
 
     async def response_from_mode(self):
@@ -523,17 +539,17 @@ class Smtp(StreamReaderProtocol):
         Response mode is configured in configuration file and can be overridden
         by email headers, if enabled.
         """
-        logger.debug('MODE: %s', self.mode)
-        if self.mode == 'bounce':
+        logger.debug("MODE: %s", self.mode)
+        if self.mode == "bounce":
             key = random.choice(list(self._bounce_responses.keys()))
             await self.push(key, self._bounce_responses[key])
-        elif self.mode == 'random':
-            resps = {250: '2.0.0 OK: queued as {0}'.format(self.message_id), }
+        elif self.mode == "random":
+            resps = {250: "2.0.0 OK: queued as {0}".format(self.message_id)}
             resps.update(self._bounce_responses)
             key = random.choice(list(resps.keys()))
             await self.push(key, resps[key])
         else:
-            msg = '2.0.0 OK: queued as {0}'.format(self.message_id)
+            msg = "2.0.0 OK: queued as {0}".format(self.message_id)
             await self.push(250, msg)
 
     async def do_DATA(self):
@@ -551,25 +567,26 @@ class Smtp(StreamReaderProtocol):
         This method implements restrictions on message sizes. --
         https://kura.github.io/blackhole/configuration.html#max-message-size
         """
-        await self.push(354, 'End data with <CR><LF>.<CR><LF>')
+        await self.push(354, "End data with <CR><LF>.<CR><LF>")
         on_body = False
         msg = []
         while not self.connection_closed:
             line = await self.wait()
-            logger.debug('RECV %s', line)
+            logger.debug("RECV %s", line)
             msg.append(line)
-            if line.lower().startswith(b'x-blackhole') and on_body is False:
-                self.process_header(line.decode('utf-8').rstrip('\n'))
-            if len(b''.join(msg)) > self.config.max_message_size:
-                await self.push(552, 'Message size exceeds fixed maximum '
-                                     'message size')
+            if line.lower().startswith(b"x-blackhole") and on_body is False:
+                self.process_header(line.decode("utf-8").rstrip("\n"))
+            if len(b"".join(msg)) > self.config.max_message_size:
+                await self.push(
+                    552, "Message size exceeds fixed maximum " "message size"
+                )
                 return
-            if line == b'\n':
+            if line == b"\n":
                 on_body = True
-            if line == b'.\r\n':
+            if line == b".\r\n":
                 break
         if self.delay:
-            logger.debug('DELAYING RESPONSE: %s seconds', self.delay)
+            logger.debug("DELAYING RESPONSE: %s seconds", self.delay)
             await asyncio.sleep(self.delay)
         await self.response_from_mode()
 
@@ -585,11 +602,11 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: NOOP')
+        await self.push(250, "Syntax: NOOP")
 
     async def do_NOOP(self):
         """Send response to the NOOP verb."""
-        await self.push(250, '2.0.0 OK')
+        await self.push(250, "2.0.0 OK")
 
     async def help_RSET(self):
         """
@@ -597,7 +614,7 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: RSET')
+        await self.push(250, "Syntax: RSET")
 
     async def do_RSET(self):
         """
@@ -607,8 +624,8 @@ class Smtp(StreamReaderProtocol):
         """
         old_msg_id = self.message_id
         self.message_id = message_id(self.fqdn)
-        logger.debug('%s is now %s', old_msg_id, self.message_id)
-        await self.push(250, '2.0.0 OK')
+        logger.debug("%s is now %s", old_msg_id, self.message_id)
+        await self.push(250, "2.0.0 OK")
 
     async def help_VRFY(self):
         """
@@ -616,7 +633,7 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: VRFY <address>')
+        await self.push(250, "Syntax: VRFY <address>")
 
     async def do_VRFY(self):
         """
@@ -638,13 +655,13 @@ class Smtp(StreamReaderProtocol):
            code 550. And finally, if neither flag is found, the server will
            respond with code 252.
         """
-        _, addr = self._line.split(' ')
-        if 'pass=' in self._line:
-            await self.push(250, '2.0.0 <{0}> OK'.format(addr))
-        elif 'fail=' in self._line:
-            await self.push(550, '5.7.1 <{0}> unknown'.format(addr))
+        _, addr = self._line.split(" ")
+        if "pass=" in self._line:
+            await self.push(250, "2.0.0 <{0}> OK".format(addr))
+        elif "fail=" in self._line:
+            await self.push(550, "5.7.1 <{0}> unknown".format(addr))
         else:
-            await self.push(252, '2.0.0 Will attempt delivery')
+            await self.push(252, "2.0.0 Will attempt delivery")
 
     async def help_EXPN(self):
         """
@@ -652,7 +669,7 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: EXPN <list1 | list2 | list3 | all>')
+        await self.push(250, "Syntax: EXPN <list1 | list2 | list3 | all>")
 
     async def _expn_value_to_list(self):
         """
@@ -661,17 +678,26 @@ class Smtp(StreamReaderProtocol):
         :returns: A list of members for a mailing list.
         :rtype: :py:obj:`list`
         """
-        _, expn = self._line.lower().split(' ')
-        expn = expn.replace('<', '').replace('>', '')
+        _, expn = self._line.lower().split(" ")
+        expn = expn.replace("<", "").replace(">", "")
         lists = {
-            'list1': ('Shadow', 'Wednesday', 'Low-key Liesmith'),
-            'list2': ('Jim Holden', 'Naomi Nagata', 'Alex Kamal',
-                      'Amos Burton'),
-            'list3': ('Takeshi Kovacs', 'Laurens Bancroft', 'Kristin Ortega',
-                      'Quellcrist Falconer', 'Virginia Vidaura',
-                      'Reileen Kawahara'),
+            "list1": ("Shadow", "Wednesday", "Low-key Liesmith"),
+            "list2": (
+                "Jim Holden",
+                "Naomi Nagata",
+                "Alex Kamal",
+                "Amos Burton",
+            ),
+            "list3": (
+                "Takeshi Kovacs",
+                "Laurens Bancroft",
+                "Kristin Ortega",
+                "Quellcrist Falconer",
+                "Virginia Vidaura",
+                "Reileen Kawahara",
+            ),
         }
-        if expn == 'all':
+        if expn == "all":
             iterator = []
             for key in lists.keys():
                 iterator.extend(lists[key])
@@ -689,12 +715,13 @@ class Smtp(StreamReaderProtocol):
         iterator = await self._expn_value_to_list()
         i, resp = 1, []
         for item in iterator:
-            start = '250-'
+            start = "250-"
             if len(iterator) == i:
-                start = '250 '
-            user = item.lower().replace(' ', '.')
-            resp.append('{0}{1} <{2}@{3}>'.format(start, item, user,
-                                                  self.fqdn))
+                start = "250 "
+            user = item.lower().replace(" ", ".")
+            resp.append(
+                "{0}{1} <{2}@{3}>".format(start, item, user, self.fqdn)
+            )
             i += 1
         return resp
 
@@ -748,20 +775,20 @@ class Smtp(StreamReaderProtocol):
            command will return a 550 code.
            Valid lists are: `list1`, `list2`, `list3` and `all`.
         """
-        if 'fail=' in self._line:
-            await self.push(550, 'Not authorised')
+        if "fail=" in self._line:
+            await self.push(550, "Not authorised")
             return
         try:
-            _, expn = self._line.lower().split(' ')
-            expn = expn.replace('<', '').replace('>', '')
+            _, expn = self._line.lower().split(" ")
+            expn = expn.replace("<", "").replace(">", "")
         except ValueError:
-            await self.push(550, 'Not authorised')
+            await self.push(550, "Not authorised")
             return
-        if expn not in ('list1', 'list2', 'list3', 'all'):
-            await self.push(550, 'Not authorised')
+        if expn not in ("list1", "list2", "list3", "all"):
+            await self.push(550, "Not authorised")
             return
         for response in await self._expn_response():
-            response = "{0}\r\n".format(response).encode('utf-8')
+            response = "{0}\r\n".format(response).encode("utf-8")
             logger.debug("SENT %s", response)
             self._writer.write(response)
         await self._writer.drain()
@@ -772,11 +799,11 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: ETRN')
+        await self.push(250, "Syntax: ETRN")
 
     async def do_ETRN(self):
         """Send response to the ETRN verb."""
-        await self.push(250, 'Queueing started')
+        await self.push(250, "Queueing started")
 
     async def help_QUIT(self):
         """
@@ -784,7 +811,7 @@ class Smtp(StreamReaderProtocol):
 
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
-        await self.push(250, 'Syntax: QUIT')
+        await self.push(250, "Syntax: QUIT")
 
     async def do_QUIT(self):
         """
@@ -792,27 +819,27 @@ class Smtp(StreamReaderProtocol):
 
         Closes the client connection.
         """
-        await self.push(221, '2.0.0 Goodbye')
+        await self.push(221, "2.0.0 Goodbye")
         self._handler_coroutine.cancel()
         await self.close()
 
     async def do_NOT_IMPLEMENTED(self):
         """Send a not implemented response."""
-        await self.push(500, 'Not implemented')
+        await self.push(500, "Not implemented")
 
     async def help_UNKNOWN(self):
         """Send available help verbs when an invalid verb is received."""
-        msg = ' '.join(self.get_help_members())
-        await self.push(501, 'Supported commands: {0}'.format(msg))
+        msg = " ".join(self.get_help_members())
+        await self.push(501, "Supported commands: {0}".format(msg))
 
     async def do_UNKNOWN(self):
         """Send response to unknown verb."""
         self._failed_commands += 1
         if self._failed_commands > 9:
-            await self.push(502, '5.5.3 Too many unknown commands')
+            await self.push(502, "5.5.3 Too many unknown commands")
             await self.close()
         else:
-            await self.push(502, '5.5.2 Command not recognised')
+            await self.push(502, "5.5.2 Command not recognised")
 
     @property
     def delay(self):
@@ -827,8 +854,8 @@ class Smtp(StreamReaderProtocol):
         :returns: A delay time in seconds. Default: ``None``.
         :rtype: :py:obj:`int` or :py:obj:`None`
         """
-        if 'delay' in self._flags.keys():
-            delay = self._flags['delay']
+        if "delay" in self._flags.keys():
+            delay = self._flags["delay"]
             if isinstance(delay, list):
                 self._delay_range(delay)
                 return self._delay
@@ -841,14 +868,14 @@ class Smtp(StreamReaderProtocol):
 
     @delay.setter
     def delay(self, values):
-        logger.debug('DELAY: Dymanic delay enabled')
-        value = values.split(',')
+        logger.debug("DELAY: Dymanic delay enabled")
+        value = values.split(",")
         if len(value) == 2:
             self._delay_range(value)
         elif len(value) == 1:
             self._delay_single(value[0])
         else:
-            logger.debug('DELAY: Invalid value(s): %s. Skipping', values)
+            logger.debug("DELAY: Invalid value(s): %s. Skipping", values)
             return
 
     def _delay_range(self, value):
@@ -871,27 +898,41 @@ class Smtp(StreamReaderProtocol):
             min_delay = int(min_delay)
             max_delay = int(max_delay)
         except ValueError:
-            logger.debug('DELAY: Unable to convert %s, %s to integers. '
-                         'Skipping', min_delay, max_delay)
+            logger.debug(
+                "DELAY: Unable to convert %s, %s to integers. " "Skipping",
+                min_delay,
+                max_delay,
+            )
             self._delay = None
             return
         if min_delay < 0 or max_delay < 0:
-            logger.debug('DELAY: A value is less than 0: %s, %s. Skipping',
-                         min_delay, max_delay)
+            logger.debug(
+                "DELAY: A value is less than 0: %s, %s. Skipping",
+                min_delay,
+                max_delay,
+            )
             self._delay = None
             return
         if min_delay > max_delay:
-            logger.debug('Min cannot be greater than max')
+            logger.debug("Min cannot be greater than max")
             self._delay = None
             return
         if max_delay > self._max_delay:
-            logger.debug('DELAY: %s is higher than %s. %s is the hard coded '
-                         'maximum delay for security.', max_delay,
-                         self._max_delay, self._max_delay)
+            logger.debug(
+                "DELAY: %s is higher than %s. %s is the hard coded "
+                "maximum delay for security.",
+                max_delay,
+                self._max_delay,
+                self._max_delay,
+            )
             max_delay = self._max_delay
         self._delay = random.randint(min_delay, max_delay)
-        logger.debug('DELAY: Set to %s from range %s-%s', self._delay,
-                     min_delay, max_delay)
+        logger.debug(
+            "DELAY: Set to %s from range %s-%s",
+            self._delay,
+            min_delay,
+            max_delay,
+        )
         return
 
     def _delay_single(self, value):
@@ -910,22 +951,27 @@ class Smtp(StreamReaderProtocol):
         try:
             value = int(value)
         except ValueError:
-            logger.debug('DELAY: Unable to convert %s to an integer. Skipping',
-                         value)
+            logger.debug(
+                "DELAY: Unable to convert %s to an integer. Skipping", value
+            )
             self._delay = None
             return
         logger.debug(value)
         if value < 0:
-            logger.debug('DELAY: %s is less than 0. Skipping', value)
+            logger.debug("DELAY: %s is less than 0. Skipping", value)
             self._delay = None
             return
         if value > self._max_delay:
-            logger.debug('DELAY: %s is higher than %s. %s is the hard coded '
-                         'maximum delay for security.', value, self._max_delay,
-                         self._max_delay)
+            logger.debug(
+                "DELAY: %s is higher than %s. %s is the hard coded "
+                "maximum delay for security.",
+                value,
+                self._max_delay,
+                self._max_delay,
+            )
             self._delay = self._max_delay
             return
-        logger.debug('DELAY: Set to %s', value)
+        logger.debug("DELAY: Set to %s", value)
         self._delay = value
 
     @property
@@ -942,18 +988,21 @@ class Smtp(StreamReaderProtocol):
         :returns: A response mode.
         :rtype: :py:obj:`str`
         """
-        if 'mode' in self._flags.keys():
-            return self._flags['mode']
+        if "mode" in self._flags.keys():
+            return self._flags["mode"]
         if self._mode is not None:
             return self._mode
         return self.config.mode
 
     @mode.setter
     def mode(self, value):
-        if value not in ('accept', 'bounce', 'random'):
-            logger.debug('MODE: %s is an invalid. Allowed modes: (accept, '
-                         'bounce, random)', value)
+        if value not in ("accept", "bounce", "random"):
+            logger.debug(
+                "MODE: %s is an invalid. Allowed modes: (accept, "
+                "bounce, random)",
+                value,
+            )
             self._mode = None
             return
-        logger.debug('MODE: Dynamic mode enabled. Mode set to %s', value)
+        logger.debug("MODE: Dynamic mode enabled. Mode set to %s", value)
         self._mode = value
