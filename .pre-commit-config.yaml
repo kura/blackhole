@@ -1,3 +1,4 @@
+fail_fast: true
 repos:
   - repo: https://github.com/ambv/black
     rev: 18.6b4
@@ -9,7 +10,7 @@ repos:
         types: []
 
   - repo: https://github.com/asottile/seed-isort-config
-    rev: v1.0.1
+    rev: v1.1.0
     hooks:
       - id: seed-isort-config
         language_version: python3.6
