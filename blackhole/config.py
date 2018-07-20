@@ -256,22 +256,23 @@ class Config(metaclass=Singleton):
         if not os.access(self.config_file, os.R_OK):
             msg = "Config file does not exist or is not readable."
             raise ConfigException(msg)
-        for line in open(self.config_file, "r").readlines():
-            line = line.strip()
-            if line.startswith("#"):
-                continue
-            if line.strip() == "":
-                continue
-            if "#" in line:
-                line = line.split("#")[0]
-            if line.count("=") >= 1:
-                key, value = line.split("=", 1)
-                key, value = key.strip(), value.strip()
-                self.validate_option(key)
-                value = value.replace('"', "").replace("'", "")
-                setattr(self, key, value)
-            else:
-                self.validate_option(line)
+        with open(self.config_file, "r") as _conf_file:
+            for line in _conf_file.readlines():
+                line = line.strip()
+                if line.startswith("#"):
+                    continue
+                if line.strip() == "":
+                    continue
+                if "#" in line:
+                    line = line.split("#")[0]
+                if line.count("=") >= 1:
+                    key, value = line.split("=", 1)
+                    key, value = key.strip(), value.strip()
+                    self.validate_option(key)
+                    value = value.replace('"', "").replace("'", "")
+                    setattr(self, key, value)
+                else:
+                    self.validate_option(line)
         return self
 
     def validate_option(self, key):
@@ -1109,12 +1110,10 @@ class Config(metaclass=Singleton):
         """
         if not self.pidfile:
             return
-        try:
-            open(self.pidfile, "w+")
-        except PermissionError:
+        if not os.access(self.pidfile, os.W_OK):
             msg = "You do not have permission to write to the pidfile."
             raise ConfigException(msg)
-        except FileNotFoundError:
+        if not os.path.exists(self.pidfile):
             msg = "The path to the pidfile does not exist."
             raise ConfigException(msg)
 

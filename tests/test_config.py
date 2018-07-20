@@ -829,13 +829,17 @@ class TestPidfile(unittest.TestCase):
     def test_pidfile_no_permission(self):
         cfile = create_config(("pidfile=/fake/path.pid",))
         conf = Config(cfile).load()
-        with pytest.raises(ConfigException):
+        with mock.patch("os.access", return_value=False), pytest.raises(
+            ConfigException
+        ):
             conf.test_pidfile()
 
     def test_pidfile_with_permission(self):
         cfile = create_config(("pidfile=/tmp/path.pid",))
         conf = Config(cfile).load()
-        with mock.patch("builtins.open", return_value=True):
+        with mock.patch("os.path.exists", return_value=True), mock.patch(
+            "os.access", return_value=True
+        ):
             conf.test_pidfile()
 
 

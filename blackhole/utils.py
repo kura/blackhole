@@ -64,14 +64,13 @@ def mailname(mailname_file="/etc/mailname"):
        opened for reading.
     """
     if os.access(mailname_file, os.R_OK):
-        mailname_content = codecs.open(
-            mailname_file, encoding="utf-8"
-        ).readlines()
-        if len(mailname_content) == 0:
-            return socket.getfqdn()
-        nmailname_content = mailname_content[0].strip()
-        if nmailname_content != "":
-            return str(nmailname_content)
+        with codecs.open(mailname_file, encoding="utf-8") as _mailname_file:
+            mailname_content = _mailname_file.readlines()
+            if len(mailname_content) == 0:
+                return socket.getfqdn()
+            nmailname_content = mailname_content[0].strip()
+            if nmailname_content != "":
+                return str(nmailname_content)
     return socket.getfqdn()
 
 
