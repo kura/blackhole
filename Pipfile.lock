@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e6d550740a779267aced622a7ad130fa3a974944590f09d0c9285a228635ebae"
+            "sha256": "d86ef2853ab7c7c219fb3b834aea67125e66c64e970a077b57f8abb47ca7df9b"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -156,17 +156,11 @@
             ],
             "version": "==4.2.0"
         },
-        "mypy-extensions": {
-            "hashes": [
-                "sha256:c4553f2475996c912658d3c2f398766cd47a65e0c2c6bb27ac8dea94a21640f4"
-            ],
-            "version": "==0.3.0"
-        },
         "nodeenv": {
             "hashes": [
-                "sha256:0611c726af1b252908646787f4d49811aa69cd92ec19644ded06ad9d3162f88e"
+                "sha256:aa040ab5189bae17d272175609010be6c5b589ec4b8dbd832cc50c9e9cb7496f"
             ],
-            "version": "==1.3.1"
+            "version": "==1.3.2"
         },
         "packaging": {
             "hashes": [
@@ -197,13 +191,6 @@
             ],
             "markers": "python_version != '3.0.*' and python_version != '3.2.*' and python_version >= '2.7' and python_version != '3.3.*' and python_version != '3.1.*'",
             "version": "==1.5.4"
-        },
-        "pyannotate": {
-            "hashes": [
-                "sha256:b6a3cf8764a4e009bc6b4484ef8c5db83ca26acb6ccc96c6db9e7ea7b245df72",
-                "sha256:dbdc2a26cbf45490a650e976ba45f99abe9ddbf0af5746307914e5ef419e325e"
-            ],
-            "version": "==1.0.6"
         },
         "pygments": {
             "hashes": [
@@ -280,6 +267,7 @@
         },
         "sphinx": {
             "hashes": [
+                "sha256:217ad9ece2156ed9f8af12b5d2c82a499ddf2c70a33c5f81864a08d8c67b9efc",
                 "sha256:a765c6db1e5b62aae857697cd4402a5c1a315a7b0854bbcd0fc8cdc524da5896"
             ],
             "version": "==1.7.6"

@@ -9,7 +9,6 @@ uvloop = { extras = ['uvloop'] }
 [dev-packages]
 sphinx = "*"
 guzzle_sphinx_theme = "*"
-pyannotate = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pre-commit = "*"

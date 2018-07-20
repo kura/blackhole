@@ -22,13 +22,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# pylama:skip=1
 
 import logging
 
 import pytest
-
-from pyannotate_runtime import collect_types
 
 from blackhole.logs import configure_logs
 
@@ -37,47 +34,31 @@ from ._utils import Args, cleandir, create_config, create_file, reset
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_default():
-    collect_types.init_types_collection()
-    collect_types.resume()
     args = Args((("debug", False), ("test", False), ("quiet", False)))
     logger = logging.getLogger("blackhole")
     configure_logs(args)
     assert logger.handlers[0].level is logging.INFO
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_debug():
-    collect_types.init_types_collection()
-    collect_types.resume()
     args = Args((("debug", True), ("test", False), ("quiet", False)))
     logger = logging.getLogger("blackhole")
     configure_logs(args)
     assert logger.handlers[0].level is logging.DEBUG
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_test():
-    collect_types.init_types_collection()
-    collect_types.resume()
     args = Args((("debug", False), ("test", True), ("quiet", False)))
     logger = logging.getLogger("blackhole")
     configure_logs(args)
     assert logger.handlers[0].level is logging.INFO
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_quiet():
-    collect_types.init_types_collection()
-    collect_types.resume()
     args = Args((("debug", False), ("test", False), ("quiet", True)))
     logger = logging.getLogger("blackhole")
     configure_logs(args)
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
     assert logger.handlers[0].level is logging.ERROR

@@ -40,6 +40,10 @@ man: clean
 	rst2man.py man/source/blackhole.rst man/build/blackhole.1
 	rst2man.py man/source/blackhole_config.rst man/build/blackhole_config.1
 
+.PHONY: pre-commit
+pre-commit:
+	tox -e pre-commit
+
 .PHONY: release
 release: clean install_tox
 	tox -e build

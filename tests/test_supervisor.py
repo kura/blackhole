@@ -22,7 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# pylama:skip=1
 
 import asyncio
 import unittest
@@ -30,8 +29,6 @@ import unittest
 from unittest import mock
 
 import pytest
-
-from pyannotate_runtime import collect_types
 
 from blackhole.config import Config
 from blackhole.exceptions import BlackholeRuntimeException
@@ -55,22 +52,16 @@ except ImportError:
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv4():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=127.0.0.1:9999",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind"):
         supervisor = Supervisor()
     assert len(supervisor.socks) == 1
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv4_tls():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cert = create_file("cert.pem")
     key = create_file("key.key")
     cfile = create_config(
@@ -88,15 +79,11 @@ def test_spawn_ipv4_tls():
     ):
         supervisor = Supervisor()
     assert len(supervisor.socks) == 2
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv6_tls():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cert = create_file("cert.pem")
     key = create_file("key.key")
     cfile = create_config(
@@ -114,15 +101,11 @@ def test_spawn_ipv6_tls():
     ):
         supervisor = Supervisor()
     assert len(supervisor.socks) == 2
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv4_tls_less_secure():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cert = create_file("cert.pem")
     key = create_file("key.key")
     cfile = create_config(
@@ -140,15 +123,11 @@ def test_spawn_ipv4_tls_less_secure():
     ):
         supervisor = Supervisor()
     assert len(supervisor.socks) == 2
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv6_tls_less_secure():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cert = create_file("cert.pem")
     key = create_file("key.key")
     cfile = create_config(
@@ -166,8 +145,6 @@ def test_spawn_ipv6_tls_less_secure():
     ):
         supervisor = Supervisor()
     assert len(supervisor.socks) == 2
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 key_data = """-----BEGIN RSA PRIVATE KEY-----
@@ -225,8 +202,6 @@ MWsNrHaep9EbyJ00JW/cSoaECAYLAgEC
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv4_tls_dhparams():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cert = create_file("test.pem", cert_data)
     key = create_file("test.key", key_data)
     dhparams = create_file("dhparams.pem", dhparams_data)
@@ -244,15 +219,11 @@ def test_spawn_ipv4_tls_dhparams():
     with mock.patch("socket.socket.bind"):
         supervisor = Supervisor()
     assert len(supervisor.socks) == 2
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv6_tls_dhparams():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cert = create_file("test.pem", cert_data)
     key = create_file("test.key", key_data)
     dhparams = create_file("dhparams.pem", dhparams_data)
@@ -271,83 +242,59 @@ def test_spawn_ipv6_tls_dhparams():
         supervisor = Supervisor()
     assert len(supervisor.socks) == 2
     assert supervisor.socks[1]["ssl"] is not None
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv6():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:::9999",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind"):
         supervisor = Supervisor()
     assert len(supervisor.socks) == 1
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv4_and_ipv6():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:9999, :::9999",))
     Config(cfile).load()
     supervisor = Supervisor()
     with mock.patch("socket.socket.bind"):
         supervisor = Supervisor()
     assert len(supervisor.socks) == 2
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv4_fail():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:9999",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
         BlackholeRuntimeException
     ):
         Supervisor()
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv6_fail():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:::9999",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
         BlackholeRuntimeException
     ):
         Supervisor()
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_spawn_ipv4_and_ipv6_fail():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:9999, :::9999",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
         BlackholeRuntimeException
     ):
         Supervisor()
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_create():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
     loop = asyncio.new_event_loop()
@@ -359,14 +306,10 @@ def test_create():
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
     loop.stop()
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_run():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
     loop = asyncio.new_event_loop()
@@ -379,14 +322,10 @@ def test_run():
             supervisor.run()
         assert len(supervisor.workers) == 2
     supervisor.loop.stop()
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_stop():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
     loop = asyncio.new_event_loop()
@@ -404,14 +343,10 @@ def test_stop():
     assert mock_stop.call_count == 2
     assert str(err.value) == "0"
     supervisor.loop.stop()
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_stop_runtime_error():
-    collect_types.init_types_collection()
-    collect_types.resume()
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
     loop = asyncio.new_event_loop()
@@ -434,5 +369,3 @@ def test_stop_runtime_error():
     assert mock_stop.call_count == 2
     assert str(err.value) == "0"
     supervisor.loop.stop()
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")

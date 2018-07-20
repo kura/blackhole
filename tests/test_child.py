@@ -22,7 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# pylama:skip=1
 
 import asyncio
 import os
@@ -31,8 +30,6 @@ import socket
 from unittest import mock
 
 import pytest
-
-from pyannotate_runtime import collect_types
 
 from blackhole import protocols
 from blackhole.child import Child
@@ -52,17 +49,11 @@ except ImportError:
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_initiation():
-    collect_types.init_types_collection()
-    collect_types.resume()
     Child("", "", [], "1")
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_start():
-    collect_types.init_types_collection()
-    collect_types.resume()
     socks = [{"sock": None, "ssl": None}, {"sock": None, "ssl": "abc"}]
     child = Child("", "", socks, "1")
     with mock.patch("asyncio.Task"), mock.patch(
@@ -74,14 +65,10 @@ def test_start():
     ) as mock_exit:
         child.start()
     assert mock_exit.called is True
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_stop():
-    collect_types.init_types_collection()
-    collect_types.resume()
     socks = [{"sock": None, "ssl": None}, {"sock": None, "ssl": "abc"}]
     child = Child("", "", socks, "1")
     child.loop = mock.MagicMock()
@@ -95,14 +82,10 @@ def test_stop():
     ):
         child.stop()
     assert mock_exit.called is True
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_stop_runtime_exception():
-    collect_types.init_types_collection()
-    collect_types.resume()
     socks = [{"sock": None, "ssl": None}, {"sock": None, "ssl": "abc"}]
     child = Child("", "", socks, "1")
     child.loop = mock.MagicMock()
@@ -116,15 +99,11 @@ def test_stop_runtime_exception():
     ):
         child.stop()
     assert mock_exit.called is True
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_start_child_loop(event_loop):
-    collect_types.init_types_collection()
-    collect_types.resume()
     sock = _socket("127.0.0.1", 0, socket.AF_INET)
     socks = ({"sock": sock, "ssl": None},)
     child = Child("", "", socks, "1")
@@ -133,15 +112,11 @@ async def test_start_child_loop(event_loop):
     assert len(child.servers) == 1
     for server in child.servers:
         server.close()
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_child_heartbeat_not_started(event_loop):
-    collect_types.init_types_collection()
-    collect_types.resume()
     up_read, up_write = os.pipe()
     down_read, down_write = os.pipe()
     os.close(up_write)
@@ -156,15 +131,11 @@ async def test_child_heartbeat_not_started(event_loop):
     assert mock_task.called is True
     assert mock_start.called is True
     assert mock_stop.called is True
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_child_heartbeat_started(event_loop):
-    collect_types.init_types_collection()
-    collect_types.resume()
     up_read, up_write = os.pipe()
     down_read, down_write = os.pipe()
     os.close(up_write)
@@ -192,5 +163,3 @@ async def test_child_heartbeat_started(event_loop):
     assert mock_task.called is True
     assert mock_start.called is True
     assert mock_stop.called is True
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")

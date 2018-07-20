@@ -22,7 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# pylama:skip=1
 
 import asyncio
 import os
@@ -32,8 +31,6 @@ from unittest import mock
 
 import pytest
 
-from pyannotate_runtime import collect_types
-
 from blackhole.streams import StreamProtocol
 
 from ._utils import Args, cleandir, create_config, create_file, reset
@@ -42,24 +39,16 @@ from ._utils import Args, cleandir, create_config, create_file, reset
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_client_not_connected():
-    collect_types.init_types_collection()
-    collect_types.resume()
     sp = StreamProtocol()
     assert sp.is_connected() is False
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 async def test_client_connected(event_loop):
-    collect_types.init_types_collection()
-    collect_types.resume()
     sp = StreamProtocol(loop=event_loop)
     sp.connection_made(asyncio.Transport())
     assert sp.is_connected() is True
-    collect_types.pause()
-    collect_types.dump_stats("/tmp/annotations")
 
 
 # @pytest.mark.usefixtures('reset_conf', 'reset_daemon', 'reset_supervisor',
