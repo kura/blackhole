@@ -101,9 +101,10 @@ class Daemon(metaclass=Singleton):
         """
         if os.path.exists(self.pidfile):
             try:
-                pid = open(self.pidfile, "r").read().strip()
-                if pid != "":
-                    return int(pid)
+                with open(self.pidfile, "r") as pidfile:
+                    pid = pidfile.read().strip()
+                    if pid != "":
+                        return int(pid)
             except (
                 FileNotFoundError,
                 IOError,

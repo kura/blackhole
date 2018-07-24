@@ -156,7 +156,8 @@ def test_create_server_ipv6_bind_fails():
     with mock.patch(
         "socket.socket.bind", side_effect=OSError
     ) as mock_sock, pytest.raises(BlackholeRuntimeException):
-        server("::", 9000, socket.AF_INET6, {})
+        _server = server("::", 9000, socket.AF_INET6, {})
+        _server["sock"].close()
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -166,9 +167,10 @@ def test_create_server_ipv6_bind_fails():
 def test_create_server_ipv4_bind_works(mock_sock):
     cfile = create_config(("listen=127.0.0.1:9000",))
     Config(cfile).load()
-    server("127.0.0.1", 9000, socket.AF_INET)
+    _server = server("127.0.0.1", 9000, socket.AF_INET)
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
+    _server["sock"].close()
 
 
 @unittest.skipIf(socket.has_ipv6 is False, "No IPv6 support")
@@ -177,7 +179,8 @@ def test_create_server_ipv6_bind_works():
     cfile = create_config(("listen=:::9000",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind") as mock_sock:
-        server("::", 9000, socket.AF_INET6)
+        _server = server("::", 9000, socket.AF_INET6)
+        _server["sock"].close()
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
 
@@ -218,7 +221,8 @@ def test_create_server_tls_ipv4_bind_works():
     with mock.patch("socket.socket.bind") as mock_sock, mock.patch(
         "ssl.create_default_context"
     ) as mock_ssl:
-        server("127.0.0.1", 9000, socket.AF_INET, use_tls=True)
+        _server = server("127.0.0.1", 9000, socket.AF_INET, use_tls=True)
+        _server["sock"].close()
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
     assert mock_ssl.called is True
@@ -235,7 +239,8 @@ def test_create_server_tls_ipv6_bind_works():
     with mock.patch("socket.socket.bind") as mock_sock, mock.patch(
         "ssl.create_default_context"
     ) as mock_ssl:
-        server("::", 9000, socket.AF_INET6, use_tls=True)
+        _server = server("::", 9000, socket.AF_INET6, use_tls=True)
+        _server["sock"].close()
     assert mock_sock.called is True
     assert mock_sock.call_count is 1
     assert mock_ssl.called is True
