@@ -36,13 +36,6 @@ from blackhole.utils import Singleton
 logging.getLogger("blackhole").addHandler(logging.NullHandler())
 
 
-def annotate(func):
-    def wrapper(*args, **kwargs):
-        output = func(*args, **kwargs)
-
-    return wrapper
-
-
 @pytest.fixture()
 def cleandir():
     newpath = tempfile.mkdtemp()

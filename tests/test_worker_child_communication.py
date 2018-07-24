@@ -49,6 +49,7 @@ except ImportError:
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_worker_ping_pong(unused_tcp_port):
     aserver = server("127.0.0.1", unused_tcp_port, socket.AF_INET)
     started = time.monotonic()
@@ -59,10 +60,12 @@ async def test_worker_ping_pong(unused_tcp_port):
     assert worker._started is False
     assert worker.ping > started
     assert worker.ping_count == 2
+    aserver["sock"].close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_restart(unused_tcp_port):
     aserver = server("127.0.0.1", unused_tcp_port, socket.AF_INET)
     started = time.monotonic()

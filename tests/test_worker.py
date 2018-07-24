@@ -50,6 +50,7 @@ except ImportError:
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_start_stop():
     worker = Worker(1, [])
     assert worker._started is True

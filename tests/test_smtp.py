@@ -228,6 +228,7 @@ async def test_mode_directive(event_loop, unused_tcp_port):
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_delay_directive(event_loop, unused_tcp_port):
     cfile = create_config(("listen=:{} delay=5".format(unused_tcp_port),))
     conf = Config(cfile).load()
@@ -257,6 +258,7 @@ async def test_delay_directive(event_loop, unused_tcp_port):
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
     cfile = create_config(
         ("listen=:{} delay=5 mode=bounce".format(unused_tcp_port),)
@@ -288,6 +290,7 @@ async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_timeout(event_loop):
     cfile = create_config(("timeout=5",))
     Config(cfile).load()
@@ -304,6 +307,7 @@ async def test_timeout(event_loop):
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_delay(event_loop):
     cfile = create_config(("timeout=10",))
     Config(cfile).load()
@@ -332,6 +336,7 @@ async def test_delay(event_loop):
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_delayed_bounce(event_loop):
     cfile = create_config(("timeout=10",))
     Config(cfile).load()
@@ -359,6 +364,7 @@ async def test_delayed_bounce(event_loop):
 
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
+@pytest.mark.slow
 async def test_delay_range(event_loop):
     cfile = create_config(("timeout=10",))
     Config(cfile).load()
