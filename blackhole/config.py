@@ -163,7 +163,6 @@ def config_test(args):
     try:
         conf = Config(args.config_file).load().test()
         conf.args = args
-        raise ConfigExceptiont("test")
     except ConfigException as exc:
         print(exc)
         logger.critical("Config error")

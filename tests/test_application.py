@@ -49,15 +49,14 @@ from ._utils import (  # noqa: F401; isort:skip
 )
 
 
-logging.basicConfig(level=logging.DEBUG)
-
-
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_run_test():
     cfile = create_config(("",))
     with mock.patch("sys.argv", ["blackhole", "-t", "-c", cfile]), mock.patch(
         "blackhole.config.Config.test_port", return_value=True
-    ), pytest.raises(SystemExit) as exc:
+    ), mock.patch("blackhole.config.Config.test_pidfile"), pytest.raises(
+        SystemExit
+    ) as exc:
         run()
     assert exc.value.code == 0
 
