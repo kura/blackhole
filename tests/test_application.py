@@ -49,6 +49,9 @@ from ._utils import (  # noqa: F401; isort:skip
 )
 
 
+logging.basicConfig(level=logging.DEBUG)
+
+
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_run_test():
     cfile = create_config(("",))

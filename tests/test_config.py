@@ -48,6 +48,9 @@ from ._utils import (  # noqa: F401; isort:skip
 )
 
 
+logging.basicConfig(level=logging.DEBUG)
+
+
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_default():
     with mock.patch("getpass.getuser") as mock_getuser, mock.patch(
