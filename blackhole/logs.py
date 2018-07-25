@@ -68,4 +68,18 @@ def configure_logs(args: Namespace) -> None:
 
     :param argparse.Namespace args: Parameters parsed from :py:mod:`argparse`.
     """
-    logging.basicConfig(level=logging.DEBUG)
+    logger_handlers = LOG_CONFIG["loggers"]["blackhole"]["handlers"]
+    if args.debug:
+        LOG_CONFIG["loggers"]["blackhole"]["level"] = logging.DEBUG
+        LOG_CONFIG["handlers"]["default_handler"] = DEBUG_HANDLER
+        logger_handlers.append("default_handler")
+    elif args.quiet:
+        LOG_CONFIG["loggers"]["blackhole"]["level"] = logging.ERROR
+        LOG_CONFIG["handlers"]["default_handler"] = DEFAULT_HANDLER
+        LOG_CONFIG["handlers"]["default_handler"]["level"] = logging.ERROR
+        logger_handlers.append("default_handler")
+    else:
+        LOG_CONFIG["loggers"]["blackhole"]["level"] = logging.INFO
+        LOG_CONFIG["handlers"]["default_handler"] = DEFAULT_HANDLER
+        logger_handlers.append("default_handler")
+    dictConfig(LOG_CONFIG)
