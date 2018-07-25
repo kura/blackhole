@@ -34,7 +34,14 @@ from blackhole.config import Config
 from blackhole.exceptions import BlackholeRuntimeException
 from blackhole.supervisor import Supervisor
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 try:
@@ -383,10 +390,10 @@ def test_stop():
         assert len(supervisor.workers) == 2
         with mock.patch(
             "blackhole.worker.Worker.stop"
-        ) as mock_stop, pytest.raises(SystemExit) as err:
+        ) as mock_stop, pytest.raises(SystemExit) as exc:
             supervisor.stop()
     assert mock_stop.call_count == 2
-    assert str(err.value) == "0"
+    assert exc.value.code == 0
     loop.run_until_complete(loop.shutdown_asyncgens())
     loop.close()
 
@@ -408,10 +415,10 @@ def test_stop_runtime_error():
             "{0}.stop".format(_LOOP), side_effect=RuntimeError
         ) as mock_rt, pytest.raises(
             SystemExit
-        ) as err:
+        ) as exc:
             supervisor.stop()
     assert mock_rt.call_count == 1
     assert mock_stop.call_count == 2
-    assert str(err.value) == "0"
+    assert exc.value.code == 0
     loop.run_until_complete(loop.shutdown_asyncgens())
     loop.close()

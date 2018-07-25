@@ -39,7 +39,14 @@ from blackhole.config import Config
 from blackhole.control import _socket
 from blackhole.smtp import Smtp
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 try:

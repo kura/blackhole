@@ -38,7 +38,14 @@ import pytest
 from blackhole.config import Config, config_test, parse_cmd_args, warn_options
 from blackhole.exceptions import ConfigException
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -135,10 +142,10 @@ class TestCmdParser(unittest.TestCase):
     def test_version(self):
         with pytest.raises(SystemExit) as exc:
             parse_cmd_args(["-v"])
-        assert str(exc.value) == "0"
+        assert exc.value.code == 0
         with pytest.raises(SystemExit) as exc:
             parse_cmd_args(["--version"])
-        assert str(exc.value) == "0"
+        assert exc.value.code == 0
 
     def test_test(self):
         parser = parse_cmd_args(["-t"])
@@ -188,7 +195,7 @@ class TestConfigTest(unittest.TestCase):
             SystemExit
         ) as exc:
             config_test(args)
-        assert str(exc.value) == "0"
+        assert exc.value.code == 0
 
 
 @pytest.mark.usefixtures("reset", "cleandir")

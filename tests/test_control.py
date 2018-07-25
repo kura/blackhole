@@ -42,7 +42,14 @@ from blackhole.control import (
 )
 from blackhole.exceptions import BlackholeRuntimeException
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 try:
@@ -276,10 +283,10 @@ def test_setgid_same_group():
 @mock.patch("grp.getgrnam", side_effect=KeyError)
 def test_setgid_invalid_group(_):
     cfile = create_config(("group=testgroup",))
-    with pytest.raises(SystemExit) as err:
+    with pytest.raises(SystemExit) as exc:
         Config(cfile).load()
         setgid()
-    assert str(err.value) == "64"
+    assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -287,10 +294,10 @@ def test_setgid_no_perms():
     cfile = create_config(("group=testgroup",))
     with mock.patch(
         "grp.getgrnam", side_effect=PermissionError
-    ), pytest.raises(SystemExit) as err:
+    ), pytest.raises(SystemExit) as exc:
         Config(cfile).load()
         setgid()
-    assert str(err.value) == "77"
+    assert exc.value.code == 77
 
 
 class Pwd(mock.MagicMock):
@@ -322,10 +329,10 @@ def test_setuid_invalid_user():
     cfile = create_config(("user=testuser",))
     with mock.patch("pwd.getpwnam", side_effect=KeyError), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         Config(cfile).load()
         setuid()
-    assert str(err.value) == "64"
+    assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -336,7 +343,7 @@ def test_setuid_no_perms():
     ), pytest.raises(SystemExit) as err:
         Config(cfile).load()
         setuid()
-    assert str(err.value) == "77"
+    assert err.value.code == 77
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -350,14 +357,14 @@ def test_set_pid_permissions():
         SystemExit
     ) as err:
         pid_permissions()
-    assert str(err.value) == "64"
+    assert err.value.code == 64
     with mock.patch("grp.getgrgid", side_effect=KeyError), pytest.raises(
         SystemExit
     ) as err:
         pid_permissions()
-    assert str(err.value) == "64"
+    assert err.value.code == 64
     with mock.patch("os.chown", side_effect=PermissionError), pytest.raises(
         SystemExit
     ) as err:
         pid_permissions()
-    assert str(err.value) == "64"
+    assert err.value.code == 64

@@ -39,7 +39,14 @@ from blackhole.exceptions import (
 )
 from blackhole.logs import configure_logs
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -47,9 +54,9 @@ def test_run_test():
     cfile = create_config(("",))
     with mock.patch("sys.argv", ["blackhole", "-t", "-c", cfile]), mock.patch(
         "blackhole.config.Config.test_port", return_value=True
-    ), pytest.raises(SystemExit) as err:
+    ), pytest.raises(SystemExit) as exc:
         run()
-    assert str(err.value) == "0"
+    assert exc.value.code == 0
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -57,9 +64,9 @@ def test_run_test_fails():
     cfile = create_config(("listen=127.0.0.1:0",))
     with mock.patch(
         "sys.argv", ["blackhole", "-t", "-c", cfile]
-    ), pytest.raises(SystemExit) as err:
+    ), pytest.raises(SystemExit) as exc:
         run()
-    assert str(err.value) == "64"
+    assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -67,9 +74,9 @@ def test_run_load_test_fails():
     cfile = create_config(("listen=127.0.0.1:0",))
     with mock.patch("sys.argv", ["blackhole", "-t", "-c", cfile]), mock.patch(
         "blackhole.config.Config.test", side_effect=ConfigException()
-    ), pytest.raises(SystemExit) as err:
+    ), pytest.raises(SystemExit) as exc:
         run()
-    assert str(err.value) == "64"
+    assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -98,9 +105,9 @@ def test_run_foreground():
         "blackhole.supervisor.Supervisor.run"
     ), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         run()
-    assert str(err.value) == "0"
+    assert exc.value.code == 0
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -119,9 +126,9 @@ def test_run_foreground_pid_error():
         "atexit.register", side_effect=DaemonException
     ), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         run()
-    assert str(err.value) == "64"
+    assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -143,9 +150,9 @@ def test_run_foreground_socket_error():
         side_effect=BlackholeRuntimeException,
     ), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         run()
-    assert str(err.value) == "77"
+    assert exc.value.code == 77
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -176,9 +183,9 @@ def test_run_background():
         "blackhole.supervisor.Supervisor.run"
     ), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         run()
-    assert str(err.value) == "0"
+    assert exc.value.code == 0
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -203,9 +210,9 @@ def test_run_daemon_daemonize_error():
         "blackhole.supervisor.Supervisor." "close_socks"
     ) as mock_close, pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         run()
-    assert str(err.value) == "77"
+    assert exc.value.code == 77
     assert mock_close.called is True
 
 
@@ -214,7 +221,8 @@ def test_blackhole_config():
     args = Args((("debug", False), ("quiet", False)))
     configure_logs(args)
     mmock = mock.MagicMock(spec=logging)
-    with pytest.raises(SystemExit) as err, mock.patch(
+    with pytest.raises(SystemExit) as exc, mock.patch(
         "logging.getLogger", return_value=mmock
     ):
         blackhole_config()
+    assert exc.value.code == 0

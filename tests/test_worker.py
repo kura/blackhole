@@ -36,7 +36,14 @@ from blackhole import protocols
 from blackhole.config import Config
 from blackhole.worker import Worker
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 try:
@@ -71,9 +78,9 @@ def test_child_start_setgid_fails_invalid_group():
         "os.setgid", side_effect=KeyError
     ), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         Worker([], [])
-    assert str(err.value) == "64"
+    assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -88,9 +95,9 @@ def test_child_start_setgid_fails_permissions():
         "os.setgid", side_effect=PermissionError
     ), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         Worker([], [])
-    assert str(err.value) == "64"
+    assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -105,9 +112,9 @@ def test_child_start_setuid_fails_invalid_user():
         "os.setuid", side_effect=KeyError
     ), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         Worker([], [])
-    assert str(err.value) == "64"
+    assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -122,6 +129,6 @@ def test_child_start_setuid_fails_permissions():
         "os.setuid", side_effect=PermissionError
     ), pytest.raises(
         SystemExit
-    ) as err:
+    ) as exc:
         Worker([], [])
-    assert str(err.value) == "64"
+    assert exc.value.code == 64

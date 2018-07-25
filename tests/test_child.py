@@ -36,7 +36,14 @@ from blackhole.child import Child
 from blackhole.control import _socket
 from blackhole.streams import StreamProtocol
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 try:

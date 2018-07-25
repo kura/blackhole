@@ -31,7 +31,14 @@ import pytest
 
 from blackhole.daemon import Daemon, DaemonException
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 @pytest.mark.usefixtures("reset", "cleandir")

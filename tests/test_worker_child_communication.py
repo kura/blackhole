@@ -27,15 +27,20 @@ import asyncio
 import socket
 import time
 
-from unittest import mock
-
 import pytest
 
 from blackhole.child import Child
 from blackhole.control import server
 from blackhole.worker import Worker
 
-from ._utils import Args, cleandir, create_config, create_file, reset
+
+from ._utils import (  # noqa: F401; isort:skip
+    Args,
+    cleandir,
+    create_config,
+    create_file,
+    reset,
+)
 
 
 try:
