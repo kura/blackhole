@@ -16,4 +16,60 @@ matrix:
   include:
 
   - python: '3.6'
-    env: TOXENV=py36
+    env: TOXENV=py36,py36-setproctitle,py36-uvloop
+    sudo: true
+    before_install:
+      - git clone https://github.com/libuv/libuv.git
+      - pushd libuv/
+      - git checkout $(git describe --tags)
+      - sh autogen.sh
+      - "./configure"
+      - make
+      - sudo make install
+      - popd
+    script: detox
+
+  - python: '3.7'
+    env: TOXENV=py37,py37-setproctitle,py37-uvloop
+    sudo: true
+    before_install:
+      - git clone https://github.com/libuv/libuv.git
+      - pushd libuv/
+      - git checkout $(git describe --tags)
+      - sh autogen.sh
+      - "./configure"
+      - make
+      - sudo make install
+      - popd
+    script: detox
+
+  - python: "3.6"
+    env: TOXENV=lint
+  - python: '3.6'
+    env: TOXENV=docs
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      github_token:
+        secure: "FGNxmBm5Zr2oLHK13HgqGKPFQKGrILvBUeC9F655V3hBTcOD9BXyeABwF0yvnGSS/1J/sQVNn71uRbZDfmxd/YTT8/5yK4yeuAiT1pnKcMppYaBA/691e9Uz9hB4yfivir/+ZWSlPMQJ2IiLvY6aBfJwwrNtiB5biWQiTlW+5aI="
+      local_dir: .tox/docs/tmp/html
+      on:
+        branch: master
+  - python: "3.6"
+    env: TOXENV=build
+  - python: "3.6"
+    env: TOXENV=man
+  - python: "3.6"
+    env: TOXENV=pipfile
+  - python: "3.6"
+    env: TOXENV=setuppy
+  - python: '3.6'
+    env: TOXENV=shellcheck
+    addons:
+      apt:
+        sources:
+          - debian-sid
+    before-script:
+      - "sudo apt-get install cabal-install"
+      - "cabal update"
+      - "cabal install shellcheck"
