@@ -54,7 +54,9 @@ def test_run_test():
     cfile = create_config(("",))
     with mock.patch("sys.argv", ["blackhole", "-t", "-c", cfile]), mock.patch(
         "blackhole.config.Config.test_port", return_value=True
-    ), mock.patch("blackhole.config.Config.test_pidfile"), pytest.raises(
+    ), mock.patch(
+        "blackhole.config.Config.test_pidfile", return_value=True
+    ), pytest.raises(
         SystemExit
     ) as exc:
         run()

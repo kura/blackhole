@@ -191,6 +191,8 @@ class TestConfigTest(unittest.TestCase):
         cfile = create_config(settings)
         args = Args((("less_secure", True), ("config_file", cfile)))
         with mock.patch(
+            "blackhole.config.Config.test_pidfile", return_value=True
+        ), mock.patch(
             "blackhole.config.Config.test_port", return_value=True
         ), mock.patch(
             "blackhole.config.Config.test_tls_port", return_value=True
