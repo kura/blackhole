@@ -85,3 +85,4 @@ async def test_restart(unused_tcp_port):
     assert worker._started is False
     assert worker.ping > started
     assert worker.ping_count == 0
+    aserver["sock"].close()
