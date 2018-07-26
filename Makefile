@@ -27,7 +27,7 @@ install:
 
 .PHONY: install_tox
 install_tox:
-	pip install tox detox
+	pip install tox
 
 .PHONY: lint
 lint: install_tox
@@ -59,11 +59,11 @@ test: install_tox
 
 .PHONY: test_py36
 test_py36: install_tox
-	detox -e py36,py36-setproctitle,py36-uvloop
+	tox -e py36,py36-setproctitle,py36-uvloop
 
 .PHONY: test_py37
 test_py37: install_tox
-	detox -e py37,py37-setproctitle,py37-uvloop
+	tox -e py37,py37-setproctitle,py37-uvloop
 
 .PHONY: test_build
 test_build: install_tox
