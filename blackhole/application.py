@@ -52,10 +52,8 @@ def blackhole_config():
 
     :raises SystemExit: Exit code :py:obj:`os.EX_OK`.
     """
-    args = parse_cmd_args(sys.argv[1:])
-    configure_logs(args)
-    logger = logging.getLogger("blackhole.blackhole_config")
-    logger.info(blackhole_config_help)
+    logging.basicConfig(format="%(message)s", level=logging.INFO)
+    logging.info(blackhole_config_help)
     raise SystemExit(os.EX_OK)
 
 
