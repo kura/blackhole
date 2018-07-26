@@ -576,15 +576,16 @@ class Smtp(StreamReaderProtocol):
             msg.append(line)
             if line.lower().startswith(b"x-blackhole") and on_body is False:
                 self.process_header(line.decode("utf-8").rstrip("\n"))
-            if len(b"".join(msg)) > self.config.max_message_size:
-                await self.push(
-                    552, "Message size exceeds fixed maximum " "message size"
-                )
-                return
             if line == b"\n":
                 on_body = True
             if line == b".\r\n":
                 break
+        if len(b"".join(msg)) > self.config.max_message_size:
+            msg = []
+            await self.push(
+                552, "Message size exceeds fixed maximum message size"
+            )
+            return
         if self.delay:
             logger.debug("DELAYING RESPONSE: %s seconds", self.delay)
             await asyncio.sleep(self.delay)

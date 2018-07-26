@@ -2,6 +2,10 @@
 branch = True
 source =
     blackhole
+    tests
+concurrency =
+    thread
+    multiprocessing
 
 [paths]
 source =

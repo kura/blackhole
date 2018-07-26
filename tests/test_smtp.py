@@ -25,7 +25,9 @@
 
 import asyncio
 import inspect
+import random
 import socket
+import string
 import threading
 import time
 import unittest
@@ -401,7 +403,7 @@ async def test_delay_range(event_loop):
 @pytest.mark.usefixtures("reset", "cleandir")
 class TestSmtp(unittest.TestCase):
     def setUp(self):
-        cfile = create_config(("timeout=5", "max_message_size=102400"))
+        cfile = create_config(("timeout=5", "max_message_size=1024"))
         Config(cfile).load()
         controller = Controller()
         controller.start()
@@ -418,13 +420,12 @@ class TestSmtp(unittest.TestCase):
         with SMTP(self.host, self.port) as client:
             code, resp = client.ehlo("example.com")
             assert code == 250
-            # resps = resp.decode('utf-8').split('\n')
             eresp = (
                 "blackhole.io",
                 "HELP",
                 "PIPELINING",
                 "AUTH CRAM-MD5 LOGIN PLAIN",
-                "SIZE 102400",
+                "SIZE 1024",
                 "VRFY",
                 "ETRN",
                 "ENHANCEDSTATUSCODES",
@@ -465,24 +466,24 @@ class TestSmtp(unittest.TestCase):
 
     def test_mail_size_too_large(self):
         with SMTP(self.host, self.port) as client:
-            msg = "MAIL FROM: kura@example.com SIZE=10240000000"
+            msg = "MAIL FROM: kura@example.com SIZE=10240"
             code, resp = client.docmd(msg)
             assert code == 552
             assert resp == b"Message size exceeds fixed maximum message size"
 
     def test_mail_size_too_large_and_mime(self):
         with SMTP(self.host, self.port) as client:
-            msg = "MAIL FROM: kura@example.com SMTPUTF8 SIZE=10240000000"
+            msg = "MAIL FROM: kura@example.com SMTPUTF8 SIZE=10240"
             code, resp = client.docmd(msg)
             assert code == 552
             assert resp == b"Message size exceeds fixed maximum message size"
         with SMTP(self.host, self.port) as client:
-            msg = "MAIL FROM: kura@example.com BODY=7BIT SIZE=10240000000"
+            msg = "MAIL FROM: kura@example.com BODY=7BIT SIZE=10240"
             code, resp = client.docmd(msg)
             assert code == 552
             assert resp == b"Message size exceeds fixed maximum message size"
         with SMTP(self.host, self.port) as client:
-            msg = "MAIL FROM: kura@example.com BODY=8BITMIME SIZE=10240000000"
+            msg = "MAIL FROM: kura@example.com BODY=8BITMIME SIZE=10240"
             code, resp = client.docmd(msg)
             assert code == 552
             assert resp == b"Message size exceeds fixed maximum message size"
@@ -517,6 +518,16 @@ class TestSmtp(unittest.TestCase):
             code, resp = client.data(b"testing 1, 2, 3")
             assert code == 250
             assert resp.startswith(b"2.0.0 OK: queued as")
+
+    def test_data_too_large(self):
+        with SMTP(self.host, self.port) as client:
+            msg = "".join(
+                random.choice(string.ascii_letters + string.digits)
+                for x in range(2048)
+            )
+            code, resp = client.data(msg)
+            assert code == 552
+            assert resp == b"Message size exceeds fixed maximum message size"
 
     def test_data_fail(self):
         with SMTP(self.host, self.port) as client:

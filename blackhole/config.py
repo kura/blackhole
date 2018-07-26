@@ -32,6 +32,7 @@ import inspect
 import logging
 import multiprocessing
 import os
+import pathlib
 import pwd
 import socket
 
@@ -1110,11 +1111,9 @@ class Config(metaclass=Singleton):
         """
         if not self.pidfile:
             return
-        if not os.access(self.pidfile, os.W_OK):
+        pidfile = pathlib.Path(self.pidfile)
+        if not os.access(pidfile.parent, os.W_OK):
             msg = "You do not have permission to write to the pidfile."
-            raise ConfigException(msg)
-        if not os.path.exists(self.pidfile):
-            msg = "The path to the pidfile does not exist."
             raise ConfigException(msg)
 
     def test_dynamic_switch(self):
