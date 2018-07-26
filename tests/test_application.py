@@ -222,11 +222,6 @@ def test_run_daemon_daemonize_error():
 
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_blackhole_config():
-    args = Args((("debug", False), ("quiet", False)))
-    configure_logs(args)
-    mmock = mock.MagicMock(spec=logging)
-    with pytest.raises(SystemExit) as exc, mock.patch(
-        "logging.getLogger", return_value=mmock
-    ):
+    with pytest.raises(SystemExit) as exc:
         blackhole_config()
     assert exc.value.code == 0
