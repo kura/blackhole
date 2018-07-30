@@ -1,2 +1,2 @@
 env:
-  PATH: "~/.tox/py36/bin:~/.tox/py36-uvloop/bin:~/.tox/py36-setproctitle/bin:~/.tox/lint/bin:~/.local/bin"
+  PATH: "~/.tox/py36/bin:~/.tox/py36-uvloop/bin:~/.tox/py36-setproctitle/bin:~/.tox/lint/bin:~/.local/bin:/usr/bin"

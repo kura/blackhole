@@ -27,7 +27,6 @@
 
 import logging
 
-from argparse import Namespace
 from logging.config import dictConfig
 
 
@@ -62,7 +61,7 @@ DEFAULT_HANDLER = {
 }
 
 
-def configure_logs(args: Namespace) -> None:
+def configure_logs(args):
     """
     Configure the logging module.
 
