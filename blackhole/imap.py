@@ -46,6 +46,40 @@ MAILBOXES = (((r'\NoInferiors', r'\UnMarked', r'\Trash'), '/', 'Trash'),
              )
 
 
+class Mailbox:
+    name = None
+    _flags = None
+    root = "/"
+
+    def __init__(self, flags, root, name):
+        self.name = name
+        if flags is not None:
+            self.flags = flags
+
+    @property
+    def repr(self):
+        return (self.flags, self.root, self.name)
+
+    @property
+    def flags(self):
+        if self._flags is not None:
+            return self._flags
+        return (r'\NoInferiors', r'\UnMarked', r'\{0}'.format(self.name))
+
+    @flags.setter
+    def flags(self, flags):
+        self._flags = flags
+
+
+class Account:
+    mailboxes = []
+
+    def __init__(self):
+        for mailbox in MAILBOXES:
+            mbox = Mailbox(mailbox[0], mailbox[1], mailbox[2])
+            self.mailboxes.append(mbox)
+
+
 class Imap(StreamReaderProtocol):
     CAPABILITY = ('CAPABILITY', 'IMAP4rev1', 'LITERAL+', 'SASL-IR',
                   'LOGIN-REFERRALS', 'ID', 'ENABLE', 'IDLE', 'AUTH=PLAIN', )
