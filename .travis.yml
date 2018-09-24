@@ -27,7 +27,7 @@ matrix:
       - make
       - sudo make install
       - popd
-    script: detox
+    script: tox
 
   - python: '3.7'
     env: TOXENV=py37,py37-setproctitle,py37-uvloop
@@ -41,7 +41,7 @@ matrix:
       - make
       - sudo make install
       - popd
-    script: detox
+    script: tox
 
   - python: "3.6"
     env: TOXENV=lint
