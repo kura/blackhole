@@ -804,8 +804,7 @@ class Config(metaclass=Singleton):
             msg = (
                 "Cannot have more workers than number of processors or "
                 "cores. {0} workers > {1} processors/cores."
-            )
-            msg.format(self.workers, cpus)
+            ).format(self.workers, cpus)
             raise ConfigException(msg)
 
     def test_ipv6_support(self):
@@ -894,15 +893,13 @@ class Config(metaclass=Singleton):
             msg = (
                 "Port number {0} is not usable because it is less than "
                 "{1} which is the lowest available port."
-            )
-            msg.format(port, min_port)
+            ).format(port, min_port)
             raise ConfigException(msg)
         if port > max_port:
             msg = (
                 "Port number {0} is not usable because it is less than "
                 "{1} which is the highest available port."
-            )
-            msg.format(port, max_port)
+            ).format(port, max_port)
             raise ConfigException(msg)
 
     def test_port(self):
