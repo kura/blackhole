@@ -56,7 +56,7 @@ def require_python(minimum):
         while split:
             parts.append(int("".join((split.pop(0), split.pop(0))), 16))
         major, minor, micro, release = parts
-        if release == 0xf0:
+        if release == 0xF0:
             print(
                 "Python {0}.{1}.{2} or higher is required".format(
                     major, minor, micro

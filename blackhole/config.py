@@ -164,7 +164,7 @@ def config_test(args):
     try:
         conf = Config(args.config_file).load().test()
         conf.args = args
-    except ConfigException as __:
+    except ConfigException:
         logger.critical("Config error")
         raise SystemExit(os.EX_USAGE)
     logger.info("blackhole: %s syntax is OK.", args.config_file)
