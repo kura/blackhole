@@ -59,11 +59,11 @@ test: install_tox
 
 .PHONY: test_py36
 test_py36: install_tox
-	tox -e py36,py36-setproctitle,py36-uvloop
+	tox -e py36,py36-setproctitle,py36-uvloop,py36-uvloopandsetproctitle
 
 .PHONY: test_py37
 test_py37: install_tox
-	tox -e py37,py37-setproctitle,py37-uvloop
+	tox -e py37,py37-setproctitle,py37-uvloop,py37-uvloopandsetproctitle
 
 .PHONY: test_build
 test_build: install_tox

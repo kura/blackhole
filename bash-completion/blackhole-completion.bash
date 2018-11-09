@@ -29,6 +29,7 @@ _blackhole_complete() {
                    --background --conf --debug --help --less-secure --quiet
                    --test --version"
     if [[ "$cur_word" == -*  ]]; then
+        # shellcheck disable=SC2207
         COMPREPLY=( $( compgen -W "$options" -- "$cur_word" ) )
     fi
     return 0
