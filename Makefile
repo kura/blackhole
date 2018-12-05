@@ -25,20 +25,14 @@ docs: clean linkcheck
 install:
 	python setup.py install
 
-.PHONY: install_tox
-install_tox:
-	pip install tox
-
 .PHONY: lint
-lint: install_tox
+lint:
 	tox -e lint
 
 .PHONY: man
-man: clean
-	pip install docutils
+man: clean test_man
 	mkdir -p man/build
-	rst2man.py man/source/blackhole.rst man/build/blackhole.1
-	rst2man.py man/source/blackhole_config.rst man/build/blackhole_config.1
+	mv .tox/man/tmp/*.1 man/build
 
 .PHONY: pre-commit
 pre-commit:
@@ -50,39 +44,39 @@ release: clean install_tox
 	twine upload dist/*.whl dist/*.tar.*
 
 .PHONY: shellcheck
-shellcheck: install_tox
+shellcheck:
 	tox -e shellcheck
 
 .PHONY: test
-test: install_tox
+test:
 	tox -e py36
 
 .PHONY: test_py36
-test_py36: install_tox
+test_py36:
 	tox -e py36,py36-setproctitle,py36-uvloop,py36-uvloopandsetproctitle
 
 .PHONY: test_py37
-test_py37: install_tox
+test_py37:
 	tox -e py37,py37-setproctitle,py37-uvloop,py37-uvloopandsetproctitle
 
 .PHONY: test_build
-test_build: install_tox
+test_build:
 	tox -e build
 
 .PHONY: test_docs
-test_docs: install_tox
+test_docs:
 	tox -e docs
 
 .PHONY: test_man
-test_man: install_tox
+test_man:
 	tox -e man
 
 .PHONY: test_pipfile
-test_pipfile: install_tox
+test_pipfile:
 	tox -e pipfile
 
 .PHONY: test_setuppy
-test_setuppy: install_tox
+test_setuppy:
 	tox -e setuppy
 
 .PHONY: testall
