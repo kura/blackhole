@@ -13,7 +13,7 @@ build:
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -delete
-	rm -rf build dist docs/build man/build t coverage.xml
+	rm -rf build dist docs/build man/build t coverage.xml .coverage .coverage.* .testmondata .testmondata-journal
 
 .PHONY: docs
 docs: clean linkcheck
@@ -105,3 +105,7 @@ uninstall:
 .PHONY: update-libuv
 update-libuv:
 	scripts/update-libuv.sh
+
+.PHONY: watch
+watch:
+	tox -e watch

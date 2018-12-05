@@ -98,6 +98,8 @@ ENV/
 # mypy
 .mypy_cache/
 
+.testmondata
+.testmondata-journal
 .coverage
 *.log
 *.crt
