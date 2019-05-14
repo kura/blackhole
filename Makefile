@@ -89,8 +89,8 @@ testssl:
 
 .PHONY: tox
 tox:
-	pip install tox detox
-	detox
+	pip install tox
+	tox -p all
 
 .PHONY: uninstall
 uninstall:

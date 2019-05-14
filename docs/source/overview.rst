@@ -188,10 +188,9 @@ To use the `setup.py test` target.
 
     python setup.py test
 
-You can also test using `tox <https://tox.readthedocs.io/en/latest/>`_, this
-will use the `detox <https://pypi.python.org/pypi/detox/>`_ library for
-parallelising the tests. The `Makefile` target will install `py.test`, `tox`
-and `detox` automatically.
+You can also test using `tox <https://tox.readthedocs.io/en/latest/>`_,
+when run through the `Makefile` `tox` will be installed automatically and the
+tests will be parallelised.
 
 .. code-block:: bash
 
