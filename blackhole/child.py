@@ -51,11 +51,11 @@ class Child:
     maintains a list of all connections being managed by the child.
     """
 
-    _started = False  # type: bool
-    servers = []  # type: List
+    _started = False
+    servers = []
     """List of :py:class:`asyncio.Server` instances."""
 
-    clients = []  # type: List
+    clients = []
     """List of clients connected to this process."""
 
     def __init__(self, up_read, down_write, socks, idx):

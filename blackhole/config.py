@@ -353,11 +353,11 @@ class Config(metaclass=Singleton):
         ipv4 = [
             ("127.0.0.1", 25, socket.AF_INET, {}),
             ("127.0.0.1", 587, socket.AF_INET, {}),
-        ]  # type: List
+        ]
         ipv6 = [
             ("::", 25, socket.AF_INET6, {}),
             ("::", 587, socket.AF_INET6, {}),
-        ]  # type: List
+        ]
         default = ipv4 + ipv6 if socket.has_ipv6 else ipv4
         return self._listen or default
 
@@ -645,7 +645,7 @@ class Config(metaclass=Singleton):
             family = socket.AF_INET
             if ":" in addr:
                 family = socket.AF_INET6
-            flags = {}  # type: Dict
+            flags = {}
             if len(parts) > 1:
                 flags = self.create_flags(parts[1:])
             host = (addr, self._convert_port(port), family, flags)
@@ -924,7 +924,7 @@ class Config(metaclass=Singleton):
                                  permissions for.
         """
         self._min_max_port(port)
-        if os.getuid() is not 0 and port < 1024:
+        if os.getuid() != 0 and port < 1024:
             msg = "You do not have permission to use port {0}".format(port)
             raise ConfigException(msg)
         sock = socket.socket(family, socket.SOCK_STREAM)

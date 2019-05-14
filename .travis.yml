@@ -5,7 +5,7 @@ sudo: false
 group: travis_latest
 
 install:
-  - pip install codecov tox detox
+  - pip install codecov tox
 script: tox
 after_success:
   - tox -e coverage-report

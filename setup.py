@@ -47,7 +47,7 @@ extras_require = {
         "coverage",
         "pytest",
         "pytest-asyncio",
-        "pytest-cov<2.6.0",
+        "pytest-cov",
         "pytest-clarity",
     ],
 }
