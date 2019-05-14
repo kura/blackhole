@@ -43,7 +43,13 @@ extras_require = {
     "setproctitle": ["setproctitle"],
     "uvloop": ["uvloop"],
     "docs": ["sphinx", "guzzle_sphinx_theme"],
-    "tests": ["coverage", "pytest", "pytest-asyncio", "pytest-cov"],
+    "tests": [
+        "coverage",
+        "pytest",
+        "pytest-asyncio",
+        "pytest-cov<2.6.0",
+        "pytest-clarity",
+    ],
 }
 
 extras_require["dev"] = (
