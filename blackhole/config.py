@@ -924,9 +924,6 @@ class Config(metaclass=Singleton):
                                  permissions for.
         """
         self._min_max_port(port)
-        if os.getuid() != 0 and port < 1024:
-            msg = "You do not have permission to use port {0}".format(port)
-            raise ConfigException(msg)
         sock = socket.socket(family, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
