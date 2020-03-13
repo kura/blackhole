@@ -105,12 +105,7 @@ class Daemon(metaclass=Singleton):
                     pid = pidfile.read().strip()
                     if pid != "":
                         return int(pid)
-            except (
-                FileNotFoundError,
-                IOError,
-                PermissionError,
-                OSError,
-            ) as err:
+            except OSError as err:
                 raise DaemonException(err.strerror)
         return None
 
@@ -125,8 +120,8 @@ class Daemon(metaclass=Singleton):
         pid = str(pid)
         try:
             with open(self.pidfile, "w+") as pidfile:
-                pidfile.write("{0}\n".format(pid))
-        except (IOError, FileNotFoundError, PermissionError) as err:
+                pidfile.write(f"{pid}\n")
+        except IOError as err:
             raise DaemonException(err.strerror)
 
     @pid.deleter

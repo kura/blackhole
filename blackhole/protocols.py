@@ -87,7 +87,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
             self._flags = flags
             self._disable_dynamic_switching = True
             logger.debug("Flags enabled, disabling dynamic switching")
-            logger.debug("Flags for this connection: %s", self._flags)
+            logger.debug(f"Flags for this connection: {self._flags}")
 
     def _client_connected_cb(self, reader, writer):
         """
@@ -158,7 +158,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
 
         :param str msg: The message for the SMTP code
         """
-        response = "{0}\r\n".format(msg).encode("utf-8")
-        logger.debug("SEND %s", response)
+        response = f"{msg}\r\n".encode("utf-8")
+        logger.debug(f"SEND {response}")
         self._writer.write(response)
         await self._writer.drain()

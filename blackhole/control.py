@@ -127,7 +127,7 @@ def _socket(addr, port, family):
     try:
         sock.bind((addr, port))
     except OSError:
-        msg = "Cannot bind to {0}:{1}.".format(addr, port)
+        msg = f"Cannot bind to {addr}:{port}."
         logger.critical(msg)
         sock.close()
         raise BlackholeRuntimeException(msg)
@@ -199,11 +199,11 @@ def setgid():
         gid = grp.getgrnam(config.group).gr_gid
         os.setgid(gid)
     except KeyError:
-        logger.error("Group '%s' does not exist.", config.group)
+        logger.error(f"Group '{config.group}' does not exist.")
         raise SystemExit(os.EX_USAGE)
     except PermissionError:
         logger.error(
-            "You do not have permission to switch to group '%s'.", config.group
+            f"You do not have permission to switch to group '{config.group}'."
         )
         raise SystemExit(os.EX_NOPERM)
 
@@ -228,10 +228,10 @@ def setuid():
         uid = pwd.getpwnam(config.user).pw_uid
         os.setuid(uid)
     except KeyError:
-        logger.error("User '%s' does not exist.", config.user)
+        logger.error(f"User '{config.user}' does not exist.")
         raise SystemExit(os.EX_USAGE)
     except PermissionError:
         logger.error(
-            "You do not have permission to switch to user '%s'.", config.user
+            f"You do not have permission to switch to user '{config.user}'."
         )
         raise SystemExit(os.EX_NOPERM)

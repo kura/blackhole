@@ -73,7 +73,7 @@ class Child:
 
     def start(self):
         """Start the child process."""
-        logger.debug("Starting child %s", self.idx)
+        logger.debug(f"Starting child {self.idx}")
         self._started = True
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self.loop)
@@ -152,8 +152,8 @@ class Child:
                 break
             if msg == protocols.PING:
                 logger.debug(
-                    "child.%s.heartbeat: Ping request received from " "parent",
-                    self.idx,
+                    f"child.{self.idx}.heartbeat: Ping request received from "
+                    "parent"
                 )
                 writer.write(protocols.PONG)
             await asyncio.sleep(5)

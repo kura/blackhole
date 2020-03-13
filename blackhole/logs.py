@@ -35,7 +35,7 @@ __all__ = ("configure_logs",)
 
 
 DEBUG_FORMAT = (
-    "[%(asctime)s] [%(levelname)s] blackhole.%(module)s: " "%(message)s"
+    "[%(asctime)s] [%(levelname)s] blackhole.%(module)s: %(message)s"
 )
 
 LOG_CONFIG = {
