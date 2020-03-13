@@ -167,8 +167,8 @@ def config_test(args):
     except ConfigException:
         logger.critical("Config error")
         raise SystemExit(os.EX_USAGE)
-    logger.info("blackhole: %s syntax is OK.", args.config_file)
-    logger.info("blackhole: %s test was successful.", args.config_file)
+    logger.info(f"blackhole: {args.config_file} syntax is OK.")
+    logger.info(f"blackhole: {args.config_file} test was successful.")
     warn_options(conf)
     raise SystemExit(os.EX_OK)
 
@@ -297,12 +297,12 @@ class Config(metaclass=Singleton):
             and a[0].startswith("_")
         ]
         if key not in attrs:
-            valid_attrs = ("'{0}' and " "'{1}'").format(
+            valid_attrs = ("'{0}' and '{1}'").format(
                 "', '".join(attrs[:-1]), attrs[-1]
             )
             msg = (
-                "Invalid configuration option '{0}'.\n\nValid options "
-                "are: {1}".format(key, valid_attrs)
+                f"Invalid configuration option '{key}'.\n\nValid options "
+                f"are: {valid_attrs}"
             )
             raise ConfigException(msg)
 
@@ -603,7 +603,7 @@ class Config(metaclass=Singleton):
         elif switch.lower() == "true":
             self._dynamic_switch = True
         else:
-            msg = "{0} is not valid. Options are true or false.".format(switch)
+            msg = f"{switch} is not valid. Options are true or false."
             raise ConfigException(msg)
 
     def _convert_port(self, port):
@@ -619,7 +619,7 @@ class Config(metaclass=Singleton):
         try:
             return int(port)
         except ValueError:
-            msg = "{0} is not a valid port number.".format(port)
+            msg = f"{port} is not a valid port number."
             raise ConfigException(msg)
 
     def _listeners(self, listeners):
@@ -641,7 +641,7 @@ class Config(metaclass=Singleton):
             parts = listener.split(" ")
             addr_port = parts[0]
             port = addr_port.split(":")[-1].strip()
-            addr = addr_port.replace(":{0}".format(port), "").strip()
+            addr = addr_port.replace(f":{port}", "").strip()
             family = socket.AF_INET
             if ":" in addr:
                 family = socket.AF_INET6
@@ -730,9 +730,8 @@ class Config(metaclass=Singleton):
             return {flag: value}
         else:
             raise ConfigException(
-                "'{0}' is not a valid mode. Valid options "
-                "are: 'accept', 'bounce' and "
-                "'random'.".format(value)
+                f"'{value}' is not a valid mode. Valid options "
+                "are: 'accept', 'bounce' and 'random'."
             )
 
     def _flag_delay(self, flag, value):
@@ -750,9 +749,8 @@ class Config(metaclass=Singleton):
                 return {flag: value}
             else:
                 raise ConfigException(
-                    "'{0}' is not a valid delay. Delay is "
-                    "in seconds and must be below "
-                    "60.".format(value)
+                    f"'{value}' is not a valid delay. Delay is "
+                    "in seconds and must be below 60."
                 )
         if value.count("-") == 1:
             start, end = value.split("-")
@@ -766,9 +764,9 @@ class Config(metaclass=Singleton):
             ):
                 return {flag: (start, end)}
         raise ConfigException(
-            "'{0}' is not a valid delay value. It must be "
+            f"'{value}' is not a valid delay value. It must be "
             "either a single value or a range i.e. 5-10 and "
-            "must be less than 60.".format(value)
+            "must be less than 60."
         )
 
     def test(self):
@@ -803,8 +801,8 @@ class Config(metaclass=Singleton):
         if self.workers > cpus:
             msg = (
                 "Cannot have more workers than number of processors or "
-                "cores. {0} workers > {1} processors/cores."
-            ).format(self.workers, cpus)
+                f"cores. {self.workers} workers > {cpus} processors/cores."
+            )
             raise ConfigException(msg)
 
     def test_ipv6_support(self):
@@ -891,15 +889,15 @@ class Config(metaclass=Singleton):
         min_port, max_port = 1, 65535
         if port < min_port:
             msg = (
-                "Port number {0} is not usable because it is less than "
-                "{1} which is the lowest available port."
-            ).format(port, min_port)
+                f"Port number {port} is not usable because it is less than "
+                f"{min_port} which is the lowest available port."
+            )
             raise ConfigException(msg)
         if port > max_port:
             msg = (
-                "Port number {0} is not usable because it is less than "
-                "{1} which is the highest available port."
-            ).format(port, max_port)
+                f"Port number {port} is not usable because it is less than "
+                f"{max_port} which is the highest available port."
+            )
             raise ConfigException(msg)
 
     def test_port(self):
@@ -925,7 +923,7 @@ class Config(metaclass=Singleton):
         """
         self._min_max_port(port)
         if os.getuid() != 0 and port < 1024:
-            msg = "You do not have permission to use port {0}".format(port)
+            msg = f"You do not have permission to use port {port}"
             raise ConfigException(msg)
         sock = socket.socket(family, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -939,7 +937,7 @@ class Config(metaclass=Singleton):
             sock.bind((address, port))
         except OSError as err:
             errmsg = err.strerror
-            msg = "Could not use port {0}, {1}".format(port, errmsg)
+            msg = f"Could not use port {port}, {errmsg}"
             raise ConfigException(msg)
         finally:
             sock.close()
@@ -959,7 +957,7 @@ class Config(metaclass=Singleton):
         try:
             pwd.getpwnam(self.user)
         except KeyError:
-            msg = "{0} is not a valid user.".format(self._user)
+            msg = f"{self._user} is not a valid user."
             raise ConfigException(msg)
 
     def test_group(self):
@@ -977,7 +975,7 @@ class Config(metaclass=Singleton):
         try:
             grp.getgrnam(self.group)
         except KeyError:
-            msg = "{0} is a not a valid group.".format(self._group)
+            msg = f"{self._group} is a not a valid group."
             raise ConfigException(msg)
 
     def test_timeout(self):
@@ -990,7 +988,7 @@ class Config(metaclass=Singleton):
         try:
             __ = self.timeout  # NOQA
         except ValueError:
-            msg = "{0} is not a valid number of seconds.".format(self._timeout)
+            msg = f"{self._timeout} is not a valid number of seconds."
             raise ConfigException(msg)
         if self.timeout and self.timeout > 180:
             msg = (
@@ -1097,7 +1095,7 @@ class Config(metaclass=Singleton):
             __ = self.max_message_size  # NOQA
         except ValueError:
             size = self._max_message_size
-            msg = "{0} is not a valid number of bytes.".format(size)
+            msg = f"{size} is not a valid number of bytes."
             raise ConfigException(msg)
 
     def test_pidfile(self):

@@ -94,13 +94,13 @@ class Supervisor(metaclass=Singleton):
 
     def create_socket(self, listeners, use_tls=False):
         """Create supervisor socket."""
-        msg = "Attaching %s:%s with flags %s"
+        _tls = ""
         if use_tls:
-            msg = "Attaching %s:%s (TLS) with flags %s"
+            _tls = " (TLS)"
         for host, port, family, flags in listeners:
             aserver = server(host, port, family, use_tls=use_tls)
             self.socks.append(aserver)
-            logger.debug(msg, host, port, flags)
+            logger.debug(f"Attaching {host}:{port}{_tls} with flags {flags}")
 
     def run(self):
         """
@@ -117,8 +117,8 @@ class Supervisor(metaclass=Singleton):
         """Start each worker and it's child process."""
         logger.debug("Starting workers")
         for idx in range(self.config.workers):
-            num = "{0}".format(idx + 1)
-            logger.debug("Creating worker: %s", num)
+            num = f"{idx + 1}"
+            logger.debug(f"Creating worker: {num}")
             self.workers.append(Worker(num, self.socks, self.loop))
 
     def stop_workers(self):
@@ -126,7 +126,7 @@ class Supervisor(metaclass=Singleton):
         logger.debug("Stopping workers")
         worker_num = 1
         for worker in self.workers:
-            logger.debug("Stopping worker: %s", worker_num)
+            logger.debug(f"Stopping worker: {worker_num}")
             worker.stop()
             worker_num += 1
 

@@ -122,7 +122,7 @@ class Smtp(StreamReaderProtocol):
         :param int code: SMTP code, i.e. 250.
         :param str msg: The message for the SMTP code
         """
-        n_msg = "{0} {1}".format(code, msg)
+        n_msg = f"{code} {msg}"
         await super().push(n_msg)
 
     async def _handle_client(self):
@@ -138,7 +138,7 @@ class Smtp(StreamReaderProtocol):
             if line is None:
                 await self.close()
                 return
-            logger.debug("RECV %s", line)
+            logger.debug(f"RECV {line}")
             line = line.decode("utf-8").rstrip("\r\n")
             self._line = line
             handler = self.lookup_handler(line)
@@ -188,9 +188,7 @@ class Smtp(StreamReaderProtocol):
             if "fail=" in line:
                 return self._auth_failure
             return self._auth_success
-        return getattr(
-            self, "auth_{0}".format(mechanism.upper()), self.auth_UNKNOWN
-        )
+        return getattr(self, f"auth_{mechanism.upper()}", self.auth_UNKNOWN)
 
     async def auth_UNKNOWN(self):
         """Response to an unknown auth mechamism."""
@@ -227,7 +225,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(334, "VXNlcm5hbWU6")
         line = await self.wait()
-        logger.debug("RECV %s", line)
+        logger.debug(f"RECV {line}")
         if b"fail=" in line.lower():
             await self._auth_failure()
         else:
@@ -256,7 +254,7 @@ class Smtp(StreamReaderProtocol):
         emessage_id = base64.b64encode(self.message_id.encode("utf-8"), b"==")
         await self.push(334, emessage_id.decode("utf-8"))
         line = await self.wait()
-        logger.debug("RECV %s", line)
+        logger.debug(f"RECV {line}")
         if b"fail=" in line.lower():
             await self._auth_failure()
         else:
@@ -289,7 +287,7 @@ class Smtp(StreamReaderProtocol):
         """
         await self.push(334, " ")
         line = await self.wait()
-        logger.debug("RECV %s", line)
+        logger.debug(f"RECV {line}")
         if b"fail=" in line.lower():
             await self._auth_failure()
         else:
@@ -312,8 +310,8 @@ class Smtp(StreamReaderProtocol):
         https://kura.github.io/blackhole/configuration.html#timeout
         """
         logger.debug(
-            "Peer timed out, no data received for %d seconds",
-            self.config.timeout,
+            f"Peer timed out, no data received for {self.config.timeout} "
+            "seconds"
         )
         await self.push(421, "Timeout")
         await self.close()
@@ -350,7 +348,7 @@ class Smtp(StreamReaderProtocol):
         :rtype: `blackhole.smtp.Smtp.help_VERB`
         """
         if len(parts) > 1:
-            cmd = "help_{0}".format(parts[1].upper())
+            cmd = f"help_{parts[1].upper()}"
         else:
             cmd = "do_HELP"
         return getattr(self, cmd, self.help_UNKNOWN)
@@ -363,11 +361,11 @@ class Smtp(StreamReaderProtocol):
         :returns: A callable command handler.
         :rtype: `blackhole.smtp.Smtp.do_VERB`
         """
-        return getattr(self, "do_{0}".format(verb.upper()), self.do_UNKNOWN)
+        return getattr(self, f"do_{verb.upper()}", self.do_UNKNOWN)
 
     async def greet(self):
         """Send a greeting to the client."""
-        await self.push(220, "{0} ESMTP".format(self.fqdn))
+        await self.push(220, f"{self.fqdn} ESMTP")
 
     def get_help_members(self):
         """
@@ -392,7 +390,7 @@ class Smtp(StreamReaderProtocol):
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
         msg = " ".join(self.get_help_members())
-        await self.push(250, "Supported commands: {0}".format(msg))
+        await self.push(250, f"Supported commands: {msg}")
 
     async def help_HELO(self):
         """
@@ -416,15 +414,15 @@ class Smtp(StreamReaderProtocol):
 
     async def do_EHLO(self):
         """Send response to EHLO verb."""
-        response = "250-{0}\r\n".format(self.fqdn).encode("utf-8")
+        response = f"250-{self.fqdn}\r\n".encode("utf-8")
         self._writer.write(response)
-        logger.debug("SENT %s", response)
+        logger.debug(f"SENT {response}")
         auth = " ".join(self.get_auth_members())
         responses = (
             "250-HELP",
             "250-PIPELINING",
-            "250-AUTH {0}".format(auth),
-            "250-SIZE {0}".format(self.config.max_message_size),
+            f"250-AUTH {auth}",
+            f"250-SIZE {self.config.max_message_size}",
             "250-VRFY",
             "250-ETRN",
             "250-ENHANCEDSTATUSCODES",
@@ -434,8 +432,8 @@ class Smtp(StreamReaderProtocol):
             "250 DSN",
         )
         for response in responses:
-            response = "{0}\r\n".format(response).encode("utf-8")
-            logger.debug("SENT %s", response)
+            response = f"{response}\r\n".encode("utf-8")
+            logger.debug(f"SENT {response}")
             self._writer.write(response)
         await self._writer.drain()
 
@@ -465,7 +463,7 @@ class Smtp(StreamReaderProtocol):
             and int(size) > self.config.max_message_size
         ):
             await self.push(
-                552, "Message size exceeds fixed maximum " "message size"
+                552, "Message size exceeds fixed maximum message size"
             )
         else:
             await self.push(250, "2.1.0 OK")
@@ -515,7 +513,7 @@ class Smtp(StreamReaderProtocol):
 
         :param str line: An email header.
         """
-        logger.debug("HEADER RECV: %s", line)
+        logger.debug(f"HEADER RECV: {line}")
         if self.config.dynamic_switch is False:
             logger.debug("Dynamic switches disabled, ignoring")
             return
@@ -539,17 +537,17 @@ class Smtp(StreamReaderProtocol):
         Response mode is configured in configuration file and can be overridden
         by email headers, if enabled.
         """
-        logger.debug("MODE: %s", self.mode)
+        logger.debug(f"MODE: {self.mode}")
         if self.mode == "bounce":
             key = random.choice(list(self._bounce_responses.keys()))
             await self.push(key, self._bounce_responses[key])
         elif self.mode == "random":
-            resps = {250: "2.0.0 OK: queued as {0}".format(self.message_id)}
+            resps = {250: f"2.0.0 OK: queued as {self.message_id}"}
             resps.update(self._bounce_responses)
             key = random.choice(list(resps.keys()))
             await self.push(key, resps[key])
         else:
-            msg = "2.0.0 OK: queued as {0}".format(self.message_id)
+            msg = f"2.0.0 OK: queued as {self.message_id}"
             await self.push(250, msg)
 
     async def do_DATA(self):
@@ -572,7 +570,7 @@ class Smtp(StreamReaderProtocol):
         msg = []
         while not self.connection_closed:
             line = await self.wait()
-            logger.debug("RECV %s", line)
+            logger.debug(f"RECV {line}")
             msg.append(line)
             if line.lower().startswith(b"x-blackhole") and on_body is False:
                 self.process_header(line.decode("utf-8").rstrip("\n"))
@@ -587,7 +585,7 @@ class Smtp(StreamReaderProtocol):
             )
             return
         if self.delay:
-            logger.debug("DELAYING RESPONSE: %s seconds", self.delay)
+            logger.debug(f"DELAYING RESPONSE: {self.delay} seconds")
             await asyncio.sleep(self.delay)
         await self.response_from_mode()
 
@@ -625,7 +623,7 @@ class Smtp(StreamReaderProtocol):
         """
         old_msg_id = self.message_id
         self.message_id = message_id(self.fqdn)
-        logger.debug("%s is now %s", old_msg_id, self.message_id)
+        logger.debug(f"{old_msg_id} is now {self.message_id}")
         await self.push(250, "2.0.0 OK")
 
     async def help_VRFY(self):
@@ -658,9 +656,9 @@ class Smtp(StreamReaderProtocol):
         """
         _, addr = self._line.split(" ")
         if "pass=" in self._line:
-            await self.push(250, "2.0.0 <{0}> OK".format(addr))
+            await self.push(250, f"2.0.0 <{addr}> OK")
         elif "fail=" in self._line:
-            await self.push(550, "5.7.1 <{0}> unknown".format(addr))
+            await self.push(550, f"5.7.1 <{addr}> unknown")
         else:
             await self.push(252, "2.0.0 Will attempt delivery")
 
@@ -720,9 +718,7 @@ class Smtp(StreamReaderProtocol):
             if len(iterator) == i:
                 start = "250 "
             user = item.lower().replace(" ", ".")
-            resp.append(
-                "{0}{1} <{2}@{3}>".format(start, item, user, self.fqdn)
-            )
+            resp.append(f"{start}{item} <{user}@{self.fqdn}>")
             i += 1
         return resp
 
@@ -789,8 +785,8 @@ class Smtp(StreamReaderProtocol):
             await self.push(550, "Not authorised")
             return
         for response in await self._expn_response():
-            response = "{0}\r\n".format(response).encode("utf-8")
-            logger.debug("SENT %s", response)
+            response = f"{response}\r\n".encode("utf-8")
+            logger.debug(f"SENT {response}")
             self._writer.write(response)
         await self._writer.drain()
 
@@ -831,7 +827,7 @@ class Smtp(StreamReaderProtocol):
     async def help_UNKNOWN(self):
         """Send available help verbs when an invalid verb is received."""
         msg = " ".join(self.get_help_members())
-        await self.push(501, "Supported commands: {0}".format(msg))
+        await self.push(501, f"Supported commands: {msg}")
 
     async def do_UNKNOWN(self):
         """Send response to unknown verb."""
@@ -876,7 +872,7 @@ class Smtp(StreamReaderProtocol):
         elif len(value) == 1:
             self._delay_single(value[0])
         else:
-            logger.debug("DELAY: Invalid value(s): %s. Skipping", values)
+            logger.debug(f"DELAY: Invalid value(s): {values}. Skipping")
             return
 
     def _delay_range(self, value):
@@ -900,17 +896,15 @@ class Smtp(StreamReaderProtocol):
             max_delay = int(max_delay)
         except ValueError:
             logger.debug(
-                "DELAY: Unable to convert %s, %s to integers. " "Skipping",
-                min_delay,
-                max_delay,
+                f"DELAY: Unable to convert {min_delay}, {max_delay} to "
+                "integers. Skipping"
             )
             self._delay = None
             return
         if min_delay < 0 or max_delay < 0:
             logger.debug(
-                "DELAY: A value is less than 0: %s, %s. Skipping",
-                min_delay,
-                max_delay,
+                f"DELAY: A value is less than 0: {min_delay}, {max_delay}. "
+                "Skipping"
             )
             self._delay = None
             return
@@ -920,19 +914,14 @@ class Smtp(StreamReaderProtocol):
             return
         if max_delay > self._max_delay:
             logger.debug(
-                "DELAY: %s is higher than %s. %s is the hard coded "
-                "maximum delay for security.",
-                max_delay,
-                self._max_delay,
-                self._max_delay,
+                f"DELAY: {max_delay} is higher than {self._max_delay}. "
+                f"{self._max_delay} is the hard coded maximum delay for "
+                "security."
             )
             max_delay = self._max_delay
         self._delay = random.randint(min_delay, max_delay)
         logger.debug(
-            "DELAY: Set to %s from range %s-%s",
-            self._delay,
-            min_delay,
-            max_delay,
+            f"DELAY: Set to {self._delay} from range {min_delay}-{max_delay}"
         )
         return
 
@@ -953,26 +942,24 @@ class Smtp(StreamReaderProtocol):
             value = int(value)
         except ValueError:
             logger.debug(
-                "DELAY: Unable to convert %s to an integer. Skipping", value
+                f"DELAY: Unable to convert {value} to an integer. Skipping"
             )
             self._delay = None
             return
         logger.debug(value)
         if value < 0:
-            logger.debug("DELAY: %s is less than 0. Skipping", value)
+            logger.debug(f"DELAY: {value} is less than 0. Skipping")
             self._delay = None
             return
         if value > self._max_delay:
             logger.debug(
-                "DELAY: %s is higher than %s. %s is the hard coded "
-                "maximum delay for security.",
-                value,
-                self._max_delay,
-                self._max_delay,
+                f"DELAY: {value} is higher than {self._max_delay}. "
+                f"{self._max_delay} is the hard coded maximum delay for "
+                "security."
             )
             self._delay = self._max_delay
             return
-        logger.debug("DELAY: Set to %s", value)
+        logger.debug(f"DELAY: Set to {value}")
         self._delay = value
 
     @property
@@ -999,11 +986,10 @@ class Smtp(StreamReaderProtocol):
     def mode(self, value):
         if value not in ("accept", "bounce", "random"):
             logger.debug(
-                "MODE: %s is an invalid. Allowed modes: (accept, "
-                "bounce, random)",
-                value,
+                f"MODE: {value} is an invalid. Allowed modes: (accept, "
+                "bounce, random)"
             )
             self._mode = None
             return
-        logger.debug("MODE: Dynamic mode enabled. Mode set to %s", value)
+        logger.debug(f"MODE: Dynamic mode enabled. Mode set to {value}")
         self._mode = value

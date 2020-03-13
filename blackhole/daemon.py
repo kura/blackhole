@@ -106,7 +106,7 @@ class Daemon(metaclass=Singleton):
                     if pid != "":
                         return int(pid)
             except IOError as err:
-                raise DaemonException(err.strerror)
+                raise DaemonException(str(err))
         return None
 
     @pid.setter
@@ -120,9 +120,9 @@ class Daemon(metaclass=Singleton):
         pid = str(pid)
         try:
             with open(self.pidfile, "w+") as pidfile:
-                pidfile.write("{0}\n".format(pid))
+                pidfile.write(f"{pid}\n")
         except IOError as err:
-            raise DaemonException(err.strerror)
+            raise DaemonException(str(err))
 
     @pid.deleter
     def pid(self):

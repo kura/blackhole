@@ -153,9 +153,8 @@ class Worker:
             else:
                 if self._started:
                     logger.debug(
-                        "worker.%s.heartbeat: Communication failed. "
-                        "Restarting worker",
-                        self.idx,
+                        f"worker.{self.idx}.heartbeat: Communication failed. "
+                        "Restarting worker"
                     )
                     self.restart_child()
 
@@ -188,7 +187,7 @@ class Worker:
                 msg = await reader.read(3)
                 if msg == protocols.PONG:
                     logger.debug(
-                        "worker.%s.chat: Pong received from child", self.idx
+                        f"worker.{self.idx}.chat: Pong received from child"
                     )
                     self.ping = time.monotonic()
                     self.ping_count += 1
