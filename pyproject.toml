@@ -6,9 +6,42 @@ line-length = 79
 
 [tool.poetry]
 name = "blackhole"
-version = "2.1.14"
+version = "2.1.15"
 description = "Blackhole is an MTA (message transfer agent) that (figuratively) pipes all mail to /dev/null."
 authors = ["Kura <kura@kura.gg>"]
+license ="MIT"
+readme = "README.rst"
+homepage = "https://kura.github.io/blackhole/"
+repository = "https://github.com/kura/blackhole"
+documentation = "https://kura.github.io/blackhole/"
+keywords = ["blackhole", "asyncio", "smtp", "mta", "email"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Communications :: Email",
+    "Topic :: Communications :: Email :: Mail Transport Agents",
+    "Topic :: Education :: Testing",
+    "Topic :: Internet",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Testing :: Traffic Generation",
+    "Topic :: System :: Networking",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+]
 
 [tool.poetry.dependencies]
 python = ">3.6.1, <4"
@@ -23,3 +56,7 @@ sphinx = {version = "^3.0.3", extras = ["dev", "docs"]}
 guzzle_sphinx_theme = {version = "^0.7.11", extras = ["dev", "docs"]}
 tox = {version = "^3.15.0", extras = ["dev"]}
 pre-commit = {version = "^2.4.0", extras = ["dev"]}
+
+[tool.poetry.scripts]
+blackhole = "blackhole.application:run"
+blackhole_config = "blackhole.application:blackhole_config"

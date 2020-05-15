@@ -25,9 +25,9 @@ the functionality yourself.
 Current release
 ---------------
 
-.. _2.1.14:
+.. _2.1.15:
 
-2.1.14
+2.1.15
 ======
 
 - Blackhole now officially supports Python 3.8 and PyPy3. There are issues

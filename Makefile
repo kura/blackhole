@@ -38,6 +38,10 @@ man: clean test_man
 pre-commit:
 	tox -e pre-commit
 
+.PHONY: publish
+publish:
+	tox -e publish
+
 .PHONY: release
 release: clean install_tox
 	tox -e build

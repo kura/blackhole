@@ -29,7 +29,6 @@ from setuptools import find_packages, setup
 from setup_helpers import PyTest, get_version, include_file
 
 
-# require_python(50725104)
 __version__ = get_version("blackhole/__init__.py")
 
 entry_points = {
@@ -85,7 +84,7 @@ classifiers = [
     "Topic :: Internet",
     "Topic :: Software Development",
     "Topic :: Software Development :: Testing",
-    ("Topic :: Software Development :: Testing :: " "Traffic Generation"),
+    "Topic :: Software Development :: Testing :: Traffic Generation",
     "Topic :: System :: Networking",
     "Topic :: System :: Systems Administration",
     "Topic :: Utilities",
