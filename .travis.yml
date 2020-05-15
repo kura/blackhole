@@ -1,6 +1,6 @@
 language: python
 cache: pip
-dist: xenial
+dist: bionic
 sudo: false
 group: travis_latest
 
@@ -43,9 +43,23 @@ matrix:
       - popd
     script: tox
 
-  - python: "3.6"
+  - python: '3.8'
+    env: TOXENV=py38,py38-setproctitle,py38-uvloop,py38-uvloopandsetproctitle
+    sudo: true
+    before_install:
+      - git clone https://github.com/libuv/libuv.git
+      - pushd libuv/
+      - git checkout $(git describe --tags)
+      - sh autogen.sh
+      - "./configure"
+      - make
+      - sudo make install
+      - popd
+    script: tox
+
+  - python: "3.8"
     env: TOXENV=lint
-  - python: '3.6'
+  - python: '3.8'
     env: TOXENV=docs
     deploy:
       provider: pages
@@ -55,15 +69,15 @@ matrix:
       local_dir: .tox/docs/tmp/html
       on:
         branch: master
-  - python: "3.6"
+  - python: "3.8"
     env: TOXENV=build
-  - python: "3.6"
+  - python: "3.8"
     env: TOXENV=man
-  - python: "3.6"
+  - python: "3.8"
     env: TOXENV=pipfile
-  - python: "3.6"
+  - python: "3.8"
     env: TOXENV=setuppy
-  - python: '3.6'
+  - python: '3.8'
     env: TOXENV=shellcheck
     addons:
       apt:

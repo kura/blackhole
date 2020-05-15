@@ -49,7 +49,7 @@ shellcheck:
 
 .PHONY: test
 test:
-	tox -e py36
+	tox -e py38
 
 .PHONY: test_py36
 test_py36:
@@ -58,6 +58,10 @@ test_py36:
 .PHONY: test_py37
 test_py37:
 	tox -e py37,py37-setproctitle,py37-uvloop,py37-uvloopandsetproctitle
+
+.PHONY: test_py38
+test_py38:
+	tox -e py38,py38-setproctitle,py38-uvloop,py38-uvloopandsetproctitle
 
 .PHONY: test_build
 test_build:
@@ -89,8 +93,7 @@ testssl:
 
 .PHONY: tox
 tox:
-	pip install tox
-	tox -p all
+	tox -e `tox -l | grep -v watch | tr '\n' ','` -p all
 
 .PHONY: uninstall
 uninstall:
