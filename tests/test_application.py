@@ -23,7 +23,6 @@
 # SOFTWARE.
 
 
-import logging
 import os
 
 from unittest import mock
@@ -37,7 +36,6 @@ from blackhole.exceptions import (
     ConfigException,
     DaemonException,
 )
-from blackhole.logs import configure_logs
 
 
 from ._utils import (  # noqa: F401; isort:skip
@@ -89,10 +87,10 @@ def test_run_foreground():
     cfile = create_config(
         ("listen=127.0.0.1:9000", "pidfile={}".format(pidfile))
     )
-    Config(cfile).load()
+    c = Config(cfile).load()
 
     with mock.patch("sys.argv", ["-c {}".format(cfile)]), mock.patch(
-        "blackhole.config.Config.test"
+        "blackhole.config.Config.test", return_value=c
     ), mock.patch("blackhole.config.warn_options"), mock.patch(
         "atexit.register"
     ), mock.patch(
@@ -120,10 +118,10 @@ def test_run_foreground_pid_error():
     cfile = create_config(
         ("listen=127.0.0.1:9000", "pidfile={}".format(pidfile))
     )
-    Config(cfile).load()
+    c = Config(cfile).load()
 
     with mock.patch("sys.argv", ["-c {}".format(cfile)]), mock.patch(
-        "blackhole.config.Config.test"
+        "blackhole.config.Config.test", return_value=c
     ), mock.patch("blackhole.config.warn_options"), mock.patch(
         "os.getpid", return_value=1234
     ), mock.patch(
@@ -141,10 +139,10 @@ def test_run_foreground_socket_error():
     cfile = create_config(
         ("listen=127.0.0.1:9000", "pidfile={}".format(pidfile))
     )
-    Config(cfile).load()
+    c = Config(cfile).load()
 
     with mock.patch("sys.argv", ["-c {}".format(cfile)]), mock.patch(
-        "blackhole.config.Config.test"
+        "blackhole.config.Config.test", return_value=c
     ), mock.patch("blackhole.config.warn_options"), mock.patch(
         "atexit.register"
     ), mock.patch(
@@ -165,10 +163,10 @@ def test_run_background():
     cfile = create_config(
         ("listen=127.0.0.1:9000", "pidfile={}".format(pidfile))
     )
-    Config(cfile).load()
+    c = Config(cfile).load()
 
     with mock.patch("sys.argv", ["-c {}".format(cfile), "-b"]), mock.patch(
-        "blackhole.config.Config.test"
+        "blackhole.config.Config.test", return_value=c
     ), mock.patch("blackhole.config.warn_options"), mock.patch(
         "atexit.register"
     ), mock.patch(
@@ -198,10 +196,10 @@ def test_run_daemon_daemonize_error():
     cfile = create_config(
         ("listen=127.0.0.1:9000", "pidfile={}".format(pidfile))
     )
-    Config(cfile).load()
+    c = Config(cfile).load()
 
     with mock.patch("sys.argv", ["-c {}".format(cfile), "-b"]), mock.patch(
-        "blackhole.config.Config.test"
+        "blackhole.application.Config.test", return_value=c
     ), mock.patch("blackhole.config.warn_options"), mock.patch(
         "atexit.register"
     ), mock.patch(
