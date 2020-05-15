@@ -53,15 +53,18 @@ test:
 
 .PHONY: test_py36
 test_py36:
-	tox -e py36,py36-setproctitle,py36-uvloop,py36-uvloopandsetproctitle
+	tox -e py36,py36-setproctitle,py36-uvloop
 
 .PHONY: test_py37
 test_py37:
-	tox -e py37,py37-setproctitle,py37-uvloop,py37-uvloopandsetproctitle
+	tox -e py37,py37-setproctitle,py37-uvloop
 
 .PHONY: test_py38
 test_py38:
-	tox -e py38,py38-setproctitle,py38-uvloop,py38-uvloopandsetproctitle
+	tox -e py38,py38-setproctitle,py38-uvloop
+
+.PHONY: test_pypy3
+	tox -e pypy3,pypy3-setproctitle
 
 .PHONY: test_build
 test_build:

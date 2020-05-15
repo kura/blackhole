@@ -6,7 +6,7 @@ line-length = 79
 
 [tool.poetry]
 name = "blackhole"
-version = "2.1.13"
+version = "2.1.14"
 description = "Blackhole is an MTA (message transfer agent) that (figuratively) pipes all mail to /dev/null."
 authors = ["Kura <kura@kura.gg>"]
 

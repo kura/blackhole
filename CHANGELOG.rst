@@ -25,16 +25,24 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.14:
+
+2.1.14
+======
+
+- Blackhole now officially supports Python 3.8 and PyPy3. There are issues
+  using blackhole with uvloop on PyPy3 so that usecase is not supported.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.13:
 
 2.1.13
 ======
 
 - Blackhole now officially supports Python 3.7.
-
--------------
-Past releases
--------------
 
 .. _2.1.11:
 
