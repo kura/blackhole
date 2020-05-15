@@ -29,7 +29,7 @@
     :platform: Unix
     :synopsis: Configuration structure and functionality for testing config
                validity.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Configuration structure and functionality for testing config validity.
 

@@ -1,6 +1,25 @@
 [build-system]
 requires = ["setuptools", "wheel"]
 
-
 [tool.black]
 line-length = 79
+
+[tool.poetry]
+name = "blackhole"
+version = "2.1.13"
+description = "Blackhole is an MTA (message transfer agent) that (figuratively) pipes all mail to /dev/null."
+authors = ["Kura <kura@kura.gg>"]
+
+[tool.poetry.dependencies]
+python = ">3.6.1, <4"
+uvloop = {version = "^0.14.0", extras = ["uvloop"]}
+setproctitle = {version = "^1.1.10", extras = ["setproctitle"]}
+coverage = {version = "^5.1", extras = ["dev", "tests"]}
+pytest = {version = "^5.4.2", extras = ["dev", "tests"]}
+pytest-asyncio = {version = "^0.12.0", extras = ["dev", "tests"]}
+pytest-cov = {version = "^2.8.1", extras = ["dev", "tests"]}
+pytest-clarity = {version = "^0.3.0-alpha.0", extras = ["dev", "tests"]}
+sphinx = {version = "^3.0.3", extras = ["dev", "docs"]}
+guzzle_sphinx_theme = {version = "^0.7.11", extras = ["dev", "docs"]}
+tox = {version = "^3.15.0", extras = ["dev"]}
+pre-commit = {version = "^2.4.0", extras = ["dev"]}

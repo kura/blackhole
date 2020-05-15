@@ -28,7 +28,7 @@
 .. module:: blackhole.exceptions
     :platform: Unix
     :synopsis: Exceptions...
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Exceptions...
 

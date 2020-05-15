@@ -27,7 +27,7 @@
 
 .. module:: blackhole.protocols
     :platform: Unix
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 .. autodata:: PING
 

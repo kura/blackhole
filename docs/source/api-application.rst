@@ -28,7 +28,7 @@
 .. module:: blackhole.application
     :platform: Unix
     :synopsis: Provides functionality to run the server.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides functionality to run the server.
 

@@ -71,9 +71,9 @@ test_docs:
 test_man:
 	tox -e man
 
-.PHONY: test_pipfile
-test_pipfile:
-	tox -e pipfile
+.PHONY: test_poetry
+test_poetry:
+	tox -e poetry
 
 .PHONY: test_setuppy
 test_setuppy:

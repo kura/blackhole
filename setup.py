@@ -90,7 +90,7 @@ classifiers = [
 
 setup(
     author="Kura",
-    author_email="kura@kura.io",
+    author_email="kura@kura.gg",
     classifiers=classifiers,
     cmdclass={"test": PyTest},
     description=description,
@@ -101,11 +101,11 @@ setup(
     license="MIT",
     long_description="\n" + include_file("README.rst"),
     maintainer="Kura",
-    maintainer_email="kura@kura.io",
+    maintainer_email="kura@kura.gg",
     name="blackhole",
     packages=find_packages(exclude=("tests",)),
     platforms=["linux"],
-    url="https://blackhole.io/",
+    url="https://kura.github.io/blackhole/",
     version=__version__,
     zip_safe=False,  # this is probably not correct, but I've never tested it.
 )

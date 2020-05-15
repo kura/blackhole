@@ -54,7 +54,7 @@ __credits__ = ("Kura",)
 __license__ = "MIT"
 __version__ = "2.1.13"
 __maintainer__ = "Kura"
-__email__ = "kura@kura.io"
+__email__ = "kura@kura.gg"
 __status__ = "Stable"
 
 

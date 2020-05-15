@@ -28,7 +28,7 @@
 .. module:: blackhole.streams
     :platform: Unix
     :synopsis: Provides additional stream classes.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides additional stream classes.
 

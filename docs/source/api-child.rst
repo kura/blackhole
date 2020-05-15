@@ -28,7 +28,7 @@
 .. module:: blackhole.child
     :platform: Unix
     :synopsis: Provides functionality to spawn and control child processes.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides functionality to spawn and control child processes.
 

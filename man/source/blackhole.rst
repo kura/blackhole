@@ -62,4 +62,4 @@ The MIT license must be distributed with this software.
 AUTHOR(S)
 =========
 
-Kura <kura@kura.io>
+Kura <kura@kura.gg>

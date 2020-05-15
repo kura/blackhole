@@ -28,7 +28,7 @@
 .. module:: blackhole.utils
     :platform: Unix
     :synopsis: Provides utility functionality.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides utility functionality.
 

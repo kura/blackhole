@@ -29,7 +29,7 @@
     :platform: Unix
     :synopsis: Provides functionality to manage child processes from the
                supervisor.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides functionality to manage child processes from the supervisor.
 

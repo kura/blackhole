@@ -28,7 +28,7 @@
 .. module:: blackhole.smtp
     :platform: Unix
     :synopsis: Provides the Smtp protocol wrapper.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides the Smtp protocol wrapper.
 

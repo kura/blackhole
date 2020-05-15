@@ -28,7 +28,7 @@
 .. module:: blackhole.supervisor
     :platform: Unix
     :synopsis: Provides functionality to create the supervisor process.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides functionality to create the supervisor process.
 

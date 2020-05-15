@@ -28,7 +28,7 @@
 .. module:: blackhole.daemon
     :platform: Unix
     :synopsis: Provides daemonisation functionality.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides daemonisation functionality.
 

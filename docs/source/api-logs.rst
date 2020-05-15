@@ -28,7 +28,7 @@
 .. module:: blackhole.logs
     :platform: Unix
     :synopsis: Configure logging.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Configure logging.
 

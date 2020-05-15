@@ -28,7 +28,7 @@
 .. module:: blackhole.control
     :platform: Unix
     :synopsis: Provides control functionality, including socket wrappers.
-.. moduleauthor:: Kura <kura@kura.io>
+.. moduleauthor:: Kura <kura@kura.gg>
 
 Provides control functionality, including socket wrappers.
 
