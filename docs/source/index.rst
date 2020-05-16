@@ -21,9 +21,9 @@
     # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     # SOFTWARE.
 
-=================================================
-Blackhole |travis| |coverage| |codacy| |requires|
-=================================================
+======================================
+Blackhole |travis| |coverage| |codacy|
+======================================
 
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
@@ -66,7 +66,3 @@ User Guide
 .. |codacy| image:: https://img.shields.io/codacy/grade/fa797b3c1c18495aa2331d327c04bb9c.svg?style=for-the-badge
     :target: https://www.codacy.com/app/kura/blackhole/dashboard
     :alt: Codacy grade
-
-.. |requires| image:: https://img.shields.io/requires/github/kura/blackhole.svg?style=for-the-badge
-    :target: https://requires.io/github/kura/blackhole/requirements/?branch=master
-    :alt: Requirements Status

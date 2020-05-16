@@ -14,10 +14,6 @@ Blackhole
     :target: https://www.codacy.com/app/kura/blackhole/dashboard
     :alt: Codacy grade
 
-.. image:: https://img.shields.io/requires/github/kura/blackhole.svg?style=for-the-badge
-    :target: https://requires.io/github/kura/blackhole/requirements/?branch=master
-    :alt: Requirements Status
-
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
 pipes all mail to /dev/null, built on top of `asyncio
