@@ -43,10 +43,16 @@ classifiers = [
     "Topic :: Utilities",
 ]
 
+[tool.poetry.scripts]
+blackhole = "blackhole.application:run"
+blackhole_config = "blackhole.application:blackhole_config"
+
 [tool.poetry.dependencies]
 python = ">3.6.1, <4"
-uvloop = {version = "^0.14.0", extras = ["uvloop"]}
-setproctitle = {version = "^1.1.10", extras = ["setproctitle"]}
+uvloop = {version = "^0.14.0", optional = true}
+setproctitle = {version = "^1.1.10", optional = true}
+
+[tool.poetry.dev-dependencies]
 coverage = {version = "^5.1", extras = ["dev", "tests"]}
 pytest = {version = "^5.4.2", extras = ["dev", "tests"]}
 pytest-asyncio = {version = "^0.12.0", extras = ["dev", "tests"]}
@@ -57,6 +63,10 @@ guzzle_sphinx_theme = {version = "^0.7.11", extras = ["dev", "docs"]}
 tox = {version = "^3.15.0", extras = ["dev"]}
 pre-commit = {version = "^2.4.0", extras = ["dev"]}
 
-[tool.poetry.scripts]
-blackhole = "blackhole.application:run"
-blackhole_config = "blackhole.application:blackhole_config"
+[tool.poetry.extras]
+uvloop = ["uvloop"]
+setproctitle = ["setproctitle"]
+docs = ["sphinx", "guzzle_sphinx_theme"]
+tests = [
+    "coverage", "pytest", "pytest-asyncio", "pytest-clarity", "pytest-cov"
+]
