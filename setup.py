@@ -24,9 +24,44 @@
 
 """Setup file."""
 
-from setuptools import find_packages, setup
+import io
+import os
+import sys
 
-from setup_helpers import PyTest, get_version, include_file
+from setuptools import find_packages, setup
+from setuptools.command.test import test as TestCommand
+
+
+class PyTest(TestCommand):
+    """Test command."""
+
+    def finalize_options(self):
+        """Build options."""
+        TestCommand.finalize_options(self)
+        self.test_args = ["--pylama", "-q", "./blackhole", "./tests"]
+        self.test_suite = True
+
+    def run_tests(self):
+        """Run ze tests."""
+        import pytest
+
+        sys.exit(pytest.main(self.test_args))
+
+
+def include_file(filename):
+    """Include contents of specified file."""
+    fpath = os.path.join(os.path.dirname(__file__), filename)
+    with io.open(fpath, encoding="utf-8") as f:
+        c = f.read()
+    return c
+
+
+def get_version(filepath):
+    """Return program version."""
+    for line in include_file(filepath).split("\n"):
+        if line.startswith("__version__"):
+            _, vers = line.split("=")
+            return vers.strip().replace('"', "").replace("'", "")
 
 
 __version__ = get_version("blackhole/__init__.py")
