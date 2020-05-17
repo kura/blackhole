@@ -297,9 +297,8 @@ class Config(metaclass=Singleton):
             and a[0].startswith("_")
         ]
         if key not in attrs:
-            valid_attrs = ("'{0}' and '{1}'").format(
-                "', '".join(attrs[:-1]), attrs[-1]
-            )
+            _attrs = "', '".join(attrs[:-1])
+            valid_attrs = f"'{_attrs}' and '{attrs[-1]}'"
             msg = (
                 f"Invalid configuration option '{key}'.\n\nValid options "
                 f"are: {valid_attrs}"

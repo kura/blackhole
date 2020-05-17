@@ -201,7 +201,7 @@ class Smtp(StreamReaderProtocol):
         https://kura.github.io/blackhole/communicating-with-blackhole.html#help
         """
         mechanisms = " ".join(self.get_auth_members())
-        await self.push(250, "Syntax: AUTH {0}".format(mechanisms))
+        await self.push(250, f"Syntax: AUTH {mechanisms}")
 
     async def auth_LOGIN(self):
         """
