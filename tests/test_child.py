@@ -26,7 +26,6 @@
 import asyncio
 import os
 import socket
-
 from unittest import mock
 
 import pytest
@@ -47,7 +46,7 @@ from ._utils import (  # noqa: F401; isort:skip
 
 
 try:
-    import uvloop
+    import uvloop  # noqa
 
     _LOOP = "uvloop.Loop"
 except ImportError:
@@ -153,11 +152,11 @@ async def test_child_heartbeat_started(event_loop):
     sp = StreamProtocol()
     sp.reader = asyncio.StreamReader()
 
-    async def reset():
+    async def _reset():
         sp.reader.feed_data(protocols.PING)
         child._started = False
 
-    reset_task = asyncio.Task(reset())
+    reset_task = asyncio.Task(_reset())
     with mock.patch(
         "blackhole.streams.StreamProtocol", return_value=sp
     ), mock.patch("asyncio.Task") as mock_task, mock.patch(

@@ -14,7 +14,13 @@ readme = "README.rst"
 homepage = "https://kura.github.io/blackhole/"
 repository = "https://github.com/kura/blackhole"
 documentation = "https://kura.github.io/blackhole/"
-keywords = ["blackhole", "asyncio", "smtp", "mta", "email"]
+keywords = [
+    "blackhole",
+    "asyncio",
+    "smtp",
+    "mta",
+    "email"
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
@@ -42,6 +48,19 @@ classifiers = [
     "Topic :: System :: Systems Administration",
     "Topic :: Utilities",
 ]
+include = [
+    "bash-completion/blackhole-completion.bash",
+    "CHANGELOG.rst",
+    "CODE_OF_CONDUCT.rst",
+    "CONTRIBUTING.rst",
+    "CONTRIBUTORS.rst",
+    "example.conf",
+    "LICENSE",
+    "README.rst",
+    "setup_helpers.py",
+    "THANKS.rst",
+    "TODO.rst"
+]
 
 [tool.poetry.scripts]
 blackhole = "blackhole.application:run"
@@ -66,7 +85,39 @@ pre-commit = {version = "^2.4.0", extras = ["dev"]}
 [tool.poetry.extras]
 uvloop = ["uvloop"]
 setproctitle = ["setproctitle"]
-docs = ["sphinx", "guzzle_sphinx_theme"]
-tests = [
-    "coverage", "pytest", "pytest-asyncio", "pytest-clarity", "pytest-cov"
+docs = [
+    "sphinx",
+    "guzzle_sphinx_theme"
 ]
+tests = [
+    "coverage",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-clarity",
+    "pytest-cov"
+]
+
+[tool.pytest]
+minversion = 3.10
+strict = true
+addopts = "-ra"
+testpaths = "tests"
+filterwarnings = "once::Warning"
+
+[tool.isort]
+include_trailing_comma = true
+lines_after_imports = 2
+multi_line_output = 3
+not_skip = [
+    "__init__.py",
+    "__main__.py"
+]
+skip_glob = "*/tests/*.py"
+known_first_party = "blackhole"
+known_third_party = [
+    "guzzle_sphinx_theme",
+    "pytest",
+    "setproctitle",
+    "uvloop"
+]
+sections = "STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"

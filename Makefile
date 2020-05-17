@@ -43,9 +43,7 @@ publish:
 	tox -e publish
 
 .PHONY: release
-release: clean install_tox
-	tox -e build
-	twine upload dist/*.whl dist/*.tar.*
+release: publish
 
 .PHONY: shellcheck
 shellcheck:

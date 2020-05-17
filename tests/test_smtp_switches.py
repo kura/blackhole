@@ -128,7 +128,7 @@ class TestProcessHeaders(unittest.TestCase):
         smtp = Smtp([])
         assert smtp.delay is None
         smtp.process_header("x-blackhole-delay: 30")
-        assert smtp.delay is 30
+        assert smtp.delay == 30
 
     def test_invalid_single_delay(self):
         smtp = Smtp([])
@@ -192,15 +192,15 @@ class TestDelaySwitch(unittest.TestCase):
         cfile = create_config(("delay=30",))
         Config(cfile).load()
         smtp = Smtp([])
-        assert smtp.delay is 30
+        assert smtp.delay == 30
 
     def test_delay_switch_overrides_config_single(self):
         cfile = create_config(("delay=30",))
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = "60"
-        assert smtp.delay is 60
-        assert smtp.config.delay is 30
+        assert smtp.delay == 60
+        assert smtp.config.delay == 30
 
     def test_delay_switch_range_overrides_config(self):
         cfile = create_config(("delay=30",))
@@ -208,7 +208,7 @@ class TestDelaySwitch(unittest.TestCase):
         smtp = Smtp([])
         smtp.delay = "40, 45"
         assert smtp.delay in [x for x in range(40, 46)]
-        assert smtp.config.delay is 30
+        assert smtp.config.delay == 30
 
     def test_delay_switch_invalid_single_value_no_config(self):
         cfile = create_config(("",))
@@ -222,7 +222,7 @@ class TestDelaySwitch(unittest.TestCase):
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = "fifteen"
-        assert smtp.delay is 30
+        assert smtp.delay == 30
 
     def test_delay_switch_invalid_single_negative_value(self):
         cfile = create_config(("",))
@@ -236,7 +236,7 @@ class TestDelaySwitch(unittest.TestCase):
         Config(cfile).load()
         smtp = Smtp([])
         smtp.delay = "90"
-        assert smtp.delay is 60
+        assert smtp.delay == 60
 
     def test_delay_switch_invalid_range_value_no_config(self):
         cfile = create_config(("",))

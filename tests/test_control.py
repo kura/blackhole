@@ -26,7 +26,6 @@
 import os
 import socket
 import unittest
-
 from unittest import mock
 
 import pytest
@@ -152,7 +151,7 @@ def test_create_server_ipv4_bind_fails():
     ) as mock_sock, pytest.raises(BlackholeRuntimeException):
         server("127.0.0.1", 9000, socket.AF_INET, {})
     assert mock_sock.called is True
-    assert mock_sock.call_count is 1
+    assert mock_sock.call_count == 1
 
 
 @unittest.skipIf(socket.has_ipv6 is False, "No IPv6 support")
@@ -166,7 +165,7 @@ def test_create_server_ipv6_bind_fails():
         _server = server("::", 9000, socket.AF_INET6, {})
         _server["sock"].close()
     assert mock_sock.called is True
-    assert mock_sock.call_count is 1
+    assert mock_sock.call_count == 1
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -176,7 +175,7 @@ def test_create_server_ipv4_bind_works(mock_sock):
     Config(cfile).load()
     _server = server("127.0.0.1", 9000, socket.AF_INET)
     assert mock_sock.called is True
-    assert mock_sock.call_count is 1
+    assert mock_sock.call_count == 1
     _server["sock"].close()
 
 
@@ -189,7 +188,7 @@ def test_create_server_ipv6_bind_works():
         _server = server("::", 9000, socket.AF_INET6)
         _server["sock"].close()
     assert mock_sock.called is True
-    assert mock_sock.call_count is 1
+    assert mock_sock.call_count == 1
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
@@ -202,7 +201,7 @@ def test_create_server_ipv4_tls_bind_fails():
     ) as mock_sock, pytest.raises(BlackholeRuntimeException):
         server("127.0.0.1", 9000, socket.AF_INET)
     assert mock_sock.called is True
-    assert mock_sock.call_count is 1
+    assert mock_sock.call_count == 1
 
 
 @unittest.skipIf(socket.has_ipv6 is False, "No IPv6 support")
@@ -216,7 +215,7 @@ def test_create_server_ipv6_tls_bind_fails():
     ) as mock_sock, pytest.raises(BlackholeRuntimeException):
         server("::", 9000, socket.AF_INET6)
     assert mock_sock.called is True
-    assert mock_sock.call_count is 1
+    assert mock_sock.call_count == 1
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
@@ -231,9 +230,9 @@ def test_create_server_tls_ipv4_bind_works():
         _server = server("127.0.0.1", 9000, socket.AF_INET, use_tls=True)
         _server["sock"].close()
     assert mock_sock.called is True
-    assert mock_sock.call_count is 1
+    assert mock_sock.call_count == 1
     assert mock_ssl.called is True
-    assert mock_ssl.call_count is 1
+    assert mock_ssl.call_count == 1
 
 
 @unittest.skipIf(socket.has_ipv6 is False, "No IPv6 support")
@@ -249,9 +248,9 @@ def test_create_server_tls_ipv6_bind_works():
         _server = server("::", 9000, socket.AF_INET6, use_tls=True)
         _server["sock"].close()
     assert mock_sock.called is True
-    assert mock_sock.call_count is 1
+    assert mock_sock.call_count == 1
     assert mock_ssl.called is True
-    assert mock_ssl.call_count is 1
+    assert mock_ssl.call_count == 1
 
 
 class Grp(mock.MagicMock):

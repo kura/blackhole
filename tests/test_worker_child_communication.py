@@ -29,7 +29,6 @@ import time
 
 import pytest
 
-from blackhole.child import Child
 from blackhole.control import server
 from blackhole.worker import Worker
 
@@ -44,7 +43,6 @@ from ._utils import (  # noqa: F401; isort:skip
 
 
 try:
-    import asyncio
     import uvloop
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())

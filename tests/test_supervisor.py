@@ -25,7 +25,6 @@
 
 import asyncio
 import unittest
-
 from unittest import mock
 
 import pytest
@@ -50,7 +49,7 @@ except ImportError:
     ssl = None
 
 try:
-    import uvloop
+    import uvloop  # noqa
 
     _LOOP = "uvloop.Loop"
 except ImportError:

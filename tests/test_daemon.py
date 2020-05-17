@@ -24,7 +24,6 @@
 
 
 import os
-
 from unittest import mock
 
 import pytest
@@ -97,7 +96,7 @@ def test_get_pid():
         "atexit.register"
     ):
         daemon = Daemon(pfile)
-        assert daemon.pid is 123
+        assert daemon.pid == 123
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -118,7 +117,7 @@ def test_delete_pid():
         "atexit.register"
     ):
         daemon = Daemon(pfile)
-        assert daemon.pid is 123
+        assert daemon.pid == 123
         del daemon.pid
         assert daemon.pid is None
 
@@ -130,7 +129,7 @@ def test_delete_pid_exit():
         "atexit.register"
     ):
         daemon = Daemon(pfile)
-        assert daemon.pid is 123
+        assert daemon.pid == 123
         daemon._exit()
         assert daemon.pid is None
 

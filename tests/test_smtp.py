@@ -31,7 +31,6 @@ import string
 import threading
 import time
 import unittest
-
 from smtplib import SMTP, SMTPNotSupportedError, SMTPServerDisconnected
 from unittest import mock
 
@@ -52,7 +51,6 @@ from ._utils import (  # noqa: F401; isort:skip
 
 
 try:
-    import asyncio
     import uvloop
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())

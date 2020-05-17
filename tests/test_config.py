@@ -30,7 +30,6 @@ import os
 import socket
 import time
 import unittest
-
 from unittest import mock
 
 import pytest
@@ -56,9 +55,9 @@ def test_default():
         conf = Config()
     assert conf.config_file is None
     assert mock_getuser.called is True
-    assert mock_getuser.call_count is 1
+    assert mock_getuser.call_count == 1
     assert mock_getgrgid.called is True
-    assert mock_getgrgid.call_count is 1
+    assert mock_getgrgid.call_count == 1
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -70,7 +69,7 @@ def test_no_access():
     ) as mock_os_access, pytest.raises(ConfigException):
         conf.load()
     assert mock_os_access.called is True
-    assert mock_os_access.call_count is 1
+    assert mock_os_access.call_count == 1
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -101,7 +100,7 @@ def test_load():
 def test_load_none():
     conf = Config(None).load()
     assert conf.mode == "accept"
-    assert conf.workers is 1
+    assert conf.workers == 1
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -306,7 +305,7 @@ class TestPort(unittest.TestCase):
         ) as mock_getuid, pytest.raises(ConfigException):
             conf.test_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
 
     def test_port_under_1024_with_perms_available(self):
         cfile = create_config(("listen=127.0.0.1:1024",))
@@ -316,7 +315,7 @@ class TestPort(unittest.TestCase):
         ) as mock_getuid, mock.patch("socket.socket.bind", return_value=True):
             conf.test_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
 
     @unittest.skipIf(socket.has_ipv6 is False, "No IPv6 support")
     def test_ipv4_and_ipv6_same_port(self):
@@ -348,9 +347,9 @@ class TestPort(unittest.TestCase):
         ):
             conf.test_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
         assert mock_socket.called is True
-        assert mock_socket.call_count is 1
+        assert mock_socket.call_count == 1
 
     def test_port_over_1023_available(self):
         cfile = create_config(("listen=127.0.0.1:1024",))
@@ -360,7 +359,7 @@ class TestPort(unittest.TestCase):
         ) as mock_getuid, mock.patch("socket.socket.bind", return_value=True):
             conf.test_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
 
     def test_port_over_1023_unavailable(self):
         cfile = create_config(("listen=127.0.0.1:1024",))
@@ -374,9 +373,9 @@ class TestPort(unittest.TestCase):
         ):
             conf.test_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
         assert mock_socket.called is True
-        assert mock_socket.call_count is 1
+        assert mock_socket.call_count == 1
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -480,7 +479,7 @@ class TestTlsPort(unittest.TestCase):
         ) as mock_getuid, pytest.raises(ConfigException):
             conf.test_tls_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
 
     def test_tls_under_1024_with_perms_available(self):
         cfile = create_config(("tls_listen=127.0.0.1:1024",))
@@ -490,7 +489,7 @@ class TestTlsPort(unittest.TestCase):
         ) as mock_getuid, mock.patch("socket.socket.bind", return_value=True):
             conf.test_tls_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
 
     def test_tls_under_1024_with_perms_unavailable(self):
         cfile = create_config(("tls_listen=127.0.0.1:1023",))
@@ -504,9 +503,9 @@ class TestTlsPort(unittest.TestCase):
         ):
             conf.test_tls_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
         assert mock_socket.called is True
-        assert mock_socket.call_count is 1
+        assert mock_socket.call_count == 1
 
     def test_tls_over_1023_available(self):
         cfile = create_config(("tls_listen=127.0.0.1:1024",))
@@ -516,7 +515,7 @@ class TestTlsPort(unittest.TestCase):
         ) as mock_getuid, mock.patch("socket.socket.bind", return_value=True):
             conf.test_tls_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
 
     def test_tls_over_1023_unavailable(self):
         cfile = create_config(("tls_listen=127.0.0.1:1024",))
@@ -530,9 +529,9 @@ class TestTlsPort(unittest.TestCase):
         ):
             conf.test_tls_port()
         assert mock_getuid.called is True
-        assert mock_getuid.call_count is 1
+        assert mock_getuid.call_count == 1
         assert mock_socket.called is True
-        assert mock_socket.call_count is 1
+        assert mock_socket.call_count == 1
 
     @unittest.skipIf(socket.has_ipv6 is False, "No IPv6 support")
     def test_ipv4_and_ipv6_same_port(self):
@@ -775,7 +774,7 @@ class TestDelay(unittest.TestCase):
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
             conf.test_delay()
-        assert conf.delay is 70
+        assert conf.delay == 70
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
@@ -893,4 +892,4 @@ class TestWorkers(unittest.TestCase):
         conf = Config(cfile).load()
         with mock.patch("multiprocessing.cpu_count", return_value=4):
             conf.test_workers()
-        assert conf.workers is 4
+        assert conf.workers == 4

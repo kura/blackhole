@@ -24,15 +24,10 @@
 
 
 import asyncio
-import os
-import time
-
-from io import BytesIO
 from unittest import mock
 
 import pytest
 
-from blackhole import protocols
 from blackhole.config import Config
 from blackhole.worker import Worker
 
@@ -47,7 +42,6 @@ from ._utils import (  # noqa: F401; isort:skip
 
 
 try:
-    import asyncio
     import uvloop
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
