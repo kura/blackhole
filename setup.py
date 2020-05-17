@@ -32,6 +32,9 @@ from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
 
+assert sys.version_info >= (3, 6, 0), "blackhole requires Python 3.6+"
+
+
 class PyTest(TestCommand):
     """Test command."""
 
