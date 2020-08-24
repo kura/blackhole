@@ -122,10 +122,6 @@ filterwarnings = "once::Warning"
 include_trailing_comma = true
 lines_after_imports = 2
 multi_line_output = 3
-not_skip = [
-    "__init__.py",
-    "__main__.py"
-]
 skip_glob = "*/tests/*.py"
 known_first_party = "blackhole"
 known_third_party = [
