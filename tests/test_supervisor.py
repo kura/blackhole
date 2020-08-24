@@ -57,21 +57,20 @@ except ImportError:
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv4():
+def test_spawn_ipv4(event_loop):
     cfile = create_config(("listen=127.0.0.1:9999",))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 1
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv4_tls():
+def test_spawn_ipv4_tls(event_loop):
     cert = create_file("cert.pem")
     key = create_file("key.key")
     cfile = create_config(
@@ -84,20 +83,19 @@ def test_spawn_ipv4_tls():
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", True),))
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"), mock.patch(
         "ssl.create_default_context"
     ):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv6_tls():
+def test_spawn_ipv6_tls(event_loop):
     cert = create_file("cert.pem")
     key = create_file("key.key")
     cfile = create_config(
@@ -110,20 +108,19 @@ def test_spawn_ipv6_tls():
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", True),))
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"), mock.patch(
         "ssl.create_default_context"
     ):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv4_tls_less_secure():
+def test_spawn_ipv4_tls_less_secure(event_loop):
     cert = create_file("cert.pem")
     key = create_file("key.key")
     cfile = create_config(
@@ -136,20 +133,19 @@ def test_spawn_ipv4_tls_less_secure():
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"), mock.patch(
         "ssl.create_default_context"
     ):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv6_tls_less_secure():
+def test_spawn_ipv6_tls_less_secure(event_loop):
     cert = create_file("cert.pem")
     key = create_file("key.key")
     cfile = create_config(
@@ -162,15 +158,14 @@ def test_spawn_ipv6_tls_less_secure():
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"), mock.patch(
         "ssl.create_default_context"
     ):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 key_data = """-----BEGIN RSA PRIVATE KEY-----
@@ -231,7 +226,7 @@ ohh2cK4DxIaqIEPImLKrsJyh7q1RuNaoUwIBAg==
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv4_tls_dhparams():
+def test_spawn_ipv4_tls_dhparams(event_loop):
     cert = create_file("test.pem", cert_data)
     key = create_file("test.key", key_data)
     dhparams = create_file("dhparams.pem", dhparams_data)
@@ -246,18 +241,17 @@ def test_spawn_ipv4_tls_dhparams():
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @unittest.skipIf(ssl is None, "No ssl module")
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv6_tls_dhparams():
+def test_spawn_ipv6_tls_dhparams(event_loop):
     cert = create_file("test.pem", cert_data)
     key = create_file("test.key", key_data)
     dhparams = create_file("dhparams.pem", dhparams_data)
@@ -272,123 +266,114 @@ def test_spawn_ipv6_tls_dhparams():
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
     assert supervisor.socks[1]["ssl"] is not None
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv6():
+def test_spawn_ipv6(event_loop):
     cfile = create_config(("listen=:::9999",))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 1
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv4_and_ipv6():
+def test_spawn_ipv4_and_ipv6(event_loop):
     cfile = create_config(("listen=:9999, :::9999",))
     Config(cfile).load()
     supervisor = Supervisor()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
     supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv4_fail():
+def test_spawn_ipv4_fail(event_loop):
     cfile = create_config(("listen=:9999",))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
         BlackholeRuntimeException
     ):
-        Supervisor(loop=loop)
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+        Supervisor(loop=event_loop)
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv6_fail():
+def test_spawn_ipv6_fail(event_loop):
     cfile = create_config(("listen=:::9999",))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
         BlackholeRuntimeException
     ):
-        Supervisor(loop=loop)
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+        Supervisor(loop=event_loop)
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_spawn_ipv4_and_ipv6_fail():
+def test_spawn_ipv4_and_ipv6_fail(event_loop):
     cfile = create_config(("listen=:9999, :::9999",))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
         BlackholeRuntimeException
     ):
-        Supervisor(loop=loop)
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+        Supervisor(loop=event_loop)
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_create():
+def test_create(event_loop):
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"), mock.patch(
         "blackhole.worker.Worker.start"
     ):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
         supervisor.close_socks()
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_run():
+def test_run(event_loop):
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"), mock.patch(
         "blackhole.worker.Worker.start"
     ):
-        supervisor = Supervisor(loop=loop)
-        with mock.patch("{0}.run_forever".format(_LOOP)):
+        supervisor = Supervisor(loop=event_loop)
+        with mock.patch(f"{_LOOP}.run_forever"):
             supervisor.run()
         assert len(supervisor.workers) == 2
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_stop():
+def test_stop(event_loop):
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"), mock.patch(
         "blackhole.worker.Worker.start"
     ):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
         with mock.patch(
@@ -397,25 +382,24 @@ def test_stop():
             supervisor.stop()
     assert mock_stop.call_count == 2
     assert exc.value.code == 0
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_stop_runtime_error():
+def test_stop_runtime_error(event_loop):
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
-    loop = asyncio.new_event_loop()
     with mock.patch("socket.socket.bind"), mock.patch(
         "blackhole.worker.Worker.start"
     ):
-        supervisor = Supervisor(loop=loop)
+        supervisor = Supervisor(loop=event_loop)
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
         with mock.patch(
             "blackhole.worker.Worker.stop"
         ) as mock_stop, mock.patch(
-            "{0}.stop".format(_LOOP), side_effect=RuntimeError
+            f"{_LOOP}.stop", side_effect=RuntimeError
         ) as mock_rt, pytest.raises(
             SystemExit
         ) as exc:
@@ -423,5 +407,5 @@ def test_stop_runtime_error():
     assert mock_rt.call_count == 1
     assert mock_stop.call_count == 2
     assert exc.value.code == 0
-    loop.run_until_complete(loop.shutdown_asyncgens())
-    loop.close()
+    event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+    event_loop.close()
