@@ -23,7 +23,6 @@
 # SOFTWARE.
 
 
-import asyncio
 import unittest
 from unittest import mock
 

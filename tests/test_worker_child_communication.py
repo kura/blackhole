@@ -43,7 +43,7 @@ from ._utils import (  # noqa: F401; isort:skip
 
 
 try:
-    import uvloop
+    import uvloop  # noqa
 except ImportError:
     pass
 
