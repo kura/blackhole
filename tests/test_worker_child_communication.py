@@ -44,8 +44,6 @@ from ._utils import (  # noqa: F401; isort:skip
 
 try:
     import uvloop
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 except ImportError:
     pass
 
@@ -53,10 +51,10 @@ except ImportError:
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 @pytest.mark.slow
-async def test_worker_ping_pong(unused_tcp_port):
+async def test_worker_ping_pong(unused_tcp_port, event_loop):
     aserver = server("127.0.0.1", unused_tcp_port, socket.AF_INET)
     started = time.monotonic()
-    worker = Worker("1", [aserver])
+    worker = Worker("1", [aserver], loop=event_loop)
     assert worker._started is True
     await asyncio.sleep(35)
     worker.stop()
@@ -69,10 +67,10 @@ async def test_worker_ping_pong(unused_tcp_port):
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 @pytest.mark.slow
-async def test_restart(unused_tcp_port):
+async def test_restart(unused_tcp_port, event_loop):
     aserver = server("127.0.0.1", unused_tcp_port, socket.AF_INET)
     started = time.monotonic()
-    worker = Worker("1", [aserver])
+    worker = Worker("1", [aserver], loop=event_loop)
     assert worker._started is True
     await asyncio.sleep(25)
     worker.ping = time.monotonic() - 120

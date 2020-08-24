@@ -41,19 +41,11 @@ from ._utils import (  # noqa: F401; isort:skip
 )
 
 
-try:
-    import uvloop
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-except ImportError:
-    pass
-
-
 @pytest.mark.usefixtures("reset", "cleandir")
 @pytest.mark.asyncio
 @pytest.mark.slow
-async def test_start_stop():
-    worker = Worker(1, [])
+async def test_start_stop(event_loop):
+    worker = Worker(1, [], loop=event_loop)
     assert worker._started is True
     await asyncio.sleep(10)
     worker.stop()
@@ -61,7 +53,7 @@ async def test_start_stop():
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_child_start_setgid_fails_invalid_group():
+def test_child_start_setgid_fails_invalid_group(event_loop):
     cfile = create_config(
         ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
     )
@@ -73,12 +65,12 @@ def test_child_start_setgid_fails_invalid_group():
     ), pytest.raises(
         SystemExit
     ) as exc:
-        Worker([], [])
+        Worker([], [], loop=event_loop)
     assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_child_start_setgid_fails_permissions():
+def test_child_start_setgid_fails_permissions(event_loop):
     cfile = create_config(
         ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
     )
@@ -90,12 +82,12 @@ def test_child_start_setgid_fails_permissions():
     ), pytest.raises(
         SystemExit
     ) as exc:
-        Worker([], [])
+        Worker([], [], loop=event_loop)
     assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_child_start_setuid_fails_invalid_user():
+def test_child_start_setuid_fails_invalid_user(event_loop):
     cfile = create_config(
         ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
     )
@@ -107,12 +99,12 @@ def test_child_start_setuid_fails_invalid_user():
     ), pytest.raises(
         SystemExit
     ) as exc:
-        Worker([], [])
+        Worker([], [], loop=event_loop)
     assert exc.value.code == 64
 
 
 @pytest.mark.usefixtures("reset", "cleandir")
-def test_child_start_setuid_fails_permissions():
+def test_child_start_setuid_fails_permissions(event_loop):
     cfile = create_config(
         ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
     )
@@ -124,5 +116,5 @@ def test_child_start_setuid_fails_permissions():
     ), pytest.raises(
         SystemExit
     ) as exc:
-        Worker([], [])
+        Worker([], [], loop=event_loop)
     assert exc.value.code == 64
