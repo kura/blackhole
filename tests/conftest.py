@@ -3,7 +3,6 @@ import pytest
 
 @pytest.fixture
 def event_loop():
-    print("in event_loop")
     try:
         import asyncio
 
