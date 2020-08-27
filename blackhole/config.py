@@ -35,6 +35,7 @@ import os
 import pathlib
 import pwd
 import socket
+import tempfile
 
 from .exceptions import ConfigException
 from .utils import Singleton, get_version, mailname
@@ -214,7 +215,7 @@ class Config(metaclass=Singleton):
     _tls_key = None
     _tls_cert = None
     _tls_dhparams = None
-    _pidfile = "/tmp/blackhole.pid"
+    _pidfile = os.path.join(tempfile.gettempdir(), "blackhole.pid")
     _delay = None
     _mode = "accept"
     _max_message_size = 512000
@@ -685,7 +686,7 @@ class Config(metaclass=Singleton):
 
            ``listen = :25 mode=bounce, :::25 delay=10, :587 mode=random``
         """
-        if addr in ("127.0.0.1", "0.0.0.0"):
+        if addr in ("127.0.0.1", "0.0.0.0"):  # nosec
             addr = ""
         elif addr in ("::1",):
             addr = "::"

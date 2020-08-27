@@ -80,7 +80,8 @@ class Worker:
 
     def start(self):
         """Create and fork off a child process for the current worker."""
-        assert not self._started
+        if self._started is True:
+            raise AssertionError("Cannot start an already started worker")
         self._started = True
 
         self.up_read, self.up_write = os.pipe()

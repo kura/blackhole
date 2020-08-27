@@ -539,12 +539,12 @@ class Smtp(StreamReaderProtocol):
         """
         logger.debug(f"MODE: {self.mode}")
         if self.mode == "bounce":
-            key = random.choice(list(self._bounce_responses.keys()))
+            key = random.choice(list(self._bounce_responses.keys()))  # nosec
             await self.push(key, self._bounce_responses[key])
         elif self.mode == "random":
             resps = {250: f"2.0.0 OK: queued as {self.message_id}"}
             resps.update(self._bounce_responses)
-            key = random.choice(list(resps.keys()))
+            key = random.choice(list(resps.keys()))  # nosec
             await self.push(key, resps[key])
         else:
             msg = f"2.0.0 OK: queued as {self.message_id}"
@@ -919,7 +919,7 @@ class Smtp(StreamReaderProtocol):
                 "security."
             )
             max_delay = self._max_delay
-        self._delay = random.randint(min_delay, max_delay)
+        self._delay = random.randint(min_delay, max_delay)  # nosec
         logger.debug(
             f"DELAY: Set to {self._delay} from range {min_delay}-{max_delay}"
         )
