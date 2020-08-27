@@ -127,6 +127,8 @@ def get_version():
 
 
 class Formatter:
+    """Terminal output formatter."""
+
     bold = "\033[1m"
     under = "\033[4m"
     reset = "\033[0m"

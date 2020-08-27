@@ -82,6 +82,8 @@ extras_require = {
     "docs": ["sphinx", "guzzle_sphinx_theme"],
     "tests": [
         "coverage",
+        "interrogate",
+        "pyroma",
         "pytest",
         "pytest-asyncio",
         "pytest-cov",
