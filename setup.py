@@ -82,7 +82,6 @@ extras_require = {
     "docs": ["sphinx", "guzzle_sphinx_theme"],
     "tests": [
         "bandit",
-        "black",
         "coverage",
         "flake8",
         "flake8-bugbear",
