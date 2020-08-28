@@ -3,23 +3,24 @@
     #
     # Copyright (c) 2013-2020 Kura
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy
-    # of this software and associated documentation files (the 'Software'), to deal
-    # in the Software without restriction, including without limitation the rights
-    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    # copies of the Software, and to permit persons to whom the Software is
-    # furnished to do so, subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a
+    # copy of this software and associated documentation files (the
+    # 'Software'), to deal in the Software without restriction, including
+    # without limitation the rights to use, copy, modify, merge, publish,
+    # distribute, sublicense, and/or sell copies of the Software, and to permit
+    # persons to whom the Software is furnished to do so, subject to the
+    # following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in
-    # all copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included
+    # in all copies or substantial portions of the Software.
     #
-    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    # SOFTWARE.
+    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    # USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 =============
 Configuration
@@ -33,17 +34,26 @@ Command line options
 Configuration options can be passed via the command line
 as below:
 
--h			show this help message and exit
--v			show program's version number and exit
--c FILE		override the default configuration options
--t			perform a configuration test and exit
--d			enable debugging mode
--b			run in the background
--ls			Disable :py:obj:`ssl.OP_SINGLE_DH_USE` and :py:obj:`ssl.OP_SINGLE_ECDH_USE`.
-			Reduces CPU overhead at the expense of security. Don't use this
-			option unless you really need to. -- added in :ref:`2.0.13`
--q			Suppress warnings when using -ls/--less-secure, running as root or
-			not using :ref:`tls_dhparams` option.
+-h
+    show this help message and exit
+-v
+    show program's version number and exit
+-c FILE
+    override the default configuration options
+-t
+    perform a configuration test and exit
+-d
+    enable debugging mode
+-b
+    run in the background
+-ls
+    Disable :py:obj:`ssl.OP_SINGLE_DH_USE` and
+    :py:obj:`ssl.OP_SINGLE_ECDH_USE`.
+    Reduces CPU overhead at the expense of security. Don't use this
+    option unless you really need to. -- added in :ref:`2.0.13`
+-q
+    Suppress warnings when using -ls/--less-secure, running as root or
+    not using :ref:`tls_dhparams` option.
 
 
 .. _configuration-options:
@@ -54,8 +64,8 @@ Configuration options
 Here are all available options for the configuration file, their default values
 and information on what the options actually do.
 
-From :ref:`2.1.8` onwards the ``blackhole_config`` command will also display this
-information directly from the command line.
+From :ref:`2.1.8` onwards the ``blackhole_config`` command will also display
+this information directly from the command line.
 
 - `listen`_
 - `tls_listen`_
@@ -466,15 +476,16 @@ Installing the init.d/rc.d scripts
 
 The init script depends on */etc/blackhole.conf* being in place and configured.
 
-Blackhole comes with a script that works with init.d/rc.d, to install it copy it
-from the *init.d/YOUR_DISTRO* folder in the root directory of this project to
-*/etc/init.d/*.
+Blackhole comes with a script that works with init.d/rc.d, to install it copy
+it from the *init.d/YOUR_DISTRO* folder in the root directory of this project
+to */etc/init.d/*.
 
 The init scripts can be found `here`_.
 
 .. _here: https://github.com/kura/blackhole/tree/master/init.d
 
-i.e. for Debian/Ubuntu users, mv the file from *init.d/debian-ubuntu/* to */etc/init.d/*.
+i.e. for Debian/Ubuntu users, mv the file from *init.d/debian-ubuntu/* to
+*/etc/init.d/*.
 
 Then make sure it's executable
 

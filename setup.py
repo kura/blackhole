@@ -94,6 +94,7 @@ extras_require = {
         "pytest-asyncio",
         "pytest-cov",
         "pytest-clarity",
+        "doc8",
     ],
 }
 

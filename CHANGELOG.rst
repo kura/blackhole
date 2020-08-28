@@ -302,7 +302,7 @@ speficially for release to PyPI.
 - Added HELP verb that lists all available SMTP verbs. Sending
   ``HELP <COMMAND>`` will return the syntax for the specified command.
 
-.. code-block:: none
+.. code-block::
 
     C: HELP
     S: 250 Supported commands: DATA EHLO ETRN HELO...
@@ -316,7 +316,7 @@ speficially for release to PyPI.
 - TLS 'modern' ciphers enforced, ciphers taken from
   `<https://wiki.mozilla.org/Security/Server_Side_TLS>`_.
 
-  .. code-block:: none
+  .. code-block::
 
       0xC0,0x2C  -  ECDHE-ECDSA-AES256-GCM-SHA384  TLSv1.2  Kx=ECDH  Au=ECDSA  Enc=AESGCM(256)    Mac=AEAD
       0xC0,0x30  -  ECDHE-RSA-AES256-GCM-SHA384    TLSv1.2  Kx=ECDH  Au=RSA    Enc=AESGCM(256)    Mac=AEAD

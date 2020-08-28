@@ -89,6 +89,7 @@ flake8-bugbear = {version = "^20.1.4", optional = true}
 flake8-isort = {version = "^4.0.0", optional = true}
 flake8-commas = {version = "^2.0.0", optional = true}
 pydocstyle = {version = "^5.1.0", optional = true}
+doc8 = {version = "^0.8.1", optional = true}
 
 [tool.poetry.extras]
 uvloop = ["uvloop"]
@@ -112,6 +113,7 @@ tests = [
     "pyroma",
     "bandit",
     "pydocstyle",
+    "doc8",
 ]
 dev = [
     "uvloop",
@@ -129,6 +131,7 @@ dev = [
     "flake8-isort",
     "flake8-commas",
     "pydocstyle",
+    "doc8",
     "interrogate",
     "pyroma",
     "bandit",

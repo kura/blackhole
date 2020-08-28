@@ -3,23 +3,24 @@
     #
     # Copyright (c) 2013-2020 Kura
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy
-    # of this software and associated documentation files (the 'Software'), to deal
-    # in the Software without restriction, including without limitation the rights
-    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    # copies of the Software, and to permit persons to whom the Software is
-    # furnished to do so, subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a
+    # copy of this software and associated documentation files (the
+    # 'Software'), to deal in the Software without restriction, including
+    # without limitation the rights to use, copy, modify, merge, publish,
+    # distribute, sublicense, and/or sell copies of the Software, and to permit
+    # persons to whom the Software is furnished to do so, subject to the
+    # following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in
-    # all copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included
+    # in all copies or substantial portions of the Software.
     #
-    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    # SOFTWARE.
+    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    # USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ============================
 Communicating with Blackhole
@@ -82,7 +83,7 @@ DATA
 :Syntax:
     **DATA**
 
-.. code-block:: none
+.. code-block::
 
     >>> DATA
     354 End data with <CR><LF>.<CR><LF>
@@ -99,7 +100,7 @@ EHLO
 :Syntax:
     **EHLO** *domain.tld*
 
-.. code-block:: none
+.. code-block::
 
     >>> EHLO domain.tld
     250-blackhole.io
@@ -124,7 +125,7 @@ ETRN
 :Syntax:
     **ETRN**
 
-.. code-block:: none
+.. code-block::
 
     >>> ETRN
     250 Queueing started
@@ -139,7 +140,7 @@ HELO
 :Syntax:
     **HELO** *domain.tld*
 
-.. code-block:: none
+.. code-block::
 
     >>> HELO domain.tld
     250 OK
@@ -156,7 +157,7 @@ HELP
 :Optional:
     *COMMAND*
 
-.. code-block:: none
+.. code-block::
 
     >>> HELP
     250 Supported commands: AUTH DATA EHLO ETRN HELO MAIL NOOP QUIT RCPT RSET
@@ -184,7 +185,7 @@ MAIL
 :Optional:
     SIZE= *SIZE*
 
-.. code-block:: none
+.. code-block::
 
     >>> MAIL FROM: <test@domain.tld>
     250 2.1.0 OK
@@ -192,17 +193,17 @@ MAIL
 BODY=
 ~~~~~
 
-.. code-block:: none
+.. code-block::
 
     >>> MAIL FROM: <test@domain.tld> BODY=7BIT
     250 2.1.0 OK
 
-.. code-block:: none
+.. code-block::
 
     >>> MAIL FROM: <test@domain.tld> BODY=8BITMIME
     250 2.1.0 OK
 
-.. code-block:: none
+.. code-block::
 
     >>> MAIL FROM: <test@domain.tld> SMTPUTF8
     250 2.1.0 OK
@@ -214,7 +215,7 @@ SIZE=
 
 You can also specify the size using the ``SIZE=`` parameter.
 
-.. code-block:: none
+.. code-block::
 
     >>> MAIL FROM: <test@domain.tld> SIZE=82000
     250 2.1.0 OK
@@ -229,7 +230,7 @@ NOOP
 :Syntax:
     **NOOP**
 
-.. code-block:: none
+.. code-block::
 
     >>> NOOP
     250 2.0.0 OK
@@ -244,7 +245,7 @@ QUIT
 :Syntax:
     **QUIT**
 
-.. code-block:: none
+.. code-block::
 
     >>> QUIT
     221 2.0.0 Goodbye
@@ -259,7 +260,7 @@ RCPT
 :Syntax:
     **RCPT TO:** *<user@domain.tld>*
 
-.. code-block:: none
+.. code-block::
 
     >>> RCPT TO: <test@domain.tld>
     250 2.1.0 OK
@@ -274,7 +275,7 @@ RSET
 :Syntax:
     **RSET**
 
-.. code-block:: none
+.. code-block::
 
     >>> RSET
     250 2.0.0 OK

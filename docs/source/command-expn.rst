@@ -3,23 +3,24 @@
     #
     # Copyright (c) 2013-2020 Kura
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy
-    # of this software and associated documentation files (the 'Software'), to deal
-    # in the Software without restriction, including without limitation the rights
-    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    # copies of the Software, and to permit persons to whom the Software is
-    # furnished to do so, subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a
+    # copy of this software and associated documentation files (the
+    # 'Software'), to deal in the Software without restriction, including
+    # without limitation the rights to use, copy, modify, merge, publish,
+    # distribute, sublicense, and/or sell copies of the Software, and to permit
+    # persons to whom the Software is furnished to do so, subject to the
+    # following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in
-    # all copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included
+    # in all copies or substantial portions of the Software.
     #
-    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    # SOFTWARE.
+    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    # USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 .. _expn:
 
@@ -38,12 +39,12 @@ EXPN without an argument
 Calling the ``EXPN`` command with no arguments or an invalid mailing list name
 will cause it to return an error.
 
-.. code-block:: none
+.. code-block::
 
     >>> EXPN
     550 Not authorised
 
-.. code-block:: none
+.. code-block::
 
     >>> EXPN some-list
     550 Not authorised
@@ -51,7 +52,7 @@ will cause it to return an error.
 You can also explicitly tell ``EXPN`` to fail by passing ``fail=`` as part of
 the mailing list name.
 
-.. code-block:: none
+.. code-block::
 
     >>> EXPN fail=test-list
     550 Not authorised
@@ -69,7 +70,7 @@ Three lists are built-in to Blackhole for use.
 list1
 -----
 
-.. code-block:: none
+.. code-block::
 
     >>> EXPN list1
     250-Shadow <shadow@blackhole.io>
@@ -79,7 +80,7 @@ list1
 list2
 -----
 
-.. code-block:: none
+.. code-block::
 
     >>> EXPN list2
     250-Jim Holden <jim.holden@blackhole.io>
@@ -90,7 +91,7 @@ list2
 list3
 -----
 
-.. code-block:: none
+.. code-block::
 
     >>> EXPN list3
     250-Takeshi Kovacs <takeshi.kovacs@blackhole.io>
@@ -108,7 +109,7 @@ EXPN all
 
 The ``all`` argument combines all three lists and returns them.
 
-.. code-block:: none
+.. code-block::
 
     >>> EXPN all
     250-Jim Holden <jim.holden@blackhole.io>

@@ -3,23 +3,24 @@
     #
     # Copyright (c) 2013-2020 Kura
     #
-    # Permission is hereby granted, free of charge, to any person obtaining a copy
-    # of this software and associated documentation files (the 'Software'), to deal
-    # in the Software without restriction, including without limitation the rights
-    # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    # copies of the Software, and to permit persons to whom the Software is
-    # furnished to do so, subject to the following conditions:
+    # Permission is hereby granted, free of charge, to any person obtaining a
+    # copy of this software and associated documentation files (the
+    # 'Software'), to deal in the Software without restriction, including
+    # without limitation the rights to use, copy, modify, merge, publish,
+    # distribute, sublicense, and/or sell copies of the Software, and to permit
+    # persons to whom the Software is furnished to do so, subject to the
+    # following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in
-    # all copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included
+    # in all copies or substantial portions of the Software.
     #
-    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    # SOFTWARE.
+    # THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    # NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    # USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 .. _dynamic-switches:
 
@@ -46,7 +47,7 @@ service respond to the email using that response mode.
 
 The ``X-Blackhole-Mode`` header is responsible for dynamic mode switching.
 
-.. code-block:: none
+.. code-block::
 
     From: Test <test@test.com>
     To: Test <test@test.com>
@@ -55,7 +56,7 @@ The ``X-Blackhole-Mode`` header is responsible for dynamic mode switching.
 
     This email will be bounced because of the X-Blackhole-Mode header.
 
-.. code-block:: none
+.. code-block::
 
     From: Another Test <a.test@test.com>
     To: Another Test <a.test@test.com>
@@ -72,7 +73,7 @@ The ``X-Blackhole-Delay`` header is responsible for dynamic delay switching.
 Delay for a set amount of time
 ------------------------------
 
-.. code-block:: none
+.. code-block::
 
     From: Test <test@test.com>
     To: Test <test@test.com>
@@ -84,7 +85,7 @@ Delay for a set amount of time
 Delay using a range
 -------------------
 
-.. code-block:: none
+.. code-block::
 
     From: Test <test@test.com>
     To: Test <test@test.com>
@@ -99,7 +100,7 @@ Combining dynamic switches
 
 Because dynamic switches are just email headers, they can be combined.
 
-.. code-block:: none
+.. code-block::
 
     From: Test <test@test.com>
     To: Test <test@test.com>
@@ -109,7 +110,7 @@ Because dynamic switches are just email headers, they can be combined.
 
     Blackhole will delay for 10 seconds before bouncing this email.
 
-.. code-block:: none
+.. code-block::
 
     From: Test <test@test.com>
     To: Test <test@test.com>
