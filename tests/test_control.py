@@ -74,7 +74,7 @@ def test_tls_context_no_dhparams():
             "tls_listen=127.0.0.1:9000",
             "tls_cert={}".format(tls_cert),
             "tls_key={}".format(tls_key),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
@@ -93,7 +93,7 @@ def test_tls_context_less_secure():
             "tls_listen=127.0.0.1:9000",
             "tls_cert={}".format(tls_cert),
             "tls_key={}".format(tls_key),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", True),))
@@ -114,12 +114,12 @@ def test_tls_context_dhparams():
             "tls_cert={}".format(tls_cert),
             "tls_key={}".format(tls_key),
             "tls_dhparams={}".format(tls_dhparams),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
     with mock.patch("ssl.SSLContext.load_cert_chain"), mock.patch(
-        "ssl.SSLContext.load_dh_params"
+        "ssl.SSLContext.load_dh_params",
     ) as dh:
         _context(use_tls=True)
     assert dh.called is True
@@ -129,7 +129,7 @@ def test_tls_context_dhparams():
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_create_ipv6_socket_fails():
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
-        BlackholeRuntimeException
+        BlackholeRuntimeException,
     ):
         _socket("::", 25, socket.AF_INET)
 
@@ -137,7 +137,7 @@ def test_create_ipv6_socket_fails():
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_create_ipv4_socket_fails():
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
-        BlackholeRuntimeException
+        BlackholeRuntimeException,
     ):
         _socket("127.0.0.1", 25, socket.AF_INET)
 
@@ -147,7 +147,8 @@ def test_create_server_ipv4_bind_fails():
     cfile = create_config(("listen=127.0.0.1:9000",))
     Config(cfile).load()
     with mock.patch(
-        "socket.socket.bind", side_effect=OSError
+        "socket.socket.bind",
+        side_effect=OSError,
     ) as mock_sock, pytest.raises(BlackholeRuntimeException):
         server("127.0.0.1", 9000, socket.AF_INET, {})
     assert mock_sock.called is True
@@ -160,7 +161,8 @@ def test_create_server_ipv6_bind_fails():
     cfile = create_config(("listen=:::9000",))
     Config(cfile).load()
     with mock.patch(
-        "socket.socket.bind", side_effect=OSError
+        "socket.socket.bind",
+        side_effect=OSError,
     ) as mock_sock, pytest.raises(BlackholeRuntimeException):
         _server = server("::", 9000, socket.AF_INET6, {})
         _server["sock"].close()
@@ -197,7 +199,8 @@ def test_create_server_ipv4_tls_bind_fails():
     cfile = create_config(("tls_listen=127.0.0.1:9000",))
     Config(cfile).load()
     with mock.patch(
-        "socket.socket.bind", side_effect=OSError
+        "socket.socket.bind",
+        side_effect=OSError,
     ) as mock_sock, pytest.raises(BlackholeRuntimeException):
         server("127.0.0.1", 9000, socket.AF_INET)
     assert mock_sock.called is True
@@ -211,7 +214,8 @@ def test_create_server_ipv6_tls_bind_fails():
     cfile = create_config(("tls_listen=:::9000",))
     Config(cfile).load()
     with mock.patch(
-        "socket.socket.bind", side_effect=OSError
+        "socket.socket.bind",
+        side_effect=OSError,
     ) as mock_sock, pytest.raises(BlackholeRuntimeException):
         server("::", 9000, socket.AF_INET6)
     assert mock_sock.called is True
@@ -225,7 +229,7 @@ def test_create_server_tls_ipv4_bind_works():
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
     with mock.patch("socket.socket.bind") as mock_sock, mock.patch(
-        "ssl.create_default_context"
+        "ssl.create_default_context",
     ) as mock_ssl:
         _server = server("127.0.0.1", 9000, socket.AF_INET, use_tls=True)
         _server["sock"].close()
@@ -243,7 +247,7 @@ def test_create_server_tls_ipv6_bind_works():
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
     with mock.patch("socket.socket.bind") as mock_sock, mock.patch(
-        "ssl.create_default_context"
+        "ssl.create_default_context",
     ) as mock_ssl:
         _server = server("::", 9000, socket.AF_INET6, use_tls=True)
         _server["sock"].close()
@@ -262,7 +266,7 @@ class Grp(mock.MagicMock):
 def test_setgid():
     cfile = create_config(("group=abc",))
     with mock.patch("grp.getgrnam") as mock_getgrnam, mock.patch(
-        "os.setgid"
+        "os.setgid",
     ) as mock_setgid:
         Config(cfile).load()
         setgid()
@@ -292,7 +296,8 @@ def test_setgid_invalid_group(_):
 def test_setgid_no_perms():
     cfile = create_config(("group=testgroup",))
     with mock.patch(
-        "grp.getgrnam", side_effect=PermissionError
+        "grp.getgrnam",
+        side_effect=PermissionError,
     ), pytest.raises(SystemExit) as exc:
         Config(cfile).load()
         setgid()
@@ -307,7 +312,7 @@ class Pwd(mock.MagicMock):
 def test_setuid():
     cfile = create_config(("user=abc",))
     with mock.patch("pwd.getpwnam") as mock_getpwnam, mock.patch(
-        "os.setuid"
+        "os.setuid",
     ) as mock_setuid:
         Config(cfile).load()
         setuid()
@@ -327,7 +332,7 @@ def test_setuid_same_user():
 def test_setuid_invalid_user():
     cfile = create_config(("user=testuser",))
     with mock.patch("pwd.getpwnam", side_effect=KeyError), pytest.raises(
-        SystemExit
+        SystemExit,
     ) as exc:
         Config(cfile).load()
         setuid()
@@ -338,7 +343,8 @@ def test_setuid_invalid_user():
 def test_setuid_no_perms():
     cfile = create_config(("user=testuser",))
     with mock.patch(
-        "pwd.getpwnam", side_effect=PermissionError
+        "pwd.getpwnam",
+        side_effect=PermissionError,
     ), pytest.raises(SystemExit) as err:
         Config(cfile).load()
         setuid()
@@ -349,21 +355,21 @@ def test_setuid_no_perms():
 def test_set_pid_permissions():
     pidfile = os.path.join(os.getcwd(), "pid.pid")
     cfile = create_config(
-        ("user=testuser", "group=testgroup", "pidfile={}".format(pidfile))
+        ("user=testuser", "group=testgroup", "pidfile={}".format(pidfile)),
     )
     Config(cfile).load()
     with mock.patch("pwd.getpwnam", side_effect=KeyError), pytest.raises(
-        SystemExit
+        SystemExit,
     ) as err:
         pid_permissions()
     assert err.value.code == 64
     with mock.patch("grp.getgrgid", side_effect=KeyError), pytest.raises(
-        SystemExit
+        SystemExit,
     ) as err:
         pid_permissions()
     assert err.value.code == 64
     with mock.patch("os.chown", side_effect=PermissionError), pytest.raises(
-        SystemExit
+        SystemExit,
     ) as err:
         pid_permissions()
     assert err.value.code == 64

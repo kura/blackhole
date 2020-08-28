@@ -62,7 +62,8 @@ except ImportError:
 def test_initiation():
     cfile = create_config(("",))
     with mock.patch("os.access", return_value=False), mock.patch(
-        "socket.getfqdn", return_value="a.blackhole.io"
+        "socket.getfqdn",
+        return_value="a.blackhole.io",
     ):
         conf = Config(cfile)
     conf.load()
@@ -268,7 +269,7 @@ async def test_delay_directive(event_loop, unused_tcp_port):
 @pytest.mark.slow
 async def test_mode_and_delay_directive(event_loop, unused_tcp_port):
     cfile = create_config(
-        ("listen=:{} delay=5 mode=bounce".format(unused_tcp_port),)
+        ("listen=:{} delay=5 mode=bounce".format(unused_tcp_port),),
     )
     conf = Config(cfile).load()
     sock = _socket("127.0.0.1", unused_tcp_port, socket.AF_INET)
@@ -457,7 +458,7 @@ class TestSmtp(unittest.TestCase):
             assert resp == b"2.1.0 OK"
         with SMTP(self.host, self.port) as client:
             code, resp = client.mail(
-                "kura@example.com BODY=8BITMIME " "SIZE=1024"
+                "kura@example.com BODY=8BITMIME SIZE=1024",
             )
             assert code == 250
             assert resp == b"2.1.0 OK"
@@ -884,7 +885,7 @@ class TestSmtp(unittest.TestCase):
 
     def test_too_many_unknown_commands(self):
         with SMTP(self.host, self.port) as client, pytest.raises(
-            SMTPServerDisconnected
+            SMTPServerDisconnected,
         ):
             for _ in range(11):
                 code, resp = client.docmd("KURA")

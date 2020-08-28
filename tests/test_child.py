@@ -63,11 +63,11 @@ def test_start():
     socks = [{"sock": None, "ssl": None}, {"sock": None, "ssl": "abc"}]
     child = Child("", "", socks, "1")
     with mock.patch("asyncio.Task"), mock.patch(
-        "blackhole.child.Child.heartbeat"
+        "blackhole.child.Child.heartbeat",
     ), mock.patch("{0}.run_forever".format(_LOOP)), mock.patch(
-        "blackhole.child.Child.stop"
+        "blackhole.child.Child.stop",
     ), mock.patch(
-        "os._exit"
+        "os._exit",
     ) as mock_exit:
         child.start()
     assert mock_exit.called is True
@@ -84,7 +84,7 @@ def test_stop():
     child.server_task = mock.MagicMock()
 
     with mock.patch("os._exit") as mock_exit, mock.patch(
-        "{0}.run_until_complete".format(_LOOP)
+        "{0}.run_until_complete".format(_LOOP),
     ):
         child.stop()
     assert mock_exit.called is True
@@ -101,7 +101,8 @@ def test_stop_runtime_exception():
     child.server_task = mock.MagicMock()
 
     with mock.patch("os._exit") as mock_exit, mock.patch(
-        "{0}.stop".format(_LOOP), side_effect=RuntimeError
+        "{0}.stop".format(_LOOP),
+        side_effect=RuntimeError,
     ):
         child.stop()
     assert mock_exit.called is True
@@ -131,7 +132,7 @@ async def test_child_heartbeat_not_started(event_loop):
     child.loop = event_loop
     child._started = False
     with mock.patch("asyncio.Task") as mock_task, mock.patch(
-        "blackhole.child.Child._start"
+        "blackhole.child.Child._start",
     ) as mock_start, mock.patch("blackhole.child.Child.stop") as mock_stop:
         await child.heartbeat()
     assert mock_task.called is True
@@ -158,11 +159,12 @@ async def test_child_heartbeat_started(event_loop):
 
     reset_task = asyncio.Task(_reset())
     with mock.patch(
-        "blackhole.streams.StreamProtocol", return_value=sp
+        "blackhole.streams.StreamProtocol",
+        return_value=sp,
     ), mock.patch("asyncio.Task") as mock_task, mock.patch(
-        "blackhole.child.Child._start"
+        "blackhole.child.Child._start",
     ) as mock_start, mock.patch(
-        "blackhole.child.Child.stop"
+        "blackhole.child.Child.stop",
     ) as mock_stop:
         await child.heartbeat()
     reset_task.cancel()

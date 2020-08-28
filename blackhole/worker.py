@@ -94,7 +94,7 @@ class Worker:
             self.setup_child()
 
     def setup_child(self):
-        """Basic setup for the child process and starting it."""
+        """Set the gid, uid and start the child process.."""
         setgid()
         setuid()
         asyncio.set_event_loop(None)
@@ -155,7 +155,7 @@ class Worker:
                 if self._started:
                     logger.debug(
                         f"worker.{self.idx}.heartbeat: Communication failed. "
-                        "Restarting worker"
+                        "Restarting worker",
                     )
                     self.restart_child()
 
@@ -188,7 +188,7 @@ class Worker:
                 msg = await reader.read(3)
                 if msg == protocols.PONG:
                     logger.debug(
-                        f"worker.{self.idx}.chat: Pong received from child"
+                        f"worker.{self.idx}.chat: Pong received from child",
                     )
                     self.ping = time.monotonic()
                     self.ping_count += 1
@@ -205,11 +205,13 @@ class Worker:
         """
         read_fd = os.fdopen(self.down_read, "rb")
         r_trans, r_proto = await self.loop.connect_read_pipe(
-            StreamProtocol, read_fd
+            StreamProtocol,
+            read_fd,
         )
         write_fd = os.fdopen(self.up_write, "wb")
         w_trans, w_proto = await self.loop.connect_write_pipe(
-            StreamProtocol, write_fd
+            StreamProtocol,
+            write_fd,
         )
         reader = r_proto.reader
         writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)

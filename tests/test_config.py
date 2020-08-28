@@ -50,7 +50,7 @@ from ._utils import (  # noqa: F401; isort:skip
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_default():
     with mock.patch("getpass.getuser") as mock_getuser, mock.patch(
-        "grp.getgrgid"
+        "grp.getgrgid",
     ) as mock_getgrgid:
         conf = Config()
     assert conf.config_file is None
@@ -65,7 +65,8 @@ def test_no_access():
     conf = Config()
     conf.config_file = "/fake/file.conf"
     with mock.patch(
-        "os.access", return_value=False
+        "os.access",
+        return_value=False,
     ) as mock_os_access, pytest.raises(ConfigException):
         conf.load()
     assert mock_os_access.called is True
@@ -79,7 +80,7 @@ def test_load():
             "#not=thisline",
             "listen=10.0.0.1:1025",
             "mode=bounce   #default accept",
-        )
+        ),
     )
     conf = Config(cfile).load()
     assert conf.listen == [("10.0.0.1", 1025, socket.AF_INET, {})]
@@ -90,7 +91,7 @@ def test_load():
             "listen=10.0.0.1:1025",
             """this won't be added""",
             "mode=bounce   #default accept",
-        )
+        ),
     )
     with pytest.raises(ConfigException):
         Config(cfile).load()
@@ -117,7 +118,8 @@ def test_warnings():
     conf.args = args
     mmock = mock.MagicMock(spec=logging)
     with mock.patch("os.getuid", return_value=0), mock.patch(
-        "os.getgid", return_value=0
+        "os.getgid",
+        return_value=0,
     ), mock.patch("logging.getLogger", return_value=mmock):
         warn_options(conf)
     assert mmock.warning.call_count == 3
@@ -187,13 +189,16 @@ class TestConfigTest(unittest.TestCase):
         cfile = create_config(settings)
         args = Args((("less_secure", True), ("config_file", cfile)))
         with mock.patch(
-            "blackhole.config.Config.test_pidfile", return_value=True
+            "blackhole.config.Config.test_pidfile",
+            return_value=True,
         ), mock.patch(
-            "blackhole.config.Config.test_port", return_value=True
+            "blackhole.config.Config.test_port",
+            return_value=True,
         ), mock.patch(
-            "blackhole.config.Config.test_tls_port", return_value=True
+            "blackhole.config.Config.test_tls_port",
+            return_value=True,
         ), pytest.raises(
-            SystemExit
+            SystemExit,
         ) as exc:
             config_test(args)
         assert exc.value.code == 0
@@ -227,7 +232,8 @@ class TestListen(unittest.TestCase):
         conf = Config(cfile).load()
         conf._listen = [("::", 25, socket.AF_UNSPEC, {})]
         with pytest.raises(ConfigException), mock.patch(
-            "socket.has_ipv6", False
+            "socket.has_ipv6",
+            False,
         ):
             conf.test_ipv6_support()
 
@@ -256,14 +262,19 @@ class TestListen(unittest.TestCase):
         cfile = create_config(("listen=:25 delay=30-50",))
         conf = Config(cfile).load()
         assert conf.listen == [
-            ("", 25, socket.AF_INET, {"delay": ("30", "50")})
+            ("", 25, socket.AF_INET, {"delay": ("30", "50")}),
         ]
 
     def test_mode_and_delay_range_flag(self):
         cfile = create_config(("listen=:25 delay=15-20 mode=bounce",))
         conf = Config(cfile).load()
         assert conf.listen == [
-            ("", 25, socket.AF_INET, {"delay": ("15", "20"), "mode": "bounce"})
+            (
+                "",
+                25,
+                socket.AF_INET,
+                {"delay": ("15", "20"), "mode": "bounce"},
+            ),
         ]
 
     def test_listen_flags_special_ipv4(self):
@@ -301,7 +312,8 @@ class TestPort(unittest.TestCase):
         cfile = create_config(("listen=127.0.0.1:1023",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=9000
+            "os.getuid",
+            return_value=9000,
         ) as mock_getuid, pytest.raises(ConfigException):
             conf.test_port()
         assert mock_getuid.called is True
@@ -311,7 +323,8 @@ class TestPort(unittest.TestCase):
         cfile = create_config(("listen=127.0.0.1:1024",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=0
+            "os.getuid",
+            return_value=0,
         ) as mock_getuid, mock.patch("socket.socket.bind", return_value=True):
             conf.test_port()
         assert mock_getuid.called is True
@@ -339,11 +352,13 @@ class TestPort(unittest.TestCase):
         cfile = create_config(("listen=127.0.0.1:1023",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=0
+            "os.getuid",
+            return_value=0,
         ) as mock_getuid, mock.patch(
-            "socket.socket.bind", side_effect=OSError(1, "none")
+            "socket.socket.bind",
+            side_effect=OSError(1, "none"),
         ) as mock_socket, pytest.raises(
-            ConfigException
+            ConfigException,
         ):
             conf.test_port()
         assert mock_getuid.called is True
@@ -355,7 +370,8 @@ class TestPort(unittest.TestCase):
         cfile = create_config(("listen=127.0.0.1:1024",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=9000
+            "os.getuid",
+            return_value=9000,
         ) as mock_getuid, mock.patch("socket.socket.bind", return_value=True):
             conf.test_port()
         assert mock_getuid.called is True
@@ -365,11 +381,13 @@ class TestPort(unittest.TestCase):
         cfile = create_config(("listen=127.0.0.1:1024",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=9000
+            "os.getuid",
+            return_value=9000,
         ) as mock_getuid, mock.patch(
-            "socket.socket.bind", side_effect=OSError(1, "none")
+            "socket.socket.bind",
+            side_effect=OSError(1, "none"),
         ) as mock_socket, pytest.raises(
-            ConfigException
+            ConfigException,
         ):
             conf.test_port()
         assert mock_getuid.called is True
@@ -448,7 +466,7 @@ class TestTlsPort(unittest.TestCase):
 
     def test_same_port_tls_port(self):
         cfile = create_config(
-            ("listen=127.0.0.1:25", "tls_listen=127.0.0.1:25")
+            ("listen=127.0.0.1:25", "tls_listen=127.0.0.1:25"),
         )
         conf = Config(cfile).load()
         with pytest.raises(ConfigException):
@@ -475,7 +493,8 @@ class TestTlsPort(unittest.TestCase):
         cfile = create_config(("tls_listen=127.0.0.1:1023",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=9000
+            "os.getuid",
+            return_value=9000,
         ) as mock_getuid, pytest.raises(ConfigException):
             conf.test_tls_port()
         assert mock_getuid.called is True
@@ -485,7 +504,8 @@ class TestTlsPort(unittest.TestCase):
         cfile = create_config(("tls_listen=127.0.0.1:1024",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=0
+            "os.getuid",
+            return_value=0,
         ) as mock_getuid, mock.patch("socket.socket.bind", return_value=True):
             conf.test_tls_port()
         assert mock_getuid.called is True
@@ -495,11 +515,13 @@ class TestTlsPort(unittest.TestCase):
         cfile = create_config(("tls_listen=127.0.0.1:1023",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=0
+            "os.getuid",
+            return_value=0,
         ) as mock_getuid, mock.patch(
-            "socket.socket.bind", side_effect=OSError(1, "none")
+            "socket.socket.bind",
+            side_effect=OSError(1, "none"),
         ) as mock_socket, pytest.raises(
-            ConfigException
+            ConfigException,
         ):
             conf.test_tls_port()
         assert mock_getuid.called is True
@@ -511,7 +533,8 @@ class TestTlsPort(unittest.TestCase):
         cfile = create_config(("tls_listen=127.0.0.1:1024",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=9000
+            "os.getuid",
+            return_value=9000,
         ) as mock_getuid, mock.patch("socket.socket.bind", return_value=True):
             conf.test_tls_port()
         assert mock_getuid.called is True
@@ -521,11 +544,13 @@ class TestTlsPort(unittest.TestCase):
         cfile = create_config(("tls_listen=127.0.0.1:1024",))
         conf = Config(cfile).load()
         with mock.patch(
-            "os.getuid", return_value=9000
+            "os.getuid",
+            return_value=9000,
         ) as mock_getuid, mock.patch(
-            "socket.socket.bind", side_effect=OSError(1, "none")
+            "socket.socket.bind",
+            side_effect=OSError(1, "none"),
         ) as mock_socket, pytest.raises(
-            ConfigException
+            ConfigException,
         ):
             conf.test_tls_port()
         assert mock_getuid.called is True
@@ -564,7 +589,8 @@ class TestTls(unittest.TestCase):
         conf = Config(cfile).load()
         conf._tls_listen = [("::", 465, socket.AF_UNSPEC, {})]
         with pytest.raises(ConfigException), mock.patch(
-            "socket.has_ipv6", False
+            "socket.has_ipv6",
+            False,
         ):
             conf.test_tls_ipv6_support()
 
@@ -689,7 +715,7 @@ class TestTls(unittest.TestCase):
         cfile = create_config(settings)
         conf = Config(cfile).load()
         assert conf.tls_listen == [
-            ("", 123, socket.AF_INET, {"mode": "bounce"})
+            ("", 123, socket.AF_INET, {"mode": "bounce"}),
         ]
 
     def test_delay_flag(self):
@@ -715,7 +741,7 @@ class TestTls(unittest.TestCase):
         cfile = create_config(settings)
         conf = Config(cfile).load()
         assert conf.tls_listen == [
-            ("", 123, socket.AF_INET, {"delay": ("30", "50")})
+            ("", 123, socket.AF_INET, {"delay": ("30", "50")}),
         ]
 
     def test_mode_and_delay_range_flag(self):
@@ -734,7 +760,7 @@ class TestTls(unittest.TestCase):
                 123,
                 socket.AF_INET,
                 {"delay": ("15", "20"), "mode": "bounce"},
-            )
+            ),
         ]
 
     def test_tls_listen_flags_special_ipv4(self):
@@ -838,7 +864,7 @@ class TestPidfile(unittest.TestCase):
         cfile = create_config(("pidfile=/fake/path.pid",))
         conf = Config(cfile).load()
         with mock.patch("os.access", return_value=False), pytest.raises(
-            ConfigException
+            ConfigException,
         ):
             conf.test_pidfile()
 
@@ -846,7 +872,8 @@ class TestPidfile(unittest.TestCase):
         cfile = create_config(("pidfile=/tmp/path.pid",))
         conf = Config(cfile).load()
         with mock.patch("os.path.exists", return_value=True), mock.patch(
-            "os.access", return_value=True
+            "os.access",
+            return_value=True,
         ):
             conf.test_pidfile()
 
@@ -883,7 +910,8 @@ class TestWorkers(unittest.TestCase):
     def test_more_than_cpus(self):
         conf = Config(None).load()
         with mock.patch(
-            "multiprocessing.cpu_count", return_value=0
+            "multiprocessing.cpu_count",
+            return_value=0,
         ), pytest.raises(ConfigException):
             conf.test_workers()
 

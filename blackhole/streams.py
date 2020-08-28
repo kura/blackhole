@@ -54,7 +54,10 @@ class StreamProtocol(asyncio.streams.FlowControlMixin, asyncio.Protocol):
         self.transport = transport
         self.reader.set_transport(transport)
         self.writer = asyncio.StreamWriter(
-            transport, self, self.reader, self._loop
+            transport,
+            self,
+            self.reader,
+            self._loop,
         )
 
     def connection_lost(self, exc):

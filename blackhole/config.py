@@ -75,10 +75,15 @@ def parse_cmd_args(args):
     )
 
     parser = argparse.ArgumentParser(
-        "blackhole", description=description, epilog=epilog
+        "blackhole",
+        description=description,
+        epilog=epilog,
     )
     parser.add_argument(
-        "-v", "--version", action="version", version=get_version()
+        "-v",
+        "--version",
+        action="version",
+        version=get_version(),
     )
     parser.add_argument(
         "-c",
@@ -137,12 +142,12 @@ def warn_options(config):
     if config.args.less_secure:
         logger.warning(
             "Using -ls or --less-secure reduces security on "
-            "SSL/TLS connections."
+            "SSL/TLS connections.",
         )
     if not config.tls_dhparams and len(config.tls_listen) > 0:
         logger.warning(
             "TLS is enabled but no Diffie Hellman ephemeral "
-            "parameters file was provided."
+            "parameters file was provided.",
         )
     _compare_uid_and_gid(config)
 
@@ -186,7 +191,7 @@ def _compare_uid_and_gid(config):
     if (uid == 0 and gid == 0) and (user == "root" and group == "root"):
         logger.warning(
             "It is unsafe to run Blackhole as root without setting "
-            "a user and group for privilege separation."
+            "a user and group for privilege separation.",
         )
 
 
@@ -289,7 +294,8 @@ class Config(metaclass=Singleton):
         if key == "":
             return
         attributes = inspect.getmembers(
-            self, lambda a: not (inspect.isroutine(a))
+            self,
+            lambda a: not (inspect.isroutine(a)),
         )
         attrs = [
             a[0][1:]
@@ -731,7 +737,7 @@ class Config(metaclass=Singleton):
         else:
             raise ConfigException(
                 f"'{value}' is not a valid mode. Valid options "
-                "are: 'accept', 'bounce' and 'random'."
+                "are: 'accept', 'bounce' and 'random'.",
             )
 
     def _flag_delay(self, flag, value):
@@ -750,7 +756,7 @@ class Config(metaclass=Singleton):
             else:
                 raise ConfigException(
                     f"'{value}' is not a valid delay. Delay is "
-                    "in seconds and must be below 60."
+                    "in seconds and must be below 60.",
                 )
         if value.count("-") == 1:
             start, end = value.split("-")
@@ -766,7 +772,7 @@ class Config(metaclass=Singleton):
         raise ConfigException(
             f"'{value}' is not a valid delay value. It must be "
             "either a single value or a range i.e. 5-10 and "
-            "must be less than 60."
+            "must be less than 60.",
         )
 
     def test(self):

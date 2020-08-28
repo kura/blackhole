@@ -55,15 +55,17 @@ async def test_start_stop(event_loop):
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_child_start_setgid_fails_invalid_group(event_loop):
     cfile = create_config(
-        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
+        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw"),
     )
     Config(cfile).load()
     with mock.patch("os.pipe", return_value=("", "")), mock.patch(
-        "os.fork", return_value=False
+        "os.fork",
+        return_value=False,
     ), mock.patch("os.close"), mock.patch(
-        "os.setgid", side_effect=KeyError
+        "os.setgid",
+        side_effect=KeyError,
     ), pytest.raises(
-        SystemExit
+        SystemExit,
     ) as exc:
         Worker([], [], loop=event_loop)
     assert exc.value.code == 64
@@ -72,15 +74,17 @@ def test_child_start_setgid_fails_invalid_group(event_loop):
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_child_start_setgid_fails_permissions(event_loop):
     cfile = create_config(
-        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
+        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw"),
     )
     Config(cfile).load()
     with mock.patch("os.pipe", return_value=("", "")), mock.patch(
-        "os.fork", return_value=False
+        "os.fork",
+        return_value=False,
     ), mock.patch("os.close"), mock.patch(
-        "os.setgid", side_effect=PermissionError
+        "os.setgid",
+        side_effect=PermissionError,
     ), pytest.raises(
-        SystemExit
+        SystemExit,
     ) as exc:
         Worker([], [], loop=event_loop)
     assert exc.value.code == 64
@@ -89,15 +93,17 @@ def test_child_start_setgid_fails_permissions(event_loop):
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_child_start_setuid_fails_invalid_user(event_loop):
     cfile = create_config(
-        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
+        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw"),
     )
     Config(cfile).load()
     with mock.patch("os.pipe", return_value=("", "")), mock.patch(
-        "os.fork", return_value=False
+        "os.fork",
+        return_value=False,
     ), mock.patch("os.close"), mock.patch(
-        "os.setuid", side_effect=KeyError
+        "os.setuid",
+        side_effect=KeyError,
     ), pytest.raises(
-        SystemExit
+        SystemExit,
     ) as exc:
         Worker([], [], loop=event_loop)
     assert exc.value.code == 64
@@ -106,15 +112,17 @@ def test_child_start_setuid_fails_invalid_user(event_loop):
 @pytest.mark.usefixtures("reset", "cleandir")
 def test_child_start_setuid_fails_permissions(event_loop):
     cfile = create_config(
-        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw")
+        ("user=fgqewgreghrehgerhehw", "group=fgqewgreghrehgerhehw"),
     )
     Config(cfile).load()
     with mock.patch("os.pipe", return_value=("", "")), mock.patch(
-        "os.fork", return_value=False
+        "os.fork",
+        return_value=False,
     ), mock.patch("os.close"), mock.patch(
-        "os.setuid", side_effect=PermissionError
+        "os.setuid",
+        side_effect=PermissionError,
     ), pytest.raises(
-        SystemExit
+        SystemExit,
     ) as exc:
         Worker([], [], loop=event_loop)
     assert exc.value.code == 64

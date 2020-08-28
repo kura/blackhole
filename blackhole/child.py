@@ -87,7 +87,8 @@ class Child:
         """Create an asyncio server for each socket."""
         for sock in self.socks:
             server = await self.loop.create_server(
-                lambda: Smtp(self.clients), **sock
+                lambda: Smtp(self.clients),
+                **sock,
             )
             self.servers.append(server)
 
@@ -135,11 +136,13 @@ class Child:
         """
         read_fd = os.fdopen(self.up_read, "rb")
         r_trans, r_proto = await self.loop.connect_read_pipe(
-            StreamProtocol, read_fd
+            StreamProtocol,
+            read_fd,
         )
         write_fd = os.fdopen(self.down_write, "wb")
         w_trans, w_proto = await self.loop.connect_write_pipe(
-            StreamProtocol, write_fd
+            StreamProtocol,
+            write_fd,
         )
         reader = r_proto.reader
         writer = asyncio.StreamWriter(w_trans, w_proto, reader, self.loop)
@@ -153,7 +156,7 @@ class Child:
             if msg == protocols.PING:
                 logger.debug(
                     f"child.{self.idx}.heartbeat: Ping request received from "
-                    "parent"
+                    "parent",
                 )
                 writer.write(protocols.PONG)
             await asyncio.sleep(5)

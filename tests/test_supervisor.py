@@ -78,12 +78,12 @@ def test_spawn_ipv4_tls(event_loop):
             "tls_listen=127.0.0.1:9999",
             "tls_cert={}".format(cert),
             "tls_key={}".format(key),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", True),))
     with mock.patch("socket.socket.bind"), mock.patch(
-        "ssl.create_default_context"
+        "ssl.create_default_context",
     ):
         supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
@@ -103,12 +103,12 @@ def test_spawn_ipv6_tls(event_loop):
             "tls_listen=:::9999",
             "tls_cert={}".format(cert),
             "tls_key={}".format(key),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", True),))
     with mock.patch("socket.socket.bind"), mock.patch(
-        "ssl.create_default_context"
+        "ssl.create_default_context",
     ):
         supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
@@ -128,12 +128,12 @@ def test_spawn_ipv4_tls_less_secure(event_loop):
             "tls_listen=127.0.0.1:9999",
             "tls_cert={}".format(cert),
             "tls_key={}".format(key),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
     with mock.patch("socket.socket.bind"), mock.patch(
-        "ssl.create_default_context"
+        "ssl.create_default_context",
     ):
         supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
@@ -153,12 +153,12 @@ def test_spawn_ipv6_tls_less_secure(event_loop):
             "tls_listen=:::9999",
             "tls_cert={}".format(cert),
             "tls_key={}".format(key),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
     with mock.patch("socket.socket.bind"), mock.patch(
-        "ssl.create_default_context"
+        "ssl.create_default_context",
     ):
         supervisor = Supervisor(loop=event_loop)
     assert len(supervisor.socks) == 2
@@ -236,7 +236,7 @@ def test_spawn_ipv4_tls_dhparams(event_loop):
             "tls_cert={}".format(cert),
             "tls_key={}".format(key),
             "tls_dhparams={}".format(dhparams),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
@@ -261,7 +261,7 @@ def test_spawn_ipv6_tls_dhparams(event_loop):
             "tls_cert={}".format(cert),
             "tls_key={}".format(key),
             "tls_dhparams={}".format(dhparams),
-        )
+        ),
     )
     conf = Config(cfile).load()
     conf.args = Args((("less_secure", False),))
@@ -304,7 +304,7 @@ def test_spawn_ipv4_fail(event_loop):
     cfile = create_config(("listen=:9999",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
-        BlackholeRuntimeException
+        BlackholeRuntimeException,
     ):
         Supervisor(loop=event_loop)
     event_loop.run_until_complete(event_loop.shutdown_asyncgens())
@@ -316,7 +316,7 @@ def test_spawn_ipv6_fail(event_loop):
     cfile = create_config(("listen=:::9999",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
-        BlackholeRuntimeException
+        BlackholeRuntimeException,
     ):
         Supervisor(loop=event_loop)
     event_loop.run_until_complete(event_loop.shutdown_asyncgens())
@@ -328,7 +328,7 @@ def test_spawn_ipv4_and_ipv6_fail(event_loop):
     cfile = create_config(("listen=:9999, :::9999",))
     Config(cfile).load()
     with mock.patch("socket.socket.bind", side_effect=OSError), pytest.raises(
-        BlackholeRuntimeException
+        BlackholeRuntimeException,
     ):
         Supervisor(loop=event_loop)
     event_loop.run_until_complete(event_loop.shutdown_asyncgens())
@@ -340,7 +340,7 @@ def test_create(event_loop):
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
     with mock.patch("socket.socket.bind"), mock.patch(
-        "blackhole.worker.Worker.start"
+        "blackhole.worker.Worker.start",
     ):
         supervisor = Supervisor(loop=event_loop)
         supervisor.start_workers()
@@ -355,7 +355,7 @@ def test_run(event_loop):
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
     with mock.patch("socket.socket.bind"), mock.patch(
-        "blackhole.worker.Worker.start"
+        "blackhole.worker.Worker.start",
     ):
         supervisor = Supervisor(loop=event_loop)
         with mock.patch(f"{_LOOP}.run_forever"):
@@ -370,13 +370,13 @@ def test_stop(event_loop):
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
     with mock.patch("socket.socket.bind"), mock.patch(
-        "blackhole.worker.Worker.start"
+        "blackhole.worker.Worker.start",
     ):
         supervisor = Supervisor(loop=event_loop)
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
         with mock.patch(
-            "blackhole.worker.Worker.stop"
+            "blackhole.worker.Worker.stop",
         ) as mock_stop, pytest.raises(SystemExit) as exc:
             supervisor.stop()
     assert mock_stop.call_count == 2
@@ -390,17 +390,18 @@ def test_stop_runtime_error(event_loop):
     cfile = create_config(("listen=:9999, :::9999", "workers=2"))
     Config(cfile).load()
     with mock.patch("socket.socket.bind"), mock.patch(
-        "blackhole.worker.Worker.start"
+        "blackhole.worker.Worker.start",
     ):
         supervisor = Supervisor(loop=event_loop)
         supervisor.start_workers()
         assert len(supervisor.workers) == 2
         with mock.patch(
-            "blackhole.worker.Worker.stop"
+            "blackhole.worker.Worker.stop",
         ) as mock_stop, mock.patch(
-            f"{_LOOP}.stop", side_effect=RuntimeError
+            f"{_LOOP}.stop",
+            side_effect=RuntimeError,
         ) as mock_rt, pytest.raises(
-            SystemExit
+            SystemExit,
         ) as exc:
             supervisor.stop()
     assert mock_rt.call_count == 1

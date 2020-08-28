@@ -203,7 +203,7 @@ def setgid():
         raise SystemExit(os.EX_USAGE)
     except PermissionError:
         logger.error(
-            f"You do not have permission to switch to group '{config.group}'."
+            f"You do not have permission to switch to group '{config.group}'.",
         )
         raise SystemExit(os.EX_NOPERM)
 
@@ -232,6 +232,6 @@ def setuid():
         raise SystemExit(os.EX_USAGE)
     except PermissionError:
         logger.error(
-            f"You do not have permission to switch to user '{config.user}'."
+            f"You do not have permission to switch to user '{config.user}'.",
         )
         raise SystemExit(os.EX_NOPERM)

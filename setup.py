@@ -73,7 +73,7 @@ entry_points = {
     "console_scripts": (
         "blackhole = blackhole.application:run",
         "blackhole_config = blackhole.application:blackhole_config",
-    )
+    ),
 }
 
 extras_require = {
@@ -81,8 +81,15 @@ extras_require = {
     "uvloop": ["uvloop"],
     "docs": ["sphinx", "guzzle_sphinx_theme"],
     "tests": [
+        "bandit",
+        "black",
         "coverage",
+        "flake8",
+        "flake8-bugbear",
+        "flake8-isort",
+        "flake8-commas",
         "interrogate",
+        "pydocstyle",
         "pyroma",
         "pytest",
         "pytest-asyncio",

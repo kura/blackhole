@@ -83,7 +83,8 @@ master_doc = "index"
 # General information about the project.
 project = "Blackhole"
 copyright = "2013-{}, {}".format(
-    datetime.datetime.now().strftime("%Y"), __author__
+    datetime.datetime.now().strftime("%Y"),
+    __author__,
 )
 author = __author__
 

@@ -311,7 +311,7 @@ class Smtp(StreamReaderProtocol):
         """
         logger.debug(
             f"Peer timed out, no data received for {self.config.timeout} "
-            "seconds"
+            "seconds",
         )
         await self.push(421, "Timeout")
         await self.close()
@@ -463,7 +463,8 @@ class Smtp(StreamReaderProtocol):
             and int(size) > self.config.max_message_size
         ):
             await self.push(
-                552, "Message size exceeds fixed maximum message size"
+                552,
+                "Message size exceeds fixed maximum message size",
             )
         else:
             await self.push(250, "2.1.0 OK")
@@ -581,7 +582,8 @@ class Smtp(StreamReaderProtocol):
         if len(b"".join(msg)) > self.config.max_message_size:
             msg = []
             await self.push(
-                552, "Message size exceeds fixed maximum message size"
+                552,
+                "Message size exceeds fixed maximum message size",
             )
             return
         if self.delay:
@@ -897,14 +899,14 @@ class Smtp(StreamReaderProtocol):
         except ValueError:
             logger.debug(
                 f"DELAY: Unable to convert {min_delay}, {max_delay} to "
-                "integers. Skipping"
+                "integers. Skipping",
             )
             self._delay = None
             return
         if min_delay < 0 or max_delay < 0:
             logger.debug(
                 f"DELAY: A value is less than 0: {min_delay}, {max_delay}. "
-                "Skipping"
+                "Skipping",
             )
             self._delay = None
             return
@@ -916,12 +918,12 @@ class Smtp(StreamReaderProtocol):
             logger.debug(
                 f"DELAY: {max_delay} is higher than {self._max_delay}. "
                 f"{self._max_delay} is the hard coded maximum delay for "
-                "security."
+                "security.",
             )
             max_delay = self._max_delay
         self._delay = random.randint(min_delay, max_delay)  # nosec
         logger.debug(
-            f"DELAY: Set to {self._delay} from range {min_delay}-{max_delay}"
+            f"DELAY: Set to {self._delay} from range {min_delay}-{max_delay}",
         )
         return
 
@@ -942,7 +944,7 @@ class Smtp(StreamReaderProtocol):
             value = int(value)
         except ValueError:
             logger.debug(
-                f"DELAY: Unable to convert {value} to an integer. Skipping"
+                f"DELAY: Unable to convert {value} to an integer. Skipping",
             )
             self._delay = None
             return
@@ -955,7 +957,7 @@ class Smtp(StreamReaderProtocol):
             logger.debug(
                 f"DELAY: {value} is higher than {self._max_delay}. "
                 f"{self._max_delay} is the hard coded maximum delay for "
-                "security."
+                "security.",
             )
             self._delay = self._max_delay
             return
@@ -987,7 +989,7 @@ class Smtp(StreamReaderProtocol):
         if value not in ("accept", "bounce", "random"):
             logger.debug(
                 f"MODE: {value} is an invalid. Allowed modes: (accept, "
-                "bounce, random)"
+                "bounce, random)",
             )
             self._mode = None
             return
