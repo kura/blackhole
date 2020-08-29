@@ -59,16 +59,6 @@ matrix:
 
   - python: 'pypy3'
     env: TOXENV=pypy3,pypy3-setproctitle
-    sudo: true
-    before_install:
-      - git clone https://github.com/libuv/libuv.git
-      - pushd libuv/
-      - git checkout $(git describe --tags)
-      - sh autogen.sh
-      - "./configure"
-      - make
-      - sudo make install
-      - popd
     script: tox
 
   - python: "3.8"
