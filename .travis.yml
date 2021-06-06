@@ -76,4 +76,4 @@ matrix:
     before-script:
       - "sudo apt-get install cabal-install"
       - "cabal update"
-      - "cabal v2-install ShellCheck"
+      - "cabal install ShellCheck"
