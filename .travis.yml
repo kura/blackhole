@@ -1,6 +1,6 @@
 language: python
 cache: pip
-dist: xenial 
+dist: focal
 sudo: false
 group: travis_latest
 
