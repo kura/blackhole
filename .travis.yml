@@ -1,7 +1,7 @@
 language: python
 cache: pip
-dist 
-sudalo: false
+dist: xenial 
+sudo: false
 group: travis_latest
 
 install:
