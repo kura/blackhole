@@ -53,10 +53,6 @@ shellcheck:
 test:
 	tox -e py38
 
-.PHONY: test_py36
-test_py36:
-	tox -e py36,py36-setproctitle,py36-uvloop
-
 .PHONY: test_py37
 test_py37:
 	tox -e py37,py37-setproctitle,py37-uvloop
@@ -64,6 +60,10 @@ test_py37:
 .PHONY: test_py38
 test_py38:
 	tox -e py38,py38-setproctitle,py38-uvloop
+
+.PHONY: test_py39
+test_py39:
+	tox -e py39,py39-setproctitle,py39-uvloop
 
 .PHONY: test_pypy3
 	tox -e pypy3,pypy3-setproctitle

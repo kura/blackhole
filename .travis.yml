@@ -1,7 +1,7 @@
 language: python
 cache: pip
-dist: bionic
-sudo: false
+dist 
+sudalo: false
 group: travis_latest
 
 install:
@@ -14,20 +14,6 @@ after_success:
 matrix:
   fast_finish: true
   include:
-
-  - python: '3.6'
-    env: TOXENV=py36,py36-setproctitle,py36-uvloop
-    sudo: true
-    before_install:
-      - git clone https://github.com/libuv/libuv.git
-      - pushd libuv/
-      - git checkout $(git describe --tags)
-      - sh autogen.sh
-      - "./configure"
-      - make
-      - sudo make install
-      - popd
-    script: tox
 
   - python: '3.7'
     env: TOXENV=py37,py37-setproctitle,py37-uvloop
@@ -57,13 +43,27 @@ matrix:
       - popd
     script: tox
 
+  - python: '3.9'
+    env: TOXENV=py39,py39-setproctitle,py39-uvloop
+    sudo: true
+    before_install:
+      - git clone https://github.com/libuv/libuv.git
+      - pushd libuv/
+      - git checkout $(git describe --tags)
+      - sh autogen.sh
+      - "./configure"
+      - make
+      - sudo make install
+      - popd
+    script: tox
+
   - python: 'pypy3'
     env: TOXENV=pypy3,pypy3-setproctitle
     script: tox
 
-  - python: "3.8"
+  - python: "3.9"
     env: TOXENV=lint
-  - python: '3.8'
+  - python: '3.9'
     env: TOXENV=docs
     deploy:
       provider: pages
@@ -73,15 +73,15 @@ matrix:
       local_dir: .tox/docs/tmp/html
       on:
         branch: master
-  - python: "3.8"
+  - python: "3.9"
     env: TOXENV=build
-  - python: "3.8"
+  - python: "3.9"
     env: TOXENV=man
-  - python: "3.8"
+  - python: "3.9"
     env: TOXENV=poetry
-  - python: "3.8"
+  - python: "3.9"
     env: TOXENV=setuppy
-  - python: '3.8'
+  - python: '3.9'
     env: TOXENV=shellcheck
     addons:
       apt:
