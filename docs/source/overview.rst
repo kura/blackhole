@@ -1,7 +1,7 @@
 ..
     # (The MIT License)
     #
-    # Copyright (c) 2013-2020 Kura
+    # Copyright (c) 2013-2021 Kura
     #
     # Permission is hereby granted, free of charge, to any person obtaining a
     # copy of this software and associated documentation files (the
@@ -31,16 +31,7 @@ Overview
 Requirements
 ============
 
-- Python 3.6
-
-.. note::
-
-    The original incarnation of Blackhole -- built on top of Tornado -- is still
-    available for use on Python versions lower than 3.6, including PyPy.
-
-    It is no longer maintained however, but is available for posterity's sake on
-    `GitHub <https://github.com/kura/blackhole/tree/1.8.1>`__ for those people
-    unable to use Python 3.6.
+- Python 3.7+ or PyPy 3.7+
 
 
 .. _installation:
@@ -77,7 +68,7 @@ Blackhole is licensed under the `MIT license
 
     (The MIT License)
 
-    Copyright (c) 2013-2020 Kura
+    Copyright (c) 2013-2021 Kura
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the

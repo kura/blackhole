@@ -2,7 +2,7 @@
 
 # (The MIT License)
 #
-# Copyright (c) 2013-2020 Kura
+# Copyright (c) 2013-2021 Kura
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -64,7 +64,7 @@ extensions = [
     "sphinx.ext.githubpages",
 ]
 
-intersphinx_mapping = {"python": ("https://docs.python.org/3.6", None)}
+intersphinx_mapping = {"python": ("https://docs.python.org/3.9", None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
