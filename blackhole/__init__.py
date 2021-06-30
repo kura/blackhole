@@ -2,7 +2,7 @@
 
 # (The MIT License)
 #
-# Copyright (c) 2013-2020 Kura
+# Copyright (c) 2013-2021 Kura
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -52,7 +52,7 @@ __author__ = "Kura"
 __copyright__ = "None"
 __credits__ = ("Kura",)
 __license__ = "MIT"
-__version__ = "2.1.15"
+__version__ = "2.1.16"
 __maintainer__ = "Kura"
 __email__ = "kura@kura.gg"
 __status__ = "Stable"

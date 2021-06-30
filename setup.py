@@ -2,7 +2,7 @@
 
 # (The MIT License)
 #
-# Copyright (c) 2013-2020 Kura
+# Copyright (c) 2013-2021 Kura
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -32,7 +32,11 @@ from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
 
-assert sys.version_info >= (3, 6, 0), "blackhole requires Python 3.6+"
+assert sys.version_info >= (
+    3,
+    7,
+    0,
+), "blackhole requires Python 3.7+ or PyPy 3.7+"
 
 
 class PyTest(TestCommand):
@@ -119,9 +123,9 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Operating System :: Unix",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",

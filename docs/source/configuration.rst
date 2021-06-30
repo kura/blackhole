@@ -1,7 +1,7 @@
 ..
     # (The MIT License)
     #
-    # Copyright (c) 2013-2020 Kura
+    # Copyright (c) 2013-2021 Kura
     #
     # Permission is hereby granted, free of charge, to any person obtaining a
     # copy of this software and associated documentation files (the
@@ -458,8 +458,8 @@ processes.
 .. code:: bash
 
     # without setproctitle
-    python3.6 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
-    python3.6 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
+    python3 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
+    python3 /home/kura/.virtualenvs/blackhole/bin/blackhole -c test.conf -d
     # with setproctitle
     blackhole: master
     blackhole: worker

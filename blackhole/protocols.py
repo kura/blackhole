@@ -2,7 +2,7 @@
 
 # (The MIT License)
 #
-# Copyright (c) 2013-2020 Kura
+# Copyright (c) 2013-2021 Kura
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -133,7 +133,6 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
                 line = await asyncio.wait_for(
                     self._reader.readline(),
                     self.config.timeout,
-                    loop=self.loop,
                 )
             except asyncio.TimeoutError:
                 await self.timeout()

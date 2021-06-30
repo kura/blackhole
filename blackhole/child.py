@@ -2,7 +2,7 @@
 
 # (The MIT License)
 #
-# Copyright (c) 2013-2020 Kura
+# Copyright (c) 2013-2021 Kura
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -109,7 +109,7 @@ class Child:
             server.close()
         self.heartbeat_task.cancel()
         self.server_task.cancel()
-        for task in asyncio.Task.all_tasks(self.loop):
+        for task in asyncio.all_tasks(self.loop):
             task.cancel()
         self.loop.stop()
         self._started = False
