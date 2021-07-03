@@ -1,0 +1,1133 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>blackhole.smtp &#8212; Blackhole 2.1.16 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/blackhole.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Blackhole 2.1.16 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">blackhole.smtp</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">Blackhole</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../communicating-with-blackhole.html">Communicating with Blackhole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dynamic-responses.html">Dynamic responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dynamic-switches.html">Dynamic Switches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../index.html">Docs</a></li>
+              
+                <li><a href="../index.html">Module code</a></li>
+              
+              <li>blackhole.smtp</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for blackhole.smtp</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># (The MIT License)</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2013-2021 Kura</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
+<span class="c1"># all copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+
+<span class="sd">&quot;&quot;&quot;Provides the Smtp protocol wrapper.&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">.protocols</span> <span class="kn">import</span> <span class="n">StreamReaderProtocol</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">message_id</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Smtp&quot;</span><span class="p">,)</span>
+<span class="sd">&quot;&quot;&quot;Tuple all the things.&quot;&quot;&quot;</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;blackhole.smtp&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Smtp"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp">[docs]</a><span class="k">class</span> <span class="nc">Smtp</span><span class="p">(</span><span class="n">StreamReaderProtocol</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The class responsible for handling SMTP/SMTPS commands.&quot;&quot;&quot;</span>
+
+    <span class="n">_bounce_responses</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">450</span><span class="p">:</span> <span class="s2">&quot;Requested mail action not taken: mailbox unavailable&quot;</span><span class="p">,</span>
+        <span class="mi">451</span><span class="p">:</span> <span class="s2">&quot;Requested action aborted: local error in processing&quot;</span><span class="p">,</span>
+        <span class="mi">452</span><span class="p">:</span> <span class="s2">&quot;Requested action not taken: insufficient system storage&quot;</span><span class="p">,</span>
+        <span class="mi">458</span><span class="p">:</span> <span class="s2">&quot;Unable to queue message&quot;</span><span class="p">,</span>
+        <span class="mi">521</span><span class="p">:</span> <span class="s2">&quot;Machine does not accept mail&quot;</span><span class="p">,</span>
+        <span class="mi">550</span><span class="p">:</span> <span class="s2">&quot;Requested action not taken: mailbox unavailable&quot;</span><span class="p">,</span>
+        <span class="mi">551</span><span class="p">:</span> <span class="s2">&quot;User not local&quot;</span><span class="p">,</span>
+        <span class="mi">552</span><span class="p">:</span> <span class="s2">&quot;Requested mail action aborted: exceeded storage allocation&quot;</span><span class="p">,</span>
+        <span class="mi">553</span><span class="p">:</span> <span class="s2">&quot;Requested action not taken: mailbox name not allowed&quot;</span><span class="p">,</span>
+        <span class="mi">571</span><span class="p">:</span> <span class="s2">&quot;Blocked&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="sd">&quot;&quot;&quot;The response code and message for each bounce type.&quot;&quot;&quot;</span>
+
+    <span class="n">_delay</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The delay timer value.&quot;&quot;&quot;</span>
+
+    <span class="n">_max_delay</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="sd">&quot;&quot;&quot;The maximum delay value in seconds. Cannot be more than 60 seconds.&quot;&quot;&quot;</span>
+
+    <span class="n">_mode</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;The response mode to use.&quot;&quot;&quot;</span>
+
+    <span class="n">_flags</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="sd">&quot;&quot;&quot;Flags defined in each listen directive.&quot;&quot;&quot;</span>
+
+    <span class="n">_disable_dynamic_switching</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This option disabled dynamic switching functionality.</span>
+
+<span class="sd">    Dynamic switching will be disabled when mode= and delay= flags are</span>
+<span class="sd">    configured.</span>
+
+<span class="sd">    https://kura.gg/blackhole/configuration.html#listen</span>
+<span class="sd">    https://kura.gg/blackhole/configuration.html#tls_listen</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_failed_commands</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="sd">&quot;&quot;&quot;An internal counter of failed commands for a client.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clients</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the SMTP protocol.</span>
+
+<span class="sd">        :param list clients: A list of connected clients.</span>
+<span class="sd">        :param loop: The event loop to use.</span>
+<span class="sd">        :type loop: :py:obj:`None` or</span>
+<span class="sd">                    :py:class:`syncio.unix_events._UnixSelectorEventLoop`</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           Loads the configuration, defines the server&#39;s FQDN and generates</span>
+<span class="sd">           an RFC 2822 Message-ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">clients</span><span class="p">,</span> <span class="n">loop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span> <span class="o">=</span> <span class="n">message_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fqdn</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Smtp.connection_made"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.connection_made">[docs]</a>    <span class="k">def</span> <span class="nf">connection_made</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tie a connection to blackhole to the SMTP protocol.</span>
+
+<span class="sd">        :param asyncio.transports.Transport transport: The transport class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">connection_made</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Peer connected&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="n">transport</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flags_from_transport</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection_closed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handler_coroutine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_handle_client</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Smtp.push"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.push">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a response code and message to the client.</span>
+
+<span class="sd">        :param int code: SMTP code, i.e. 250.</span>
+<span class="sd">        :param str msg: The message for the SMTP code</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">await</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">n_msg</span><span class="p">)</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_handle_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle a client connection.</span>
+
+<span class="sd">        This method greets the client and then accepts and handles each line</span>
+<span class="sd">        the client sends, passing off to the currect verb handler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">greet</span><span class="p">()</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_closed</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">return</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RECV </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_line</span> <span class="o">=</span> <span class="n">line</span>
+            <span class="n">handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_handler</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">handler</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">handler</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">502</span><span class="p">,</span> <span class="s2">&quot;5.5.2 Command not recognised&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Smtp.get_auth_members"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.get_auth_members">[docs]</a>    <span class="k">def</span> <span class="nf">get_auth_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of available AUTH mechanisms.</span>
+
+<span class="sd">        :returns: A list of available authentication mechanisms.</span>
+<span class="sd">        :rtype: :py:obj:`list`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">members</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">)</span>
+        <span class="n">cmds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;auth_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cmd</span> <span class="o">!=</span> <span class="s2">&quot;auth_UNKNOWN&quot;</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;auth_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cmds</span></div>
+
+<div class="viewcode-block" id="Smtp.lookup_auth_handler"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.lookup_auth_handler">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_auth_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Look up a handler for the received AUTH mechanism.</span>
+
+<span class="sd">        :param str line: A line of data from a client.</span>
+<span class="sd">        :returns: A callable authentication mechanism.</span>
+<span class="sd">        :rtype: `blackhole.smtp.Smtp.auth_MECHANISM`</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           Using ``pass=`` as part of the auth data will trigger an</span>
+<span class="sd">           authentication pass, using ``fail=`` will trigger an authentication</span>
+<span class="sd">           failure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_UNKNOWN</span>
+        <span class="n">mechanism</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">mechanism</span> <span class="o">==</span> <span class="s2">&quot;CRAM-MD5&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_CRAM_MD5</span>
+        <span class="k">if</span> <span class="n">mechanism</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_auth_members</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_UNKNOWN</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">mechanism</span> <span class="o">==</span> <span class="s2">&quot;PLAIN&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;fail=&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_failure</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_success</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;auth_</span><span class="si">{</span><span class="n">mechanism</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_UNKNOWN</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.auth_UNKNOWN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.auth_UNKNOWN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">auth_UNKNOWN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Response to an unknown auth mechamism.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">501</span><span class="p">,</span> <span class="s2">&quot;5.5.4 Syntax: AUTH mechanism&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_AUTH"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_AUTH">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_AUTH</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for AUTH mechanisms.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mechanisms</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_auth_members</span><span class="p">())</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Syntax: AUTH </span><span class="si">{</span><span class="n">mechanisms</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.auth_LOGIN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.auth_LOGIN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">auth_LOGIN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle an AUTH LOGIN request.</span>
+
+<span class="sd">            &gt;&gt;&gt; AUTH LOGIN</span>
+<span class="sd">            334 VXNlcm5hbWU6</span>
+<span class="sd">            &gt;&gt;&gt; pass=letmein</span>
+<span class="sd">            235 2.7.0 Authentication successful</span>
+
+<span class="sd">            &gt;&gt;&gt; AUTH LOGIN</span>
+<span class="sd">            334 VXNlcm5hbWU6</span>
+<span class="sd">            &gt;&gt;&gt; fail=letmein</span>
+<span class="sd">            535 5.7.8 Authentication failed</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           Using ``pass=`` as part of the auth data will trigger an</span>
+<span class="sd">           authentication pass, using ``fail=`` will trigger an authentication</span>
+<span class="sd">           failure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">334</span><span class="p">,</span> <span class="s2">&quot;VXNlcm5hbWU6&quot;</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RECV </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;fail=&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_failure</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_success</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Smtp.auth_CRAM_MD5"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.auth_CRAM_MD5">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">auth_CRAM_MD5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle an AUTH CRAM-MD5 request.</span>
+
+<span class="sd">            &gt;&gt;&gt; AUTH CRAM-MD5</span>
+<span class="sd">            334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...</span>
+<span class="sd">            &gt;&gt;&gt; pass=letmein</span>
+<span class="sd">            235 2.7.0 Authentication successful</span>
+
+<span class="sd">            &gt;&gt;&gt; AUTH CRAM-MD5</span>
+<span class="sd">            334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...</span>
+<span class="sd">            &gt;&gt;&gt; fail=letmein</span>
+<span class="sd">            535 5.7.8 Authentication failed</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           Using ``pass=`` as part of the auth data will trigger an</span>
+<span class="sd">           authentication pass, using ``fail=`` will trigger an authentication</span>
+<span class="sd">           failure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">emessage_id</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;==&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">334</span><span class="p">,</span> <span class="n">emessage_id</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RECV </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;fail=&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_failure</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_success</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Smtp.auth_PLAIN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.auth_PLAIN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">auth_PLAIN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Handle an AUTH PLAIN request.</span>
+
+<span class="sd">            &gt;&gt;&gt; AUTH PLAIN</span>
+<span class="sd">            334</span>
+<span class="sd">            &gt;&gt;&gt; pass=letmein</span>
+<span class="sd">            235 2.7.0 Authentication successful</span>
+
+<span class="sd">            &gt;&gt;&gt; AUTH PLAIN</span>
+<span class="sd">            334</span>
+<span class="sd">            &gt;&gt;&gt; fail=letmein</span>
+<span class="sd">            535 5.7.8 Authentication failed</span>
+
+<span class="sd">            &gt;&gt;&gt; AUTH PLAIN pass=letmein</span>
+<span class="sd">            235 2.7.0 Authentication successful</span>
+
+<span class="sd">            &gt;&gt;&gt; AUTH PLAIN fail=letmein</span>
+<span class="sd">            535 5.7.8 Authentication failed</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           Using ``pass=`` as part of the auth data will trigger an</span>
+<span class="sd">           authentication pass, using ``fail=`` will trigger an authentication</span>
+<span class="sd">           failure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">334</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RECV </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="sa">b</span><span class="s2">&quot;fail=&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_failure</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_success</span><span class="p">()</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_auth_success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send an authentication successful response.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">235</span><span class="p">,</span> <span class="s2">&quot;2.7.0 Authentication successful&quot;</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_auth_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send an authentication failure response.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">535</span><span class="p">,</span> <span class="s2">&quot;5.7.8 Authentication failed&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Smtp.timeout"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.timeout">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Timeout a client connection.</span>
+
+<span class="sd">        Sends the 421 timeout message to the client and closes the connection.</span>
+
+<span class="sd">        https://kura.gg/blackhole/configuration.html#timeout</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Peer timed out, no data received for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="s2">&quot;seconds&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">421</span><span class="p">,</span> <span class="s2">&quot;Timeout&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Smtp.lookup_handler"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.lookup_handler">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Look up the SMTP VERB against a handler.</span>
+
+<span class="sd">        :param str line: Look up the command handler to use from the data</span>
+<span class="sd">                         provided.</span>
+<span class="sd">        :returns: A callable command handler.</span>
+<span class="sd">        :rtype: `blackhole.smtp.Smtp.do_VERB`,</span>
+<span class="sd">                `blackhole.smtp.Smtp.auth_MECHANISM`,</span>
+<span class="sd">                `blackhole.smtp.Smtp.help_VERB`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">parts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;help&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_help_handler</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;auth&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_auth_handler</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_verb_handler</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_UNKNOWN</span></div>
+
+<div class="viewcode-block" id="Smtp.lookup_help_handler"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.lookup_help_handler">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_help_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Look up a help handler for the SMTP VERB.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+
+<span class="sd">        :param list parts: A list of command data, split on spaces.</span>
+<span class="sd">        :returns: A callable help handler.</span>
+<span class="sd">        :rtype: `blackhole.smtp.Smtp.help_VERB`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;help_</span><span class="si">{</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;do_HELP&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">help_UNKNOWN</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.lookup_verb_handler"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.lookup_verb_handler">[docs]</a>    <span class="k">def</span> <span class="nf">lookup_verb_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verb</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Look up a handler for the SMTP VERB.</span>
+
+<span class="sd">        :param str verb:</span>
+<span class="sd">        :returns: A callable command handler.</span>
+<span class="sd">        :rtype: `blackhole.smtp.Smtp.do_VERB`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;do_</span><span class="si">{</span><span class="n">verb</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_UNKNOWN</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.greet"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.greet">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send a greeting to the client.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">220</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fqdn</span><span class="si">}</span><span class="s2"> ESMTP&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.get_help_members"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.get_help_members">[docs]</a>    <span class="k">def</span> <span class="nf">get_help_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a list of HELP handlers for verbs.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+
+<span class="sd">        :returns: A list of available help handlers.</span>
+<span class="sd">        :rtype: :py:obj:`list`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">members</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">)</span>
+        <span class="n">cmds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;help_&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s2">&quot;help_UNKNOWN&quot;</span><span class="p">:</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;help_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cmds</span></div>
+
+<div class="viewcode-block" id="Smtp.do_HELP"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_HELP">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_HELP</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a response to the HELP verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_help_members</span><span class="p">())</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Supported commands: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_HELO"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_HELO">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_HELO</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for HELO verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: HELO domain.tld&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_HELO"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_HELO">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_HELO</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send response to HELO verb.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;OK&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_EHLO"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_EHLO">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_EHLO</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the EHLO verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: EHLO domain.tld&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_EHLO"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_EHLO">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_EHLO</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send response to EHLO verb.&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;250-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fqdn</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SENT </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">auth</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_auth_members</span><span class="p">())</span>
+        <span class="n">responses</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;250-HELP&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;250-PIPELINING&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;250-AUTH </span><span class="si">{</span><span class="n">auth</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;250-SIZE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_message_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;250-VRFY&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;250-ETRN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;250-ENHANCEDSTATUSCODES&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;250-8BITMIME&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;250-SMTPUTF8&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;250-EXPN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;250 DSN&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="n">responses</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SENT </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">drain</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Smtp.help_MAIL"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_MAIL">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_MAIL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the MAIL TO verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: MAIL FROM: &lt;address&gt;&quot;</span><span class="p">)</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_size_in_mail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle ``SIZE=`` being passed in ``MAIL`` verb.</span>
+
+<span class="sd">        Send a 552 response if the size provided is larger than</span>
+<span class="sd">        max_message_size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;size=&quot;</span><span class="p">):</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">size</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_message_size</span>
+        <span class="p">):</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span>
+                <span class="mi">552</span><span class="p">,</span>
+                <span class="s2">&quot;Message size exceeds fixed maximum message size&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;2.1.0 OK&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Smtp.do_MAIL"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_MAIL">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_MAIL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send response to MAIL TO verb.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           Checks to see if ``SIZE=`` is passed, pass function off to have it&#39;s</span>
+<span class="sd">           size handled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;size=&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_in_mail</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;2.1.0 OK&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_RCPT"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_RCPT">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_RCPT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send response to the RCPT TO verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: RCPT TO: &lt;address&gt;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_RCPT"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_RCPT">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_RCPT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send response to RCPT TO verb.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;2.1.5 OK&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_DATA"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_DATA">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_DATA</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the DATA verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: DATA&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.process_header"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.process_header">[docs]</a>    <span class="k">def</span> <span class="nf">process_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process dynamic switch email headers.</span>
+
+<span class="sd">        Reads x-blackhole-delay and x-blackhole-mode headers and re-configures</span>
+<span class="sd">        on-the-fly how the email is handled based on these headers.</span>
+
+<span class="sd">        https://kura.gg/blackhole/dynamic-switches.html</span>
+
+<span class="sd">        :param str line: An email header.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;HEADER RECV: </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dynamic_switch</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Dynamic switches disabled, ignoring&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_dynamic_switching</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Dynamic switches are disabled by flags option.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;x-blackhole-delay&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;x-blackhole-mode&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="Smtp.response_from_mode"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.response_from_mode">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">response_from_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a response based on the configured response mode.</span>
+
+<span class="sd">        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches</span>
+<span class="sd">        https://kura.gg/blackhole/configuration.html#mode</span>
+
+<span class="sd">        Response mode is configured in configuration file and can be overridden</span>
+<span class="sd">        by email headers, if enabled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MODE: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;bounce&quot;</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bounce_responses</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>  <span class="c1"># nosec</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounce_responses</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+            <span class="n">resps</span> <span class="o">=</span> <span class="p">{</span><span class="mi">250</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;2.0.0 OK: queued as </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+            <span class="n">resps</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bounce_responses</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">resps</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>  <span class="c1"># nosec</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">resps</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;2.0.0 OK: queued as </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_DATA"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_DATA">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_DATA</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send response to DATA verb and wait for mail data.</span>
+
+<span class="sd">        This method will also implement timeout management and handling after</span>
+<span class="sd">        receiving the DATA command and no new data is received.</span>
+
+<span class="sd">        This method also implements the delay functionality, delaying a</span>
+<span class="sd">        response after the final &#39;\r\n.\r\n&#39; line. --</span>
+<span class="sd">        https://kura.gg/blackhole/configuration.html#delay</span>
+<span class="sd">        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches</span>
+
+<span class="sd">        This method implements restrictions on message sizes. --</span>
+<span class="sd">        https://kura.gg/blackhole/configuration.html#max-message-size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">354</span><span class="p">,</span> <span class="s2">&quot;End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;&quot;</span><span class="p">)</span>
+        <span class="n">on_body</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_closed</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RECV </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">msg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;x-blackhole&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">on_body</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">process_header</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+                <span class="n">on_body</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;.</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_message_size</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span>
+                <span class="mi">552</span><span class="p">,</span>
+                <span class="s2">&quot;Message size exceeds fixed maximum message size&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DELAYING RESPONSE: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_from_mode</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Smtp.do_STARTTLS"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_STARTTLS">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_STARTTLS</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;STARTTLS is not implemented.&quot;&quot;&quot;</span>
+        <span class="c1"># It&#39;s currently not possible to implement STARTTLS due to lack of</span>
+        <span class="c1"># support in asyncio. - https://bugs.python.org/review/23749/</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_NOT_IMPLEMENTED</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Smtp.help_NOOP"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_NOOP">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_NOOP</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the NOOP verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: NOOP&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_NOOP"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_NOOP">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_NOOP</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send response to the NOOP verb.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;2.0.0 OK&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_RSET"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_RSET">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_RSET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the RSET verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: RSET&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_RSET"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_RSET">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_RSET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send response to the RSET verb.</span>
+
+<span class="sd">        A new message id is generated and assigned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">old_msg_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message_id</span> <span class="o">=</span> <span class="n">message_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fqdn</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">old_msg_id</span><span class="si">}</span><span class="s2"> is now </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;2.0.0 OK&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_VRFY"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_VRFY">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_VRFY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the VRFY verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: VRFY &lt;address&gt;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_VRFY"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_VRFY">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_VRFY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send response to the VRFY verb.</span>
+
+<span class="sd">            &gt;&gt;&gt; VRFY pass=user@domain.tld</span>
+<span class="sd">            250 2.0.0 &lt;pass=user@domain.tld&gt; OK</span>
+
+<span class="sd">            &gt;&gt;&gt; VRFY fail=user@domain.tld</span>
+<span class="sd">            550 5.7.1 &lt;fail=user@domain.tld&gt; unknown</span>
+
+<span class="sd">            &gt;&gt;&gt; VRFY user@domain.tld</span>
+<span class="sd">            252 2.0.0 Will attempt delivery</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           If the request contains &#39;pass=&#39;, the server will respond with code</span>
+<span class="sd">           250. If the request contains &#39;fail=&#39;, the server will respond with</span>
+<span class="sd">           code 550. And finally, if neither flag is found, the server will</span>
+<span class="sd">           respond with code 252.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;pass=&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;2.0.0 &lt;</span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">&gt; OK&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="s2">&quot;fail=&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;5.7.1 &lt;</span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">&gt; unknown&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">252</span><span class="p">,</span> <span class="s2">&quot;2.0.0 Will attempt delivery&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_EXPN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_EXPN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_EXPN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the EXPN verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: EXPN &lt;list1 | list2 | list3 | all&gt;&quot;</span><span class="p">)</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_expn_value_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Look up and return a mailing list or generate one for EXPN all.</span>
+
+<span class="sd">        :returns: A list of members for a mailing list.</span>
+<span class="sd">        :rtype: :py:obj:`list`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">expn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+        <span class="n">expn</span> <span class="o">=</span> <span class="n">expn</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">lists</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;list1&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;Shadow&quot;</span><span class="p">,</span> <span class="s2">&quot;Wednesday&quot;</span><span class="p">,</span> <span class="s2">&quot;Low-key Liesmith&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;list2&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;Jim Holden&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Naomi Nagata&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Alex Kamal&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Amos Burton&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;list3&quot;</span><span class="p">:</span> <span class="p">(</span>
+                <span class="s2">&quot;Takeshi Kovacs&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Laurens Bancroft&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Kristin Ortega&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Quellcrist Falconer&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Virginia Vidaura&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Reileen Kawahara&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">expn</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="n">iterator</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">lists</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">iterator</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">lists</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">iterator</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">lists</span><span class="p">[</span><span class="n">expn</span><span class="p">]</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_expn_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate response for an EXPN query.</span>
+
+<span class="sd">        :returns: A list of responses.</span>
+<span class="sd">        :rtype: :py:obj:`list`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">iterator</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expn_value_to_list</span><span class="p">()</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">resp</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="s2">&quot;250-&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="s2">&quot;250 &quot;</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start</span><span class="si">}{</span><span class="n">item</span><span class="si">}</span><span class="s2"> &lt;</span><span class="si">{</span><span class="n">user</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fqdn</span><span class="si">}</span><span class="s2">&gt;&quot;</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">resp</span>
+
+<div class="viewcode-block" id="Smtp.do_EXPN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_EXPN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_EXPN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle the EXPN verb.</span>
+
+<span class="sd">            &gt;&gt;&gt; EXPN fail=test-list</span>
+<span class="sd">            550 Not authorised</span>
+
+<span class="sd">            &gt;&gt;&gt; EXPN list1</span>
+<span class="sd">            250-Shadow &lt;shadow@blackhole.io&gt;</span>
+<span class="sd">            250-Wednesday &lt;wednesday@blackhole.io&gt;</span>
+<span class="sd">            250 Low-key Liesmith &lt;low-key.liesmith@blackhole.io&gt;</span>
+
+<span class="sd">            &gt;&gt;&gt; EXPN list2</span>
+<span class="sd">            250-Jim Holden &lt;jim.holden@blackhole.io&gt;</span>
+<span class="sd">            250-Naomi Nagata &lt;naomi.nagata@blackhole.io&gt;</span>
+<span class="sd">            250-Alex Kamal &lt;alex.kamal@blackhole.io&gt;</span>
+<span class="sd">            250 Amos Burton &lt;amos.burton@blackhole.io&gt;</span>
+
+<span class="sd">            &gt;&gt;&gt; EXPN list3</span>
+<span class="sd">            250-Takeshi Kovacs &lt;takeshi.kovacs@blackhole.io&gt;</span>
+<span class="sd">            250-Laurens Bancroft &lt;laurens.bancroft@blackhole.io&gt;</span>
+<span class="sd">            250-Kristin Ortega &lt;kristin.ortega@blackhole.io&gt;</span>
+<span class="sd">            250-Quellcrist Falconer &lt;quellcrist.falconer@blackhole.io&gt;</span>
+<span class="sd">            250-Virginia Vidaura &lt;virginia.vidaura@blackhole.io&gt;</span>
+<span class="sd">            250 Reileen Kawahara &lt;reileen.kawahara@blackhole.io&gt;</span>
+
+<span class="sd">            &gt;&gt;&gt; EXPN all</span>
+<span class="sd">            250-Shadow &lt;shadow@blackhole.io&gt;</span>
+<span class="sd">            250-Wednesday &lt;wednesday@blackhole.io&gt;</span>
+<span class="sd">            250-Low-key Liesmith &lt;low-key.liesmith@blackhole.io&gt;</span>
+<span class="sd">            250-Takeshi Kovacs &lt;takeshi.kovacs@blackhole.io&gt;</span>
+<span class="sd">            250-Laurens Bancroft &lt;laurens.bancroft@blackhole.io&gt;</span>
+<span class="sd">            250-Kristin Ortega &lt;kristin.ortega@blackhole.io&gt;</span>
+<span class="sd">            250-Quellcrist Falconer &lt;quellcrist.falconer@blackhole.io&gt;</span>
+<span class="sd">            250-Virginia Vidaura &lt;virginia.vidaura@blackhole.io&gt;</span>
+<span class="sd">            250-Reileen Kawahara &lt;reileen.kawahara@blackhole.io&gt;</span>
+<span class="sd">            250-Jim Holden &lt;jim.holden@blackhole.io&gt;</span>
+<span class="sd">            250-Naomi Nagata &lt;naomi.nagata@blackhole.io&gt;</span>
+<span class="sd">            250-Alex Kamal &lt;alex.kamal@blackhole.io&gt;</span>
+<span class="sd">            250 Amos Burton &lt;amos.burton@blackhole.io&gt;</span>
+
+<span class="sd">            &gt;&gt;&gt; EXPN list-does-not-exist</span>
+<span class="sd">            550 Not authorised</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           If EXPN contains &#39;fail=&#39; or does not specify a mailing list the</span>
+<span class="sd">           command will return a 550 code.</span>
+<span class="sd">           Valid lists are: `list1`, `list2`, `list3` and `all`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;fail=&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="s2">&quot;Not authorised&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">expn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_line</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+            <span class="n">expn</span> <span class="o">=</span> <span class="n">expn</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&lt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="s2">&quot;Not authorised&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">expn</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;list1&quot;</span><span class="p">,</span> <span class="s2">&quot;list2&quot;</span><span class="p">,</span> <span class="s2">&quot;list3&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">):</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="s2">&quot;Not authorised&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expn_response</span><span class="p">():</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SENT </span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">drain</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Smtp.help_ETRN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_ETRN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_ETRN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the ETRN verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: ETRN&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_ETRN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_ETRN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_ETRN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send response to the ETRN verb.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Queueing started&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_QUIT"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_QUIT">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_QUIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send help for the QUIT verb.</span>
+
+<span class="sd">        https://kura.gg/blackhole/communicating-with-blackhole.html#help</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s2">&quot;Syntax: QUIT&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_QUIT"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_QUIT">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_QUIT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send response to the QUIT verb.</span>
+
+<span class="sd">        Closes the client connection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">221</span><span class="p">,</span> <span class="s2">&quot;2.0.0 Goodbye&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handler_coroutine</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Smtp.do_NOT_IMPLEMENTED"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_NOT_IMPLEMENTED">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_NOT_IMPLEMENTED</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send a not implemented response.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s2">&quot;Not implemented&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.help_UNKNOWN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_UNKNOWN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_UNKNOWN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send available help verbs when an invalid verb is received.&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_help_members</span><span class="p">())</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">501</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Supported commands: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Smtp.do_UNKNOWN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.do_UNKNOWN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">do_UNKNOWN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send response to unknown verb.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_failed_commands</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed_commands</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">502</span><span class="p">,</span> <span class="s2">&quot;5.5.3 Too many unknown commands&quot;</span><span class="p">)</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">502</span><span class="p">,</span> <span class="s2">&quot;5.5.2 Command not recognised&quot;</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">delay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delay after the DATA command completes.</span>
+
+<span class="sd">        Value is in seconds, with a maximum value of 60 seconds.</span>
+
+<span class="sd">        https://kura.gg/blackhole/configuration.html#delay</span>
+<span class="sd">        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches</span>
+
+<span class="sd">        :returns: A delay time in seconds. Default: ``None``.</span>
+<span class="sd">        :rtype: :py:obj:`int` or :py:obj:`None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;delay&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">[</span><span class="s2">&quot;delay&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">delay</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_delay_range</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">delay</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">delay</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@delay</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">delay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;DELAY: Dymanic delay enabled&quot;</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay_range</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay_single</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DELAY: Invalid value(s): </span><span class="si">{</span><span class="n">values</span><span class="si">}</span><span class="s2">. Skipping&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_delay_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a delay from a range provided in the email header.</span>
+
+<span class="sd">        https://kura.gg/blackhole/configuration.html#delay</span>
+<span class="sd">        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches</span>
+
+<span class="sd">        :param str value: A list of minimum and maximum values as a string.</span>
+<span class="sd">                          i.e. (10, 20).</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           Converted from a string of a list to a list of integers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_delay</span><span class="p">,</span> <span class="n">max_delay</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">min_delay</span><span class="p">,</span> <span class="n">max_delay</span> <span class="o">=</span> <span class="n">min_delay</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">max_delay</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">min_delay</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">min_delay</span><span class="p">)</span>
+            <span class="n">max_delay</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_delay</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DELAY: Unable to convert </span><span class="si">{</span><span class="n">min_delay</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">max_delay</span><span class="si">}</span><span class="s2"> to &quot;</span>
+                <span class="s2">&quot;integers. Skipping&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">min_delay</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">max_delay</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DELAY: A value is less than 0: </span><span class="si">{</span><span class="n">min_delay</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">max_delay</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Skipping&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">min_delay</span> <span class="o">&gt;</span> <span class="n">max_delay</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Min cannot be greater than max&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">max_delay</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_delay</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DELAY: </span><span class="si">{</span><span class="n">max_delay</span><span class="si">}</span><span class="s2"> is higher than </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_delay</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_delay</span><span class="si">}</span><span class="s2"> is the hard coded maximum delay for &quot;</span>
+                <span class="s2">&quot;security.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">max_delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_delay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">min_delay</span><span class="p">,</span> <span class="n">max_delay</span><span class="p">)</span>  <span class="c1"># nosec</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;DELAY: Set to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_delay</span><span class="si">}</span><span class="s2"> from range </span><span class="si">{</span><span class="n">min_delay</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">max_delay</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_delay_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a delay from a value provided in an email header.</span>
+
+<span class="sd">        https://kura.gg/blackhole/configuration.html#delay</span>
+<span class="sd">        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches</span>
+
+<span class="sd">        :param str value: Time in seconds as a string.</span>
+
+<span class="sd">        .. note:</span>
+
+<span class="sd">           Converted from a string to an integer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DELAY: Unable to convert </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> to an integer. Skipping&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DELAY: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is less than 0. Skipping&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_delay</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DELAY: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is higher than </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_delay</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_delay</span><span class="si">}</span><span class="s2"> is the hard coded maximum delay for &quot;</span>
+                <span class="s2">&quot;security.&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_delay</span>
+            <span class="k">return</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DELAY: Set to </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delay</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        How to respond to an email, based on configuration.</span>
+
+<span class="sd">        Reponse is configured in the configuration file or configured from</span>
+<span class="sd">        email headers, if configured to allow that option.</span>
+
+<span class="sd">        https://kura.gg/blackhole/configuration.html#mode</span>
+<span class="sd">        https://kura.gg/blackhole/dynamic-switches.html#dynamic-mode-switches</span>
+
+<span class="sd">        :returns: A response mode.</span>
+<span class="sd">        :rtype: :py:obj:`str`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;mode&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">mode</span>
+
+    <span class="nd">@mode</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;accept&quot;</span><span class="p">,</span> <span class="s2">&quot;bounce&quot;</span><span class="p">,</span> <span class="s2">&quot;random&quot;</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;MODE: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> is an invalid. Allowed modes: (accept, &quot;</span>
+                <span class="s2">&quot;bounce, random)&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MODE: Dynamic mode enabled. Mode set to </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">value</span></div>
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">blackhole.smtp</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

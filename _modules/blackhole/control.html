@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>blackhole.control &#8212; Blackhole 2.1.16 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/blackhole.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Blackhole 2.1.16 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">blackhole.control</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">Blackhole</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../communicating-with-blackhole.html">Communicating with Blackhole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dynamic-responses.html">Dynamic responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dynamic-switches.html">Dynamic Switches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../index.html">Docs</a></li>
+              
+                <li><a href="../index.html">Module code</a></li>
+              
+              <li>blackhole.control</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for blackhole.control</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># (The MIT License)</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2013-2021 Kura</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
+<span class="c1"># all copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+
+<span class="sd">&quot;&quot;&quot;Provides control functionality, including socket wrappers.&quot;&quot;&quot;</span>
+
+<span class="k">try</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">import</span> <span class="nn">ssl</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">ssl</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="kn">import</span> <span class="nn">grp</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pwd</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">BlackholeRuntimeException</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;pid_permissions&quot;</span><span class="p">,</span> <span class="s2">&quot;server&quot;</span><span class="p">,</span> <span class="s2">&quot;setgid&quot;</span><span class="p">,</span> <span class="s2">&quot;setuid&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Tuple all the things.&quot;&quot;&quot;</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;blackhole.control&quot;</span><span class="p">)</span>
+<span class="n">ciphers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ECDHE-ECDSA-AES256-GCM-SHA384&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-RSA-AES256-GCM-SHA384&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-ECDSA-CHACHA20-POLY1305&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-RSA-CHACHA20-POLY1305&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-ECDSA-AES128-GCM-SHA256&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-RSA-AES128-GCM-SHA256&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-ECDSA-AES256-SHA384&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-RSA-AES256-SHA384&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-ECDSA-AES128-SHA256&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ECDHE-RSA-AES128-SHA256&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Strong default TLS ciphers.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="_context"><a class="viewcode-back" href="../../api-control.html#blackhole.control._context">[docs]</a><span class="k">def</span> <span class="nf">_context</span><span class="p">(</span><span class="n">use_tls</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a TLS context using the certificate, key and dhparams file.</span>
+
+<span class="sd">    :param bool use_tls: Whether to create a TLS context or not.</span>
+<span class="sd">                         Default: ``False``.</span>
+<span class="sd">    :returns: A TLS context or ``None``.</span>
+<span class="sd">    :rtype: :py:class:`ssl.SSLContext` or :py:obj:`None`.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       Created with:</span>
+
+<span class="sd">       - :py:obj:`ssl.OP_NO_SSLv2`</span>
+<span class="sd">       - :py:obj:`ssl.OP_NO_SSLv3`</span>
+<span class="sd">       - :py:obj:`ssl.OP_NO_COMPRESSION`</span>
+<span class="sd">       - :py:obj:`ssl.OP_CIPHER_SERVER_PREFERENCE`</span>
+
+<span class="sd">       Also responsible for loading Diffie Hellman ephemeral parameters if</span>
+<span class="sd">       they&#39;re provided -- :py:func:`ssl.SSLContext.load_dh_params`</span>
+
+<span class="sd">       If the ``-ls`` or ``--less-secure`` option is provided,</span>
+<span class="sd">       :py:obj:`ssl.OP_SINGLE_DH_USE` and :py:obj:`ssl.OP_SINGLE_ECDH_USE`</span>
+<span class="sd">       will be omitted from the context. --</span>
+<span class="sd">       https://kura.gg/blackhole/configuration.html#command-line-options</span>
+<span class="sd">       -- added in :ref:`2.0.13`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">use_tls</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="n">ctx</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">create_default_context</span><span class="p">(</span><span class="n">ssl</span><span class="o">.</span><span class="n">Purpose</span><span class="o">.</span><span class="n">CLIENT_AUTH</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">load_cert_chain</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">tls_cert</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">tls_key</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">options</span> <span class="o">|=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">OP_NO_SSLv2</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">options</span> <span class="o">|=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">OP_NO_SSLv3</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">options</span> <span class="o">|=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">OP_NO_COMPRESSION</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">options</span> <span class="o">|=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">OP_CIPHER_SERVER_PREFERENCE</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">less_secure</span><span class="p">:</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">options</span> <span class="o">|=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">OP_SINGLE_DH_USE</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">options</span> <span class="o">|=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">OP_SINGLE_ECDH_USE</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">set_ciphers</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ciphers</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">tls_dhparams</span><span class="p">:</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">load_dh_params</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">tls_dhparams</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ctx</span></div>
+
+
+<div class="viewcode-block" id="_socket"><a class="viewcode-back" href="../../api-control.html#blackhole.control._socket">[docs]</a><span class="k">def</span> <span class="nf">_socket</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">family</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a socket, bind and listen.</span>
+
+<span class="sd">    :param str addr: The address to use.</span>
+<span class="sd">    :param int port: The port to use.</span>
+<span class="sd">    :param family: The type of socket to use.</span>
+<span class="sd">    :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`.</span>
+<span class="sd">    :returns: Bound socket.</span>
+<span class="sd">    :rtype: :py:func:`socket.socket`</span>
+<span class="sd">    :raises BlackholeRuntimeException: When a socket cannot be bound.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEPORT</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="n">socket</span><span class="o">.</span><span class="n">AF_INET6</span><span class="p">:</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">IPPROTO_IPV6</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">IPV6_V6ONLY</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="n">addr</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Cannot bind to </span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">sock</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">BlackholeRuntimeException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">set_inheritable</span><span class="p">(</span><span class="n">sock</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="n">sock</span><span class="o">.</span><span class="n">setblocking</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sock</span></div>
+
+
+<div class="viewcode-block" id="server"><a class="viewcode-back" href="../../api-control.html#blackhole.control.server">[docs]</a><span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">use_tls</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Socket and possibly a TLS context.</span>
+
+<span class="sd">    Create an instance of :py:func:`socket.socket`, bind it and return a</span>
+<span class="sd">    dictionary containing the socket object and a TLS context if configured.</span>
+
+<span class="sd">    :param str addr: The address to use.</span>
+<span class="sd">    :param int port: The port to use.</span>
+<span class="sd">    :param family: The type of socket to use.</span>
+<span class="sd">    :type family: :py:obj:`socket.AF_INET` or :py:obj:`socket.AF_INET6`.</span>
+<span class="sd">    :param bool use_tls: Whether to create a TLS context or not.</span>
+<span class="sd">                         Default: ``False``.</span>
+<span class="sd">    :returns: Bound socket, a TLS context if configured.</span>
+<span class="sd">    :rtype: :py:obj:`dict`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sock</span> <span class="o">=</span> <span class="n">_socket</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">family</span><span class="p">)</span>
+    <span class="n">ctx</span> <span class="o">=</span> <span class="n">_context</span><span class="p">(</span><span class="n">use_tls</span><span class="o">=</span><span class="n">use_tls</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;sock&quot;</span><span class="p">:</span> <span class="n">sock</span><span class="p">,</span> <span class="s2">&quot;ssl&quot;</span><span class="p">:</span> <span class="n">ctx</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="pid_permissions"><a class="viewcode-back" href="../../api-control.html#blackhole.control.pid_permissions">[docs]</a><span class="k">def</span> <span class="nf">pid_permissions</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change the pid file ownership.</span>
+
+<span class="sd">    Called before :func:`blackhole.control.setgid` and</span>
+<span class="sd">    :func:`blackhole.control.setuid` are called to stop</span>
+<span class="sd">    :class:`blackhole.daemon.Daemon` losing permissions to modify the pid file.</span>
+
+<span class="sd">    :raises SystemExit: With exit code :py:obj:`os.EX_USAGE` when a permissions</span>
+<span class="sd">                        error occurs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">grp</span><span class="o">.</span><span class="n">getgrnam</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chown</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">pidfile</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">pw_uid</span><span class="p">,</span> <span class="n">group</span><span class="o">.</span><span class="n">gr_gid</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">PermissionError</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unable to change pidfile ownership permissions.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_USAGE</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="setgid"><a class="viewcode-back" href="../../api-control.html#blackhole.control.setgid">[docs]</a><span class="k">def</span> <span class="nf">setgid</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change group.</span>
+
+<span class="sd">    Change to a less privileged group. Unless you&#39;re using it incorrectly --</span>
+<span class="sd">    in which case, don&#39;t use it.</span>
+
+<span class="sd">    :raises SystemExit: Exit code :py:obj:`os.EX_USAGE` when a configuration</span>
+<span class="sd">                        error occurs or :py:obj:`os.EX_NOPERM` when a</span>
+<span class="sd">                        permission error occurs.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       MUST be called BEFORE setuid, not after.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">gid</span> <span class="o">=</span> <span class="n">grp</span><span class="o">.</span><span class="n">getgrnam</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">gr_gid</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">setgid</span><span class="p">(</span><span class="n">gid</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Group &#39;</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&#39; does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_USAGE</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;You do not have permission to switch to group &#39;</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">group</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_NOPERM</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="setuid"><a class="viewcode-back" href="../../api-control.html#blackhole.control.setuid">[docs]</a><span class="k">def</span> <span class="nf">setuid</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change user.</span>
+
+<span class="sd">    Change to a less privileged user.Unless you&#39;re using it incorrectly --</span>
+<span class="sd">    inwhich case, don&#39;t use it.</span>
+
+<span class="sd">    :raises SystemExit: Exit code :py:obj:`os.EX_USAGE` when a configuration</span>
+<span class="sd">                        error occurs or :py:obj:`os.EX_NOPERM` when a</span>
+<span class="sd">                        permission error occurs.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       MUST be called AFTER setgid, not before.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">pw_uid</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">setuid</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User &#39;</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">&#39; does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_USAGE</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;You do not have permission to switch to user &#39;</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_NOPERM</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">blackhole.control</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

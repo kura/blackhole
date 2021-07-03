@@ -1,0 +1,831 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>blackhole.smtp &#8212; Blackhole 2.1.16 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/blackhole.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Blackhole 2.1.16 documentation"
+          href="_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="blackhole.streams" href="api-streams.html" />
+    <link rel="prev" title="blackhole.protocols" href="api-protocols.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api-streams.html" title="blackhole.streams"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api-protocols.html" title="blackhole.protocols"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api.html" accesskey="U">API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    index.html" class="text-logo">Blackhole</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="communicating-with-blackhole.html">Communicating with Blackhole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-responses.html">Dynamic responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-switches.html">Dynamic Switches</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api-application.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.application</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-child.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.child</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-config.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.config</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-control.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.control</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-daemon.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.daemon</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-exceptions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.exceptions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-logs.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.logs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-protocols.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-streams.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-supervisor.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.supervisor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-worker.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.worker</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+                <li><a href="api.html">API</a></li>
+              
+              <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <section id="module-blackhole.smtp">
+<span id="blackhole-smtp"></span><h1><a class="reference internal" href="#module-blackhole.smtp" title="blackhole.smtp: Provides the Smtp protocol wrapper. (Unix)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a><a class="headerlink" href="#module-blackhole.smtp" title="Permalink to this headline">¶</a></h1>
+<p>Provides the Smtp protocol wrapper.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">blackhole.smtp.</span></span><span class="sig-name descname"><span class="pre">Smtp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp" title="Permalink to this definition">¶</a></dt>
+<dd><p>The class responsible for handling SMTP/SMTPS commands.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.connection_made">
+<span class="sig-name descname"><span class="pre">connection_made</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transport</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.connection_made"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.connection_made" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tie a connection to blackhole to the SMTP protocol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>transport</strong> (<em>asyncio.transports.Transport</em>) – The transport class.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.push">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">push</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.push"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.push" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a response code and message to the client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>code</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – SMTP code, i.e. 250.</p></li>
+<li><p><strong>msg</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The message for the SMTP code</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.get_auth_members">
+<span class="sig-name descname"><span class="pre">get_auth_members</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.get_auth_members"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.get_auth_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of available AUTH mechanisms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of available authentication mechanisms.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.lookup_auth_handler">
+<span class="sig-name descname"><span class="pre">lookup_auth_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.lookup_auth_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.lookup_auth_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look up a handler for the received AUTH mechanism.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – A line of data from a client.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A callable authentication mechanism.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>blackhole.smtp.Smtp.auth_MECHANISM</cite></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">pass=</span></code> as part of the auth data will trigger an
+authentication pass, using <code class="docutils literal notranslate"><span class="pre">fail=</span></code> will trigger an authentication
+failure.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.auth_UNKNOWN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">auth_UNKNOWN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.auth_UNKNOWN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.auth_UNKNOWN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Response to an unknown auth mechamism.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_AUTH">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_AUTH</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_AUTH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_AUTH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for AUTH mechanisms.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.auth_LOGIN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">auth_LOGIN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.auth_LOGIN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.auth_LOGIN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle an AUTH LOGIN request.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">LOGIN</span>
+<span class="go">334 VXNlcm5hbWU6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">pass</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">235 2.7.0 Authentication successful</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">LOGIN</span>
+<span class="go">334 VXNlcm5hbWU6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fail</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">535 5.7.8 Authentication failed</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">pass=</span></code> as part of the auth data will trigger an
+authentication pass, using <code class="docutils literal notranslate"><span class="pre">fail=</span></code> will trigger an authentication
+failure.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.auth_CRAM_MD5">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">auth_CRAM_MD5</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.auth_CRAM_MD5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.auth_CRAM_MD5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle an AUTH CRAM-MD5 request.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">CRAM</span><span class="o">-</span><span class="n">MD5</span>
+<span class="go">334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">pass</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">235 2.7.0 Authentication successful</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">CRAM</span><span class="o">-</span><span class="n">MD5</span>
+<span class="go">334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMzI4NTE2...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fail</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">535 5.7.8 Authentication failed</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">pass=</span></code> as part of the auth data will trigger an
+authentication pass, using <code class="docutils literal notranslate"><span class="pre">fail=</span></code> will trigger an authentication
+failure.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.auth_PLAIN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">auth_PLAIN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.auth_PLAIN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.auth_PLAIN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle an AUTH PLAIN request.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">PLAIN</span>
+<span class="go">334</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">pass</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">235 2.7.0 Authentication successful</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">PLAIN</span>
+<span class="go">334</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fail</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">535 5.7.8 Authentication failed</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">PLAIN</span> <span class="k">pass</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">235 2.7.0 Authentication successful</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">PLAIN</span> <span class="n">fail</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">535 5.7.8 Authentication failed</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">pass=</span></code> as part of the auth data will trigger an
+authentication pass, using <code class="docutils literal notranslate"><span class="pre">fail=</span></code> will trigger an authentication
+failure.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.timeout">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">timeout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.timeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Timeout a client connection.</p>
+<p>Sends the 421 timeout message to the client and closes the connection.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/configuration.html#timeout">https://kura.gg/blackhole/configuration.html#timeout</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.lookup_handler">
+<span class="sig-name descname"><span class="pre">lookup_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.lookup_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.lookup_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look up the SMTP VERB against a handler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – Look up the command handler to use from the data
+provided.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A callable command handler.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>blackhole.smtp.Smtp.do_VERB</cite>,
+<cite>blackhole.smtp.Smtp.auth_MECHANISM</cite>,
+<cite>blackhole.smtp.Smtp.help_VERB</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.lookup_help_handler">
+<span class="sig-name descname"><span class="pre">lookup_help_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.lookup_help_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.lookup_help_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look up a help handler for the SMTP VERB.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>parts</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><em>list</em></a>) – A list of command data, split on spaces.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A callable help handler.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>blackhole.smtp.Smtp.help_VERB</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.lookup_verb_handler">
+<span class="sig-name descname"><span class="pre">lookup_verb_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.lookup_verb_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.lookup_verb_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look up a handler for the SMTP VERB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verb</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A callable command handler.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>blackhole.smtp.Smtp.do_VERB</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.greet">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">greet</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.greet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.greet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a greeting to the client.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.get_help_members">
+<span class="sig-name descname"><span class="pre">get_help_members</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.get_help_members"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.get_help_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of HELP handlers for verbs.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of available help handlers.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_HELP">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_HELP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_HELP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_HELP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a response to the HELP verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_HELO">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_HELO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_HELO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_HELO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for HELO verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_HELO">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_HELO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_HELO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_HELO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to HELO verb.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_EHLO">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_EHLO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_EHLO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_EHLO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the EHLO verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_EHLO">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_EHLO</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_EHLO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_EHLO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to EHLO verb.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_MAIL">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_MAIL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_MAIL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_MAIL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the MAIL TO verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_MAIL">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_MAIL</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_MAIL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_MAIL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to MAIL TO verb.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Checks to see if <code class="docutils literal notranslate"><span class="pre">SIZE=</span></code> is passed, pass function off to have it’s
+size handled.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_RCPT">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_RCPT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_RCPT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_RCPT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to the RCPT TO verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_RCPT">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_RCPT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_RCPT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_RCPT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to RCPT TO verb.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_DATA">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_DATA</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_DATA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_DATA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the DATA verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.process_header">
+<span class="sig-name descname"><span class="pre">process_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.process_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.process_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process dynamic switch email headers.</p>
+<p>Reads x-blackhole-delay and x-blackhole-mode headers and re-configures
+on-the-fly how the email is handled based on these headers.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/dynamic-switches.html">https://kura.gg/blackhole/dynamic-switches.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>line</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – An email header.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.response_from_mode">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">response_from_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.response_from_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.response_from_mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a response based on the configured response mode.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches">https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches</a>
+<a class="reference external" href="https://kura.gg/blackhole/configuration.html#mode">https://kura.gg/blackhole/configuration.html#mode</a></p>
+<p>Response mode is configured in configuration file and can be overridden
+by email headers, if enabled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_DATA">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_DATA</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_DATA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_DATA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to DATA verb and wait for mail data.</p>
+<p>This method will also implement timeout management and handling after
+receiving the DATA command and no new data is received.</p>
+<p>This method also implements the delay functionality, delaying a
+response after the final ‘rn.rn’ line. –
+<a class="reference external" href="https://kura.gg/blackhole/configuration.html#delay">https://kura.gg/blackhole/configuration.html#delay</a>
+<a class="reference external" href="https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches">https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches</a></p>
+<p>This method implements restrictions on message sizes. –
+<a class="reference external" href="https://kura.gg/blackhole/configuration.html#max-message-size">https://kura.gg/blackhole/configuration.html#max-message-size</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_STARTTLS">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_STARTTLS</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_STARTTLS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_STARTTLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>STARTTLS is not implemented.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_NOOP">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_NOOP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_NOOP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_NOOP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the NOOP verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_NOOP">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_NOOP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_NOOP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_NOOP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to the NOOP verb.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_RSET">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_RSET</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_RSET"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_RSET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the RSET verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_RSET">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_RSET</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_RSET"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_RSET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to the RSET verb.</p>
+<p>A new message id is generated and assigned.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_VRFY">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_VRFY</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_VRFY"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_VRFY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the VRFY verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_VRFY">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_VRFY</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_VRFY"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_VRFY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to the VRFY verb.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">VRFY</span> <span class="k">pass</span><span class="o">=</span><span class="n">user</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span>
+<span class="go">250 2.0.0 &lt;pass=user@domain.tld&gt; OK</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">VRFY</span> <span class="n">fail</span><span class="o">=</span><span class="n">user</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span>
+<span class="go">550 5.7.1 &lt;fail=user@domain.tld&gt; unknown</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">VRFY</span> <span class="n">user</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span>
+<span class="go">252 2.0.0 Will attempt delivery</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the request contains ‘pass=’, the server will respond with code
+250. If the request contains ‘fail=’, the server will respond with
+code 550. And finally, if neither flag is found, the server will
+respond with code 252.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_EXPN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_EXPN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_EXPN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_EXPN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the EXPN verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_EXPN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_EXPN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_EXPN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_EXPN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the EXPN verb.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EXPN</span> <span class="n">fail</span><span class="o">=</span><span class="n">test</span><span class="o">-</span><span class="nb">list</span>
+<span class="go">550 Not authorised</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EXPN</span> <span class="n">list1</span>
+<span class="go">250-Shadow &lt;shadow@blackhole.io&gt;</span>
+<span class="go">250-Wednesday &lt;wednesday@blackhole.io&gt;</span>
+<span class="go">250 Low-key Liesmith &lt;low-key.liesmith@blackhole.io&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EXPN</span> <span class="n">list2</span>
+<span class="go">250-Jim Holden &lt;jim.holden@blackhole.io&gt;</span>
+<span class="go">250-Naomi Nagata &lt;naomi.nagata@blackhole.io&gt;</span>
+<span class="go">250-Alex Kamal &lt;alex.kamal@blackhole.io&gt;</span>
+<span class="go">250 Amos Burton &lt;amos.burton@blackhole.io&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EXPN</span> <span class="n">list3</span>
+<span class="go">250-Takeshi Kovacs &lt;takeshi.kovacs@blackhole.io&gt;</span>
+<span class="go">250-Laurens Bancroft &lt;laurens.bancroft@blackhole.io&gt;</span>
+<span class="go">250-Kristin Ortega &lt;kristin.ortega@blackhole.io&gt;</span>
+<span class="go">250-Quellcrist Falconer &lt;quellcrist.falconer@blackhole.io&gt;</span>
+<span class="go">250-Virginia Vidaura &lt;virginia.vidaura@blackhole.io&gt;</span>
+<span class="go">250 Reileen Kawahara &lt;reileen.kawahara@blackhole.io&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EXPN</span> <span class="nb">all</span>
+<span class="go">250-Shadow &lt;shadow@blackhole.io&gt;</span>
+<span class="go">250-Wednesday &lt;wednesday@blackhole.io&gt;</span>
+<span class="go">250-Low-key Liesmith &lt;low-key.liesmith@blackhole.io&gt;</span>
+<span class="go">250-Takeshi Kovacs &lt;takeshi.kovacs@blackhole.io&gt;</span>
+<span class="go">250-Laurens Bancroft &lt;laurens.bancroft@blackhole.io&gt;</span>
+<span class="go">250-Kristin Ortega &lt;kristin.ortega@blackhole.io&gt;</span>
+<span class="go">250-Quellcrist Falconer &lt;quellcrist.falconer@blackhole.io&gt;</span>
+<span class="go">250-Virginia Vidaura &lt;virginia.vidaura@blackhole.io&gt;</span>
+<span class="go">250-Reileen Kawahara &lt;reileen.kawahara@blackhole.io&gt;</span>
+<span class="go">250-Jim Holden &lt;jim.holden@blackhole.io&gt;</span>
+<span class="go">250-Naomi Nagata &lt;naomi.nagata@blackhole.io&gt;</span>
+<span class="go">250-Alex Kamal &lt;alex.kamal@blackhole.io&gt;</span>
+<span class="go">250 Amos Burton &lt;amos.burton@blackhole.io&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EXPN</span> <span class="nb">list</span><span class="o">-</span><span class="n">does</span><span class="o">-</span><span class="ow">not</span><span class="o">-</span><span class="n">exist</span>
+<span class="go">550 Not authorised</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If EXPN contains ‘fail=’ or does not specify a mailing list the
+command will return a 550 code.
+Valid lists are: <cite>list1</cite>, <cite>list2</cite>, <cite>list3</cite> and <cite>all</cite>.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_ETRN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_ETRN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_ETRN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_ETRN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the ETRN verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_ETRN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_ETRN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_ETRN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_ETRN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to the ETRN verb.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_QUIT">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_QUIT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_QUIT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_QUIT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send help for the QUIT verb.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/communicating-with-blackhole.html#help">https://kura.gg/blackhole/communicating-with-blackhole.html#help</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.close">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.smtp.Smtp.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the connection from the client.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.connection_lost">
+<span class="sig-name descname"><span class="pre">connection_lost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.smtp.Smtp.connection_lost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client connection is closed or lost.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>exc</strong> (<em>exc</em>) – Exception.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.data_received">
+<span class="sig-name descname"><span class="pre">data_received</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.smtp.Smtp.data_received" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when some data is received.</p>
+<p>The argument is a bytes object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_QUIT">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_QUIT</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_QUIT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_QUIT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to the QUIT verb.</p>
+<p>Closes the client connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.eof_received">
+<span class="sig-name descname"><span class="pre">eof_received</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.smtp.Smtp.eof_received" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the other end calls write_eof() or equivalent.</p>
+<p>If this returns a false value (including None), the transport
+will close itself.  If it returns a true value, closing the
+transport is up to the protocol.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.flags_from_transport">
+<span class="sig-name descname"><span class="pre">flags_from_transport</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.smtp.Smtp.flags_from_transport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapt internal flags for the transport in use.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.pause_writing">
+<span class="sig-name descname"><span class="pre">pause_writing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.smtp.Smtp.pause_writing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the transport’s buffer goes over the high-water mark.</p>
+<p>Pause and resume calls are paired – pause_writing() is called
+once when the buffer goes strictly over the high-water mark
+(even if subsequent writes increases the buffer size even
+more), and eventually resume_writing() is called once when the
+buffer size reaches the low-water mark.</p>
+<p>Note that if the buffer size equals the high-water mark,
+pause_writing() is not called – it must go strictly over.
+Conversely, resume_writing() is called when the buffer size is
+equal or lower than the low-water mark.  These end conditions
+are important to ensure that things go as expected when either
+mark is zero.</p>
+<p>NOTE: This is the only Protocol callback that is not called
+through EventLoop.call_soon() – if it were, it would have no
+effect when it’s most needed (when the app keeps writing
+without yielding until pause_writing() is called).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.resume_writing">
+<span class="sig-name descname"><span class="pre">resume_writing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.smtp.Smtp.resume_writing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the transport’s buffer drains below the low-water mark.</p>
+<p>See pause_writing() for details.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.wait">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.smtp.Smtp.wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for data from the client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A line of received data.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Also handles client timeouts if they wait too long before sending
+data. – <a class="reference external" href="https://kura.gg/blackhole/configuration.html#timeout">https://kura.gg/blackhole/configuration.html#timeout</a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_NOT_IMPLEMENTED">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_NOT_IMPLEMENTED</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_NOT_IMPLEMENTED"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_NOT_IMPLEMENTED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a not implemented response.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.help_UNKNOWN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">help_UNKNOWN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.help_UNKNOWN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.help_UNKNOWN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send available help verbs when an invalid verb is received.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.do_UNKNOWN">
+<em class="property"><span class="pre">async</span> </em><span class="sig-name descname"><span class="pre">do_UNKNOWN</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/smtp.html#Smtp.do_UNKNOWN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.smtp.Smtp.do_UNKNOWN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send response to unknown verb.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.delay">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">delay</span></span><a class="headerlink" href="#blackhole.smtp.Smtp.delay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delay after the DATA command completes.</p>
+<p>Value is in seconds, with a maximum value of 60 seconds.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/configuration.html#delay">https://kura.gg/blackhole/configuration.html#delay</a>
+<a class="reference external" href="https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches">https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A delay time in seconds. Default: <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="blackhole.smtp.Smtp.mode">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#blackhole.smtp.Smtp.mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>How to respond to an email, based on configuration.</p>
+<p>Reponse is configured in the configuration file or configured from
+email headers, if configured to allow that option.</p>
+<p><a class="reference external" href="https://kura.gg/blackhole/configuration.html#mode">https://kura.gg/blackhole/configuration.html#mode</a>
+<a class="reference external" href="https://kura.gg/blackhole/dynamic-switches.html#dynamic-mode-switches">https://kura.gg/blackhole/dynamic-switches.html#dynamic-mode-switches</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A response mode.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="api-protocols.html" title="previous chapter (use the left arrow)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="api-streams.html" title="next chapter (use the right arrow)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api-streams.html" title="blackhole.streams"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api-protocols.html" title="blackhole.protocols"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api.html" >API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

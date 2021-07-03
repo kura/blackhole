@@ -1,0 +1,367 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>blackhole.worker &#8212; Blackhole 2.1.16 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/blackhole.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Blackhole 2.1.16 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">blackhole.worker</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">Blackhole</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../communicating-with-blackhole.html">Communicating with Blackhole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dynamic-responses.html">Dynamic responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dynamic-switches.html">Dynamic Switches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="../../index.html">Docs</a></li>
+              
+                <li><a href="../index.html">Module code</a></li>
+              
+              <li>blackhole.worker</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <h1>Source code for blackhole.worker</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># (The MIT License)</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2013-2021 Kura</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
+<span class="c1"># all copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+
+<span class="sd">&quot;&quot;&quot;Provides functionality to manage child processes from the supervisor.&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">protocols</span>
+<span class="kn">from</span> <span class="nn">.child</span> <span class="kn">import</span> <span class="n">Child</span>
+<span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">setgid</span><span class="p">,</span> <span class="n">setuid</span>
+<span class="kn">from</span> <span class="nn">.streams</span> <span class="kn">import</span> <span class="n">StreamProtocol</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">setproctitle</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">setproctitle</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Worker&quot;</span><span class="p">,)</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;blackhole.worker&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Worker"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker">[docs]</a><span class="k">class</span> <span class="nc">Worker</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A worker.</span>
+
+<span class="sd">    Providers functionality to manage a single child process. The worker is</span>
+<span class="sd">    responsible for communicating heartbeat information with it&#39;s child</span>
+<span class="sd">    process and starting, stopping and restarting a child as required or</span>
+<span class="sd">    instructed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_started</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">ping_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">socks</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the worker.</span>
+
+<span class="sd">        :param str idx: The number reference of the worker and child.</span>
+<span class="sd">        :param list socks: Sockets to listen for connections on.</span>
+<span class="sd">        :param loop: The event loop to use.</span>
+<span class="sd">        :type loop: :py:class:`asyncio.unix_events._UnixSelectorEventLoop` or</span>
+<span class="sd">                    :py:obj:`None` to get the current event loop using</span>
+<span class="sd">                    :py:func:`asyncio.get_event_loop`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span> <span class="k">if</span> <span class="n">loop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">socks</span> <span class="o">=</span> <span class="n">socks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Worker.start"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create and fork off a child process for the current worker.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Cannot start an already started worker&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">up_read</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">up_write</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">down_read</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">down_write</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pipe</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Parent</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Child</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setup_child</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Worker.setup_child"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker.setup_child">[docs]</a>    <span class="k">def</span> <span class="nf">setup_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the gid, uid and start the child process..&quot;&quot;&quot;</span>
+        <span class="n">setgid</span><span class="p">()</span>
+        <span class="n">setuid</span><span class="p">()</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">setproctitle</span><span class="p">:</span>
+            <span class="n">setproctitle</span><span class="o">.</span><span class="n">setproctitle</span><span class="p">(</span><span class="s2">&quot;blackhole: worker&quot;</span><span class="p">)</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">Child</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">up_read</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">down_write</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">socks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">process</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Worker.restart_child"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker.restart_child">[docs]</a>    <span class="k">def</span> <span class="nf">restart_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Restart the child process.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kill_child</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ping_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ping</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setup_child</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Worker.kill_child"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker.kill_child">[docs]</a>    <span class="k">def</span> <span class="nf">kill_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Kill the child process.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">ProcessLookupError</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Worker.heartbeat"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker.heartbeat">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">heartbeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle heartbeat between a worker and child.</span>
+
+<span class="sd">        If a child process stops communicating with it&#39;s worker, it will be</span>
+<span class="sd">        killed, the worker managing it will also be removed and a new worker</span>
+<span class="sd">        and child will be spawned.</span>
+
+<span class="sd">        :param asyncio.StreamWriter writer: An object for writing data to the</span>
+<span class="sd">                                            pipe.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           3 bytes are used in the communication channel.</span>
+
+<span class="sd">           - b&#39;x01&#39; -- :const:`blackhole.protocols.PING`</span>
+<span class="sd">           - b&#39;x02&#39; -- :const:`blackhole.protocols.PONG`</span>
+
+<span class="sd">           The worker will sleep for 15 seconds, before requesting a ping from</span>
+<span class="sd">           the child. If we go for over 30 seconds waiting for a ping, the</span>
+<span class="sd">           worker will restart itself and the child bound to it.</span>
+
+<span class="sd">           These message values are defined in the :mod:`blackhole.protocols`</span>
+<span class="sd">           schema. Documentation is available at --</span>
+<span class="sd">           https://kura.gg/blackhole/api-protocols.html</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ping</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">PING</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;worker.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="si">}</span><span class="s2">.heartbeat: Communication failed. &quot;</span>
+                        <span class="s2">&quot;Restarting worker&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">restart_child</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Worker.chat"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker.chat">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">chat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Communicate between a worker and child.</span>
+
+<span class="sd">        If communication with the child fails the worker is shutdown and the</span>
+<span class="sd">        child is killed.</span>
+
+<span class="sd">        :param asyncio.StreamReader reader: An object for reading data from</span>
+<span class="sd">                                            the pipe.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">           3 bytes are used in the communication channel.</span>
+
+<span class="sd">           - b&#39;x01&#39; -- :const:`blackhole.protocols.PING`</span>
+<span class="sd">           - b&#39;x02&#39; -- :const:`blackhole.protocols.PONG`</span>
+
+<span class="sd">           Read data coming in from the child. If a PONG is received, we&#39;ll</span>
+<span class="sd">           update the worker, setting this PONG as a &#39;PING&#39; from the child.</span>
+
+<span class="sd">           These message values are defined in the :mod:`blackhole.protocols`</span>
+<span class="sd">           schema. Documentation is available at --</span>
+<span class="sd">           https://kura.gg/blackhole/api-protocols.html</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="k">await</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">msg</span> <span class="o">==</span> <span class="n">protocols</span><span class="o">.</span><span class="n">PONG</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;worker.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">idx</span><span class="si">}</span><span class="s2">.chat: Pong received from child&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ping</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ping_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Worker.connect"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker.connect">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Connect the child and worker so they can communicate.</span>
+
+<span class="sd">        :param int up_write: A file descriptor.</span>
+<span class="sd">        :param int down_read: A file descriptor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">read_fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">down_read</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="n">r_trans</span><span class="p">,</span> <span class="n">r_proto</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">connect_read_pipe</span><span class="p">(</span>
+            <span class="n">StreamProtocol</span><span class="p">,</span>
+            <span class="n">read_fd</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">write_fd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">up_write</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+        <span class="n">w_trans</span><span class="p">,</span> <span class="n">w_proto</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">connect_write_pipe</span><span class="p">(</span>
+            <span class="n">StreamProtocol</span><span class="p">,</span>
+            <span class="n">write_fd</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">r_proto</span><span class="o">.</span><span class="n">reader</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">StreamWriter</span><span class="p">(</span><span class="n">w_trans</span><span class="p">,</span> <span class="n">w_proto</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ping</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rtransport</span> <span class="o">=</span> <span class="n">r_trans</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wtransport</span> <span class="o">=</span> <span class="n">w_trans</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chat_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="n">reader</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">ensure_future</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">heartbeat</span><span class="p">(</span><span class="n">writer</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Worker.stop"><a class="viewcode-back" href="../../api-worker.html#blackhole.worker.Worker.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Terminate the worker and it&#39;s respective child process.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kill_child</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chat_task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">heartbeat_task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rtransport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wtransport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+            
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">blackhole.worker</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

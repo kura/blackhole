@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>blackhole.control &#8212; Blackhole 2.1.16 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/blackhole.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Blackhole 2.1.16 documentation"
+          href="_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="blackhole.daemon" href="api-daemon.html" />
+    <link rel="prev" title="blackhole.config" href="api-config.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api-daemon.html" title="blackhole.daemon"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api-config.html" title="blackhole.config"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api.html" accesskey="U">API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.control</span></code></a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    index.html" class="text-logo">Blackhole</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="communicating-with-blackhole.html">Communicating with Blackhole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-responses.html">Dynamic responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-switches.html">Dynamic Switches</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api-application.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.application</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-child.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.child</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-config.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.config</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.control</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-daemon.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.daemon</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-exceptions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.exceptions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-logs.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.logs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-protocols.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-smtp.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-streams.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-supervisor.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.supervisor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-worker.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.worker</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+                <li><a href="api.html">API</a></li>
+              
+              <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.control</span></code></li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <section id="module-blackhole.control">
+<span id="blackhole-control"></span><h1><a class="reference internal" href="#module-blackhole.control" title="blackhole.control: Provides control functionality, including socket wrappers. (Unix)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.control</span></code></a><a class="headerlink" href="#module-blackhole.control" title="Permalink to this headline">¶</a></h1>
+<p>Provides control functionality, including socket wrappers.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="blackhole.control._context">
+<span class="sig-prename descclassname"><span class="pre">blackhole.control.</span></span><span class="sig-name descname"><span class="pre">_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_tls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/control.html#_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.control._context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a TLS context using the certificate, key and dhparams file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>use_tls</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to create a TLS context or not.
+Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A TLS context or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.SSLContext" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ssl.SSLContext</span></code></a> or <a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Created with:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.OP_NO_SSLv2" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssl.OP_NO_SSLv2</span></code></a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.OP_NO_SSLv3" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssl.OP_NO_SSLv3</span></code></a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.OP_NO_COMPRESSION" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssl.OP_NO_COMPRESSION</span></code></a></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.OP_CIPHER_SERVER_PREFERENCE" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssl.OP_CIPHER_SERVER_PREFERENCE</span></code></a></p></li>
+</ul>
+<p>Also responsible for loading Diffie Hellman ephemeral parameters if
+they’re provided – <code class="xref py py-func docutils literal notranslate"><span class="pre">ssl.SSLContext.load_dh_params</span></code></p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">-ls</span></code> or <code class="docutils literal notranslate"><span class="pre">--less-secure</span></code> option is provided,
+<a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.OP_SINGLE_DH_USE" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssl.OP_SINGLE_DH_USE</span></code></a> and <a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.OP_SINGLE_ECDH_USE" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssl.OP_SINGLE_ECDH_USE</span></code></a>
+will be omitted from the context. –
+<a class="reference external" href="https://kura.gg/blackhole/configuration.html#command-line-options">https://kura.gg/blackhole/configuration.html#command-line-options</a>
+– added in <a class="reference internal" href="changelog.html#id32"><span class="std std-ref">2.0.13</span></a></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="blackhole.control._socket">
+<span class="sig-prename descclassname"><span class="pre">blackhole.control.</span></span><span class="sig-name descname"><span class="pre">_socket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">addr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/control.html#_socket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.control._socket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a socket, bind and listen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The address to use.</p></li>
+<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The port to use.</p></li>
+<li><p><strong>family</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/socket.html#socket.AF_INET" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">socket.AF_INET</span></code></a> or <a class="reference external" href="https://docs.python.org/3.9/library/socket.html#socket.AF_INET6" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">socket.AF_INET6</span></code></a>.) – The type of socket to use.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Bound socket.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/socket.html#socket.socket" title="(in Python v3.9)"><code class="xref py py-func docutils literal notranslate"><span class="pre">socket.socket</span></code></a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="api-exceptions.html#blackhole.exceptions.BlackholeRuntimeException" title="blackhole.exceptions.BlackholeRuntimeException"><strong>BlackholeRuntimeException</strong></a> – When a socket cannot be bound.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="blackhole.control.server">
+<span class="sig-prename descclassname"><span class="pre">blackhole.control.</span></span><span class="sig-name descname"><span class="pre">server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">addr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_tls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/control.html#server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.control.server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Socket and possibly a TLS context.</p>
+<p>Create an instance of <a class="reference external" href="https://docs.python.org/3.9/library/socket.html#socket.socket" title="(in Python v3.9)"><code class="xref py py-func docutils literal notranslate"><span class="pre">socket.socket</span></code></a>, bind it and return a
+dictionary containing the socket object and a TLS context if configured.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>addr</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – The address to use.</p></li>
+<li><p><strong>port</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – The port to use.</p></li>
+<li><p><strong>family</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/socket.html#socket.AF_INET" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">socket.AF_INET</span></code></a> or <a class="reference external" href="https://docs.python.org/3.9/library/socket.html#socket.AF_INET6" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">socket.AF_INET6</span></code></a>.) – The type of socket to use.</p></li>
+<li><p><strong>use_tls</strong> (<a class="reference external" href="https://docs.python.org/3.9/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – Whether to create a TLS context or not.
+Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Bound socket, a TLS context if configured.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="blackhole.control.pid_permissions">
+<span class="sig-prename descclassname"><span class="pre">blackhole.control.</span></span><span class="sig-name descname"><span class="pre">pid_permissions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/control.html#pid_permissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.control.pid_permissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the pid file ownership.</p>
+<p>Called before <a class="reference internal" href="#blackhole.control.setgid" title="blackhole.control.setgid"><code class="xref py py-func docutils literal notranslate"><span class="pre">blackhole.control.setgid</span></code></a> and
+<a class="reference internal" href="#blackhole.control.setuid" title="blackhole.control.setuid"><code class="xref py py-func docutils literal notranslate"><span class="pre">blackhole.control.setuid</span></code></a> are called to stop
+<a class="reference internal" href="api-daemon.html#blackhole.daemon.Daemon" title="blackhole.daemon.Daemon"><code class="xref py py-class docutils literal notranslate"><span class="pre">blackhole.daemon.Daemon</span></code></a> losing permissions to modify the pid file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#SystemExit" title="(in Python v3.9)"><strong>SystemExit</strong></a> – With exit code <a class="reference external" href="https://docs.python.org/3.9/library/os.html#os.EX_USAGE" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">os.EX_USAGE</span></code></a> when a permissions
+error occurs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="blackhole.control.setgid">
+<span class="sig-prename descclassname"><span class="pre">blackhole.control.</span></span><span class="sig-name descname"><span class="pre">setgid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/control.html#setgid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.control.setgid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change group.</p>
+<p>Change to a less privileged group. Unless you’re using it incorrectly –
+in which case, don’t use it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#SystemExit" title="(in Python v3.9)"><strong>SystemExit</strong></a> – Exit code <a class="reference external" href="https://docs.python.org/3.9/library/os.html#os.EX_USAGE" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">os.EX_USAGE</span></code></a> when a configuration
+error occurs or <a class="reference external" href="https://docs.python.org/3.9/library/os.html#os.EX_NOPERM" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">os.EX_NOPERM</span></code></a> when a
+permission error occurs.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>MUST be called BEFORE setuid, not after.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="blackhole.control.setuid">
+<span class="sig-prename descclassname"><span class="pre">blackhole.control.</span></span><span class="sig-name descname"><span class="pre">setuid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/control.html#setuid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.control.setuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change user.</p>
+<p>Change to a less privileged user.Unless you’re using it incorrectly –
+inwhich case, don’t use it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.9/library/exceptions.html#SystemExit" title="(in Python v3.9)"><strong>SystemExit</strong></a> – Exit code <a class="reference external" href="https://docs.python.org/3.9/library/os.html#os.EX_USAGE" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">os.EX_USAGE</span></code></a> when a configuration
+error occurs or <a class="reference external" href="https://docs.python.org/3.9/library/os.html#os.EX_NOPERM" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">os.EX_NOPERM</span></code></a> when a
+permission error occurs.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>MUST be called AFTER setgid, not before.</p>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="api-config.html" title="previous chapter (use the left arrow)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.config</span></code></a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="api-daemon.html" title="next chapter (use the right arrow)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.daemon</span></code></a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api-daemon.html" title="blackhole.daemon"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api-config.html" title="blackhole.config"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api.html" >API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.control</span></code></a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>AUTH &#8212; Blackhole 2.1.16 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/blackhole.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Blackhole 2.1.16 documentation"
+          href="_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="VRFY" href="command-vrfy.html" />
+    <link rel="prev" title="Dynamic responses" href="dynamic-responses.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="command-vrfy.html" title="VRFY"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="dynamic-responses.html" title="Dynamic responses"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="dynamic-responses.html" accesskey="U">Dynamic responses</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">AUTH</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    index.html" class="text-logo">Blackhole</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="communicating-with-blackhole.html">Communicating with Blackhole</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="dynamic-responses.html">Dynamic responses</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">AUTH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command-vrfy.html">VRFY</a></li>
+<li class="toctree-l2"><a class="reference internal" href="command-expn.html">EXPN</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-switches.html">Dynamic Switches</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+                <li><a href="dynamic-responses.html">Dynamic responses</a></li>
+              
+              <li>AUTH</li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <section id="auth">
+<span id="id1"></span><h1>AUTH<a class="headerlink" href="#auth" title="Permalink to this headline">¶</a></h1>
+<section id="auth-plain">
+<h2>AUTH PLAIN<a class="headerlink" href="#auth-plain" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Syntax</dt>
+<dd class="field-odd"><p><strong>AUTH PLAIN</strong></p>
+</dd>
+<dt class="field-even">Optional</dt>
+<dd class="field-even"><p><em>auth data</em></p>
+</dd>
+</dl>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">AUTH</span> <span class="pre">PLAIN</span></code> will succeed unless you ask it not to.</p>
+<section id="succeed">
+<h3>Succeed<a class="headerlink" href="#succeed" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">PLAIN</span>
+<span class="go">334</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fail</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">535 5.7.8 Authentication failed</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">PLAIN</span> <span class="k">pass</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">235 2.7.0 Authentication successful</span>
+</pre></div>
+</div>
+</section>
+<section id="fail">
+<h3>Fail<a class="headerlink" href="#fail" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">PLAIN</span>
+<span class="go">334</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">pass</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">235 2.7.0 Authentication successful</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">PLAIN</span> <span class="n">fail</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">535 5.7.8 Authentication failed</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="auth-login">
+<h2>AUTH LOGIN<a class="headerlink" href="#auth-login" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Syntax</dt>
+<dd class="field-odd"><p><strong>AUTH LOGIN</strong></p>
+</dd>
+</dl>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">AUTH</span> <span class="pre">PLAIN</span></code> will succeed unless you ask it not to.</p>
+<section id="id2">
+<h3>Succeed<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">LOGIN</span><span class="p">:</span>
+<span class="go">334 VXNlcm5hbWU6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">pass</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">235 2.7.0 Authentication successful</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>Fail<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">LOGIN</span><span class="p">:</span>
+<span class="go">334 VXNlcm5hbWU6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fail</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">535 5.7.8 Authentication failed</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="auth-cram-md5">
+<h2>AUTH CRAM-MD5<a class="headerlink" href="#auth-cram-md5" title="Permalink to this headline">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Syntax</dt>
+<dd class="field-odd"><p><strong>AUTH CRAM-MD5</strong></p>
+</dd>
+</dl>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">AUTH</span> <span class="pre">PLAIN</span></code> will succeed unless you ask it not to.</p>
+<section id="id4">
+<h3>Succeed<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">CRAM</span><span class="o">-</span><span class="n">MD5</span>
+<span class="go">334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMz...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">pass</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">235 2.7.0 Authentication successful</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>Fail<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">AUTH</span> <span class="n">CRAM</span><span class="o">-</span><span class="n">MD5</span>
+<span class="go">334 PDE0NjE5MzA1OTYwMS4yMDQ5LjEyMz...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fail</span><span class="o">=</span><span class="n">letmein</span>
+<span class="go">535 5.7.8 Authentication failed</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="dynamic-responses.html" title="previous chapter (use the left arrow)">Dynamic responses</a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="command-vrfy.html" title="next chapter (use the right arrow)">VRFY</a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="command-vrfy.html" title="VRFY"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="dynamic-responses.html" title="Dynamic responses"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="dynamic-responses.html" >Dynamic responses</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">AUTH</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

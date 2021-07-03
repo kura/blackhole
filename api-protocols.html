@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>blackhole.protocols &#8212; Blackhole 2.1.16 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/blackhole.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Blackhole 2.1.16 documentation"
+          href="_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="blackhole.smtp" href="api-smtp.html" />
+    <link rel="prev" title="blackhole.logs" href="api-logs.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api-smtp.html" title="blackhole.smtp"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api-logs.html" title="blackhole.logs"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api.html" accesskey="U">API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    index.html" class="text-logo">Blackhole</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="communicating-with-blackhole.html">Communicating with Blackhole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-responses.html">Dynamic responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-switches.html">Dynamic Switches</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api-application.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.application</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-child.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.child</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-config.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.config</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-control.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.control</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-daemon.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.daemon</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-exceptions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.exceptions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-logs.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.logs</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-smtp.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-streams.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-supervisor.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.supervisor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-worker.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.worker</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+                <li><a href="api.html">API</a></li>
+              
+              <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <section id="module-blackhole.protocols">
+<span id="blackhole-protocols"></span><h1><a class="reference internal" href="#module-blackhole.protocols" title="blackhole.protocols (Unix)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></a><a class="headerlink" href="#module-blackhole.protocols" title="Permalink to this headline">¶</a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="blackhole.protocols.PING">
+<span class="sig-prename descclassname"><span class="pre">blackhole.protocols.</span></span><span class="sig-name descname"><span class="pre">PING</span></span><em class="property"> <span class="pre">=</span> <span class="pre">b'x01'</span></em><a class="headerlink" href="#blackhole.protocols.PING" title="Permalink to this definition">¶</a></dt>
+<dd><p>Protocol message used by the worker and child processes to communicate.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="blackhole.protocols.PONG">
+<span class="sig-prename descclassname"><span class="pre">blackhole.protocols.</span></span><span class="sig-name descname"><span class="pre">PONG</span></span><em class="property"> <span class="pre">=</span> <span class="pre">b'x02'</span></em><a class="headerlink" href="#blackhole.protocols.PONG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Protocol message used by the worker and child processes to communicate.</p>
+</dd></dl>
+
+</section>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="api-logs.html" title="previous chapter (use the left arrow)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.logs</span></code></a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="api-smtp.html" title="next chapter (use the right arrow)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api-smtp.html" title="blackhole.smtp"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api-logs.html" title="blackhole.logs"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api.html" >API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

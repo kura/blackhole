@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>blackhole.streams &#8212; Blackhole 2.1.16 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/blackhole.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Blackhole 2.1.16 documentation"
+          href="_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="blackhole.supervisor" href="api-supervisor.html" />
+    <link rel="prev" title="blackhole.smtp" href="api-smtp.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api-supervisor.html" title="blackhole.supervisor"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api-smtp.html" title="blackhole.smtp"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api.html" accesskey="U">API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    index.html" class="text-logo">Blackhole</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="communicating-with-blackhole.html">Communicating with Blackhole</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-responses.html">Dynamic responses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-switches.html">Dynamic Switches</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="api-application.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.application</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-child.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.child</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-config.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.config</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-control.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.control</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-daemon.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.daemon</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-exceptions.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.exceptions</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-logs.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.logs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-protocols.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.protocols</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-smtp.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-supervisor.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.supervisor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-utils.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.utils</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-worker.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.worker</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+    
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+          
+          <div role="navigation" aria-label="breadcrumbs navigation">
+            <ol class="breadcrumb">
+              <li><a href="index.html">Docs</a></li>
+              
+                <li><a href="api.html">API</a></li>
+              
+              <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></li>
+            </ol>
+          </div>
+          
+          <div class="document clearer body">
+            
+  <section id="module-blackhole.streams">
+<span id="blackhole-streams"></span><h1><a class="reference internal" href="#module-blackhole.streams" title="blackhole.streams: Provides additional stream classes. (Unix)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></a><a class="headerlink" href="#module-blackhole.streams" title="Permalink to this headline">¶</a></h1>
+<p>Provides additional stream classes.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="blackhole.streams.StreamProtocol">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">blackhole.streams.</span></span><span class="sig-name descname"><span class="pre">StreamProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">loop=None</span></em>, <em class="sig-param"><span class="pre">disconnect_error=&lt;class</span> <span class="pre">'RuntimeError'&gt;</span></em>, <em class="sig-param"><span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/streams.html#StreamProtocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.streams.StreamProtocol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper class to adapt between Protocol and StreamReader.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.streams.StreamProtocol.is_connected">
+<span class="sig-name descname"><span class="pre">is_connected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/streams.html#StreamProtocol.is_connected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.streams.StreamProtocol.is_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client is connected.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.streams.StreamProtocol.connection_made">
+<span class="sig-name descname"><span class="pre">connection_made</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transport</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/streams.html#StreamProtocol.connection_made"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.streams.StreamProtocol.connection_made" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client connection made callback.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.streams.StreamProtocol.connection_lost">
+<span class="sig-name descname"><span class="pre">connection_lost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/streams.html#StreamProtocol.connection_lost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.streams.StreamProtocol.connection_lost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client connection lost callback.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.streams.StreamProtocol.data_received">
+<span class="sig-name descname"><span class="pre">data_received</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/streams.html#StreamProtocol.data_received"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.streams.StreamProtocol.data_received" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client data received.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.streams.StreamProtocol.eof_received">
+<span class="sig-name descname"><span class="pre">eof_received</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/blackhole/streams.html#StreamProtocol.eof_received"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#blackhole.streams.StreamProtocol.eof_received" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client EOF received.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.streams.StreamProtocol.pause_writing">
+<span class="sig-name descname"><span class="pre">pause_writing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.streams.StreamProtocol.pause_writing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the transport’s buffer goes over the high-water mark.</p>
+<p>Pause and resume calls are paired – pause_writing() is called
+once when the buffer goes strictly over the high-water mark
+(even if subsequent writes increases the buffer size even
+more), and eventually resume_writing() is called once when the
+buffer size reaches the low-water mark.</p>
+<p>Note that if the buffer size equals the high-water mark,
+pause_writing() is not called – it must go strictly over.
+Conversely, resume_writing() is called when the buffer size is
+equal or lower than the low-water mark.  These end conditions
+are important to ensure that things go as expected when either
+mark is zero.</p>
+<p>NOTE: This is the only Protocol callback that is not called
+through EventLoop.call_soon() – if it were, it would have no
+effect when it’s most needed (when the app keeps writing
+without yielding until pause_writing() is called).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="blackhole.streams.StreamProtocol.resume_writing">
+<span class="sig-name descname"><span class="pre">resume_writing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#blackhole.streams.StreamProtocol.resume_writing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called when the transport’s buffer drains below the low-water mark.</p>
+<p>See pause_writing() for details.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+            
+  <div class="footer-relations">
+    
+      <div class="pull-left">
+        <a class="btn btn-default" href="api-smtp.html" title="previous chapter (use the left arrow)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.smtp</span></code></a>
+      </div>
+    
+      <div class="pull-right">
+        <a class="btn btn-default" href="api-supervisor.html" title="next chapter (use the right arrow)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.supervisor</span></code></a>
+      </div>
+    </div>
+    <div class="clearer"></div>
+  
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api-supervisor.html" title="blackhole.supervisor"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api-smtp.html" title="blackhole.smtp"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.16 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="api.html" >API</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href=""><code class="xref py py-mod docutils literal notranslate"><span class="pre">blackhole.streams</span></code></a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
