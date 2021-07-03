@@ -70,7 +70,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         self.config = Config()
         logger.debug(self.config)
         # This is not a nice way to do this but, socket.getfqdn silently fails
-        # and craches inbound connections when called after os.fork
+        # and crashes inbound connections when called after os.fork
         self.fqdn = self.config.mailname
 
     def flags_from_transport(self):

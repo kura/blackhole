@@ -124,7 +124,7 @@ the large 2.1.4 release.
 - Added a ``--quiet`` mode to suppress warnings when using
   ``-ls/--less-secure``, running as the root user or not using the
   :ref:`tls_dhparams` option.
-- Added a warning when running the server as the root user without specifing
+- Added a warning when running the server as the root user without specifying
   a reduced privilege :ref:`user` and :ref:`group`.
 - Improved shutdown procedure, now does a much better job of disconnecting
   clients and closing everything before exiting.
@@ -300,7 +300,7 @@ Will be read as.
 =====
 
 No changes in particular except documentation changes. Tag was created
-speficially for release to PyPI.
+specifically for release to PyPI.
 
 .. _2.0.2:
 

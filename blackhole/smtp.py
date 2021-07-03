@@ -130,7 +130,7 @@ class Smtp(StreamReaderProtocol):
         Handle a client connection.
 
         This method greets the client and then accepts and handles each line
-        the client sends, passing off to the currect verb handler.
+        the client sends, passing off to the correct verb handler.
         """
         await self.greet()
         while not self.connection_closed:
@@ -191,7 +191,7 @@ class Smtp(StreamReaderProtocol):
         return getattr(self, f"auth_{mechanism.upper()}", self.auth_UNKNOWN)
 
     async def auth_UNKNOWN(self):
-        """Response to an unknown auth mechamism."""
+        """Response to an unknown auth mechanism."""
         await self.push(501, "5.5.4 Syntax: AUTH mechanism")
 
     async def help_AUTH(self):
@@ -969,7 +969,7 @@ class Smtp(StreamReaderProtocol):
         """
         How to respond to an email, based on configuration.
 
-        Reponse is configured in the configuration file or configured from
+        Response is configured in the configuration file or configured from
         email headers, if configured to allow that option.
 
         https://kura.gg/blackhole/configuration.html#mode

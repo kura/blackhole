@@ -120,7 +120,7 @@ def parse_cmd_args(args):
         "--quiet",
         dest="quiet",
         action="store_true",
-        help="Supress warnings",
+        help="Suppress warnings",
     )
     parser.add_argument(
         "-ls",

@@ -122,6 +122,18 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 
 [[package]]
+name = "codespell"
+version = "2.1.0"
+description = "Codespell"
+category = "main"
+optional = true
+python-versions = ">=3.5"
+
+[package.extras]
+dev = ["check-manifest", "flake8", "pytest", "pytest-cov", "pytest-dependency"]
+hard-encoding-detection = ["chardet"]
+
+[[package]]
 name = "colorama"
 version = "0.4.4"
 description = "Cross-platform colored terminal text."
@@ -957,16 +969,16 @@ docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [extras]
-dev = ["uvloop", "setproctitle", "sphinx", "guzzle_sphinx_theme", "black", "coverage", "pytest", "pytest-asyncio", "pytest-clarity", "pytest-cov", "flake8", "flake8-bugbear", "flake8-isort", "flake8-commas", "pydocstyle", "doc8", "interrogate", "pyroma", "bandit", "tox", "pre-commit"]
+dev = ["uvloop", "setproctitle", "sphinx", "guzzle_sphinx_theme", "black", "coverage", "pytest", "pytest-asyncio", "pytest-clarity", "pytest-cov", "flake8", "flake8-bugbear", "flake8-isort", "flake8-commas", "pydocstyle", "doc8", "interrogate", "pyroma", "bandit", "tox", "pre-commit", "codespell"]
 docs = ["sphinx", "guzzle_sphinx_theme"]
 setproctitle = ["setproctitle"]
-tests = ["black", "coverage", "pytest", "pytest-asyncio", "pytest-clarity", "pytest-cov", "flake8", "flake8-bugbear", "flake8-isort", "flake8-commas", "interrogate", "pyroma", "bandit", "pydocstyle", "doc8"]
+tests = ["black", "coverage", "pytest", "pytest-asyncio", "pytest-clarity", "pytest-cov", "flake8", "flake8-bugbear", "flake8-isort", "flake8-commas", "interrogate", "pyroma", "bandit", "pydocstyle", "doc8", "codespell"]
 uvloop = ["uvloop"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = ">3.6.1, <4"
-content-hash = "5f74812013ac0f3170566234b1f6b3c38cb5e6e8e80684c9c31b1c44395f9d59"
+content-hash = "2f1fc0368334c6cab854e57e2fc9a6147281e4a06b76d19c95e0d513c3ec7f9d"
 
 [metadata.files]
 alabaster = [
@@ -1012,6 +1024,10 @@ chardet = [
 click = [
     {file = "click-8.0.1-py3-none-any.whl", hash = "sha256:fba402a4a47334742d782209a7c79bc448911afe1149d07bdabdf480b3e2f4b6"},
     {file = "click-8.0.1.tar.gz", hash = "sha256:8c04c11192119b1ef78ea049e0a6f0463e4c48ef00a30160c704337586f3ad7a"},
+]
+codespell = [
+    {file = "codespell-2.1.0-py3-none-any.whl", hash = "sha256:b864c7d917316316ac24272ee992d7937c3519be4569209c5b60035ac5d569b5"},
+    {file = "codespell-2.1.0.tar.gz", hash = "sha256:19d3fe5644fef3425777e66f225a8c82d39059dcfe9edb3349a8a2cf48383ee5"},
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},

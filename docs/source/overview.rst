@@ -192,7 +192,7 @@ tests will be parallelised.
 Building the documentation
 --------------------------
 
-The Makefile suppied also has a target for building the documentation.
+The Makefile supplied also has a target for building the documentation.
 
 .. code-block:: bash
 
