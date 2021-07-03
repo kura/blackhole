@@ -2,11 +2,11 @@
 Blackhole
 =========
 
-.. image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=tests
+.. image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=tests&logo=travis
     :target: http://travis-ci.org/kura/blackhole
     :alt: Build status of the master branch
 
-.. image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage
+.. image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage&logo=codecov
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
 

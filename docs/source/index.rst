@@ -56,10 +56,10 @@ User Guide
     api
 
 
-.. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=build
+.. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=tests&logo=travis
     :target: https://travis-ci.org/kura/blackhole
     :alt: Build status of the master branch
 
-.. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage
+.. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage&logo=codecov
     :target: https://codecov.io/github/kura/blackhole/
     :alt: Test coverage
