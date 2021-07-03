@@ -57,7 +57,7 @@ User Guide
 
 
 .. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=tests&logo=travis
-    :target: https://travis-ci.org/kura/blackhole
+    :target: https://travis-ci.com/kura/blackhole
     :alt: Build status of the master branch
 
 .. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage&logo=codecov

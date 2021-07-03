@@ -3,7 +3,7 @@ Blackhole
 =========
 
 .. image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=tests&logo=travis
-    :target: http://travis-ci.org/kura/blackhole
+    :target: http://travis-ci.com/kura/blackhole
     :alt: Build status of the master branch
 
 .. image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage&logo=codecov
@@ -36,7 +36,7 @@ You can find the latest documentation `here
 If you would like to contribute, please read the `contributors guide
 <https://kura.github.io/blackhole/overview.html#contributing>`_.
 
-The latest build status on `travis <https://travis-ci.org/kura/blackhole/>`_.
+The latest build status on `travis <https://travis-ci.com/kura/blackhole/>`_.
 
 And the test coverage report on `codecov
 <https://codecov.io/github/kura/blackhole/>`_.

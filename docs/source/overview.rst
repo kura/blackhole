@@ -159,7 +159,7 @@ Running tests
 -------------
 
 You can find the latest tests against the source code on `travis
-<https://travis-ci.org/kura/blackhole/>`_.
+<https://travis-ci.com/kura/blackhole/>`_.
 
 Running tests manually is pretty simple, there is a `Makefile` target dedicated
 to it.
