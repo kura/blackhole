@@ -158,7 +158,7 @@ setup(
     name="blackhole",
     packages=find_packages(exclude=("tests",)),
     platforms=["linux"],
-    url="https://kura.github.io/blackhole/",
+    url="https://kura.gg/blackhole/",
     version=__version__,
     zip_safe=False,  # this is probably not correct, but I've never tested it.
 )

@@ -31,10 +31,10 @@ Documentation
 =============
 
 You can find the latest documentation `here
-<https://kura.github.io/blackhole/>`_.
+<https://kura.gg/blackhole/>`_.
 
 If you would like to contribute, please read the `contributors guide
-<https://kura.github.io/blackhole/overview.html#contributing>`_.
+<https://kura.gg/blackhole/overview.html#contributing>`_.
 
 The latest build status on `travis <https://travis-ci.com/kura/blackhole/>`_.
 
@@ -45,4 +45,4 @@ Changelog
 =========
 
 You can find a list of changes `on the
-blackhole website <https://kura.github.io/blackhole/changelog.html>`_.
+blackhole website <https://kura.gg/blackhole/changelog.html>`_.

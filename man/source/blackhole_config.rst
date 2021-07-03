@@ -274,7 +274,7 @@ SEE ALSO
 ========
 
 - **blackhole** (1)
-- `<https://kura.github.io/blackhole/configuration.html>`_
+- `<https://kura.gg/blackhole/configuration.html>`_
 
 LICENSE
 =======

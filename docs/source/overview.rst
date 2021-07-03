@@ -100,7 +100,7 @@ need to feel daunted. You can contribute in a variety of ways:
 
 - `Report bugs <https://github.com/kura/blackhole/issues>`_,
 - `fix bugs <https://github.com/kura/blackhole/issues>`_,
-- `add new behaviour <https://kura.github.io/blackhole/todo.html>`_,
+- `add new behaviour <https://kura.gg/blackhole/todo.html>`_,
 - `improve the documentation
   <https://github.com/kura/blackhole/tree/master/docs/source>`_,
 - `write tests <https://github.com/kura/blackhole/tree/master/tests>`_,

@@ -49,7 +49,7 @@ def parse_cmd_args(args):
     """
     Parse arguments from the command line.
 
-    https://kura.github.io/blackhole/configuration.html#command-line-options
+    https://kura.gg/blackhole/configuration.html#command-line-options
 
     :param list args: Command line arguments.
     :returns: Parsed command line arguments.
@@ -71,7 +71,7 @@ def parse_cmd_args(args):
     epilog = (
         "An explanation of all command line and all configuration "
         "options is provided here -- "
-        "https://kura.github.io/blackhole/configuration.html"
+        "https://kura.gg/blackhole/configuration.html"
     )
 
     parser = argparse.ArgumentParser(
@@ -202,7 +202,7 @@ class Config(metaclass=Singleton):
     Default values are provided as well as self-test functionality
     to sanity check configuration.
 
-    https://kura.github.io/blackhole/configuration.html#configuration-options
+    https://kura.gg/blackhole/configuration.html#configuration-options
     """
 
     args = None
@@ -286,7 +286,7 @@ class Config(metaclass=Singleton):
         """
         Validate config option is actually... valid...
 
-        https://kura.github.io/blackhole/configuration.html#configuration-options
+        https://kura.gg/blackhole/configuration.html#configuration-options
 
         :param str key: Configuration option.
         :raises ConfigException: When an invalid option is configured.
@@ -317,7 +317,7 @@ class Config(metaclass=Singleton):
         """
         How many workers to spawn to handle incoming connections.
 
-        https://kura.github.io/blackhole/configuration.html#workers
+        https://kura.gg/blackhole/configuration.html#workers
 
         :returns: Number of workers. Default: ``1``
         :rtype: :py:obj:`int`
@@ -339,7 +339,7 @@ class Config(metaclass=Singleton):
         """
         Address, port and socket family.
 
-        https://kura.github.io/blackhole/configuration.html#listen
+        https://kura.gg/blackhole/configuration.html#listen
 
         :returns: Listeners.
         :rtype: :py:obj:`list`
@@ -376,7 +376,7 @@ class Config(metaclass=Singleton):
         """
         Address and port and socket family for SSL/TLS connections.
 
-        https://kura.github.io/blackhole/configuration.html#tls-listen
+        https://kura.gg/blackhole/configuration.html#tls-listen
 
         :returns: TLS listeners. Default: ``[]``
         :rtype: :py:obj:`list`
@@ -392,7 +392,7 @@ class Config(metaclass=Singleton):
         """
         UNIX user.
 
-        https://kura.github.io/blackhole/configuration.html#user
+        https://kura.gg/blackhole/configuration.html#user
 
         :returns: User name.
         :rtype: :py:obj:`str`
@@ -412,7 +412,7 @@ class Config(metaclass=Singleton):
         """
         UNIX group.
 
-        https://kura.github.io/blackhole/configuration.html#group
+        https://kura.gg/blackhole/configuration.html#group
 
         :returns: Group name.
         :rtype: :py:obj:`str`
@@ -432,7 +432,7 @@ class Config(metaclass=Singleton):
         """
         Timeout in seconds.
 
-        https://kura.github.io/blackhole/configuration.html#timeout
+        https://kura.gg/blackhole/configuration.html#timeout
 
         :returns: Timeout in seconds. Default: ``60``
         :rtype: :py:obj:`int`
@@ -453,7 +453,7 @@ class Config(metaclass=Singleton):
         """
         TLS key file.
 
-        https://kura.github.io/blackhole/configuration.html#tls-key
+        https://kura.gg/blackhole/configuration.html#tls-key
 
         :returns: Path to a TLS key file. Default: ``None``
         :rtype: :py:obj:`str`
@@ -470,7 +470,7 @@ class Config(metaclass=Singleton):
         """
         TLS certificate file.
 
-        https://kura.github.io/blackhole/configuration.html#tls-cert
+        https://kura.gg/blackhole/configuration.html#tls-cert
 
         :returns: Path to a TLS certificate. Default: ``None``
         :rtype: :py:obj:`str`
@@ -487,7 +487,7 @@ class Config(metaclass=Singleton):
         """
         Diffie Hellman ephemeral parameters.
 
-        https://kura.github.io/blackhole/configuration.html#tls-dhparams
+        https://kura.gg/blackhole/configuration.html#tls-dhparams
 
         :returns: Path to a file containing dhparams. Default: ``None``
         :rtype: :py:obj:`str`
@@ -504,7 +504,7 @@ class Config(metaclass=Singleton):
         """
         Path to store the pid.
 
-        https://kura.github.io/blackhole/configuration.html#pidfile
+        https://kura.gg/blackhole/configuration.html#pidfile
 
         :returns: Path to a pid file. Default: ``/tmp/blackhole.pid``.
         :rtype: :py:obj:`str`
@@ -521,7 +521,7 @@ class Config(metaclass=Singleton):
         """
         Delay in seconds.
 
-        https://kura.github.io/blackhole/configuration.html#delay
+        https://kura.gg/blackhole/configuration.html#delay
 
         :returns: Delay in seconds. Default: ``None``
         :rtype: :py:obj:`int` or :py:obj:`None`
@@ -544,7 +544,7 @@ class Config(metaclass=Singleton):
         """
         Mode with which to respond.
 
-        https://kura.github.io/blackhole/configuration.html#mode
+        https://kura.gg/blackhole/configuration.html#mode
 
         :returns: A response mode. Default: ``accept``.
         :rtype: :py:obj:`str`
@@ -565,7 +565,7 @@ class Config(metaclass=Singleton):
         """
         Maximum size, in bytes, of a message.
 
-        https://kura.github.io/blackhole/configuration.html#max-message-size
+        https://kura.gg/blackhole/configuration.html#max-message-size
 
         :returns: Maximum message size in bytes. Default: ``512000``.
         :rtype: :py:obj:`int`
@@ -587,7 +587,7 @@ class Config(metaclass=Singleton):
         """
         Enable or disable dynamic switches.
 
-        https://kura.github.io/blackhole/configuration.html#dynamic-switch
+        https://kura.gg/blackhole/configuration.html#dynamic-switch
 
         :returns: Whether dynamic switches are enabled or not. Default:
                   ``True``.

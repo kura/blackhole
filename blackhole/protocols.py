@@ -126,7 +126,7 @@ class StreamReaderProtocol(asyncio.StreamReaderProtocol):
         .. note::
 
            Also handles client timeouts if they wait too long before sending
-           data. -- https://kura.github.io/blackhole/configuration.html#timeout
+           data. -- https://kura.gg/blackhole/configuration.html#timeout
         """
         while not self.connection_closed:
             try:

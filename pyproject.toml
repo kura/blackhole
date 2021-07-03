@@ -13,9 +13,9 @@ description = "Blackhole is an MTA (message transfer agent) that (figuratively) 
 authors = ["Kura <kura@kura.gg>"]
 license ="MIT"
 readme = "README.rst"
-homepage = "https://kura.github.io/blackhole/"
+homepage = "https://kura.gg/blackhole/"
 repository = "https://github.com/kura/blackhole"
-documentation = "https://kura.github.io/blackhole/"
+documentation = "https://kura.gg/blackhole/"
 keywords = [
     "blackhole",
     "asyncio",

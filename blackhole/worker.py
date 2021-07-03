@@ -145,7 +145,7 @@ class Worker:
 
            These message values are defined in the :mod:`blackhole.protocols`
            schema. Documentation is available at --
-           https://kura.github.io/blackhole/api-protocols.html
+           https://kura.gg/blackhole/api-protocols.html
         """
         while self._started:
             await asyncio.sleep(15)
@@ -181,7 +181,7 @@ class Worker:
 
            These message values are defined in the :mod:`blackhole.protocols`
            schema. Documentation is available at --
-           https://kura.github.io/blackhole/api-protocols.html
+           https://kura.gg/blackhole/api-protocols.html
         """
         while self._started:
             try:

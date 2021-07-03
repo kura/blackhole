@@ -1,8 +1,5 @@
 .\" Man page generated from reStructuredText.
 .
-.TH BLACKHOLE 1 "" "" ""
-.SH NAME
-Blackhole \- An MTA that (figuratively) pipes all mail to /dev/null.
 .
 .nr rst2man-indent-level 0
 .
@@ -30,6 +27,9 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
+.TH "BLACKHOLE" 1 "" "" ""
+.SH NAME
+Blackhole \- An MTA that (figuratively) pipes all mail to /dev/null.
 .SH SYNOPSIS
 .sp
 blackhole [OPTIONS]
@@ -51,22 +51,22 @@ but it\(aqs specifically designed with testing in mind.
 .SH OPTIONS
 .INDENT 0.0
 .TP
-.B \-h
+.B  \-h
 show this help message and exit
 .TP
-.B \-v
+.B  \-v
 show program\(aqs version number and exit
 .TP
 .BI \-c \ FILE
 override the default configuration options
 .TP
-.B \-t
+.B  \-t
 perform a configuration test and exit
 .TP
-.B \-d
+.B  \-d
 enable debugging mode
 .TP
-.B \-b
+.B  \-b
 run in the background
 .TP
 .BI \-l\fB s
@@ -74,7 +74,7 @@ Disable \fIssl.OP_SINGLE_DH_USE\fP and \fIssl.OP_SINGLE_ECDH_USE\fP\&.
 Reduces CPU overhead at the expense of security. Don\(aqt use this
 option unless you really need to.
 .TP
-.B \-q
+.B  \-q
 Suppress warnings when using \-ls/\-\-less\-secure, running as root or
 not using \fItls_dhparams\fP option.
 .UNINDENT
@@ -83,7 +83,7 @@ not using \fItls_dhparams\fP option.
 .IP \(bu 2
 \fBblackhole_config\fP (1)
 .IP \(bu 2
-\fI\%https://kura.github.io/blackhole/configuration.html\fP
+\fI\%https://kura.gg/blackhole/configuration.html\fP
 .UNINDENT
 .SH LICENSE
 .sp

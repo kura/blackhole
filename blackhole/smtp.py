@@ -78,8 +78,8 @@ class Smtp(StreamReaderProtocol):
     Dynamic switching will be disabled when mode= and delay= flags are
     configured.
 
-    https://kura.github.io/blackhole/configuration.html#listen
-    https://kura.github.io/blackhole/configuration.html#tls_listen
+    https://kura.gg/blackhole/configuration.html#listen
+    https://kura.gg/blackhole/configuration.html#tls_listen
     """
 
     _failed_commands = 0
@@ -198,7 +198,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for AUTH mechanisms.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         mechanisms = " ".join(self.get_auth_members())
         await self.push(250, f"Syntax: AUTH {mechanisms}")
@@ -307,7 +307,7 @@ class Smtp(StreamReaderProtocol):
 
         Sends the 421 timeout message to the client and closes the connection.
 
-        https://kura.github.io/blackhole/configuration.html#timeout
+        https://kura.gg/blackhole/configuration.html#timeout
         """
         logger.debug(
             f"Peer timed out, no data received for {self.config.timeout} "
@@ -341,7 +341,7 @@ class Smtp(StreamReaderProtocol):
         """
         Look up a help handler for the SMTP VERB.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
 
         :param list parts: A list of command data, split on spaces.
         :returns: A callable help handler.
@@ -371,7 +371,7 @@ class Smtp(StreamReaderProtocol):
         """
         Get a list of HELP handlers for verbs.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
 
         :returns: A list of available help handlers.
         :rtype: :py:obj:`list`
@@ -387,7 +387,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send a response to the HELP verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         msg = " ".join(self.get_help_members())
         await self.push(250, f"Supported commands: {msg}")
@@ -396,7 +396,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for HELO verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: HELO domain.tld")
 
@@ -408,7 +408,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the EHLO verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: EHLO domain.tld")
 
@@ -441,7 +441,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the MAIL TO verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: MAIL FROM: <address>")
 
@@ -487,7 +487,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send response to the RCPT TO verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: RCPT TO: <address>")
 
@@ -499,7 +499,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the DATA verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: DATA")
 
@@ -510,7 +510,7 @@ class Smtp(StreamReaderProtocol):
         Reads x-blackhole-delay and x-blackhole-mode headers and re-configures
         on-the-fly how the email is handled based on these headers.
 
-        https://kura.github.io/blackhole/dynamic-switches.html
+        https://kura.gg/blackhole/dynamic-switches.html
 
         :param str line: An email header.
         """
@@ -532,8 +532,8 @@ class Smtp(StreamReaderProtocol):
         """
         Send a response based on the configured response mode.
 
-        https://kura.github.io/blackhole/dynamic-switches.html#dynamic-delay-switches
-        https://kura.github.io/blackhole/configuration.html#mode
+        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches
+        https://kura.gg/blackhole/configuration.html#mode
 
         Response mode is configured in configuration file and can be overridden
         by email headers, if enabled.
@@ -560,11 +560,11 @@ class Smtp(StreamReaderProtocol):
 
         This method also implements the delay functionality, delaying a
         response after the final '\r\n.\r\n' line. --
-        https://kura.github.io/blackhole/configuration.html#delay
-        https://kura.github.io/blackhole/dynamic-switches.html#dynamic-delay-switches
+        https://kura.gg/blackhole/configuration.html#delay
+        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches
 
         This method implements restrictions on message sizes. --
-        https://kura.github.io/blackhole/configuration.html#max-message-size
+        https://kura.gg/blackhole/configuration.html#max-message-size
         """
         await self.push(354, "End data with <CR><LF>.<CR><LF>")
         on_body = False
@@ -601,7 +601,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the NOOP verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: NOOP")
 
@@ -613,7 +613,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the RSET verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: RSET")
 
@@ -632,7 +632,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the VRFY verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: VRFY <address>")
 
@@ -668,7 +668,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the EXPN verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: EXPN <list1 | list2 | list3 | all>")
 
@@ -796,7 +796,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the ETRN verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: ETRN")
 
@@ -808,7 +808,7 @@ class Smtp(StreamReaderProtocol):
         """
         Send help for the QUIT verb.
 
-        https://kura.github.io/blackhole/communicating-with-blackhole.html#help
+        https://kura.gg/blackhole/communicating-with-blackhole.html#help
         """
         await self.push(250, "Syntax: QUIT")
 
@@ -847,8 +847,8 @@ class Smtp(StreamReaderProtocol):
 
         Value is in seconds, with a maximum value of 60 seconds.
 
-        https://kura.github.io/blackhole/configuration.html#delay
-        https://kura.github.io/blackhole/dynamic-switches.html#dynamic-delay-switches
+        https://kura.gg/blackhole/configuration.html#delay
+        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches
 
         :returns: A delay time in seconds. Default: ``None``.
         :rtype: :py:obj:`int` or :py:obj:`None`
@@ -881,8 +881,8 @@ class Smtp(StreamReaderProtocol):
         """
         Generate a delay from a range provided in the email header.
 
-        https://kura.github.io/blackhole/configuration.html#delay
-        https://kura.github.io/blackhole/dynamic-switches.html#dynamic-delay-switches
+        https://kura.gg/blackhole/configuration.html#delay
+        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches
 
         :param str value: A list of minimum and maximum values as a string.
                           i.e. (10, 20).
@@ -931,8 +931,8 @@ class Smtp(StreamReaderProtocol):
         """
         Generate a delay from a value provided in an email header.
 
-        https://kura.github.io/blackhole/configuration.html#delay
-        https://kura.github.io/blackhole/dynamic-switches.html#dynamic-delay-switches
+        https://kura.gg/blackhole/configuration.html#delay
+        https://kura.gg/blackhole/dynamic-switches.html#dynamic-delay-switches
 
         :param str value: Time in seconds as a string.
 
@@ -972,8 +972,8 @@ class Smtp(StreamReaderProtocol):
         Reponse is configured in the configuration file or configured from
         email headers, if configured to allow that option.
 
-        https://kura.github.io/blackhole/configuration.html#mode
-        https://kura.github.io/blackhole/dynamic-switches.html#dynamic-mode-switches
+        https://kura.gg/blackhole/configuration.html#mode
+        https://kura.gg/blackhole/dynamic-switches.html#dynamic-mode-switches
 
         :returns: A response mode.
         :rtype: :py:obj:`str`
