@@ -234,7 +234,7 @@
 <span class="sd">        Handle a client connection.</span>
 
 <span class="sd">        This method greets the client and then accepts and handles each line</span>
-<span class="sd">        the client sends, passing off to the currect verb handler.</span>
+<span class="sd">        the client sends, passing off to the correct verb handler.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">greet</span><span class="p">()</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_closed</span><span class="p">:</span>
@@ -295,7 +295,7 @@
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;auth_</span><span class="si">{</span><span class="n">mechanism</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">auth_UNKNOWN</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Smtp.auth_UNKNOWN"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.auth_UNKNOWN">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">auth_UNKNOWN</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Response to an unknown auth mechamism.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Response to an unknown auth mechanism.&quot;&quot;&quot;</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">501</span><span class="p">,</span> <span class="s2">&quot;5.5.4 Syntax: AUTH mechanism&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Smtp.help_AUTH"><a class="viewcode-back" href="../../api-smtp.html#blackhole.smtp.Smtp.help_AUTH">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">help_AUTH</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1073,7 +1073,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        How to respond to an email, based on configuration.</span>
 
-<span class="sd">        Reponse is configured in the configuration file or configured from</span>
+<span class="sd">        Response is configured in the configuration file or configured from</span>
 <span class="sd">        email headers, if configured to allow that option.</span>
 
 <span class="sd">        https://kura.gg/blackhole/configuration.html#mode</span>

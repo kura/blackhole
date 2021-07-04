@@ -174,7 +174,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
         <span class="c1"># This is not a nice way to do this but, socket.getfqdn silently fails</span>
-        <span class="c1"># and craches inbound connections when called after os.fork</span>
+        <span class="c1"># and crashes inbound connections when called after os.fork</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fqdn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">mailname</span>
 
     <span class="k">def</span> <span class="nf">flags_from_transport</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

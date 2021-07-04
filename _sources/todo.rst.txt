@@ -35,7 +35,7 @@ Things on the todo list, in no particular order.
 - Strip out :any:`blackhole.config.Config` context and make it loadable on
   creation -- allowing any config context to be passed.
 - Command injection -- move HELO, EHLO etc to separate modules, allowing them
-  to be injected and that injection to be overriden by a user-defined method.
+  to be injected and that injection to be overridden by a user-defined method.
 - Add auth mechanisms as injectables, special injectables that, unlike the
   command inections, these are injected specially in to the auth system.
 
