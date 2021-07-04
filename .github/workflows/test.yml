@@ -1,4 +1,4 @@
-name: Test Blackhole
+name: run_tests
 
 on:
   push:
