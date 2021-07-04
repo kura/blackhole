@@ -158,8 +158,7 @@ Things to do before submitting a pull request
 Running tests
 -------------
 
-You can find the latest tests against the source code on `travis
-<https://travis-ci.com/kura/blackhole/>`_.
+You can find the latest tests against the source code on `GitHub <https://github.com/kura/blackhole/actions/workflows/ci.yml>`_.
 
 Running tests manually is pretty simple, there is a `Makefile` target dedicated
 to it.

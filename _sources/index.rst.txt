@@ -22,9 +22,9 @@
     # OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
     # USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-=============================
-Blackhole |travis| |coverage|
-=============================
+====================================
+Blackhole |githubactions| |coverage|
+====================================
 
 Blackhole is an `MTA (message transfer agent)
 <https://en.wikipedia.org/wiki/Message_transfer_agent>`_ that (figuratively)
@@ -56,8 +56,8 @@ User Guide
     api
 
 
-.. |travis| image:: https://img.shields.io/travis/kura/blackhole/master.svg?style=for-the-badge&label=tests&logo=travis
-    :target: https://travis-ci.com/kura/blackhole
+.. |githubactions| image:: https://img.shields.io/github/workflow/status/kura/blackhole/CI?style=for-the-badge&label=tests&logo=githubactions
+    :target: https://github.com/kura/blackhole/actions/workflows/ci.yml 
     :alt: Build status of the master branch
 
 .. |coverage| image:: https://img.shields.io/codecov/c/github/kura/blackhole/master.svg?style=for-the-badge&label=coverage&logo=codecov
