@@ -57,6 +57,7 @@ jobs:
         run: tox -e coverage-report
       - name: Upload coverage
         uses: codecov/codecov-action@v1.0.10
+        if: github.ref == 'refs/heads/master'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
