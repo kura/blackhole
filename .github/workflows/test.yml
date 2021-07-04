@@ -37,3 +37,5 @@ jobs:
           make
           sudo make install
           popd
+      - name: Lint
+        run: tox -e lint
