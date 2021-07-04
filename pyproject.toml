@@ -8,7 +8,7 @@ target-version = ['py37', 'py38', 'py39']
 
 [tool.poetry]
 name = "blackhole"
-version = "2.1.16"
+version = "2.1.17"
 description = "Blackhole is an MTA (message transfer agent) that (figuratively) pipes all mail to /dev/null."
 authors = ["Kura <kura@kura.gg>"]
 license ="MIT"

@@ -25,6 +25,17 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.17:
+
+2.1.17
+======
+
+- Release to update PyPI pages to remove references to Travis CI.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.16:
 
 2.1.16
@@ -32,10 +43,6 @@ Current release
 
 - Blackhole now officially supports Python 3.9.
 - Blackhole no longer supports Python 3.6.
-
--------------
-Past releases
--------------
 
 .. _2.1.15:
 
