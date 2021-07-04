@@ -1,0 +1,35 @@
+name: Test Blackhole
+
+on: [push, pull_request]
+  workflow_dispact:
+
+jobs:
+   build:
+   run-on: ubuntu-latest
+   strategy:
+     matrix:
+       python-version: ['3.7', '3.8', '3.9', 'pypy-3.7']
+   defaults:
+     run:
+       shell: bash
+   steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Apt install
+        run: sudo apt install shellcheck
+      - name: Pip install
+        run: pip install codecov tox
+      - name: Build and install uvloop
+        run: |
+          git clone https://github.com/libuv/libuv.git
+          pushd libuv
+          git checkout $(git describe --tags)
+          sh autogen.sh
+          ./configure
+          make
+          sudo make install
+          popd
