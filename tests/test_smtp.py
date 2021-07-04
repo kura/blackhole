@@ -201,7 +201,7 @@ class Controller:
 
     def _stop(self):
         self.loop.stop()
-        for task in asyncio.Task.all_tasks(self.loop):
+        for task in asyncio.all_tasks(self.loop):
             task.cancel()
 
 
