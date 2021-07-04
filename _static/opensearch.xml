@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
   <ShortName>Blackhole</ShortName>
-  <Description>Search Blackhole 2.1.16 documentation</Description>
+  <Description>Search Blackhole 2.1.17 documentation</Description>
   <InputEncoding>utf-8</InputEncoding>
   <Url type="text/html" method="get"
        template="https://kura.gg/blackhole/search.html?q={searchTerms}"/>
-  <LongName>Blackhole 2.1.16 documentation</LongName>
+  <LongName>Blackhole 2.1.17 documentation</LongName>
   
 </OpenSearchDescription>
