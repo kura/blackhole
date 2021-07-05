@@ -8,7 +8,7 @@ target-version = ['py37', 'py38', 'py39']
 
 [tool.poetry]
 name = "blackhole"
-version = "2.1.17"
+version = "2.1.18"
 description = "Blackhole is an MTA (message transfer agent) that (figuratively) pipes all mail to /dev/null."
 authors = ["Kura <kura@kura.gg>"]
 license ="MIT"
@@ -91,6 +91,7 @@ flake8-commas = {version = "^2.0.0", optional = true}
 pydocstyle = {version = "^5.1.0", optional = true}
 doc8 = {version = "^0.8.1", optional = true}
 codespell = {version = "^2.1.0", optional = true}
+vulture = {version = "^2.3", optional = true}
 
 [tool.poetry.extras]
 uvloop = ["uvloop"]
@@ -115,7 +116,8 @@ tests = [
     "bandit",
     "pydocstyle",
     "doc8",
-    "codespell"
+    "codespell",
+    "vulture"
 ]
 dev = [
     "uvloop",
@@ -139,7 +141,8 @@ dev = [
     "bandit",
     "tox",
     "pre-commit",
-    "codespell"
+    "codespell",
+    "vulture"
 ]
 
 [tool.pytest]

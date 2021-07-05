@@ -36,7 +36,7 @@ assert sys.version_info >= (
     3,
     7,
     0,
-), "blackhole requires Python 3.7+ or PyPy 3.7+"
+), "blackhole requires Python 3.7+, PyPy 3.7+, or Pyston 2.2+"
 
 
 class PyTest(TestCommand):
@@ -99,6 +99,8 @@ extras_require = {
         "pytest-cov",
         "pytest-clarity",
         "doc8",
+        "codespell",
+        "vulture",
     ],
 }
 

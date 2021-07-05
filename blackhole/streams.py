@@ -38,7 +38,7 @@ logger = logging.getLogger("blackhole.streams")
 class StreamProtocol(asyncio.streams.FlowControlMixin, asyncio.Protocol):
     """Helper class to adapt between Protocol and StreamReader."""
 
-    def __init__(self, *, loop=None, disconnect_error=RuntimeError, **kwargs):
+    def __init__(self, *, loop=None, **kwargs):
         """Stream protocol."""
         super().__init__(loop=loop)
         self.transport = None

@@ -31,7 +31,7 @@ Overview
 Requirements
 ============
 
-- Python 3.7+ or PyPy 3.7+
+- Python 3.7+, PyPy 3.7+, or Pyston 2.2+
 
 
 .. _installation:

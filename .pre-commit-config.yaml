@@ -1,24 +1,26 @@
 fail_fast: true
+exclude: ^(\.tox/|\.coverage|poetry\.lock)
 repos:
   - repo: https://github.com/psf/black
-    rev: stable
+    rev: 21.6b0
     hooks:
       - id: black
 
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.7.8
+    rev: 3.9.2
     hooks:
       - id: flake8
+        additional_dependencies: [flake8-bugbear, flake8-isort, flake8-commas]
 
   - repo: https://github.com/timothycrosley/isort
-    rev: 4.3.21-2
+    rev: 5.9.2
     hooks:
       - id: isort
         additional_dependencies: [toml]
         exclude: ^.*/tests/.*\.py$
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v4.0.1
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -28,3 +30,6 @@ repos:
       - id: check-symlinks
       - id: debug-statements
       - id: fix-encoding-pragma
+      - id: check-toml
+      - id: check-yaml
+      - id: destroyed-symlinks
