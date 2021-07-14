@@ -25,16 +25,23 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.18:
+
+2.1.18
+======
+
+- Blackhole now officially supports Pyston 2.2 and above.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.17:
 
 2.1.17
 ======
 
 - Release to update PyPI pages to remove references to Travis CI.
-
--------------
-Past releases
--------------
 
 .. _2.1.16:
 
