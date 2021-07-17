@@ -45,7 +45,9 @@ jobs:
           sudo make install
           popd
       - name: Run tests
-        run: tox -vv
+        env:
+          TOX_PARALLEL_NO_SPINNER: 1
+        run: tox -vvp
       - name: Generate coverage report
         run: tox -e coverage-report
       - name: Upload coverage

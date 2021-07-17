@@ -26,6 +26,12 @@ randomly do either of those two actions.
 Think of Blackhole sort of like a honeypot in terms of how it handles mail, but
 it's specifically designed with testing in mind.
 
+Python support
+==============
+
+- Python 3.7+
+- PyPy 3.7+
+- Pyston 2.2+
 
 Documentation
 =============
