@@ -31,8 +31,16 @@ Overview
 Requirements
 ============
 
+Python support
+--------------
+
 - Python 3.7+, PyPy 3.7+, or Pyston 2.2+
 
+Extras
+------
+
+- `setproctitle` if you wish to have named processes
+- `uvloop` if you wish to use `libuv`
 
 .. _installation:
 
@@ -45,6 +53,27 @@ PyPI
 .. code-block:: bash
 
   pip install blackhole
+
+Installing with extas
+#####################
+
+- For uvloop support
+
+.. code-block:: bash
+
+  pip install blackhole[uvloop]
+
+- For setproctitle support
+
+.. code-block:: bash
+
+  pip install blackhole[setproctitle]
+
+For both `uvloop` and `setproctitle`
+
+.. code-block:: bash
+
+  pip install blackhole[uvloop,setproctitle]
 
 Source
 ------

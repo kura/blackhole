@@ -119,9 +119,19 @@
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
 <section id="requirements">
 <span id="id1"></span><h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<section id="python-support">
+<h3>Python support<a class="headerlink" href="#python-support" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Python 3.7+, PyPy 3.7+, or Pyston 2.2+</p></li>
 </ul>
+</section>
+<section id="extras">
+<h3>Extras<a class="headerlink" href="#extras" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><cite>setproctitle</cite> if you wish to have named processes</p></li>
+<li><p><cite>uvloop</cite> if you wish to use <cite>libuv</cite></p></li>
+</ul>
+</section>
 </section>
 <section id="installation">
 <span id="id2"></span><h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
@@ -130,6 +140,25 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install blackhole
 </pre></div>
 </div>
+<section id="installing-with-extas">
+<h4>Installing with extas<a class="headerlink" href="#installing-with-extas" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p>For uvloop support</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install blackhole<span class="o">[</span>uvloop<span class="o">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>For setproctitle support</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install blackhole<span class="o">[</span>setproctitle<span class="o">]</span>
+</pre></div>
+</div>
+<p>For both <cite>uvloop</cite> and <cite>setproctitle</cite></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install blackhole<span class="o">[</span>uvloop,setproctitle<span class="o">]</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="source">
 <h3>Source<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h3>
