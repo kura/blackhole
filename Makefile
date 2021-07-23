@@ -69,9 +69,13 @@ test_py39:
 test_pypy:
 	tox -vvp -e pypy3,pypy3-setproctitle,py39-uvloop
 
-.PHONY: test_pyston-3
-test_pyston-3:
-	tox -vvp -e pyston-3,pyston-3-setproctitle,pyston-3-uvloop
+.PHONY: test_pyston-2.2
+test_pyston-2.2:
+	tox -vvp -e pyston-2.2,pyston-2.2-setproctitle,pyston-2.2-uvloop
+
+.PHONY: test_pyston-2.3
+test_pyston-2.3:
+        tox -vvp -e pyston-2.3,pyston-2.3-setproctitle,pyston-2.3-uvloop
 
 .PHONY: test_build
 test_build:
