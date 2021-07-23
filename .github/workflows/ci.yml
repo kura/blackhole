@@ -25,7 +25,7 @@ jobs:
         run: |
           git clone https://github.com/pyenv/pyenv.git ~/.pyenv
           ~/.pyenv/bin/pyenv install ${{ matrix.python-version }}
-          echo "$HOME/.pyenv/versions/${{ $matrix.python-version }}/bin" >> $GITHUB_PATH
+          echo "$HOME/.pyenv/versions/${{ matrix.python-version }}/bin" >> $GITHUB_PATH
           echo "TOXENV=${{ matrix.python-version }},${{ matrix.python-version-uvloop }},${{ matrix.python-version-setproctitle }}" >> $GITHUB_ENV
       - uses: actions/cache@v2
         with:
