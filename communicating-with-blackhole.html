@@ -1,415 +1,82 @@
+<!DOCTYPE html><html> <head><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><meta name=generator content="Docutils 0.17.1: http://docutils.sourceforge.net/"><link rel=stylesheet type=text/css href=_static/fonts/open-sans/stylesheet.css><link rel=stylesheet type=text/css href=_static/fonts/source-serif-pro/source-serif-pro.css><link rel=stylesheet type=text/css href=_static/css/bootstrap.min.css><link rel=stylesheet type=text/css href=_static/css/bootstrap-theme.min.css><meta name=viewport content="width=device-width, initial-scale=1.0"><title>Communicating with Blackhole &#8212; Blackhole 2.1.19 documentation</title><link rel=stylesheet type=text/css href=_static/pygments.css><link rel=stylesheet type=text/css href=_static/blackhole.css><script data-url_root=./ id=documentation_options src=_static/documentation_options.js></script><script src=_static/jquery.js></script><script src=_static/underscore.js></script><script src=_static/doctools.js></script><link rel=search type=application/opensearchdescription+xml title="Search within Blackhole 2.1.19 documentation" href=_static/opensearch.xml><link rel=index title=Index href=genindex.html><link rel=search title=Search href=search.html><link rel=next title="Dynamic responses" href=dynamic-responses.html><link rel=prev title=Configuration href=configuration.html></head><body> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=genindex.html title="General Index" accesskey=I>index</a></li> <li class=right> <a href=py-modindex.html title="Python Module Index">modules</a> |</li> <li class=right> <a href=dynamic-responses.html title="Dynamic responses" accesskey=N>next</a> |</li> <li class=right> <a href=configuration.html title=Configuration accesskey=P>previous</a> |</li> <li class="nav-item nav-item-0"><a href=index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-this"><a href>Communicating with Blackhole</a></li> </ul> </div> <div class=container-wrapper> <div id=mobile-toggle> <a href=#><span class="glyphicon glyphicon-align-justify" aria-hidden=true></span></a> </div> <div id=left-column> <div class=sphinxsidebar><a href="
+    index.html" class=text-logo>Blackhole</a><div class=sidebar-block> <div class=sidebar-wrapper> <h2>Table Of Contents</h2> </div> <div class=sidebar-toc> <ul class=current><li class=toctree-l1><a class="reference internal" href=overview.html>Overview</a></li><li class=toctree-l1><a class="reference internal" href=configuration.html>Configuration</a></li><li class="toctree-l1 current"><a class="current reference internal" href=#>Communicating with Blackhole</a><ul><li class=toctree-l2><a class="reference internal" href=#with-python>With Python</a></li><li class=toctree-l2><a class="reference internal" href=#supported-commands-verbs-parameters>Supported commands/verbs &amp; parameters</a></li><li class=toctree-l2><a class="reference internal" href=#response-codes>Response codes</a></li></ul></li><li class=toctree-l1><a class="reference internal" href=dynamic-responses.html>Dynamic responses</a></li><li class=toctree-l1><a class="reference internal" href=dynamic-switches.html>Dynamic Switches</a></li><li class=toctree-l1><a class="reference internal" href=api.html>API</a></li></ul> </div></div><div class=sidebar-block> <div class=sidebar-wrapper> <div id=main-search> <form class=form-inline action=search.html method=GET role=form> <div class=input-group> <input name=q type=text class=form-control placeholder=Search...> </div> <input type=hidden name=check_keywords value=yes> <input type=hidden name=area value=default> </form> </div> </div></div> </div> </div> <div id=right-column> <div role=navigation aria-label="breadcrumbs navigation"> <ol class=breadcrumb> <li><a href=index.html>Docs</a></li> <li>Communicating with Blackhole</li> </ol> </div> <div class="document clearer body"> <section id=communicating-with-blackhole><h1>Communicating with Blackhole<a class=headerlink href=#communicating-with-blackhole title="Permalink to this headline">¶</a></h1><section id=with-python><h2>With Python<a class=headerlink href=#with-python title="Permalink to this headline">¶</a></h2><div class="highlight-python notranslate"><div class=highlight><pre><span></span><span class=c1># from smtplib import SMTP             # For sending without SSL/TLS.</span>
+<span class=kn>from</span> <span class=nn>smtplib</span> <span class=kn>import</span> <span class=n>SMTP_SSL</span>
 
-<!DOCTYPE html>
+<span class=n>server</span> <span class=o>=</span> <span class=s1>&#39;blackhole.io&#39;</span>  <span class=c1># Change this to your server address.</span>
+<span class=n>msg</span> <span class=o>=</span> <span class=s1>&#39;&#39;&#39;From: &lt;test@blackhole.io&gt;</span>
+<span class=s1>To: &lt;test@blackhole.io&gt;</span>
+<span class=s1>Subject: Test email</span>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<span class=s1>Random test email. Some UTF-8 characters: ßæøþ&#39;&#39;&#39;</span>
 
-  
-  <!-- Licensed under the Apache 2.0 License -->
-  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
-  <!-- Licensed under the SIL Open Font License -->
-  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
-  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <title>Communicating with Blackhole &#8212; Blackhole 2.1.19 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/blackhole.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Blackhole 2.1.19 documentation"
-          href="_static/opensearch.xml"/>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Dynamic responses" href="dynamic-responses.html" />
-    <link rel="prev" title="Configuration" href="configuration.html" />
-  
-   
+<span class=c1># smtp = SMTP(server, 25)      # For sending without SSL/TLS.</span>
+<span class=n>smtp</span> <span class=o>=</span> <span class=n>SMTP_SSL</span><span class=p>(</span><span class=n>server</span><span class=p>,</span> <span class=mi>465</span><span class=p>)</span>
+<span class=n>smtp</span><span class=o>.</span><span class=n>sendmail</span><span class=p>(</span><span class=s1>&#39;test@blackhole.io&#39;</span><span class=p>,</span> <span class=s1>&#39;test@blackhole.io&#39;</span><span class=p>,</span>
+              <span class=n>msg</span><span class=o>.</span><span class=n>encode</span><span class=p>(</span><span class=s1>&#39;utf-8&#39;</span><span class=p>))</span>
 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="dynamic-responses.html" title="Dynamic responses"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="configuration.html" title="Configuration"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Communicating with Blackhole</a></li> 
-      </ul>
-    </div>
-    <div class="container-wrapper">
+<span class=c1># We can send multiple messages using the same connection.</span>
+<span class=n>smtp</span><span class=o>.</span><span class=n>sendmail</span><span class=p>(</span><span class=n>server</span><span class=p>,</span> <span class=s1>&#39;tset@blackhole.io&#39;</span><span class=p>,</span>
+              <span class=n>msg</span><span class=o>.</span><span class=n>encode</span><span class=p>(</span><span class=s1>&#39;utf-8&#39;</span><span class=p>))</span>
 
-      <div id="mobile-toggle">
-        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
-      </div>
-  <div id="left-column">
-    <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">Blackhole</a>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Communicating with Blackhole</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#with-python">With Python</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#supported-commands-verbs-parameters">Supported commands/verbs &amp; parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#response-codes">Response codes</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="dynamic-responses.html">Dynamic responses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dynamic-switches.html">Dynamic Switches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
-</ul>
+<span class=c1># Quit after we&#39;re done</span>
+<span class=n>smtp</span><span class=o>.</span><span class=n>quit</span><span class=p>()</span>
+</pre></div></div></section><section id=supported-commands-verbs-parameters><span id=commands></span><h2>Supported commands/verbs &amp; parameters<a class=headerlink href=#supported-commands-verbs-parameters title="Permalink to this headline">¶</a></h2><ul class=simple><li><p><a class="reference internal" href=command-auth.html#auth><span class="std std-ref">AUTH</span></a></p></li><li><p><a class="reference internal" href=#data>DATA</a></p></li><li><p><a class="reference internal" href=#ehlo>EHLO</a></p></li><li><p><a class="reference internal" href=#etrn>ETRN</a></p></li><li><p><a class="reference internal" href=command-expn.html#expn><span class="std std-ref">EXPN</span></a></p></li><li><p><a class="reference internal" href=#helo>HELO</a></p></li><li><p><a class="reference internal" href=#help>HELP</a></p></li><li><p><a class="reference internal" href=#mail>MAIL</a> <strong>BODY=</strong> <a class="reference internal" href=#bit>7BIT</a>, <a class="reference internal" href=#bitmime>8BITMIME</a>, <a class="reference internal" href=#smtputf8>SMTPUTF8</a> <strong>SIZE=</strong> <a class="reference internal" href=#size>SIZE</a></p></li><li><p><a class="reference internal" href=#noop>NOOP</a></p></li><li><p><a class="reference internal" href=#quit>QUIT</a></p></li><li><p><a class="reference internal" href=#rcpt>RCPT</a></p></li><li><p><a class="reference internal" href=#rset>RSET</a></p></li><li><p><a class="reference internal" href=command-vrfy.html#vrfy><span class="std std-ref">VRFY</span></a></p></li></ul><hr class=docutils><section id=data><span id=id1></span><h3>DATA<a class=headerlink href=#data title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>DATA</strong></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>DATA</span>
+<span class=go>354 End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;</span>
+<span class=gp>&gt;&gt;&gt; </span><span class=n>some</span> <span class=n>email</span> <span class=n>content</span>
+<span class=gp>&gt;&gt;&gt; </span><span class=o>.</span>
+</pre></div></div><hr class=docutils></section><section id=ehlo><span id=id2></span><h3>EHLO<a class=headerlink href=#ehlo title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>EHLO</strong> <em>domain.tld</em></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>EHLO</span> <span class=n>domain</span><span class=o>.</span><span class=n>tld</span>
+<span class=go>250-blackhole.io</span>
+<span class=go>250-HELP</span>
+<span class=go>250-PIPELINING</span>
+<span class=go>250-AUTH CRAM-MD5 LOGIN PLAIN</span>
+<span class=go>250-SIZE</span>
+<span class=go>250-VRFY</span>
+<span class=go>250-ETRN</span>
+<span class=go>250-ENHANCEDSTATUSCODES</span>
+<span class=go>250-8BITMIME</span>
+<span class=go>250-SMTPUTF8</span>
+<span class=go>250 DSN</span>
+</pre></div></div><hr class=docutils></section><section id=etrn><span id=id3></span><h3>ETRN<a class=headerlink href=#etrn title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>ETRN</strong></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>ETRN</span>
+<span class=go>250 Queueing started</span>
+</pre></div></div><hr class=docutils></section><section id=helo><span id=id4></span><h3>HELO<a class=headerlink href=#helo title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>HELO</strong> <em>domain.tld</em></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>HELO</span> <span class=n>domain</span><span class=o>.</span><span class=n>tld</span>
+<span class=go>250 OK</span>
+</pre></div></div><hr class=docutils></section><section id=help><span id=id5></span><h3>HELP<a class=headerlink href=#help title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>HELP</strong></p></dd><dt class=field-even>Optional</dt><dd class=field-even><p><em>COMMAND</em></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>HELP</span>
+<span class=go>250 Supported commands: AUTH DATA EHLO ETRN HELO MAIL NOOP QUIT RCPT RSET</span>
+<span class=go>                        VRFY</span>
 
-    
-  </div>
-</div>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <div id="main-search">
-      <form class="form-inline" action="search.html" method="GET" role="form">
-        <div class="input-group">
-          <input name="q" type="text" class="form-control" placeholder="Search...">
-        </div>
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-      </form>
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-        <div id="right-column">
-          
-          <div role="navigation" aria-label="breadcrumbs navigation">
-            <ol class="breadcrumb">
-              <li><a href="index.html">Docs</a></li>
-              
-              <li>Communicating with Blackhole</li>
-            </ol>
-          </div>
-          
-          <div class="document clearer body">
-            
-  <section id="communicating-with-blackhole">
-<h1>Communicating with Blackhole<a class="headerlink" href="#communicating-with-blackhole" title="Permalink to this headline">¶</a></h1>
-<section id="with-python">
-<h2>With Python<a class="headerlink" href="#with-python" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># from smtplib import SMTP             # For sending without SSL/TLS.</span>
-<span class="kn">from</span> <span class="nn">smtplib</span> <span class="kn">import</span> <span class="n">SMTP_SSL</span>
-
-<span class="n">server</span> <span class="o">=</span> <span class="s1">&#39;blackhole.io&#39;</span>  <span class="c1"># Change this to your server address.</span>
-<span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;From: &lt;test@blackhole.io&gt;</span>
-<span class="s1">To: &lt;test@blackhole.io&gt;</span>
-<span class="s1">Subject: Test email</span>
-
-<span class="s1">Random test email. Some UTF-8 characters: ßæøþ&#39;&#39;&#39;</span>
-
-<span class="c1"># smtp = SMTP(server, 25)      # For sending without SSL/TLS.</span>
-<span class="n">smtp</span> <span class="o">=</span> <span class="n">SMTP_SSL</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="mi">465</span><span class="p">)</span>
-<span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="s1">&#39;test@blackhole.io&#39;</span><span class="p">,</span> <span class="s1">&#39;test@blackhole.io&#39;</span><span class="p">,</span>
-              <span class="n">msg</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
-
-<span class="c1"># We can send multiple messages using the same connection.</span>
-<span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="s1">&#39;tset@blackhole.io&#39;</span><span class="p">,</span>
-              <span class="n">msg</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
-
-<span class="c1"># Quit after we&#39;re done</span>
-<span class="n">smtp</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="supported-commands-verbs-parameters">
-<span id="commands"></span><h2>Supported commands/verbs &amp; parameters<a class="headerlink" href="#supported-commands-verbs-parameters" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><a class="reference internal" href="command-auth.html#auth"><span class="std std-ref">AUTH</span></a></p></li>
-<li><p><a class="reference internal" href="#data">DATA</a></p></li>
-<li><p><a class="reference internal" href="#ehlo">EHLO</a></p></li>
-<li><p><a class="reference internal" href="#etrn">ETRN</a></p></li>
-<li><p><a class="reference internal" href="command-expn.html#expn"><span class="std std-ref">EXPN</span></a></p></li>
-<li><p><a class="reference internal" href="#helo">HELO</a></p></li>
-<li><p><a class="reference internal" href="#help">HELP</a></p></li>
-<li><p><a class="reference internal" href="#mail">MAIL</a> <strong>BODY=</strong> <a class="reference internal" href="#bit">7BIT</a>, <a class="reference internal" href="#bitmime">8BITMIME</a>, <a class="reference internal" href="#smtputf8">SMTPUTF8</a> <strong>SIZE=</strong> <a class="reference internal" href="#size">SIZE</a></p></li>
-<li><p><a class="reference internal" href="#noop">NOOP</a></p></li>
-<li><p><a class="reference internal" href="#quit">QUIT</a></p></li>
-<li><p><a class="reference internal" href="#rcpt">RCPT</a></p></li>
-<li><p><a class="reference internal" href="#rset">RSET</a></p></li>
-<li><p><a class="reference internal" href="command-vrfy.html#vrfy"><span class="std std-ref">VRFY</span></a></p></li>
-</ul>
-<hr class="docutils" />
-<section id="data">
-<span id="id1"></span><h3>DATA<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>DATA</strong></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">DATA</span>
-<span class="go">354 End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">some</span> <span class="n">email</span> <span class="n">content</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="o">.</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="ehlo">
-<span id="id2"></span><h3>EHLO<a class="headerlink" href="#ehlo" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>EHLO</strong> <em>domain.tld</em></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">EHLO</span> <span class="n">domain</span><span class="o">.</span><span class="n">tld</span>
-<span class="go">250-blackhole.io</span>
-<span class="go">250-HELP</span>
-<span class="go">250-PIPELINING</span>
-<span class="go">250-AUTH CRAM-MD5 LOGIN PLAIN</span>
-<span class="go">250-SIZE</span>
-<span class="go">250-VRFY</span>
-<span class="go">250-ETRN</span>
-<span class="go">250-ENHANCEDSTATUSCODES</span>
-<span class="go">250-8BITMIME</span>
-<span class="go">250-SMTPUTF8</span>
-<span class="go">250 DSN</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="etrn">
-<span id="id3"></span><h3>ETRN<a class="headerlink" href="#etrn" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>ETRN</strong></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ETRN</span>
-<span class="go">250 Queueing started</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="helo">
-<span id="id4"></span><h3>HELO<a class="headerlink" href="#helo" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>HELO</strong> <em>domain.tld</em></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">HELO</span> <span class="n">domain</span><span class="o">.</span><span class="n">tld</span>
-<span class="go">250 OK</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="help">
-<span id="id5"></span><h3>HELP<a class="headerlink" href="#help" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>HELP</strong></p>
-</dd>
-<dt class="field-even">Optional</dt>
-<dd class="field-even"><p><em>COMMAND</em></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">HELP</span>
-<span class="go">250 Supported commands: AUTH DATA EHLO ETRN HELO MAIL NOOP QUIT RCPT RSET</span>
-<span class="go">                        VRFY</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">HELP</span> <span class="n">AUTH</span>
-<span class="go">250 Syntax: AUTH CRAM-MD5 LOGIN PLAIN</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="smtputf8">
-<span id="bitmime"></span><span id="bit"></span><span id="mail"></span><span id="id6"></span><h3>MAIL<a class="headerlink" href="#smtputf8" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>MAIL FROM:</strong> <em>&lt;user&#64;domain.tld&gt;</em></p>
-</dd>
-<dt class="field-even">Optional</dt>
-<dd class="field-even"><p>BODY= <em>7BIT, 8BITMIME</em></p>
-</dd>
-<dt class="field-odd">Optional</dt>
-<dd class="field-odd"><p><em>SMTPUTF8</em></p>
-</dd>
-<dt class="field-even">Optional</dt>
-<dd class="field-even"><p>SIZE= <em>SIZE</em></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MAIL</span> <span class="n">FROM</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span><span class="o">&gt;</span>
-<span class="go">250 2.1.0 OK</span>
-</pre></div>
-</div>
-<section id="body">
-<h4>BODY=<a class="headerlink" href="#body" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MAIL</span> <span class="n">FROM</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span><span class="o">&gt;</span> <span class="n">BODY</span><span class="o">=</span><span class="mi">7</span><span class="n">BIT</span>
-<span class="go">250 2.1.0 OK</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MAIL</span> <span class="n">FROM</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span><span class="o">&gt;</span> <span class="n">BODY</span><span class="o">=</span><span class="mi">8</span><span class="n">BITMIME</span>
-<span class="go">250 2.1.0 OK</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MAIL</span> <span class="n">FROM</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span><span class="o">&gt;</span> <span class="n">SMTPUTF8</span>
-<span class="go">250 2.1.0 OK</span>
-</pre></div>
-</div>
-</section>
-<section id="size">
-<span id="id7"></span><h4>SIZE=<a class="headerlink" href="#size" title="Permalink to this headline">¶</a></h4>
-<p>You can also specify the size using the <code class="docutils literal notranslate"><span class="pre">SIZE=</span></code> parameter.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MAIL</span> <span class="n">FROM</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span><span class="o">&gt;</span> <span class="n">SIZE</span><span class="o">=</span><span class="mi">82000</span>
-<span class="go">250 2.1.0 OK</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-</section>
-<section id="noop">
-<span id="id8"></span><h3>NOOP<a class="headerlink" href="#noop" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>NOOP</strong></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">NOOP</span>
-<span class="go">250 2.0.0 OK</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="quit">
-<span id="id9"></span><h3>QUIT<a class="headerlink" href="#quit" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>QUIT</strong></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">QUIT</span>
-<span class="go">221 2.0.0 Goodbye</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="rcpt">
-<span id="id10"></span><h3>RCPT<a class="headerlink" href="#rcpt" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>RCPT TO:</strong> <em>&lt;user&#64;domain.tld&gt;</em></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">RCPT</span> <span class="n">TO</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@domain</span><span class="o">.</span><span class="n">tld</span><span class="o">&gt;</span>
-<span class="go">250 2.1.0 OK</span>
-</pre></div>
-</div>
-<hr class="docutils" />
-</section>
-<section id="rset">
-<span id="id11"></span><h3>RSET<a class="headerlink" href="#rset" title="Permalink to this headline">¶</a></h3>
-<dl class="field-list simple">
-<dt class="field-odd">Syntax</dt>
-<dd class="field-odd"><p><strong>RSET</strong></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">RSET</span>
-<span class="go">250 2.0.0 OK</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="response-codes">
-<span id="id12"></span><h2>Response codes<a class="headerlink" href="#response-codes" title="Permalink to this headline">¶</a></h2>
-<section id="accept-codes">
-<h3>Accept codes<a class="headerlink" href="#accept-codes" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">250</span><span class="p">:</span> <span class="mf">2.0.0</span> <span class="n">OK</span><span class="p">:</span> <span class="n">queued</span> <span class="k">as</span> <span class="n">MESSAGE</span><span class="o">-</span><span class="n">ID</span>
-</pre></div>
-</div>
-</section>
-<section id="bounce-codes">
-<h3>Bounce codes<a class="headerlink" href="#bounce-codes" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">450</span><span class="p">:</span> <span class="n">Requested</span> <span class="n">mail</span> <span class="n">action</span> <span class="ow">not</span> <span class="n">taken</span><span class="p">:</span> <span class="n">mailbox</span> <span class="n">unavailable</span>
-<span class="mi">451</span><span class="p">:</span> <span class="n">Requested</span> <span class="n">action</span> <span class="n">aborted</span><span class="p">:</span> <span class="n">local</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">processing</span>
-<span class="mi">452</span><span class="p">:</span> <span class="n">Requested</span> <span class="n">action</span> <span class="ow">not</span> <span class="n">taken</span><span class="p">:</span> <span class="n">insufficient</span> <span class="n">system</span> <span class="n">storage</span>
-<span class="mi">458</span><span class="p">:</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">queue</span> <span class="n">message</span>
-<span class="mi">521</span><span class="p">:</span> <span class="n">Machine</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">accept</span> <span class="n">mail</span>
-<span class="mi">550</span><span class="p">:</span> <span class="n">Requested</span> <span class="n">action</span> <span class="ow">not</span> <span class="n">taken</span><span class="p">:</span> <span class="n">mailbox</span> <span class="n">unavailable</span>
-<span class="mi">551</span><span class="p">:</span> <span class="n">User</span> <span class="ow">not</span> <span class="n">local</span>
-<span class="mi">552</span><span class="p">:</span> <span class="n">Requested</span> <span class="n">mail</span> <span class="n">action</span> <span class="n">aborted</span><span class="p">:</span> <span class="n">exceeded</span> <span class="n">storage</span> <span class="n">allocation</span>
-<span class="mi">553</span><span class="p">:</span> <span class="n">Requested</span> <span class="n">action</span> <span class="ow">not</span> <span class="n">taken</span><span class="p">:</span> <span class="n">mailbox</span> <span class="n">name</span> <span class="ow">not</span> <span class="n">allowed</span>
-<span class="mi">571</span><span class="p">:</span> <span class="n">Blocked</span>
-</pre></div>
-</div>
-</section>
-</section>
-</section>
-
-
-          </div>
-            
-  <div class="footer-relations">
-    
-      <div class="pull-left">
-        <a class="btn btn-default" href="configuration.html" title="previous chapter (use the left arrow)">Configuration</a>
-      </div>
-    
-      <div class="pull-right">
-        <a class="btn btn-default" href="dynamic-responses.html" title="next chapter (use the right arrow)">Dynamic responses</a>
-      </div>
-    </div>
-    <div class="clearer"></div>
-  
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="dynamic-responses.html" title="Dynamic responses"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="configuration.html" title="Configuration"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Communicating with Blackhole</a></li> 
-      </ul>
-    </div>
-<script type="text/javascript">
+<span class=gp>&gt;&gt;&gt; </span><span class=n>HELP</span> <span class=n>AUTH</span>
+<span class=go>250 Syntax: AUTH CRAM-MD5 LOGIN PLAIN</span>
+</pre></div></div><hr class=docutils></section><section id=smtputf8><span id=bitmime></span><span id=bit></span><span id=mail></span><span id=id6></span><h3>MAIL<a class=headerlink href=#smtputf8 title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>MAIL FROM:</strong> <em>&lt;user&#64;domain.tld&gt;</em></p></dd><dt class=field-even>Optional</dt><dd class=field-even><p>BODY= <em>7BIT, 8BITMIME</em></p></dd><dt class=field-odd>Optional</dt><dd class=field-odd><p><em>SMTPUTF8</em></p></dd><dt class=field-even>Optional</dt><dd class=field-even><p>SIZE= <em>SIZE</em></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>MAIL</span> <span class=n>FROM</span><span class=p>:</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@domain</span><span class=o>.</span><span class=n>tld</span><span class=o>&gt;</span>
+<span class=go>250 2.1.0 OK</span>
+</pre></div></div><section id=body><h4>BODY=<a class=headerlink href=#body title="Permalink to this headline">¶</a></h4><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>MAIL</span> <span class=n>FROM</span><span class=p>:</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@domain</span><span class=o>.</span><span class=n>tld</span><span class=o>&gt;</span> <span class=n>BODY</span><span class=o>=</span><span class=mi>7</span><span class=n>BIT</span>
+<span class=go>250 2.1.0 OK</span>
+</pre></div></div><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>MAIL</span> <span class=n>FROM</span><span class=p>:</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@domain</span><span class=o>.</span><span class=n>tld</span><span class=o>&gt;</span> <span class=n>BODY</span><span class=o>=</span><span class=mi>8</span><span class=n>BITMIME</span>
+<span class=go>250 2.1.0 OK</span>
+</pre></div></div><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>MAIL</span> <span class=n>FROM</span><span class=p>:</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@domain</span><span class=o>.</span><span class=n>tld</span><span class=o>&gt;</span> <span class=n>SMTPUTF8</span>
+<span class=go>250 2.1.0 OK</span>
+</pre></div></div></section><section id=size><span id=id7></span><h4>SIZE=<a class=headerlink href=#size title="Permalink to this headline">¶</a></h4><p>You can also specify the size using the <code class="docutils literal notranslate"><span class=pre>SIZE=</span></code> parameter.</p><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>MAIL</span> <span class=n>FROM</span><span class=p>:</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@domain</span><span class=o>.</span><span class=n>tld</span><span class=o>&gt;</span> <span class=n>SIZE</span><span class=o>=</span><span class=mi>82000</span>
+<span class=go>250 2.1.0 OK</span>
+</pre></div></div><hr class=docutils></section></section><section id=noop><span id=id8></span><h3>NOOP<a class=headerlink href=#noop title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>NOOP</strong></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>NOOP</span>
+<span class=go>250 2.0.0 OK</span>
+</pre></div></div><hr class=docutils></section><section id=quit><span id=id9></span><h3>QUIT<a class=headerlink href=#quit title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>QUIT</strong></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>QUIT</span>
+<span class=go>221 2.0.0 Goodbye</span>
+</pre></div></div><hr class=docutils></section><section id=rcpt><span id=id10></span><h3>RCPT<a class=headerlink href=#rcpt title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>RCPT TO:</strong> <em>&lt;user&#64;domain.tld&gt;</em></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>RCPT</span> <span class=n>TO</span><span class=p>:</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@domain</span><span class=o>.</span><span class=n>tld</span><span class=o>&gt;</span>
+<span class=go>250 2.1.0 OK</span>
+</pre></div></div><hr class=docutils></section><section id=rset><span id=id11></span><h3>RSET<a class=headerlink href=#rset title="Permalink to this headline">¶</a></h3><dl class="field-list simple"><dt class=field-odd>Syntax</dt><dd class=field-odd><p><strong>RSET</strong></p></dd></dl><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=gp>&gt;&gt;&gt; </span><span class=n>RSET</span>
+<span class=go>250 2.0.0 OK</span>
+</pre></div></div></section></section><section id=response-codes><span id=id12></span><h2>Response codes<a class=headerlink href=#response-codes title="Permalink to this headline">¶</a></h2><section id=accept-codes><h3>Accept codes<a class=headerlink href=#accept-codes title="Permalink to this headline">¶</a></h3><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=mi>250</span><span class=p>:</span> <span class=mf>2.0.0</span> <span class=n>OK</span><span class=p>:</span> <span class=n>queued</span> <span class=k>as</span> <span class=n>MESSAGE</span><span class=o>-</span><span class=n>ID</span>
+</pre></div></div></section><section id=bounce-codes><h3>Bounce codes<a class=headerlink href=#bounce-codes title="Permalink to this headline">¶</a></h3><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=mi>450</span><span class=p>:</span> <span class=n>Requested</span> <span class=n>mail</span> <span class=n>action</span> <span class=ow>not</span> <span class=n>taken</span><span class=p>:</span> <span class=n>mailbox</span> <span class=n>unavailable</span>
+<span class=mi>451</span><span class=p>:</span> <span class=n>Requested</span> <span class=n>action</span> <span class=n>aborted</span><span class=p>:</span> <span class=n>local</span> <span class=n>error</span> <span class=ow>in</span> <span class=n>processing</span>
+<span class=mi>452</span><span class=p>:</span> <span class=n>Requested</span> <span class=n>action</span> <span class=ow>not</span> <span class=n>taken</span><span class=p>:</span> <span class=n>insufficient</span> <span class=n>system</span> <span class=n>storage</span>
+<span class=mi>458</span><span class=p>:</span> <span class=n>Unable</span> <span class=n>to</span> <span class=n>queue</span> <span class=n>message</span>
+<span class=mi>521</span><span class=p>:</span> <span class=n>Machine</span> <span class=n>does</span> <span class=ow>not</span> <span class=n>accept</span> <span class=n>mail</span>
+<span class=mi>550</span><span class=p>:</span> <span class=n>Requested</span> <span class=n>action</span> <span class=ow>not</span> <span class=n>taken</span><span class=p>:</span> <span class=n>mailbox</span> <span class=n>unavailable</span>
+<span class=mi>551</span><span class=p>:</span> <span class=n>User</span> <span class=ow>not</span> <span class=n>local</span>
+<span class=mi>552</span><span class=p>:</span> <span class=n>Requested</span> <span class=n>mail</span> <span class=n>action</span> <span class=n>aborted</span><span class=p>:</span> <span class=n>exceeded</span> <span class=n>storage</span> <span class=n>allocation</span>
+<span class=mi>553</span><span class=p>:</span> <span class=n>Requested</span> <span class=n>action</span> <span class=ow>not</span> <span class=n>taken</span><span class=p>:</span> <span class=n>mailbox</span> <span class=n>name</span> <span class=ow>not</span> <span class=n>allowed</span>
+<span class=mi>571</span><span class=p>:</span> <span class=n>Blocked</span>
+</pre></div></div></section></section></section> </div> <div class=footer-relations> <div class=pull-left> <a class="btn btn-default" href=configuration.html title="previous chapter (use the left arrow)">Configuration</a> </div> <div class=pull-right> <a class="btn btn-default" href=dynamic-responses.html title="next chapter (use the right arrow)">Dynamic responses</a> </div> </div> <div class=clearer></div> </div> <div class=clearfix></div> </div> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=genindex.html title="General Index">index</a></li> <li class=right> <a href=py-modindex.html title="Python Module Index">modules</a> |</li> <li class=right> <a href=dynamic-responses.html title="Dynamic responses">next</a> |</li> <li class=right> <a href=configuration.html title=Configuration>previous</a> |</li> <li class="nav-item nav-item-0"><a href=index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-this"><a href>Communicating with Blackhole</a></li> </ul> </div><script type=text/javascript>
   $("#mobile-toggle a").click(function () {
     $("#left-column").toggle();
   });
-</script>
-<script type="text/javascript" src="_static/js/bootstrap.js"></script>
-  <div class="footer">
-    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-  </div>
-  </body>
-</html>
+</script><script type=text/javascript src=_static/js/bootstrap.js></script> <div class=footer> &copy; Copyright 2013-2021, Kura. Created using <a href=http://sphinx.pocoo.org/ >Sphinx</a>. </div> </body></html>

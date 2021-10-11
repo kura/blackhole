@@ -1,236 +1,107 @@
+<!DOCTYPE html><html> <head><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><link rel=stylesheet type=text/css href=../../_static/fonts/open-sans/stylesheet.css><link rel=stylesheet type=text/css href=../../_static/fonts/source-serif-pro/source-serif-pro.css><link rel=stylesheet type=text/css href=../../_static/css/bootstrap.min.css><link rel=stylesheet type=text/css href=../../_static/css/bootstrap-theme.min.css><meta name=viewport content="width=device-width, initial-scale=1.0"><title>blackhole.application &#8212; Blackhole 2.1.19 documentation</title><link rel=stylesheet type=text/css href=../../_static/pygments.css><link rel=stylesheet type=text/css href=../../_static/blackhole.css><script data-url_root=../../ id=documentation_options src=../../_static/documentation_options.js></script><script src=../../_static/jquery.js></script><script src=../../_static/underscore.js></script><script src=../../_static/doctools.js></script><link rel=search type=application/opensearchdescription+xml title="Search within Blackhole 2.1.19 documentation" href=../../_static/opensearch.xml><link rel=index title=Index href=../../genindex.html><link rel=search title=Search href=../../search.html></head><body> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=../../genindex.html title="General Index" accesskey=I>index</a></li> <li class=right> <a href=../../py-modindex.html title="Python Module Index">modules</a> |</li> <li class="nav-item nav-item-0"><a href=../../index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-1"><a href=../index.html accesskey=U>Module code</a> &#187;</li> <li class="nav-item nav-item-this"><a href>blackhole.application</a></li> </ul> </div> <div class=container-wrapper> <div id=mobile-toggle> <a href=#><span class="glyphicon glyphicon-align-justify" aria-hidden=true></span></a> </div> <div id=left-column> <div class=sphinxsidebar><a href="
+    ../../index.html" class=text-logo>Blackhole</a><div class=sidebar-block> <div class=sidebar-wrapper> <h2>Table Of Contents</h2> </div> <div class=sidebar-toc> <ul><li class=toctree-l1><a class="reference internal" href=../../overview.html>Overview</a></li><li class=toctree-l1><a class="reference internal" href=../../configuration.html>Configuration</a></li><li class=toctree-l1><a class="reference internal" href=../../communicating-with-blackhole.html>Communicating with Blackhole</a></li><li class=toctree-l1><a class="reference internal" href=../../dynamic-responses.html>Dynamic responses</a></li><li class=toctree-l1><a class="reference internal" href=../../dynamic-switches.html>Dynamic Switches</a></li><li class=toctree-l1><a class="reference internal" href=../../api.html>API</a></li></ul> </div></div><div class=sidebar-block> <div class=sidebar-wrapper> <div id=main-search> <form class=form-inline action=../../search.html method=GET role=form> <div class=input-group> <input name=q type=text class=form-control placeholder=Search...> </div> <input type=hidden name=check_keywords value=yes> <input type=hidden name=area value=default> </form> </div> </div></div> </div> </div> <div id=right-column> <div role=navigation aria-label="breadcrumbs navigation"> <ol class=breadcrumb> <li><a href=../../index.html>Docs</a></li> <li><a href=../index.html>Module code</a></li> <li>blackhole.application</li> </ol> </div> <div class="document clearer body"> <h1>Source code for blackhole.application</h1><div class=highlight><pre>
+<span></span><span class=c1># -*- coding: utf-8 -*-</span>
 
-<!DOCTYPE html>
+<span class=c1># (The MIT License)</span>
+<span class=c1>#</span>
+<span class=c1># Copyright (c) 2013-2021 Kura</span>
+<span class=c1>#</span>
+<span class=c1># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class=c1># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
+<span class=c1># in the Software without restriction, including without limitation the rights</span>
+<span class=c1># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class=c1># copies of the Software, and to permit persons to whom the Software is</span>
+<span class=c1># furnished to do so, subject to the following conditions:</span>
+<span class=c1>#</span>
+<span class=c1># The above copyright notice and this permission notice shall be included in</span>
+<span class=c1># all copies or substantial portions of the Software.</span>
+<span class=c1>#</span>
+<span class=c1># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class=c1># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class=c1># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class=c1># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class=c1># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class=c1># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class=c1># SOFTWARE.</span>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Licensed under the Apache 2.0 License -->
-  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
-  <!-- Licensed under the SIL Open Font License -->
-  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
-  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <title>blackhole.application &#8212; Blackhole 2.1.19 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/blackhole.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Blackhole 2.1.19 documentation"
-          href="../../_static/opensearch.xml"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-  
-   
-
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">blackhole.application</a></li> 
-      </ul>
-    </div>
-    <div class="container-wrapper">
-
-      <div id="mobile-toggle">
-        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
-      </div>
-  <div id="left-column">
-    <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">Blackhole</a>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../communicating-with-blackhole.html">Communicating with Blackhole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../dynamic-responses.html">Dynamic responses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../dynamic-switches.html">Dynamic Switches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
-</ul>
-
-    
-  </div>
-</div>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <div id="main-search">
-      <form class="form-inline" action="../../search.html" method="GET" role="form">
-        <div class="input-group">
-          <input name="q" type="text" class="form-control" placeholder="Search...">
-        </div>
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-      </form>
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-        <div id="right-column">
-          
-          <div role="navigation" aria-label="breadcrumbs navigation">
-            <ol class="breadcrumb">
-              <li><a href="../../index.html">Docs</a></li>
-              
-                <li><a href="../index.html">Module code</a></li>
-              
-              <li>blackhole.application</li>
-            </ol>
-          </div>
-          
-          <div class="document clearer body">
-            
-  <h1>Source code for blackhole.application</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="c1"># (The MIT License)</span>
-<span class="c1">#</span>
-<span class="c1"># Copyright (c) 2013-2021 Kura</span>
-<span class="c1">#</span>
-<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
-<span class="c1"># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
-<span class="c1"># in the Software without restriction, including without limitation the rights</span>
-<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
-<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
-<span class="c1"># furnished to do so, subject to the following conditions:</span>
-<span class="c1">#</span>
-<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
-<span class="c1"># all copies or substantial portions of the Software.</span>
-<span class="c1">#</span>
-<span class="c1"># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
-<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
-<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
-<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
-<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
-<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
-<span class="c1"># SOFTWARE.</span>
-
-<span class="sd">&quot;&quot;&quot;Provides functionality to run the server.&quot;&quot;&quot;</span>
+<span class=sd>&quot;&quot;&quot;Provides functionality to run the server.&quot;&quot;&quot;</span>
 
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class=kn>import</span> <span class=nn>logging</span>
+<span class=kn>import</span> <span class=nn>os</span>
+<span class=kn>import</span> <span class=nn>sys</span>
 
-<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">config_test</span><span class="p">,</span> <span class="n">parse_cmd_args</span><span class="p">,</span> <span class="n">warn_options</span>
-<span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">pid_permissions</span><span class="p">,</span> <span class="n">setgid</span><span class="p">,</span> <span class="n">setuid</span>
-<span class="kn">from</span> <span class="nn">.daemon</span> <span class="kn">import</span> <span class="n">Daemon</span>
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BlackholeRuntimeException</span><span class="p">,</span>
-    <span class="n">ConfigException</span><span class="p">,</span>
-    <span class="n">DaemonException</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.logs</span> <span class="kn">import</span> <span class="n">configure_logs</span>
-<span class="kn">from</span> <span class="nn">.supervisor</span> <span class="kn">import</span> <span class="n">Supervisor</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">blackhole_config_help</span>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;blackhole_config&quot;</span><span class="p">,</span> <span class="s2">&quot;run&quot;</span><span class="p">)</span>
-<span class="sd">&quot;&quot;&quot;Tuple all the things.&quot;&quot;&quot;</span>
+<span class=kn>from</span> <span class=nn>.config</span> <span class=kn>import</span> <span class=n>Config</span><span class=p>,</span> <span class=n>config_test</span><span class=p>,</span> <span class=n>parse_cmd_args</span><span class=p>,</span> <span class=n>warn_options</span>
+<span class=kn>from</span> <span class=nn>.control</span> <span class=kn>import</span> <span class=n>pid_permissions</span><span class=p>,</span> <span class=n>setgid</span><span class=p>,</span> <span class=n>setuid</span>
+<span class=kn>from</span> <span class=nn>.daemon</span> <span class=kn>import</span> <span class=n>Daemon</span>
+<span class=kn>from</span> <span class=nn>.exceptions</span> <span class=kn>import</span> <span class=p>(</span>
+    <span class=n>BlackholeRuntimeException</span><span class=p>,</span>
+    <span class=n>ConfigException</span><span class=p>,</span>
+    <span class=n>DaemonException</span><span class=p>,</span>
+<span class=p>)</span>
+<span class=kn>from</span> <span class=nn>.logs</span> <span class=kn>import</span> <span class=n>configure_logs</span>
+<span class=kn>from</span> <span class=nn>.supervisor</span> <span class=kn>import</span> <span class=n>Supervisor</span>
+<span class=kn>from</span> <span class=nn>.utils</span> <span class=kn>import</span> <span class=n>blackhole_config_help</span>
 
 
-<div class="viewcode-block" id="blackhole_config"><a class="viewcode-back" href="../../api-application.html#blackhole.application.blackhole_config">[docs]</a><span class="k">def</span> <span class="nf">blackhole_config</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Print the config help to the console with man-style formatting.</span>
-
-<span class="sd">    :raises SystemExit: Exit code :py:obj:`os.EX_OK`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">blackhole_config_help</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_OK</span><span class="p">)</span></div>
+<span class=n>__all__</span> <span class=o>=</span> <span class=p>(</span><span class=s2>&quot;blackhole_config&quot;</span><span class=p>,</span> <span class=s2>&quot;run&quot;</span><span class=p>)</span>
+<span class=sd>&quot;&quot;&quot;Tuple all the things.&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../api-application.html#blackhole.application.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the asyncio loop and start the server.</span>
+<div class=viewcode-block id=blackhole_config><a class=viewcode-back href=../../api-application.html#blackhole.application.blackhole_config>[docs]</a><span class=k>def</span> <span class=nf>blackhole_config</span><span class=p>():</span>
+    <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>    Print the config help to the console with man-style formatting.</span>
 
-<span class="sd">    :raises SystemExit: Exit code :py:obj:`os.EX_USAGE` when a configuration</span>
-<span class="sd">                        error occurs, :py:obj:`os.EX_NOPERM` when a permission</span>
-<span class="sd">                        error occurs or :py:obj:`os.EX_OK` when the program</span>
-<span class="sd">                        exits cleanly.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_cmd_args</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-    <span class="n">configure_logs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;blackhole&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>
-        <span class="n">config_test</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config_file</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">test</span><span class="p">()</span>
-        <span class="n">config</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
-        <span class="n">warn_options</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-        <span class="n">daemon</span> <span class="o">=</span> <span class="n">Daemon</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">pidfile</span><span class="p">)</span>
-        <span class="n">supervisor</span> <span class="o">=</span> <span class="n">Supervisor</span><span class="p">()</span>
-        <span class="n">pid_permissions</span><span class="p">()</span>
-        <span class="n">setgid</span><span class="p">()</span>
-        <span class="n">setuid</span><span class="p">()</span>
-    <span class="k">except</span> <span class="p">(</span><span class="n">ConfigException</span><span class="p">,</span> <span class="n">DaemonException</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_USAGE</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">BlackholeRuntimeException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_NOPERM</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">background</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">daemon</span><span class="o">.</span><span class="n">daemonize</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">DaemonException</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="n">supervisor</span><span class="o">.</span><span class="n">close_socks</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_NOPERM</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">supervisor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="k">pass</span>
-    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_OK</span><span class="p">)</span></div>
-</pre></div>
+<span class=sd>    :raises SystemExit: Exit code :py:obj:`os.EX_OK`.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+    <span class=n>logging</span><span class=o>.</span><span class=n>basicConfig</span><span class=p>(</span><span class=nb>format</span><span class=o>=</span><span class=s2>&quot;</span><span class=si>%(message)s</span><span class=s2>&quot;</span><span class=p>,</span> <span class=n>level</span><span class=o>=</span><span class=n>logging</span><span class=o>.</span><span class=n>INFO</span><span class=p>)</span>
+    <span class=n>logging</span><span class=o>.</span><span class=n>info</span><span class=p>(</span><span class=n>blackhole_config_help</span><span class=p>)</span>
+    <span class=k>raise</span> <span class=ne>SystemExit</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>EX_OK</span><span class=p>)</span></div>
 
-          </div>
-            
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">blackhole.application</a></li> 
-      </ul>
-    </div>
-<script type="text/javascript">
+
+<div class=viewcode-block id=run><a class=viewcode-back href=../../api-application.html#blackhole.application.run>[docs]</a><span class=k>def</span> <span class=nf>run</span><span class=p>():</span>
+    <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>    Create the asyncio loop and start the server.</span>
+
+<span class=sd>    :raises SystemExit: Exit code :py:obj:`os.EX_USAGE` when a configuration</span>
+<span class=sd>                        error occurs, :py:obj:`os.EX_NOPERM` when a permission</span>
+<span class=sd>                        error occurs or :py:obj:`os.EX_OK` when the program</span>
+<span class=sd>                        exits cleanly.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+    <span class=n>args</span> <span class=o>=</span> <span class=n>parse_cmd_args</span><span class=p>(</span><span class=n>sys</span><span class=o>.</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>:])</span>
+    <span class=n>configure_logs</span><span class=p>(</span><span class=n>args</span><span class=p>)</span>
+    <span class=n>logger</span> <span class=o>=</span> <span class=n>logging</span><span class=o>.</span><span class=n>getLogger</span><span class=p>(</span><span class=s2>&quot;blackhole&quot;</span><span class=p>)</span>
+    <span class=k>if</span> <span class=n>args</span><span class=o>.</span><span class=n>test</span><span class=p>:</span>
+        <span class=n>config_test</span><span class=p>(</span><span class=n>args</span><span class=p>)</span>
+    <span class=k>try</span><span class=p>:</span>
+        <span class=n>config</span> <span class=o>=</span> <span class=n>Config</span><span class=p>(</span><span class=n>args</span><span class=o>.</span><span class=n>config_file</span><span class=p>)</span><span class=o>.</span><span class=n>load</span><span class=p>()</span><span class=o>.</span><span class=n>test</span><span class=p>()</span>
+        <span class=n>config</span><span class=o>.</span><span class=n>args</span> <span class=o>=</span> <span class=n>args</span>
+        <span class=n>warn_options</span><span class=p>(</span><span class=n>config</span><span class=p>)</span>
+        <span class=n>daemon</span> <span class=o>=</span> <span class=n>Daemon</span><span class=p>(</span><span class=n>config</span><span class=o>.</span><span class=n>pidfile</span><span class=p>)</span>
+        <span class=n>supervisor</span> <span class=o>=</span> <span class=n>Supervisor</span><span class=p>()</span>
+        <span class=n>pid_permissions</span><span class=p>()</span>
+        <span class=n>setgid</span><span class=p>()</span>
+        <span class=n>setuid</span><span class=p>()</span>
+    <span class=k>except</span> <span class=p>(</span><span class=n>ConfigException</span><span class=p>,</span> <span class=n>DaemonException</span><span class=p>)</span> <span class=k>as</span> <span class=n>err</span><span class=p>:</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>critical</span><span class=p>(</span><span class=n>err</span><span class=p>)</span>
+        <span class=k>raise</span> <span class=ne>SystemExit</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>EX_USAGE</span><span class=p>)</span>
+    <span class=k>except</span> <span class=n>BlackholeRuntimeException</span> <span class=k>as</span> <span class=n>err</span><span class=p>:</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>critical</span><span class=p>(</span><span class=n>err</span><span class=p>)</span>
+        <span class=k>raise</span> <span class=ne>SystemExit</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>EX_NOPERM</span><span class=p>)</span>
+    <span class=k>if</span> <span class=n>args</span><span class=o>.</span><span class=n>background</span><span class=p>:</span>
+        <span class=k>try</span><span class=p>:</span>
+            <span class=n>daemon</span><span class=o>.</span><span class=n>daemonize</span><span class=p>()</span>
+        <span class=k>except</span> <span class=n>DaemonException</span> <span class=k>as</span> <span class=n>err</span><span class=p>:</span>
+            <span class=n>supervisor</span><span class=o>.</span><span class=n>close_socks</span><span class=p>()</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>critical</span><span class=p>(</span><span class=n>err</span><span class=p>)</span>
+            <span class=k>raise</span> <span class=ne>SystemExit</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>EX_NOPERM</span><span class=p>)</span>
+    <span class=k>try</span><span class=p>:</span>
+        <span class=n>supervisor</span><span class=o>.</span><span class=n>run</span><span class=p>()</span>
+    <span class=k>except</span> <span class=ne>KeyboardInterrupt</span><span class=p>:</span>
+        <span class=k>pass</span>
+    <span class=k>raise</span> <span class=ne>SystemExit</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>EX_OK</span><span class=p>)</span></div>
+</pre></div> </div> </div> <div class=clearfix></div> </div> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=../../genindex.html title="General Index">index</a></li> <li class=right> <a href=../../py-modindex.html title="Python Module Index">modules</a> |</li> <li class="nav-item nav-item-0"><a href=../../index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-1"><a href=../index.html>Module code</a> &#187;</li> <li class="nav-item nav-item-this"><a href>blackhole.application</a></li> </ul> </div><script type=text/javascript>
   $("#mobile-toggle a").click(function () {
     $("#left-column").toggle();
   });
-</script>
-<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
-  <div class="footer">
-    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-  </div>
-  </body>
-</html>
+</script><script type=text/javascript src=../../_static/js/bootstrap.js></script> <div class=footer> &copy; Copyright 2013-2021, Kura. Created using <a href=http://sphinx.pocoo.org/ >Sphinx</a>. </div> </body></html>

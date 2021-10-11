@@ -1,504 +1,375 @@
+<!DOCTYPE html><html> <head><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><link rel=stylesheet type=text/css href=../../_static/fonts/open-sans/stylesheet.css><link rel=stylesheet type=text/css href=../../_static/fonts/source-serif-pro/source-serif-pro.css><link rel=stylesheet type=text/css href=../../_static/css/bootstrap.min.css><link rel=stylesheet type=text/css href=../../_static/css/bootstrap-theme.min.css><meta name=viewport content="width=device-width, initial-scale=1.0"><title>blackhole.utils &#8212; Blackhole 2.1.19 documentation</title><link rel=stylesheet type=text/css href=../../_static/pygments.css><link rel=stylesheet type=text/css href=../../_static/blackhole.css><script data-url_root=../../ id=documentation_options src=../../_static/documentation_options.js></script><script src=../../_static/jquery.js></script><script src=../../_static/underscore.js></script><script src=../../_static/doctools.js></script><link rel=search type=application/opensearchdescription+xml title="Search within Blackhole 2.1.19 documentation" href=../../_static/opensearch.xml><link rel=index title=Index href=../../genindex.html><link rel=search title=Search href=../../search.html></head><body> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=../../genindex.html title="General Index" accesskey=I>index</a></li> <li class=right> <a href=../../py-modindex.html title="Python Module Index">modules</a> |</li> <li class="nav-item nav-item-0"><a href=../../index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-1"><a href=../index.html accesskey=U>Module code</a> &#187;</li> <li class="nav-item nav-item-this"><a href>blackhole.utils</a></li> </ul> </div> <div class=container-wrapper> <div id=mobile-toggle> <a href=#><span class="glyphicon glyphicon-align-justify" aria-hidden=true></span></a> </div> <div id=left-column> <div class=sphinxsidebar><a href="
+    ../../index.html" class=text-logo>Blackhole</a><div class=sidebar-block> <div class=sidebar-wrapper> <h2>Table Of Contents</h2> </div> <div class=sidebar-toc> <ul><li class=toctree-l1><a class="reference internal" href=../../overview.html>Overview</a></li><li class=toctree-l1><a class="reference internal" href=../../configuration.html>Configuration</a></li><li class=toctree-l1><a class="reference internal" href=../../communicating-with-blackhole.html>Communicating with Blackhole</a></li><li class=toctree-l1><a class="reference internal" href=../../dynamic-responses.html>Dynamic responses</a></li><li class=toctree-l1><a class="reference internal" href=../../dynamic-switches.html>Dynamic Switches</a></li><li class=toctree-l1><a class="reference internal" href=../../api.html>API</a></li></ul> </div></div><div class=sidebar-block> <div class=sidebar-wrapper> <div id=main-search> <form class=form-inline action=../../search.html method=GET role=form> <div class=input-group> <input name=q type=text class=form-control placeholder=Search...> </div> <input type=hidden name=check_keywords value=yes> <input type=hidden name=area value=default> </form> </div> </div></div> </div> </div> <div id=right-column> <div role=navigation aria-label="breadcrumbs navigation"> <ol class=breadcrumb> <li><a href=../../index.html>Docs</a></li> <li><a href=../index.html>Module code</a></li> <li>blackhole.utils</li> </ol> </div> <div class="document clearer body"> <h1>Source code for blackhole.utils</h1><div class=highlight><pre>
+<span></span><span class=c1># -*- coding: utf-8 -*-</span>
+
+<span class=c1># (The MIT License)</span>
+<span class=c1>#</span>
+<span class=c1># Copyright (c) 2013-2021 Kura</span>
+<span class=c1>#</span>
+<span class=c1># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class=c1># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
+<span class=c1># in the Software without restriction, including without limitation the rights</span>
+<span class=c1># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class=c1># copies of the Software, and to permit persons to whom the Software is</span>
+<span class=c1># furnished to do so, subject to the following conditions:</span>
+<span class=c1>#</span>
+<span class=c1># The above copyright notice and this permission notice shall be included in</span>
+<span class=c1># all copies or substantial portions of the Software.</span>
+<span class=c1>#</span>
+<span class=c1># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class=c1># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class=c1># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class=c1># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class=c1># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class=c1># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class=c1># SOFTWARE.</span>
+
+<span class=sd>&quot;&quot;&quot;Provides utility functionality.&quot;&quot;&quot;</span>
+
+<span class=kn>import</span> <span class=nn>codecs</span>
+<span class=kn>import</span> <span class=nn>os</span>
+<span class=kn>import</span> <span class=nn>random</span>
+<span class=kn>import</span> <span class=nn>socket</span>
+<span class=kn>import</span> <span class=nn>time</span>
+
+
+<span class=n>__all__</span> <span class=o>=</span> <span class=p>(</span><span class=s2>&quot;blackhole_config_help&quot;</span><span class=p>,</span> <span class=s2>&quot;mailname&quot;</span><span class=p>,</span> <span class=s2>&quot;message_id&quot;</span><span class=p>,</span> <span class=s2>&quot;get_version&quot;</span><span class=p>)</span>
+
+
+<div class=viewcode-block id=Singleton><a class=viewcode-back href=../../api-utils.html#blackhole.utils.Singleton>[docs]</a><span class=k>class</span> <span class=nc>Singleton</span><span class=p>(</span><span class=nb>type</span><span class=p>):</span>
+    <span class=sd>&quot;&quot;&quot;Singleton.&quot;&quot;&quot;</span>
+
+    <span class=n>_instances</span> <span class=o>=</span> <span class=p>{}</span>
+
+    <span class=k>def</span> <span class=fm>__call__</span><span class=p>(</span><span class=bp>cls</span><span class=p>,</span> <span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Override the __call__ method.&quot;&quot;&quot;</span>
+        <span class=k>if</span> <span class=bp>cls</span> <span class=ow>not</span> <span class=ow>in</span> <span class=bp>cls</span><span class=o>.</span><span class=n>_instances</span><span class=p>:</span>
+            <span class=bp>cls</span><span class=o>.</span><span class=n>_instances</span><span class=p>[</span><span class=bp>cls</span><span class=p>]</span> <span class=o>=</span> <span class=nb>super</span><span class=p>(</span><span class=n>Singleton</span><span class=p>,</span> <span class=bp>cls</span><span class=p>)</span><span class=o>.</span><span class=fm>__call__</span><span class=p>(</span>
+                <span class=o>*</span><span class=n>args</span><span class=p>,</span>
+                <span class=o>**</span><span class=n>kwargs</span><span class=p>,</span>
+            <span class=p>)</span>
+        <span class=k>return</span> <span class=bp>cls</span><span class=o>.</span><span class=n>_instances</span><span class=p>[</span><span class=bp>cls</span><span class=p>]</span></div>
+
+
+<div class=viewcode-block id=mailname><a class=viewcode-back href=../../api-utils.html#blackhole.utils.mailname>[docs]</a><span class=k>def</span> <span class=nf>mailname</span><span class=p>(</span><span class=n>mailname_file</span><span class=o>=</span><span class=s2>&quot;/etc/mailname&quot;</span><span class=p>):</span>
+    <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>    Fully qualified domain name for HELO and EHLO.</span>
+
+<span class=sd>    :param str mailname_file: A path to the mailname file. Default:</span>
+<span class=sd>                              ``/etc/mailname``.</span>
+<span class=sd>    :returns: A domain name.</span>
+<span class=sd>    :rtype: :py:obj:`str`</span>
+
+<span class=sd>    .. note::</span>
+
+<span class=sd>       Prefers content of `mailname_file`, falls back on</span>
+<span class=sd>       :py:func:`socket.getfqdn` if `mailname_file` does not exist or cannot be</span>
+<span class=sd>       opened for reading.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+    <span class=k>if</span> <span class=n>os</span><span class=o>.</span><span class=n>access</span><span class=p>(</span><span class=n>mailname_file</span><span class=p>,</span> <span class=n>os</span><span class=o>.</span><span class=n>R_OK</span><span class=p>):</span>
+        <span class=k>with</span> <span class=n>codecs</span><span class=o>.</span><span class=n>open</span><span class=p>(</span><span class=n>mailname_file</span><span class=p>,</span> <span class=n>encoding</span><span class=o>=</span><span class=s2>&quot;utf-8&quot;</span><span class=p>)</span> <span class=k>as</span> <span class=n>_mailname_file</span><span class=p>:</span>
+            <span class=n>mailname_content</span> <span class=o>=</span> <span class=n>_mailname_file</span><span class=o>.</span><span class=n>readlines</span><span class=p>()</span>
+            <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=n>mailname_content</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>:</span>
+                <span class=k>return</span> <span class=n>socket</span><span class=o>.</span><span class=n>getfqdn</span><span class=p>()</span>
+            <span class=n>nmailname_content</span> <span class=o>=</span> <span class=n>mailname_content</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span>
+            <span class=k>if</span> <span class=n>nmailname_content</span> <span class=o>!=</span> <span class=s2>&quot;&quot;</span><span class=p>:</span>
+                <span class=k>return</span> <span class=nb>str</span><span class=p>(</span><span class=n>nmailname_content</span><span class=p>)</span>
+    <span class=k>return</span> <span class=n>socket</span><span class=o>.</span><span class=n>getfqdn</span><span class=p>()</span></div>
+
+
+<div class=viewcode-block id=message_id><a class=viewcode-back href=../../api-utils.html#blackhole.utils.message_id>[docs]</a><span class=k>def</span> <span class=nf>message_id</span><span class=p>(</span><span class=n>domain</span><span class=p>):</span>
+    <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>    Return a string suitable for RFC 2822 compliant Message-ID.</span>
+
+<span class=sd>    :param str domain: A fully qualified domain.</span>
+<span class=sd>    :returns: An RFC 2822 compliant Message-ID.</span>
+<span class=sd>    :rtype: :py:obj:`str`</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+    <span class=n>timeval</span> <span class=o>=</span> <span class=nb>int</span><span class=p>(</span><span class=n>time</span><span class=o>.</span><span class=n>monotonic</span><span class=p>()</span> <span class=o>*</span> <span class=mi>100</span><span class=p>)</span>
+    <span class=n>pid</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>getpid</span><span class=p>()</span>
+    <span class=n>randint</span> <span class=o>=</span> <span class=n>random</span><span class=o>.</span><span class=n>getrandbits</span><span class=p>(</span><span class=mi>64</span><span class=p>)</span>
+    <span class=k>return</span> <span class=sa>f</span><span class=s2>&quot;&lt;</span><span class=si>{</span><span class=n>timeval</span><span class=si>}</span><span class=s2>.</span><span class=si>{</span><span class=n>pid</span><span class=si>}</span><span class=s2>.</span><span class=si>{</span><span class=n>randint</span><span class=si>}</span><span class=s2>@</span><span class=si>{</span><span class=n>domain</span><span class=si>}</span><span class=s2>&gt;&quot;</span></div>
+
+
+<div class=viewcode-block id=get_version><a class=viewcode-back href=../../api-utils.html#blackhole.utils.get_version>[docs]</a><span class=k>def</span> <span class=nf>get_version</span><span class=p>():</span>
+    <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>    Extract the __version__ from a file without importing it.</span>
+
+<span class=sd>    :return: The version that was extracted.</span>
+<span class=sd>    :rtype: :py:obj:`str`</span>
+<span class=sd>    :raises AssertionError: When a version cannot be determined.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+    <span class=n>path</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>dirname</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>abspath</span><span class=p>(</span><span class=vm>__file__</span><span class=p>))</span>
+    <span class=n>filepath</span> <span class=o>=</span> <span class=n>os</span><span class=o>.</span><span class=n>path</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>path</span><span class=p>,</span> <span class=s2>&quot;__init__.py&quot;</span><span class=p>)</span>
+    <span class=k>if</span> <span class=ow>not</span> <span class=n>os</span><span class=o>.</span><span class=n>access</span><span class=p>(</span><span class=n>filepath</span><span class=p>,</span> <span class=n>os</span><span class=o>.</span><span class=n>R_OK</span><span class=p>):</span>
+        <span class=k>raise</span> <span class=ne>OSError</span><span class=p>(</span><span class=s2>&quot;Cannot open __init__.py file for reading&quot;</span><span class=p>)</span>
+    <span class=k>with</span> <span class=n>codecs</span><span class=o>.</span><span class=n>open</span><span class=p>(</span><span class=n>filepath</span><span class=p>,</span> <span class=n>encoding</span><span class=o>=</span><span class=s2>&quot;utf-8&quot;</span><span class=p>)</span> <span class=k>as</span> <span class=n>fp</span><span class=p>:</span>
+        <span class=k>for</span> <span class=n>line</span> <span class=ow>in</span> <span class=n>fp</span><span class=p>:</span>
+            <span class=k>if</span> <span class=n>line</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=s2>&quot;__version__&quot;</span><span class=p>):</span>
+                <span class=k>try</span><span class=p>:</span>
+                    <span class=n>_</span><span class=p>,</span> <span class=n>vers</span> <span class=o>=</span> <span class=n>line</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&quot;=&quot;</span><span class=p>)</span>
+                <span class=k>except</span> <span class=ne>ValueError</span><span class=p>:</span>
+                    <span class=n>msg</span> <span class=o>=</span> <span class=s2>&quot;Cannot extract version from __version__&quot;</span>
+                    <span class=k>raise</span> <span class=ne>AssertionError</span><span class=p>(</span><span class=n>msg</span><span class=p>)</span>
+                <span class=n>version</span> <span class=o>=</span> <span class=n>vers</span><span class=o>.</span><span class=n>strip</span><span class=p>()</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=s1>&#39;&quot;&#39;</span><span class=p>,</span> <span class=s2>&quot;&quot;</span><span class=p>)</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=s2>&quot;&#39;&quot;</span><span class=p>,</span> <span class=s2>&quot;&quot;</span><span class=p>)</span>
+                <span class=k>try</span><span class=p>:</span>
+                    <span class=n>major</span><span class=p>,</span> <span class=n>minor</span><span class=p>,</span> <span class=n>patch</span> <span class=o>=</span> <span class=n>version</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s2>&quot;.&quot;</span><span class=p>)</span>
+                    <span class=n>digits</span> <span class=o>=</span> <span class=p>(</span>
+                        <span class=n>major</span><span class=o>.</span><span class=n>isdigit</span><span class=p>(),</span>
+                        <span class=n>minor</span><span class=o>.</span><span class=n>isdigit</span><span class=p>(),</span>
+                        <span class=n>patch</span><span class=o>.</span><span class=n>isdigit</span><span class=p>(),</span>
+                    <span class=p>)</span>
+                    <span class=k>if</span> <span class=ow>not</span> <span class=nb>all</span><span class=p>(</span><span class=n>digits</span><span class=p>):</span>
+                        <span class=n>msg</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>version</span><span class=si>}</span><span class=s2> is not a valid version number&quot;</span>
+                        <span class=k>raise</span> <span class=ne>AssertionError</span><span class=p>(</span><span class=n>msg</span><span class=p>)</span>
+                <span class=k>except</span> <span class=ne>ValueError</span><span class=p>:</span>
+                    <span class=n>msg</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>version</span><span class=si>}</span><span class=s2> is not a valid version number&quot;</span>
+                    <span class=k>raise</span> <span class=ne>AssertionError</span><span class=p>(</span><span class=n>msg</span><span class=p>)</span>
+                <span class=k>return</span> <span class=n>version</span>
+    <span class=k>raise</span> <span class=ne>AssertionError</span><span class=p>(</span><span class=s2>&quot;No __version__ assignment found&quot;</span><span class=p>)</span></div>
 
-<!DOCTYPE html>
-
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Licensed under the Apache 2.0 License -->
-  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
-  <!-- Licensed under the SIL Open Font License -->
-  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
-  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <title>blackhole.utils &#8212; Blackhole 2.1.19 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/blackhole.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Blackhole 2.1.19 documentation"
-          href="../../_static/opensearch.xml"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-  
-   
-
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">blackhole.utils</a></li> 
-      </ul>
-    </div>
-    <div class="container-wrapper">
-
-      <div id="mobile-toggle">
-        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
-      </div>
-  <div id="left-column">
-    <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">Blackhole</a>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../communicating-with-blackhole.html">Communicating with Blackhole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../dynamic-responses.html">Dynamic responses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../dynamic-switches.html">Dynamic Switches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
-</ul>
-
-    
-  </div>
-</div>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <div id="main-search">
-      <form class="form-inline" action="../../search.html" method="GET" role="form">
-        <div class="input-group">
-          <input name="q" type="text" class="form-control" placeholder="Search...">
-        </div>
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-      </form>
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-        <div id="right-column">
-          
-          <div role="navigation" aria-label="breadcrumbs navigation">
-            <ol class="breadcrumb">
-              <li><a href="../../index.html">Docs</a></li>
-              
-                <li><a href="../index.html">Module code</a></li>
-              
-              <li>blackhole.utils</li>
-            </ol>
-          </div>
-          
-          <div class="document clearer body">
-            
-  <h1>Source code for blackhole.utils</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="c1"># (The MIT License)</span>
-<span class="c1">#</span>
-<span class="c1"># Copyright (c) 2013-2021 Kura</span>
-<span class="c1">#</span>
-<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
-<span class="c1"># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
-<span class="c1"># in the Software without restriction, including without limitation the rights</span>
-<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
-<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
-<span class="c1"># furnished to do so, subject to the following conditions:</span>
-<span class="c1">#</span>
-<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
-<span class="c1"># all copies or substantial portions of the Software.</span>
-<span class="c1">#</span>
-<span class="c1"># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
-<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
-<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
-<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
-<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
-<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
-<span class="c1"># SOFTWARE.</span>
-
-<span class="sd">&quot;&quot;&quot;Provides utility functionality.&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">codecs</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">socket</span>
-<span class="kn">import</span> <span class="nn">time</span>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;blackhole_config_help&quot;</span><span class="p">,</span> <span class="s2">&quot;mailname&quot;</span><span class="p">,</span> <span class="s2">&quot;message_id&quot;</span><span class="p">,</span> <span class="s2">&quot;get_version&quot;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="Singleton"><a class="viewcode-back" href="../../api-utils.html#blackhole.utils.Singleton">[docs]</a><span class="k">class</span> <span class="nc">Singleton</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Singleton.&quot;&quot;&quot;</span>
-
-    <span class="n">_instances</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Override the __call__ method.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Singleton</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span>
-                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="mailname"><a class="viewcode-back" href="../../api-utils.html#blackhole.utils.mailname">[docs]</a><span class="k">def</span> <span class="nf">mailname</span><span class="p">(</span><span class="n">mailname_file</span><span class="o">=</span><span class="s2">&quot;/etc/mailname&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Fully qualified domain name for HELO and EHLO.</span>
-
-<span class="sd">    :param str mailname_file: A path to the mailname file. Default:</span>
-<span class="sd">                              ``/etc/mailname``.</span>
-<span class="sd">    :returns: A domain name.</span>
-<span class="sd">    :rtype: :py:obj:`str`</span>
-
-<span class="sd">    .. note::</span>
-
-<span class="sd">       Prefers content of `mailname_file`, falls back on</span>
-<span class="sd">       :py:func:`socket.getfqdn` if `mailname_file` does not exist or cannot be</span>
-<span class="sd">       opened for reading.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">mailname_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">mailname_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">_mailname_file</span><span class="p">:</span>
-            <span class="n">mailname_content</span> <span class="o">=</span> <span class="n">_mailname_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mailname_content</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">socket</span><span class="o">.</span><span class="n">getfqdn</span><span class="p">()</span>
-            <span class="n">nmailname_content</span> <span class="o">=</span> <span class="n">mailname_content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">nmailname_content</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">nmailname_content</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">socket</span><span class="o">.</span><span class="n">getfqdn</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="message_id"><a class="viewcode-back" href="../../api-utils.html#blackhole.utils.message_id">[docs]</a><span class="k">def</span> <span class="nf">message_id</span><span class="p">(</span><span class="n">domain</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return a string suitable for RFC 2822 compliant Message-ID.</span>
-
-<span class="sd">    :param str domain: A fully qualified domain.</span>
-<span class="sd">    :returns: An RFC 2822 compliant Message-ID.</span>
-<span class="sd">    :rtype: :py:obj:`str`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">timeval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span>
-    <span class="n">randint</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">timeval</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">randint</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
-
-
-<div class="viewcode-block" id="get_version"><a class="viewcode-back" href="../../api-utils.html#blackhole.utils.get_version">[docs]</a><span class="k">def</span> <span class="nf">get_version</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Extract the __version__ from a file without importing it.</span>
-
-<span class="sd">    :return: The version that was extracted.</span>
-<span class="sd">    :rtype: :py:obj:`str`</span>
-<span class="sd">    :raises AssertionError: When a version cannot be determined.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-    <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;__init__.py&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s2">&quot;Cannot open __init__.py file for reading&quot;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;__version__&quot;</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">_</span><span class="p">,</span> <span class="n">vers</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Cannot extract version from __version__&quot;</span>
-                    <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                <span class="n">version</span> <span class="o">=</span> <span class="n">vers</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">major</span><span class="p">,</span> <span class="n">minor</span><span class="p">,</span> <span class="n">patch</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-                    <span class="n">digits</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="n">major</span><span class="o">.</span><span class="n">isdigit</span><span class="p">(),</span>
-                        <span class="n">minor</span><span class="o">.</span><span class="n">isdigit</span><span class="p">(),</span>
-                        <span class="n">patch</span><span class="o">.</span><span class="n">isdigit</span><span class="p">(),</span>
-                    <span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">digits</span><span class="p">):</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> is not a valid version number&quot;</span>
-                        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> is not a valid version number&quot;</span>
-                    <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">version</span>
-    <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;No __version__ assignment found&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Formatter"><a class="viewcode-back" href="../../api-utils.html#blackhole.utils.Formatter">[docs]</a><span class="k">class</span> <span class="nc">Formatter</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Terminal output formatter.&quot;&quot;&quot;</span>
-
-    <span class="n">bold</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[1m&quot;</span>
-    <span class="n">under</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[4m&quot;</span>
-    <span class="n">reset</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span></div>
-
-
-<span class="n">formatting</span> <span class="o">=</span> <span class="n">Formatter</span><span class="p">()</span>
-
-<span class="c1"># fmt: off</span>
-<span class="n">blackhole_config_help</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;BLACKHOLE_CONFIG(1)</span>
-
-<span class="si">{f.bold}</span><span class="s1">NAME</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">       blackhole_config - the config file format for the Blackhole MTA</span>
-
-<span class="si">{f.bold}</span><span class="s1">DESCRIPTION</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">       This manual page documents the </span><span class="si">{f.bold}</span><span class="s1">Blackhole</span><span class="si">{f.reset}</span><span class="s1"> configuration file format and</span>
-<span class="s1">       options.</span>
-
-<span class="si">{f.bold}</span><span class="s1">OPTIONS</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">    These are all available options for the configuration file, their default</span>
-<span class="s1">    values and information on what the options actually do.</span>
-
-<span class="s1">    The file format is a simple </span><span class="si">{f.under}</span><span class="s1">attribute = value</span><span class="si">{f.reset}</span><span class="s1"> style, an example is shown</span>
-<span class="s1">    below.</span>
-
-<span class="s1">        # This is a comment.</span>
-<span class="s1">        listen = :25  # This is an inline comment.</span>
-<span class="s1">        user = kura</span>
-<span class="s1">        group = kura</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">listen</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">listen</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">[address]:port [mode=MODE] [delay=DELAY]</span><span class="si">{f.reset}</span><span class="s1"></span>
+<div class=viewcode-block id=Formatter><a class=viewcode-back href=../../api-utils.html#blackhole.utils.Formatter>[docs]</a><span class=k>class</span> <span class=nc>Formatter</span><span class=p>:</span>
+    <span class=sd>&quot;&quot;&quot;Terminal output formatter.&quot;&quot;&quot;</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            127.0.0.1:25,  127.0.0.1:587, :::25, :::587</span>
-<span class="s1">            IPv6 listeners are only enabled if IPv6 is supported.</span>
+    <span class=n>bold</span> <span class=o>=</span> <span class=s2>&quot;</span><span class=se>\033</span><span class=s2>[1m&quot;</span>
+    <span class=n>under</span> <span class=o>=</span> <span class=s2>&quot;</span><span class=se>\033</span><span class=s2>[4m&quot;</span>
+    <span class=n>reset</span> <span class=o>=</span> <span class=s2>&quot;</span><span class=se>\033</span><span class=s2>[0m&quot;</span></div>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Optional</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.under}</span><span class="s1">mode=</span><span class="si">{f.reset}</span><span class="s1"> and </span><span class="si">{f.under}</span><span class="s1">delay=</span><span class="si">{f.reset}</span><span class="s1"> -- allows setting a response mode and delay per</span>
-<span class="s1">            listener.</span>
 
-<span class="s1">        The </span><span class="si">{f.under}</span><span class="s1">mode=</span><span class="si">{f.reset}</span><span class="s1"> and </span><span class="si">{f.under}</span><span class="s1">delay=</span><span class="si">{f.reset}</span><span class="s1"> flags allow specific ports to act in different ways.</span>
-<span class="s1">        i.e. you could accept all mail on 10.0.0.1:25 and bounce it all on</span>
-<span class="s1">        10.0.0.2:25, as below.</span>
+<span class=n>formatting</span> <span class=o>=</span> <span class=n>Formatter</span><span class=p>()</span>
 
-<span class="s1">            listen = 10.0.0.1:25 mode=accept, 10.0.0.2:25 mode=bounce</span>
+<span class=c1># fmt: off</span>
+<span class=n>blackhole_config_help</span> <span class=o>=</span> <span class=s1>&#39;&#39;&#39;BLACKHOLE_CONFIG(1)</span>
 
-<span class="s1">        The </span><span class="si">{f.under}</span><span class="s1">mode=</span><span class="si">{f.reset}</span><span class="s1"> and </span><span class="si">{f.under}</span><span class="s1">delay=</span><span class="si">{f.reset}</span><span class="s1"> flags may also be specified together, as required.</span>
+<span class=si>{f.bold}</span><span class=s1>NAME</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>       blackhole_config - the config file format for the Blackhole MTA</span>
 
-<span class="s1">            listen = 10.0.0.1:25 mode=accept delay=5, 10.0.0.2:25 mode=bounce delay=10</span>
+<span class=si>{f.bold}</span><span class=s1>DESCRIPTION</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>       This manual page documents the </span><span class=si>{f.bold}</span><span class=s1>Blackhole</span><span class=si>{f.reset}</span><span class=s1> configuration file format and</span>
+<span class=s1>       options.</span>
 
-<span class="s1">        The flags accept the same options as </span><span class="si">{f.under}</span><span class="s1">dynamic-switches</span><span class="si">{f.reset}</span><span class="s1">, including setting</span>
-<span class="s1">        a delay range.</span>
+<span class=si>{f.bold}</span><span class=s1>OPTIONS</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>    These are all available options for the configuration file, their default</span>
+<span class=s1>    values and information on what the options actually do.</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>    The file format is a simple </span><span class=si>{f.under}</span><span class=s1>attribute = value</span><span class=si>{f.reset}</span><span class=s1> style, an example is shown</span>
+<span class=s1>    below.</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">tls_listen</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">tls_listen</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">[address]:port [mode=MODE] [delay=DELAY]</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        # This is a comment.</span>
+<span class=s1>        listen = :25  # This is an inline comment.</span>
+<span class=s1>        user = kura</span>
+<span class=s1>        group = kura</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            None</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>listen</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>listen</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>[address]:port [mode=MODE] [delay=DELAY]</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Optional</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.under}</span><span class="s1">mode=</span><span class="si">{f.reset}</span><span class="s1"> and </span><span class="si">{f.under}</span><span class="s1">delay=</span><span class="si">{f.reset}</span><span class="s1"> -- allows setting a response mode and delay per</span>
-<span class="s1">            listener.</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            127.0.0.1:25,  127.0.0.1:587, :::25, :::587</span>
+<span class=s1>            IPv6 listeners are only enabled if IPv6 is supported.</span>
 
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Optional</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.under}</span><span class=s1>mode=</span><span class=si>{f.reset}</span><span class=s1> and </span><span class=si>{f.under}</span><span class=s1>delay=</span><span class=si>{f.reset}</span><span class=s1> -- allows setting a response mode and delay per</span>
+<span class=s1>            listener.</span>
 
-<span class="s1">        :465 is equivalent to listening on port 465 on all IPv4 addresses and</span>
-<span class="s1">        :::465 is equivalent to listening on port 465 on all IPv6 addresses.</span>
+<span class=s1>        The </span><span class=si>{f.under}</span><span class=s1>mode=</span><span class=si>{f.reset}</span><span class=s1> and </span><span class=si>{f.under}</span><span class=s1>delay=</span><span class=si>{f.reset}</span><span class=s1> flags allow specific ports to act in different ways.</span>
+<span class=s1>        i.e. you could accept all mail on 10.0.0.1:25 and bounce it all on</span>
+<span class=s1>        10.0.0.2:25, as below.</span>
 
-<span class="s1">        Multiple addresses and ports can be listed on a single line.</span>
+<span class=s1>            listen = 10.0.0.1:25 mode=accept, 10.0.0.2:25 mode=bounce</span>
 
-<span class="s1">            tls_listen = 10.0.0.1:465, 10.0.0.2:465, :465, :::465</span>
+<span class=s1>        The </span><span class=si>{f.under}</span><span class=s1>mode=</span><span class=si>{f.reset}</span><span class=s1> and </span><span class=si>{f.under}</span><span class=s1>delay=</span><span class=si>{f.reset}</span><span class=s1> flags may also be specified together, as required.</span>
 
-<span class="s1">        The </span><span class="si">{f.under}</span><span class="s1">mode=</span><span class="si">{f.reset}</span><span class="s1"> and </span><span class="si">{f.under}</span><span class="s1">delay=</span><span class="si">{f.reset}</span><span class="s1"> flags allow specific ports to act in different ways.</span>
-<span class="s1">        i.e. you could accept all mail on 10.0.0.1:465 and bounce it all on</span>
-<span class="s1">        10.0.0.2:465, as below.</span>
+<span class=s1>            listen = 10.0.0.1:25 mode=accept delay=5, 10.0.0.2:25 mode=bounce delay=10</span>
 
-<span class="s1">            tls_listen = 10.0.0.1:465 mode=accept, 10.0.0.2:465 mode=bounce</span>
+<span class=s1>        The flags accept the same options as </span><span class=si>{f.under}</span><span class=s1>dynamic-switches</span><span class=si>{f.reset}</span><span class=s1>, including setting</span>
+<span class=s1>        a delay range.</span>
 
-<span class="s1">        The </span><span class="si">{f.under}</span><span class="s1">mode=</span><span class="si">{f.reset}</span><span class="s1"> and </span><span class="si">{f.under}</span><span class="s1">delay=</span><span class="si">{f.reset}</span><span class="s1"> flags may also be specified together, as required.</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">            tls_listen = 10.0.0.1:465 mode=accept delay=5, 10.0.0.2:465 mode=bounce delay=10</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>tls_listen</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>tls_listen</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>[address]:port [mode=MODE] [delay=DELAY]</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">        The flags accept the same options as </span><span class="si">{f.under}</span><span class="s1">dynamic-switches</span><span class="si">{f.reset}</span><span class="s1">, including setting</span>
-<span class="s1">        a delay range.</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            None</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Optional</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.under}</span><span class=s1>mode=</span><span class=si>{f.reset}</span><span class=s1> and </span><span class=si>{f.under}</span><span class=s1>delay=</span><span class=si>{f.reset}</span><span class=s1> -- allows setting a response mode and delay per</span>
+<span class=s1>            listener.</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">user</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">user</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">user</span><span class="si">{f.reset}</span><span class="s1"></span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            The current Linux user</span>
+<span class=s1>        :465 is equivalent to listening on port 465 on all IPv4 addresses and</span>
+<span class=s1>        :::465 is equivalent to listening on port 465 on all IPv6 addresses.</span>
 
-<span class="s1">        Blackhole will set it&#39;s process owner to the value provided with this</span>
-<span class="s1">        option. Ports below 1024 require sudo or root privileges, this option</span>
-<span class="s1">        is available so that the process can be started, listen on privileged</span>
-<span class="s1">        ports and then give up those privileges.</span>
+<span class=s1>        Multiple addresses and ports can be listed on a single line.</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>            tls_listen = 10.0.0.1:465, 10.0.0.2:465, :465, :::465</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">group</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">group</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">group</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        The </span><span class=si>{f.under}</span><span class=s1>mode=</span><span class=si>{f.reset}</span><span class=s1> and </span><span class=si>{f.under}</span><span class=s1>delay=</span><span class=si>{f.reset}</span><span class=s1> flags allow specific ports to act in different ways.</span>
+<span class=s1>        i.e. you could accept all mail on 10.0.0.1:465 and bounce it all on</span>
+<span class=s1>        10.0.0.2:465, as below.</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            The primary group of the current Linux user</span>
+<span class=s1>            tls_listen = 10.0.0.1:465 mode=accept, 10.0.0.2:465 mode=bounce</span>
 
-<span class="s1">        Blackhole will set it&#39;s process group to the value provided with this</span>
-<span class="s1">        option.</span>
+<span class=s1>        The </span><span class=si>{f.under}</span><span class=s1>mode=</span><span class=si>{f.reset}</span><span class=s1> and </span><span class=si>{f.under}</span><span class=s1>delay=</span><span class=si>{f.reset}</span><span class=s1> flags may also be specified together, as required.</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>            tls_listen = 10.0.0.1:465 mode=accept delay=5, 10.0.0.2:465 mode=bounce delay=10</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">pidfile</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">pidfile</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">/path/to/file.pid</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        The flags accept the same options as </span><span class=si>{f.under}</span><span class=s1>dynamic-switches</span><span class=si>{f.reset}</span><span class=s1>, including setting</span>
+<span class=s1>        a delay range.</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            /tmp/blackhole.pid</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">        Blackhole will write it&#39;s Process ID to this file, allowing you to</span>
-<span class="s1">        easily track the process and send signals to it.</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>user</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>user</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>user</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            The current Linux user</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">timeout</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">timeout</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">seconds</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        Blackhole will set it&#39;s process owner to the value provided with this</span>
+<span class=s1>        option. Ports below 1024 require sudo or root privileges, this option</span>
+<span class=s1>        is available so that the process can be started, listen on privileged</span>
+<span class=s1>        ports and then give up those privileges.</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            60 -- Maximum value of 180 seconds.</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">        This is the amount of time to wait for a client to send data. Once the</span>
-<span class="s1">        timeout value has been reached with no data being sent by the client,</span>
-<span class="s1">        the connection will be terminated and a 421 Timeout message will be</span>
-<span class="s1">        sent to the client.</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>group</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>group</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>group</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">        Helps mitigate DoS risks.</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            The primary group of the current Linux user</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>        Blackhole will set it&#39;s process group to the value provided with this</span>
+<span class=s1>        option.</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">tls_cert</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">tls_cert</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">/path/to/certificate.pem</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            None</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>pidfile</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>pidfile</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>/path/to/file.pid</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">        The certificate file in x509 format for wrapping a connection in</span>
-<span class="s1">        SSL/TLS.</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            /tmp/blackhole.pid</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>        Blackhole will write it&#39;s Process ID to this file, allowing you to</span>
+<span class=s1>        easily track the process and send signals to it.</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">tls_key</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">tls_key</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">/path/to/private.key</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            None</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>timeout</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>timeout</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>seconds</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">        The private key of the tls_cert.</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            60 -- Maximum value of 180 seconds.</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>        This is the amount of time to wait for a client to send data. Once the</span>
+<span class=s1>        timeout value has been reached with no data being sent by the client,</span>
+<span class=s1>        the connection will be terminated and a 421 Timeout message will be</span>
+<span class=s1>        sent to the client.</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">tls_dhparams</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">tls_dhparams</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">/path/to/dhparams.pem</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        Helps mitigate DoS risks.</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            None</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">        File containing Diffie Hellman ephemeral parameters for ECDH ciphers.</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>tls_cert</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>tls_cert</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>/path/to/certificate.pem</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            None</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">delay</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">delay</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">seconds</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        The certificate file in x509 format for wrapping a connection in</span>
+<span class=s1>        SSL/TLS.</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            0 -- Maximum value of 60 seconds.</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">        Time to delay before returning a response to a completed DATA command.</span>
-<span class="s1">        You can use this to delay testing or simulate lag.</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>tls_key</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>tls_key</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>/path/to/private.key</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            None</span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">mode</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">mode</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">accept | bounce | random</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        The private key of the tls_cert.</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            accept</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>tls_dhparams</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>tls_dhparams</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>/path/to/dhparams.pem</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">max_message_size</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">max_message_size</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">bytes</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            None</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            512000 Bytes (512 KB)</span>
+<span class=s1>        File containing Diffie Hellman ephemeral parameters for ECDH ciphers.</span>
 
-<span class="s1">        The maximum message size for a message. This includes headers and helps</span>
-<span class="s1">        mitigate a DoS risk.</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>delay</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>delay</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>seconds</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">dynamic_switch</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">dynamic_switch</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">true | false</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            0 -- Maximum value of 60 seconds.</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            true</span>
+<span class=s1>        Time to delay before returning a response to a completed DATA command.</span>
+<span class=s1>        You can use this to delay testing or simulate lag.</span>
 
-<span class="s1">        The dynamic switch option allows you to enable or disable parsing of</span>
-<span class="s1">        dynamic switches from email headers.</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">                                            ----</span>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>mode</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>mode</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>accept | bounce | random</span><span class=si>{f.reset}</span><span class=s1></span>
 
-<span class="s1">    </span><span class="si">{f.bold}</span><span class="s1">workers</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Syntax</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            </span><span class="si">{f.bold}</span><span class="s1">workers</span><span class="si">{f.reset}</span><span class="s1"> = </span><span class="si">{f.under}</span><span class="s1">number</span><span class="si">{f.reset}</span><span class="s1"></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            accept</span>
 
-<span class="s1">        </span><span class="si">{f.bold}</span><span class="s1">Default</span><span class="si">{f.reset}</span><span class="s1"></span>
-<span class="s1">            1</span>
+<span class=s1>                                            ----</span>
 
-<span class="s1">        The workers option allows you to define how many worker processes to</span>
-<span class="s1">        spawn to handle incoming mail. The absolute minimum is actually 2. Even</span>
-<span class="s1">        by setting the workers value to 1, a supervisor process will always</span>
-<span class="s1">        exist meaning that you would have 1 worker and a supervisor.</span>
-<span class="s1">&#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="n">formatting</span><span class="p">)</span>  <span class="c1"># noqa</span>
-<span class="c1"># fmt: on</span>
-</pre></div>
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>max_message_size</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>max_message_size</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>bytes</span><span class=si>{f.reset}</span><span class=s1></span>
 
-          </div>
-            
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">blackhole.utils</a></li> 
-      </ul>
-    </div>
-<script type="text/javascript">
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            512000 Bytes (512 KB)</span>
+
+<span class=s1>        The maximum message size for a message. This includes headers and helps</span>
+<span class=s1>        mitigate a DoS risk.</span>
+
+<span class=s1>                                            ----</span>
+
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>dynamic_switch</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>dynamic_switch</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>true | false</span><span class=si>{f.reset}</span><span class=s1></span>
+
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            true</span>
+
+<span class=s1>        The dynamic switch option allows you to enable or disable parsing of</span>
+<span class=s1>        dynamic switches from email headers.</span>
+
+<span class=s1>                                            ----</span>
+
+<span class=s1>    </span><span class=si>{f.bold}</span><span class=s1>workers</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Syntax</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            </span><span class=si>{f.bold}</span><span class=s1>workers</span><span class=si>{f.reset}</span><span class=s1> = </span><span class=si>{f.under}</span><span class=s1>number</span><span class=si>{f.reset}</span><span class=s1></span>
+
+<span class=s1>        </span><span class=si>{f.bold}</span><span class=s1>Default</span><span class=si>{f.reset}</span><span class=s1></span>
+<span class=s1>            1</span>
+
+<span class=s1>        The workers option allows you to define how many worker processes to</span>
+<span class=s1>        spawn to handle incoming mail. The absolute minimum is actually 2. Even</span>
+<span class=s1>        by setting the workers value to 1, a supervisor process will always</span>
+<span class=s1>        exist meaning that you would have 1 worker and a supervisor.</span>
+<span class=s1>&#39;&#39;&#39;</span><span class=o>.</span><span class=n>format</span><span class=p>(</span><span class=n>f</span><span class=o>=</span><span class=n>formatting</span><span class=p>)</span>  <span class=c1># noqa</span>
+<span class=c1># fmt: on</span>
+</pre></div> </div> </div> <div class=clearfix></div> </div> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=../../genindex.html title="General Index">index</a></li> <li class=right> <a href=../../py-modindex.html title="Python Module Index">modules</a> |</li> <li class="nav-item nav-item-0"><a href=../../index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-1"><a href=../index.html>Module code</a> &#187;</li> <li class="nav-item nav-item-this"><a href>blackhole.utils</a></li> </ul> </div><script type=text/javascript>
   $("#mobile-toggle a").click(function () {
     $("#left-column").toggle();
   });
-</script>
-<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
-  <div class="footer">
-    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-  </div>
-  </body>
-</html>
+</script><script type=text/javascript src=../../_static/js/bootstrap.js></script> <div class=footer> &copy; Copyright 2013-2021, Kura. Created using <a href=http://sphinx.pocoo.org/ >Sphinx</a>. </div> </body></html>

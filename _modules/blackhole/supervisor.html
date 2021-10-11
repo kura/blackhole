@@ -1,289 +1,160 @@
+<!DOCTYPE html><html> <head><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><link rel=stylesheet type=text/css href=../../_static/fonts/open-sans/stylesheet.css><link rel=stylesheet type=text/css href=../../_static/fonts/source-serif-pro/source-serif-pro.css><link rel=stylesheet type=text/css href=../../_static/css/bootstrap.min.css><link rel=stylesheet type=text/css href=../../_static/css/bootstrap-theme.min.css><meta name=viewport content="width=device-width, initial-scale=1.0"><title>blackhole.supervisor &#8212; Blackhole 2.1.19 documentation</title><link rel=stylesheet type=text/css href=../../_static/pygments.css><link rel=stylesheet type=text/css href=../../_static/blackhole.css><script data-url_root=../../ id=documentation_options src=../../_static/documentation_options.js></script><script src=../../_static/jquery.js></script><script src=../../_static/underscore.js></script><script src=../../_static/doctools.js></script><link rel=search type=application/opensearchdescription+xml title="Search within Blackhole 2.1.19 documentation" href=../../_static/opensearch.xml><link rel=index title=Index href=../../genindex.html><link rel=search title=Search href=../../search.html></head><body> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=../../genindex.html title="General Index" accesskey=I>index</a></li> <li class=right> <a href=../../py-modindex.html title="Python Module Index">modules</a> |</li> <li class="nav-item nav-item-0"><a href=../../index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-1"><a href=../index.html accesskey=U>Module code</a> &#187;</li> <li class="nav-item nav-item-this"><a href>blackhole.supervisor</a></li> </ul> </div> <div class=container-wrapper> <div id=mobile-toggle> <a href=#><span class="glyphicon glyphicon-align-justify" aria-hidden=true></span></a> </div> <div id=left-column> <div class=sphinxsidebar><a href="
+    ../../index.html" class=text-logo>Blackhole</a><div class=sidebar-block> <div class=sidebar-wrapper> <h2>Table Of Contents</h2> </div> <div class=sidebar-toc> <ul><li class=toctree-l1><a class="reference internal" href=../../overview.html>Overview</a></li><li class=toctree-l1><a class="reference internal" href=../../configuration.html>Configuration</a></li><li class=toctree-l1><a class="reference internal" href=../../communicating-with-blackhole.html>Communicating with Blackhole</a></li><li class=toctree-l1><a class="reference internal" href=../../dynamic-responses.html>Dynamic responses</a></li><li class=toctree-l1><a class="reference internal" href=../../dynamic-switches.html>Dynamic Switches</a></li><li class=toctree-l1><a class="reference internal" href=../../api.html>API</a></li></ul> </div></div><div class=sidebar-block> <div class=sidebar-wrapper> <div id=main-search> <form class=form-inline action=../../search.html method=GET role=form> <div class=input-group> <input name=q type=text class=form-control placeholder=Search...> </div> <input type=hidden name=check_keywords value=yes> <input type=hidden name=area value=default> </form> </div> </div></div> </div> </div> <div id=right-column> <div role=navigation aria-label="breadcrumbs navigation"> <ol class=breadcrumb> <li><a href=../../index.html>Docs</a></li> <li><a href=../index.html>Module code</a></li> <li>blackhole.supervisor</li> </ol> </div> <div class="document clearer body"> <h1>Source code for blackhole.supervisor</h1><div class=highlight><pre>
+<span></span><span class=c1># -*- coding: utf-8 -*-</span>
 
-<!DOCTYPE html>
+<span class=c1># (The MIT License)</span>
+<span class=c1>#</span>
+<span class=c1># Copyright (c) 2013-2021 Kura</span>
+<span class=c1>#</span>
+<span class=c1># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class=c1># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
+<span class=c1># in the Software without restriction, including without limitation the rights</span>
+<span class=c1># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class=c1># copies of the Software, and to permit persons to whom the Software is</span>
+<span class=c1># furnished to do so, subject to the following conditions:</span>
+<span class=c1>#</span>
+<span class=c1># The above copyright notice and this permission notice shall be included in</span>
+<span class=c1># all copies or substantial portions of the Software.</span>
+<span class=c1>#</span>
+<span class=c1># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class=c1># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class=c1># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class=c1># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class=c1># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class=c1># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class=c1># SOFTWARE.</span>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Licensed under the Apache 2.0 License -->
-  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
-  <!-- Licensed under the SIL Open Font License -->
-  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
-  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <title>blackhole.supervisor &#8212; Blackhole 2.1.19 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/blackhole.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Blackhole 2.1.19 documentation"
-          href="../../_static/opensearch.xml"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-  
-   
-
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">blackhole.supervisor</a></li> 
-      </ul>
-    </div>
-    <div class="container-wrapper">
-
-      <div id="mobile-toggle">
-        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
-      </div>
-  <div id="left-column">
-    <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">Blackhole</a>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../communicating-with-blackhole.html">Communicating with Blackhole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../dynamic-responses.html">Dynamic responses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../dynamic-switches.html">Dynamic Switches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
-</ul>
-
-    
-  </div>
-</div>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <div id="main-search">
-      <form class="form-inline" action="../../search.html" method="GET" role="form">
-        <div class="input-group">
-          <input name="q" type="text" class="form-control" placeholder="Search...">
-        </div>
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-      </form>
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-        <div id="right-column">
-          
-          <div role="navigation" aria-label="breadcrumbs navigation">
-            <ol class="breadcrumb">
-              <li><a href="../../index.html">Docs</a></li>
-              
-                <li><a href="../index.html">Module code</a></li>
-              
-              <li>blackhole.supervisor</li>
-            </ol>
-          </div>
-          
-          <div class="document clearer body">
-            
-  <h1>Source code for blackhole.supervisor</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="c1"># (The MIT License)</span>
-<span class="c1">#</span>
-<span class="c1"># Copyright (c) 2013-2021 Kura</span>
-<span class="c1">#</span>
-<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
-<span class="c1"># of this software and associated documentation files (the &#39;Software&#39;), to deal</span>
-<span class="c1"># in the Software without restriction, including without limitation the rights</span>
-<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
-<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
-<span class="c1"># furnished to do so, subject to the following conditions:</span>
-<span class="c1">#</span>
-<span class="c1"># The above copyright notice and this permission notice shall be included in</span>
-<span class="c1"># all copies or substantial portions of the Software.</span>
-<span class="c1">#</span>
-<span class="c1"># THE SOFTWARE IS PROVIDED &#39;AS IS&#39;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
-<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
-<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
-<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
-<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
-<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
-<span class="c1"># SOFTWARE.</span>
-
-<span class="sd">&quot;&quot;&quot;Provides functionality to create the supervisor process.&quot;&quot;&quot;</span>
+<span class=sd>&quot;&quot;&quot;Provides functionality to create the supervisor process.&quot;&quot;&quot;</span>
 
 
-<span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">signal</span>
+<span class=kn>import</span> <span class=nn>asyncio</span>
+<span class=kn>import</span> <span class=nn>logging</span>
+<span class=kn>import</span> <span class=nn>os</span>
+<span class=kn>import</span> <span class=nn>signal</span>
 
-<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Config</span>
-<span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">server</span>
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">BlackholeRuntimeException</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">Singleton</span>
-<span class="kn">from</span> <span class="nn">.worker</span> <span class="kn">import</span> <span class="n">Worker</span>
-
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">setproctitle</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">setproctitle</span> <span class="o">=</span> <span class="kc">None</span>
+<span class=kn>from</span> <span class=nn>.config</span> <span class=kn>import</span> <span class=n>Config</span>
+<span class=kn>from</span> <span class=nn>.control</span> <span class=kn>import</span> <span class=n>server</span>
+<span class=kn>from</span> <span class=nn>.exceptions</span> <span class=kn>import</span> <span class=n>BlackholeRuntimeException</span>
+<span class=kn>from</span> <span class=nn>.utils</span> <span class=kn>import</span> <span class=n>Singleton</span>
+<span class=kn>from</span> <span class=nn>.worker</span> <span class=kn>import</span> <span class=n>Worker</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Supervisor&quot;</span><span class="p">,)</span>
-<span class="sd">&quot;&quot;&quot;Tuple all the things.&quot;&quot;&quot;</span>
+<span class=k>try</span><span class=p>:</span>
+    <span class=kn>import</span> <span class=nn>setproctitle</span>
+<span class=k>except</span> <span class=ne>ImportError</span><span class=p>:</span>
+    <span class=n>setproctitle</span> <span class=o>=</span> <span class=kc>None</span>
 
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;blackhole.supervisor&quot;</span><span class="p">)</span>
+<span class=n>__all__</span> <span class=o>=</span> <span class=p>(</span><span class=s2>&quot;Supervisor&quot;</span><span class=p>,)</span>
+<span class=sd>&quot;&quot;&quot;Tuple all the things.&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="Supervisor"><a class="viewcode-back" href="../../api-supervisor.html#blackhole.supervisor.Supervisor">[docs]</a><span class="k">class</span> <span class="nc">Supervisor</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">Singleton</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The supervisor process.</span>
+<span class=n>logger</span> <span class=o>=</span> <span class=n>logging</span><span class=o>.</span><span class=n>getLogger</span><span class=p>(</span><span class=s2>&quot;blackhole.supervisor&quot;</span><span class=p>)</span>
 
-<span class="sd">    Responsible for monitoring and controlling child processes via an</span>
-<span class="sd">    internal map of workers and the children they manage.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialise the supervisor.</span>
+<div class=viewcode-block id=Supervisor><a class=viewcode-back href=../../api-supervisor.html#blackhole.supervisor.Supervisor>[docs]</a><span class=k>class</span> <span class=nc>Supervisor</span><span class=p>(</span><span class=n>metaclass</span><span class=o>=</span><span class=n>Singleton</span><span class=p>):</span>
+    <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>    The supervisor process.</span>
 
-<span class="sd">        Loads the configuration and event loop.</span>
+<span class=sd>    Responsible for monitoring and controlling child processes via an</span>
+<span class=sd>    internal map of workers and the children they manage.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
 
-<span class="sd">        :param loop: The event loop to use.</span>
-<span class="sd">        :type loop: :py:class:`syncio.unix_events._UnixSelectorEventLoop` or</span>
-<span class="sd">                    :py:obj:`None` to get the current event loop using</span>
-<span class="sd">                    :py:func:`asyncio.get_event_loop`.</span>
-<span class="sd">        :raises BlackholeRuntimeException: When an error occurs generating</span>
-<span class="sd">                                           servers.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initiating the supervisor&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span> <span class="k">if</span> <span class="n">loop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">socks</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">setproctitle</span><span class="p">:</span>
-            <span class="n">setproctitle</span><span class="o">.</span><span class="n">setproctitle</span><span class="p">(</span><span class="s2">&quot;blackhole: master&quot;</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generate_servers</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">BlackholeRuntimeException</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">close_socks</span><span class="p">()</span>
-            <span class="k">raise</span> <span class="n">BlackholeRuntimeException</span><span class="p">()</span>
+    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>        Initialise the supervisor.</span>
 
-<div class="viewcode-block" id="Supervisor.generate_servers"><a class="viewcode-back" href="../../api-supervisor.html#blackhole.supervisor.Supervisor.generate_servers">[docs]</a>    <span class="k">def</span> <span class="nf">generate_servers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Spawn all of the required sockets and TLS contexts.&quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attaching sockets to the supervisor&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_socket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">listen</span><span class="p">)</span>
-        <span class="n">tls_conf</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tls_cert</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tls_key</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tls_listen</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">tls_conf</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">create_socket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tls_listen</span><span class="p">,</span> <span class="n">use_tls</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+<span class=sd>        Loads the configuration and event loop.</span>
 
-<div class="viewcode-block" id="Supervisor.create_socket"><a class="viewcode-back" href="../../api-supervisor.html#blackhole.supervisor.Supervisor.create_socket">[docs]</a>    <span class="k">def</span> <span class="nf">create_socket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listeners</span><span class="p">,</span> <span class="n">use_tls</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create supervisor socket.&quot;&quot;&quot;</span>
-        <span class="n">_tls</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">use_tls</span><span class="p">:</span>
-            <span class="n">_tls</span> <span class="o">=</span> <span class="s2">&quot; (TLS)&quot;</span>
-        <span class="k">for</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">flags</span> <span class="ow">in</span> <span class="n">listeners</span><span class="p">:</span>
-            <span class="n">aserver</span> <span class="o">=</span> <span class="n">server</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">use_tls</span><span class="o">=</span><span class="n">use_tls</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">socks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aserver</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attaching </span><span class="si">{</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}{</span><span class="n">_tls</span><span class="si">}</span><span class="s2"> with flags </span><span class="si">{</span><span class="n">flags</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+<span class=sd>        :param loop: The event loop to use.</span>
+<span class=sd>        :type loop: :py:class:`syncio.unix_events._UnixSelectorEventLoop` or</span>
+<span class=sd>                    :py:obj:`None` to get the current event loop using</span>
+<span class=sd>                    :py:func:`asyncio.get_event_loop`.</span>
+<span class=sd>        :raises BlackholeRuntimeException: When an error occurs generating</span>
+<span class=sd>                                           servers.</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>&quot;Initiating the supervisor&quot;</span><span class=p>)</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>config</span> <span class=o>=</span> <span class=n>Config</span><span class=p>()</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>loop</span> <span class=o>=</span> <span class=n>loop</span> <span class=k>if</span> <span class=n>loop</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span> <span class=k>else</span> <span class=n>asyncio</span><span class=o>.</span><span class=n>get_event_loop</span><span class=p>()</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>socks</span> <span class=o>=</span> <span class=p>[]</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>workers</span> <span class=o>=</span> <span class=p>[]</span>
+        <span class=k>if</span> <span class=n>setproctitle</span><span class=p>:</span>
+            <span class=n>setproctitle</span><span class=o>.</span><span class=n>setproctitle</span><span class=p>(</span><span class=s2>&quot;blackhole: master&quot;</span><span class=p>)</span>
+        <span class=k>try</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>generate_servers</span><span class=p>()</span>
+        <span class=k>except</span> <span class=n>BlackholeRuntimeException</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>close_socks</span><span class=p>()</span>
+            <span class=k>raise</span> <span class=n>BlackholeRuntimeException</span><span class=p>()</span>
 
-<div class="viewcode-block" id="Supervisor.run"><a class="viewcode-back" href="../../api-supervisor.html#blackhole.supervisor.Supervisor.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Start all workers and their children.</span>
+<div class=viewcode-block id=Supervisor.generate_servers><a class=viewcode-back href=../../api-supervisor.html#blackhole.supervisor.Supervisor.generate_servers>[docs]</a>    <span class=k>def</span> <span class=nf>generate_servers</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Spawn all of the required sockets and TLS contexts.&quot;&quot;&quot;</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>&quot;Attaching sockets to the supervisor&quot;</span><span class=p>)</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>create_socket</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>config</span><span class=o>.</span><span class=n>listen</span><span class=p>)</span>
+        <span class=n>tls_conf</span> <span class=o>=</span> <span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>config</span><span class=o>.</span><span class=n>tls_cert</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>config</span><span class=o>.</span><span class=n>tls_key</span><span class=p>)</span>
+        <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>config</span><span class=o>.</span><span class=n>tls_listen</span><span class=p>)</span> <span class=o>&gt;</span> <span class=mi>0</span> <span class=ow>and</span> <span class=nb>all</span><span class=p>(</span><span class=n>tls_conf</span><span class=p>):</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>create_socket</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>config</span><span class=o>.</span><span class=n>tls_listen</span><span class=p>,</span> <span class=n>use_tls</span><span class=o>=</span><span class=kc>True</span><span class=p>)</span></div>
 
-<span class="sd">        Attaches signals and runs the event loop.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start_workers</span><span class="p">()</span>
-        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
-        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span></div>
+<div class=viewcode-block id=Supervisor.create_socket><a class=viewcode-back href=../../api-supervisor.html#blackhole.supervisor.Supervisor.create_socket>[docs]</a>    <span class=k>def</span> <span class=nf>create_socket</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>listeners</span><span class=p>,</span> <span class=n>use_tls</span><span class=o>=</span><span class=kc>False</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Create supervisor socket.&quot;&quot;&quot;</span>
+        <span class=n>_tls</span> <span class=o>=</span> <span class=s2>&quot;&quot;</span>
+        <span class=k>if</span> <span class=n>use_tls</span><span class=p>:</span>
+            <span class=n>_tls</span> <span class=o>=</span> <span class=s2>&quot; (TLS)&quot;</span>
+        <span class=k>for</span> <span class=n>host</span><span class=p>,</span> <span class=n>port</span><span class=p>,</span> <span class=n>family</span><span class=p>,</span> <span class=n>flags</span> <span class=ow>in</span> <span class=n>listeners</span><span class=p>:</span>
+            <span class=n>aserver</span> <span class=o>=</span> <span class=n>server</span><span class=p>(</span><span class=n>host</span><span class=p>,</span> <span class=n>port</span><span class=p>,</span> <span class=n>family</span><span class=p>,</span> <span class=n>use_tls</span><span class=o>=</span><span class=n>use_tls</span><span class=p>)</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>socks</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>aserver</span><span class=p>)</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Attaching </span><span class=si>{</span><span class=n>host</span><span class=si>}</span><span class=s2>:</span><span class=si>{</span><span class=n>port</span><span class=si>}{</span><span class=n>_tls</span><span class=si>}</span><span class=s2> with flags </span><span class=si>{</span><span class=n>flags</span><span class=si>}</span><span class=s2>&quot;</span><span class=p>)</span></div>
 
-<div class="viewcode-block" id="Supervisor.start_workers"><a class="viewcode-back" href="../../api-supervisor.html#blackhole.supervisor.Supervisor.start_workers">[docs]</a>    <span class="k">def</span> <span class="nf">start_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Start each worker and it&#39;s child process.&quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting workers&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">workers</span><span class="p">):</span>
-            <span class="n">num</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating worker: </span><span class="si">{</span><span class="n">num</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Worker</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">socks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">))</span></div>
+<div class=viewcode-block id=Supervisor.run><a class=viewcode-back href=../../api-supervisor.html#blackhole.supervisor.Supervisor.run>[docs]</a>    <span class=k>def</span> <span class=nf>run</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>        Start all workers and their children.</span>
 
-<div class="viewcode-block" id="Supervisor.stop_workers"><a class="viewcode-back" href="../../api-supervisor.html#blackhole.supervisor.Supervisor.stop_workers">[docs]</a>    <span class="k">def</span> <span class="nf">stop_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Stop the workers and their respective child process.&quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping workers&quot;</span><span class="p">)</span>
-        <span class="n">worker_num</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Stopping worker: </span><span class="si">{</span><span class="n">worker_num</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">worker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-            <span class="n">worker_num</span> <span class="o">+=</span> <span class="mi">1</span></div>
+<span class=sd>        Attaches signals and runs the event loop.</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>start_workers</span><span class=p>()</span>
+        <span class=n>signal</span><span class=o>.</span><span class=n>signal</span><span class=p>(</span><span class=n>signal</span><span class=o>.</span><span class=n>SIGTERM</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>stop</span><span class=p>)</span>
+        <span class=n>signal</span><span class=o>.</span><span class=n>signal</span><span class=p>(</span><span class=n>signal</span><span class=o>.</span><span class=n>SIGINT</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>stop</span><span class=p>)</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>loop</span><span class=o>.</span><span class=n>run_forever</span><span class=p>()</span></div>
 
-<div class="viewcode-block" id="Supervisor.close_socks"><a class="viewcode-back" href="../../api-supervisor.html#blackhole.supervisor.Supervisor.close_socks">[docs]</a>    <span class="k">def</span> <span class="nf">close_socks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Close all opened sockets.&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">sock</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">socks</span><span class="p">:</span>
-            <span class="n">sock</span><span class="p">[</span><span class="s2">&quot;sock&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+<div class=viewcode-block id=Supervisor.start_workers><a class=viewcode-back href=../../api-supervisor.html#blackhole.supervisor.Supervisor.start_workers>[docs]</a>    <span class=k>def</span> <span class=nf>start_workers</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Start each worker and it&#39;s child process.&quot;&quot;&quot;</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>&quot;Starting workers&quot;</span><span class=p>)</span>
+        <span class=k>for</span> <span class=n>idx</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>config</span><span class=o>.</span><span class=n>workers</span><span class=p>):</span>
+            <span class=n>num</span> <span class=o>=</span> <span class=sa>f</span><span class=s2>&quot;</span><span class=si>{</span><span class=n>idx</span> <span class=o>+</span> <span class=mi>1</span><span class=si>}</span><span class=s2>&quot;</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Creating worker: </span><span class=si>{</span><span class=n>num</span><span class=si>}</span><span class=s2>&quot;</span><span class=p>)</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>workers</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>Worker</span><span class=p>(</span><span class=n>num</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>socks</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>loop</span><span class=p>))</span></div>
 
-<div class="viewcode-block" id="Supervisor.stop"><a class="viewcode-back" href="../../api-supervisor.html#blackhole.supervisor.Supervisor.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Terminate all of the workers.</span>
+<div class=viewcode-block id=Supervisor.stop_workers><a class=viewcode-back href=../../api-supervisor.html#blackhole.supervisor.Supervisor.stop_workers>[docs]</a>    <span class=k>def</span> <span class=nf>stop_workers</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Stop the workers and their respective child process.&quot;&quot;&quot;</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>&quot;Stopping workers&quot;</span><span class=p>)</span>
+        <span class=n>worker_num</span> <span class=o>=</span> <span class=mi>1</span>
+        <span class=k>for</span> <span class=n>worker</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>workers</span><span class=p>:</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=sa>f</span><span class=s2>&quot;Stopping worker: </span><span class=si>{</span><span class=n>worker_num</span><span class=si>}</span><span class=s2>&quot;</span><span class=p>)</span>
+            <span class=n>worker</span><span class=o>.</span><span class=n>stop</span><span class=p>()</span>
+            <span class=n>worker_num</span> <span class=o>+=</span> <span class=mi>1</span></div>
 
-<span class="sd">        Generally should be called by a signal, nothing else.</span>
+<div class=viewcode-block id=Supervisor.close_socks><a class=viewcode-back href=../../api-supervisor.html#blackhole.supervisor.Supervisor.close_socks>[docs]</a>    <span class=k>def</span> <span class=nf>close_socks</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Close all opened sockets.&quot;&quot;&quot;</span>
+        <span class=k>for</span> <span class=n>sock</span> <span class=ow>in</span> <span class=bp>self</span><span class=o>.</span><span class=n>socks</span><span class=p>:</span>
+            <span class=n>sock</span><span class=p>[</span><span class=s2>&quot;sock&quot;</span><span class=p>]</span><span class=o>.</span><span class=n>close</span><span class=p>()</span></div>
 
-<span class="sd">        :raise SystemExit: With code :py:obj:`os.EX_OK`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stop_workers</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">close_socks</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping supervisor&quot;</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">EX_OK</span><span class="p">)</span></div></div>
-</pre></div>
+<div class=viewcode-block id=Supervisor.stop><a class=viewcode-back href=../../api-supervisor.html#blackhole.supervisor.Supervisor.stop>[docs]</a>    <span class=k>def</span> <span class=nf>stop</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;</span>
+<span class=sd>        Terminate all of the workers.</span>
 
-          </div>
-            
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">blackhole.supervisor</a></li> 
-      </ul>
-    </div>
-<script type="text/javascript">
+<span class=sd>        Generally should be called by a signal, nothing else.</span>
+
+<span class=sd>        :raise SystemExit: With code :py:obj:`os.EX_OK`.</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>stop_workers</span><span class=p>()</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>close_socks</span><span class=p>()</span>
+        <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>&quot;Stopping supervisor&quot;</span><span class=p>)</span>
+        <span class=k>try</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>loop</span><span class=o>.</span><span class=n>stop</span><span class=p>()</span>
+        <span class=k>except</span> <span class=ne>RuntimeError</span><span class=p>:</span>
+            <span class=k>pass</span>
+        <span class=k>raise</span> <span class=ne>SystemExit</span><span class=p>(</span><span class=n>os</span><span class=o>.</span><span class=n>EX_OK</span><span class=p>)</span></div></div>
+</pre></div> </div> </div> <div class=clearfix></div> </div> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=../../genindex.html title="General Index">index</a></li> <li class=right> <a href=../../py-modindex.html title="Python Module Index">modules</a> |</li> <li class="nav-item nav-item-0"><a href=../../index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-1"><a href=../index.html>Module code</a> &#187;</li> <li class="nav-item nav-item-this"><a href>blackhole.supervisor</a></li> </ul> </div><script type=text/javascript>
   $("#mobile-toggle a").click(function () {
     $("#left-column").toggle();
   });
-</script>
-<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
-  <div class="footer">
-    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-  </div>
-  </body>
-</html>
+</script><script type=text/javascript src=../../_static/js/bootstrap.js></script> <div class=footer> &copy; Copyright 2013-2021, Kura. Created using <a href=http://sphinx.pocoo.org/ >Sphinx</a>. </div> </body></html>

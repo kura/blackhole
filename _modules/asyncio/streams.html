@@ -1,877 +1,748 @@
-
-<!DOCTYPE html>
-
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Licensed under the Apache 2.0 License -->
-  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
-  <!-- Licensed under the SIL Open Font License -->
-  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
-  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <title>asyncio.streams &#8212; Blackhole 2.1.19 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/blackhole.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Blackhole 2.1.19 documentation"
-          href="../../_static/opensearch.xml"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-  
-   
-
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">asyncio.streams</a></li> 
-      </ul>
-    </div>
-    <div class="container-wrapper">
-
-      <div id="mobile-toggle">
-        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
-      </div>
-  <div id="left-column">
-    <div class="sphinxsidebar"><a href="
-    ../../index.html" class="text-logo">Blackhole</a>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../communicating-with-blackhole.html">Communicating with Blackhole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../dynamic-responses.html">Dynamic responses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../dynamic-switches.html">Dynamic Switches</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
-</ul>
-
-    
-  </div>
-</div>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <div id="main-search">
-      <form class="form-inline" action="../../search.html" method="GET" role="form">
-        <div class="input-group">
-          <input name="q" type="text" class="form-control" placeholder="Search...">
-        </div>
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-      </form>
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-        <div id="right-column">
-          
-          <div role="navigation" aria-label="breadcrumbs navigation">
-            <ol class="breadcrumb">
-              <li><a href="../../index.html">Docs</a></li>
-              
-                <li><a href="../index.html">Module code</a></li>
-              
-              <li>asyncio.streams</li>
-            </ol>
-          </div>
-          
-          <div class="document clearer body">
-            
-  <h1>Source code for asyncio.streams</h1><div class="highlight"><pre>
-<span></span><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s1">&#39;StreamReader&#39;</span><span class="p">,</span> <span class="s1">&#39;StreamWriter&#39;</span><span class="p">,</span> <span class="s1">&#39;StreamReaderProtocol&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;open_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;start_server&#39;</span><span class="p">)</span>
-
-<span class="kn">import</span> <span class="nn">socket</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">weakref</span>
-
-<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="s1">&#39;AF_UNIX&#39;</span><span class="p">):</span>
-    <span class="n">__all__</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;open_unix_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;start_unix_server&#39;</span><span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">coroutines</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">events</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">exceptions</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">format_helpers</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">protocols</span>
-<span class="kn">from</span> <span class="nn">.log</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">.tasks</span> <span class="kn">import</span> <span class="n">sleep</span>
-
-
-<span class="n">_DEFAULT_LIMIT</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">16</span>  <span class="c1"># 64 KiB</span>
-
-
-<span class="k">async</span> <span class="k">def</span> <span class="nf">open_connection</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                          <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">_DEFAULT_LIMIT</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A wrapper for create_connection() returning a (reader, writer) pair.</span>
-
-<span class="sd">    The reader returned is a StreamReader instance; the writer is a</span>
-<span class="sd">    StreamWriter instance.</span>
-
-<span class="sd">    The arguments are all the usual arguments to create_connection()</span>
-<span class="sd">    except protocol_factory; most common are positional host and port,</span>
-<span class="sd">    with various optional keyword arguments following.</span>
-
-<span class="sd">    Additional optional keyword arguments are loop (to set the event loop</span>
-<span class="sd">    instance to use) and limit (to set the buffer limit passed to the</span>
-<span class="sd">    StreamReader).</span>
-
-<span class="sd">    (If you want to customize the StreamReader and/or</span>
-<span class="sd">    StreamReaderProtocol classes, just copy the code -- there&#39;s</span>
-<span class="sd">    really nothing special here except some convenience.)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">loop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">loop</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The loop argument is deprecated since Python 3.8, &quot;</span>
-                      <span class="s2">&quot;and scheduled for removal in Python 3.10.&quot;</span><span class="p">,</span>
-                      <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">reader</span> <span class="o">=</span> <span class="n">StreamReader</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-    <span class="n">protocol</span> <span class="o">=</span> <span class="n">StreamReaderProtocol</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-    <span class="n">transport</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_connection</span><span class="p">(</span>
-        <span class="k">lambda</span><span class="p">:</span> <span class="n">protocol</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-    <span class="n">writer</span> <span class="o">=</span> <span class="n">StreamWriter</span><span class="p">(</span><span class="n">transport</span><span class="p">,</span> <span class="n">protocol</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">loop</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">reader</span><span class="p">,</span> <span class="n">writer</span>
-
-
-<span class="k">async</span> <span class="k">def</span> <span class="nf">start_server</span><span class="p">(</span><span class="n">client_connected_cb</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                       <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">_DEFAULT_LIMIT</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Start a socket server, call back for each client connected.</span>
-
-<span class="sd">    The first parameter, `client_connected_cb`, takes two parameters:</span>
-<span class="sd">    client_reader, client_writer.  client_reader is a StreamReader</span>
-<span class="sd">    object, while client_writer is a StreamWriter object.  This</span>
-<span class="sd">    parameter can either be a plain callback function or a coroutine;</span>
-<span class="sd">    if it is a coroutine, it will be automatically converted into a</span>
-<span class="sd">    Task.</span>
-
-<span class="sd">    The rest of the arguments are all the usual arguments to</span>
-<span class="sd">    loop.create_server() except protocol_factory; most common are</span>
-<span class="sd">    positional host and port, with various optional keyword arguments</span>
-<span class="sd">    following.  The return value is the same as loop.create_server().</span>
-
-<span class="sd">    Additional optional keyword arguments are loop (to set the event loop</span>
-<span class="sd">    instance to use) and limit (to set the buffer limit passed to the</span>
-<span class="sd">    StreamReader).</span>
-
-<span class="sd">    The return value is the same as loop.create_server(), i.e. a</span>
-<span class="sd">    Server object which can be used to stop the service.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">loop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">loop</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The loop argument is deprecated since Python 3.8, &quot;</span>
-                      <span class="s2">&quot;and scheduled for removal in Python 3.10.&quot;</span><span class="p">,</span>
-                      <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">factory</span><span class="p">():</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="n">StreamReader</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-        <span class="n">protocol</span> <span class="o">=</span> <span class="n">StreamReaderProtocol</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">client_connected_cb</span><span class="p">,</span>
-                                        <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">protocol</span>
-
-    <span class="k">return</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_server</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-
-
-<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">socket</span><span class="p">,</span> <span class="s1">&#39;AF_UNIX&#39;</span><span class="p">):</span>
-    <span class="c1"># UNIX Domain Sockets are supported on this platform</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">open_unix_connection</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                                   <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">_DEFAULT_LIMIT</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Similar to `open_connection` but works with UNIX Domain Sockets.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">loop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">loop</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The loop argument is deprecated since Python 3.8, &quot;</span>
-                          <span class="s2">&quot;and scheduled for removal in Python 3.10.&quot;</span><span class="p">,</span>
-                          <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="n">StreamReader</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-        <span class="n">protocol</span> <span class="o">=</span> <span class="n">StreamReaderProtocol</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-        <span class="n">transport</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_unix_connection</span><span class="p">(</span>
-            <span class="k">lambda</span><span class="p">:</span> <span class="n">protocol</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-        <span class="n">writer</span> <span class="o">=</span> <span class="n">StreamWriter</span><span class="p">(</span><span class="n">transport</span><span class="p">,</span> <span class="n">protocol</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">loop</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">reader</span><span class="p">,</span> <span class="n">writer</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">start_unix_server</span><span class="p">(</span><span class="n">client_connected_cb</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                                <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">_DEFAULT_LIMIT</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Similar to `start_server` but works with UNIX Domain Sockets.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">loop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">loop</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;The loop argument is deprecated since Python 3.8, &quot;</span>
-                          <span class="s2">&quot;and scheduled for removal in Python 3.10.&quot;</span><span class="p">,</span>
-                          <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">factory</span><span class="p">():</span>
-            <span class="n">reader</span> <span class="o">=</span> <span class="n">StreamReader</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-            <span class="n">protocol</span> <span class="o">=</span> <span class="n">StreamReaderProtocol</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">client_connected_cb</span><span class="p">,</span>
-                                            <span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">protocol</span>
-
-        <span class="k">return</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_unix_server</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">FlowControlMixin</span><span class="p">(</span><span class="n">protocols</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Reusable flow control logic for StreamWriter.drain().</span>
-
-<span class="sd">    This implements the protocol methods pause_writing(),</span>
-<span class="sd">    resume_writing() and connection_lost().  If the subclass overrides</span>
-<span class="sd">    these it must call the super methods.</span>
-
-<span class="sd">    StreamWriter.drain() must wait for _drain_helper() coroutine.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">loop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">loop</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drain_waiter</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_connection_lost</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">def</span> <span class="nf">pause_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">get_debug</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> pauses writing&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">resume_writing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">get_debug</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> resumes writing&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-
-        <span class="n">waiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drain_waiter</span>
-        <span class="k">if</span> <span class="n">waiter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_drain_waiter</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">waiter</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
-                <span class="n">waiter</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">connection_lost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_connection_lost</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="c1"># Wake up the writer if currently paused.</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="n">waiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drain_waiter</span>
-        <span class="k">if</span> <span class="n">waiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drain_waiter</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">waiter</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
-            <span class="k">return</span>
-        <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">waiter</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">waiter</span><span class="o">.</span><span class="n">set_exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_drain_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection_lost</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ConnectionResetError</span><span class="p">(</span><span class="s1">&#39;Connection lost&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="n">waiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drain_waiter</span>
-        <span class="k">assert</span> <span class="n">waiter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">waiter</span><span class="o">.</span><span class="n">cancelled</span><span class="p">()</span>
-        <span class="n">waiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_drain_waiter</span> <span class="o">=</span> <span class="n">waiter</span>
-        <span class="k">await</span> <span class="n">waiter</span>
-
-    <span class="k">def</span> <span class="nf">_get_close_waiter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-
-<span class="k">class</span> <span class="nc">StreamReaderProtocol</span><span class="p">(</span><span class="n">FlowControlMixin</span><span class="p">,</span> <span class="n">protocols</span><span class="o">.</span><span class="n">Protocol</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Helper class to adapt between Protocol and StreamReader.</span>
-
-<span class="sd">    (This is a helper class instead of making StreamReader itself a</span>
-<span class="sd">    Protocol subclass, because the StreamReader has other potential</span>
-<span class="sd">    uses, and to prevent the user of the StreamReader to accidentally</span>
-<span class="sd">    call inappropriate methods of the protocol.)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">_source_traceback</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_reader</span><span class="p">,</span> <span class="n">client_connected_cb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="n">loop</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">stream_reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader_wr</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">stream_reader</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_source_traceback</span> <span class="o">=</span> <span class="n">stream_reader</span><span class="o">.</span><span class="n">_source_traceback</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader_wr</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">client_connected_cb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># This is a stream created by the `create_server()` function.</span>
-            <span class="c1"># Keep a strong reference to the reader until a connection</span>
-            <span class="c1"># is established.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_strong_reader</span> <span class="o">=</span> <span class="n">stream_reader</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reject_connection</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stream_writer</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_client_connected_cb</span> <span class="o">=</span> <span class="n">client_connected_cb</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_over_ssl</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_stream_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader_wr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader_wr</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">connection_made</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reject_connection</span><span class="p">:</span>
-            <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;An open stream was garbage collected prior to &#39;</span>
-                            <span class="s1">&#39;establishing network connection; &#39;</span>
-                            <span class="s1">&#39;call &quot;stream.close()&quot; explicitly.&#39;</span><span class="p">)</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_traceback</span><span class="p">:</span>
-                <span class="n">context</span><span class="p">[</span><span class="s1">&#39;source_traceback&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_traceback</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">call_exception_handler</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
-            <span class="n">transport</span><span class="o">.</span><span class="n">abort</span><span class="p">()</span>
-            <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="o">=</span> <span class="n">transport</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader</span>
-        <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">reader</span><span class="o">.</span><span class="n">set_transport</span><span class="p">(</span><span class="n">transport</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_over_ssl</span> <span class="o">=</span> <span class="n">transport</span><span class="o">.</span><span class="n">get_extra_info</span><span class="p">(</span><span class="s1">&#39;sslcontext&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client_connected_cb</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_stream_writer</span> <span class="o">=</span> <span class="n">StreamWriter</span><span class="p">(</span><span class="n">transport</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
-                                               <span class="n">reader</span><span class="p">,</span>
-                                               <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="p">)</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client_connected_cb</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span>
-                                            <span class="bp">self</span><span class="o">.</span><span class="n">_stream_writer</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">coroutines</span><span class="o">.</span><span class="n">iscoroutine</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_strong_reader</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">connection_lost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">):</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader</span>
-        <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">reader</span><span class="o">.</span><span class="n">feed_eof</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">reader</span><span class="o">.</span><span class="n">set_exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="o">.</span><span class="n">set_exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">connection_lost</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader_wr</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stream_writer</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">data_received</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader</span>
-        <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">reader</span><span class="o">.</span><span class="n">feed_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">eof_received</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_reader</span>
-        <span class="k">if</span> <span class="n">reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">reader</span><span class="o">.</span><span class="n">feed_eof</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_over_ssl</span><span class="p">:</span>
-            <span class="c1"># Prevent a warning in SSLProtocol.eof_received:</span>
-            <span class="c1"># &quot;returning true from eof_received()</span>
-            <span class="c1"># has no effect when using ssl&quot;</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="nf">_get_close_waiter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span>
-
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Prevent reports about unhandled exceptions.</span>
-        <span class="c1"># Better than self._closed._log_traceback = False hack</span>
-        <span class="n">closed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span>
-        <span class="k">if</span> <span class="n">closed</span><span class="o">.</span><span class="n">done</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">closed</span><span class="o">.</span><span class="n">cancelled</span><span class="p">():</span>
-            <span class="n">closed</span><span class="o">.</span><span class="n">exception</span><span class="p">()</span>
-
-
-<span class="k">class</span> <span class="nc">StreamWriter</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Wraps a Transport.</span>
-
-<span class="sd">    This exposes write(), writelines(), [can_]write_eof(),</span>
-<span class="sd">    get_extra_info() and close().  It adds drain() which returns an</span>
-<span class="sd">    optional Future on which you can wait for flow control.  It also</span>
-<span class="sd">    adds a transport property which references the Transport</span>
-<span class="sd">    directly.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">,</span> <span class="n">protocol</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">loop</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="o">=</span> <span class="n">transport</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span> <span class="o">=</span> <span class="n">protocol</span>
-        <span class="c1"># drain() expects that the reader has an exception() method</span>
-        <span class="k">assert</span> <span class="n">reader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">StreamReader</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">reader</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">loop</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_complete_fut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_complete_fut</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;transport=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="si">!r}</span><span class="s1">&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;reader=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="si">!r}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">transport</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span>
-
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">writelines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">write_eof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">write_eof</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">can_write_eof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">can_write_eof</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">is_closing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">is_closing</span><span class="p">()</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">wait_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span><span class="o">.</span><span class="n">_get_close_waiter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get_extra_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">get_extra_info</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">drain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Flush the write buffer.</span>
-
-<span class="sd">        The intended use is to write</span>
-
-<span class="sd">          w.write(data)</span>
-<span class="sd">          await w.drain()</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">exc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">exception</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">exc</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">is_closing</span><span class="p">():</span>
-            <span class="c1"># Wait for protocol.connection_lost() call</span>
-            <span class="c1"># Raise connection closing error if any,</span>
-            <span class="c1"># ConnectionResetError otherwise</span>
-            <span class="c1"># Yield to the event loop so connection_lost() may be</span>
-            <span class="c1"># called.  Without this, _drain_helper() would return</span>
-            <span class="c1"># immediately, and code that calls</span>
-            <span class="c1">#     write(...); await drain()</span>
-            <span class="c1"># in a loop would never call connection_lost(), so it</span>
-            <span class="c1"># would not see an error when the socket is closed.</span>
-            <span class="k">await</span> <span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_protocol</span><span class="o">.</span><span class="n">_drain_helper</span><span class="p">()</span>
-
-
-<span class="k">class</span> <span class="nc">StreamReader</span><span class="p">:</span>
-
-    <span class="n">_source_traceback</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">_DEFAULT_LIMIT</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># The line length limit is  a security feature;</span>
-        <span class="c1"># it also doubles as half the buffer limit.</span>
-
-        <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Limit cannot be &lt;= 0&#39;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_limit</span> <span class="o">=</span> <span class="n">limit</span>
-        <span class="k">if</span> <span class="n">loop</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">events</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span> <span class="o">=</span> <span class="n">loop</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span> <span class="o">=</span> <span class="kc">False</span>    <span class="c1"># Whether we&#39;re done.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># A future used by _wait_for_data()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">get_debug</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_source_traceback</span> <span class="o">=</span> <span class="n">format_helpers</span><span class="o">.</span><span class="n">extract_stack</span><span class="p">(</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;StreamReader&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">:</span>
-            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span><span class="si">}</span><span class="s1"> bytes&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span><span class="p">:</span>
-            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;eof&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_limit</span> <span class="o">!=</span> <span class="n">_DEFAULT_LIMIT</span><span class="p">:</span>
-            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;limit=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_limit</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span><span class="p">:</span>
-            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;waiter=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span><span class="si">!r}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span><span class="p">:</span>
-            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;exception=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_exception</span><span class="si">!r}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="p">:</span>
-            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;transport=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="si">!r}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span><span class="p">:</span>
-            <span class="n">info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;paused&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span>
-
-    <span class="k">def</span> <span class="nf">set_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">exc</span>
-
-        <span class="n">waiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span>
-        <span class="k">if</span> <span class="n">waiter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">waiter</span><span class="o">.</span><span class="n">cancelled</span><span class="p">():</span>
-                <span class="n">waiter</span><span class="o">.</span><span class="n">set_exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_wakeup_waiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wakeup read*() functions waiting for data or EOF.&quot;&quot;&quot;</span>
-        <span class="n">waiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span>
-        <span class="k">if</span> <span class="n">waiter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">waiter</span><span class="o">.</span><span class="n">cancelled</span><span class="p">():</span>
-                <span class="n">waiter</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">set_transport</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Transport already set&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="o">=</span> <span class="n">transport</span>
-
-    <span class="k">def</span> <span class="nf">_maybe_resume_transport</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_limit</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">resume_reading</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">feed_eof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_wakeup_waiter</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">at_eof</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return True if the buffer is empty and &#39;feed_eof&#39; was called.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span>
-
-    <span class="k">def</span> <span class="nf">feed_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span><span class="p">,</span> <span class="s1">&#39;feed_data after feed_eof&#39;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
-            <span class="k">return</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_wakeup_waiter</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
-                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="ow">and</span>
-                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_limit</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">pause_reading</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
-                <span class="c1"># The transport can&#39;t be paused.</span>
-                <span class="c1"># We&#39;ll just have to buffer all data.</span>
-                <span class="c1"># Forget the transport so we don&#39;t keep trying.</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_wait_for_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wait until feed_data() or feed_eof() is called.</span>
-
-<span class="sd">        If stream was paused, automatically resume it.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># StreamReader uses a future to link the protocol feed_data() method</span>
-        <span class="c1"># to a read coroutine. Running two read coroutines at the same time</span>
-        <span class="c1"># would have an unexpected behaviour. It would not possible to know</span>
-        <span class="c1"># which coroutine would get the next data.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s1">() called while another coroutine is &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;already waiting for incoming data&#39;</span><span class="p">)</span>
-
-        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span><span class="p">,</span> <span class="s1">&#39;_wait_for_data after EOF&#39;</span>
-
-        <span class="c1"># Waiting for data while paused will make deadlock, so prevent it.</span>
-        <span class="c1"># This is essential for readexactly(n) for case when n &gt; self._limit.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_paused</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_transport</span><span class="o">.</span><span class="n">resume_reading</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_waiter</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">readline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Read chunk of data from the stream until newline (b&#39;\n&#39;) is found.</span>
-
-<span class="sd">        On success, return chunk that ends with newline. If only partial</span>
-<span class="sd">        line can be read due to EOF, return incomplete line without</span>
-<span class="sd">        terminating newline. When EOF was reached while no bytes read, empty</span>
-<span class="sd">        bytes object is returned.</span>
-
-<span class="sd">        If limit is reached, ValueError will be raised. In that case, if</span>
-<span class="sd">        newline was found, complete line including newline will be removed</span>
-<span class="sd">        from internal buffer. Else, internal buffer will be cleared. Limit is</span>
-<span class="sd">        compared against part of the line without newline.</span>
-
-<span class="sd">        If stream was paused, this function will automatically resume it if</span>
-<span class="sd">        needed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sep</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-        <span class="n">seplen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">readuntil</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">IncompleteReadError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">e</span><span class="o">.</span><span class="n">partial</span>
-        <span class="k">except</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">LimitOverrunError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">consumed</span><span class="p">):</span>
-                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:</span><span class="n">e</span><span class="o">.</span><span class="n">consumed</span> <span class="o">+</span> <span class="n">seplen</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_resume_transport</span><span class="p">()</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">line</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">readuntil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Read data from the stream until ``separator`` is found.</span>
-
-<span class="sd">        On success, the data and separator will be removed from the</span>
-<span class="sd">        internal buffer (consumed). Returned data will include the</span>
-<span class="sd">        separator at the end.</span>
-
-<span class="sd">        Configured stream limit is used to check result. Limit sets the</span>
-<span class="sd">        maximal length of data that can be returned, not counting the</span>
-<span class="sd">        separator.</span>
-
-<span class="sd">        If an EOF occurs and the complete separator is still not found,</span>
-<span class="sd">        an IncompleteReadError exception will be raised, and the internal</span>
-<span class="sd">        buffer will be reset.  The IncompleteReadError.partial attribute</span>
-<span class="sd">        may contain the separator partially.</span>
-
-<span class="sd">        If the data cannot be read because of over limit, a</span>
-<span class="sd">        LimitOverrunError exception  will be raised, and the data</span>
-<span class="sd">        will be left in the internal buffer, so it can be read again.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">seplen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">seplen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Separator should be at least one-byte string&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span>
-
-        <span class="c1"># Consume whole buffer except last bytes, which length is</span>
-        <span class="c1"># one less than seplen. Let&#39;s check corner cases with</span>
-        <span class="c1"># separator=&#39;SEPARATOR&#39;:</span>
-        <span class="c1"># * we have received almost complete separator (without last</span>
-        <span class="c1">#   byte). i.e buffer=&#39;some textSEPARATO&#39;. In this case we</span>
-        <span class="c1">#   can safely consume len(separator) - 1 bytes.</span>
-        <span class="c1"># * last byte of buffer is first byte of separator, i.e.</span>
-        <span class="c1">#   buffer=&#39;abcdefghijklmnopqrS&#39;. We may safely consume</span>
-        <span class="c1">#   everything except that last byte, but this require to</span>
-        <span class="c1">#   analyze bytes of buffer that match partial separator.</span>
-        <span class="c1">#   This is slow and/or require FSM. For this case our</span>
-        <span class="c1">#   implementation is not optimal, since require rescanning</span>
-        <span class="c1">#   of data that is known to not belong to separator. In</span>
-        <span class="c1">#   real world, separator will not be so long to notice</span>
-        <span class="c1">#   performance problems. Even when reading MIME-encoded</span>
-        <span class="c1">#   messages :)</span>
-
-        <span class="c1"># `offset` is the number of bytes from the beginning of the buffer</span>
-        <span class="c1"># where there is no occurrence of `separator`.</span>
-        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="c1"># Loop until we find `separator` in the buffer, exceed the buffer size,</span>
-        <span class="c1"># or an EOF has happened.</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">buflen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
-
-            <span class="c1"># Check if we now have enough data in the buffer for `separator` to</span>
-            <span class="c1"># fit.</span>
-            <span class="k">if</span> <span class="n">buflen</span> <span class="o">-</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="n">seplen</span><span class="p">:</span>
-                <span class="n">isep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">separator</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">isep</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="c1"># `separator` is in the buffer. `isep` will be used later</span>
-                    <span class="c1"># to retrieve the data.</span>
-                    <span class="k">break</span>
-
-                <span class="c1"># see upper comment for explanation.</span>
-                <span class="n">offset</span> <span class="o">=</span> <span class="n">buflen</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">seplen</span>
-                <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_limit</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">LimitOverrunError</span><span class="p">(</span>
-                        <span class="s1">&#39;Separator is not found, and chunk exceed the limit&#39;</span><span class="p">,</span>
-                        <span class="n">offset</span><span class="p">)</span>
-
-            <span class="c1"># Complete message (with full separator) may be present in buffer</span>
-            <span class="c1"># even when EOF flag is set. This may happen when the last chunk</span>
-            <span class="c1"># adds data which makes separator be found. That&#39;s why we check for</span>
-            <span class="c1"># EOF *ater* inspecting the buffer.</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span><span class="p">:</span>
-                <span class="n">chunk</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">IncompleteReadError</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
-            <span class="c1"># _wait_for_data() will resume reading if stream was paused.</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_data</span><span class="p">(</span><span class="s1">&#39;readuntil&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">isep</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_limit</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">LimitOverrunError</span><span class="p">(</span>
-                <span class="s1">&#39;Separator is found, but chunk is longer than limit&#39;</span><span class="p">,</span> <span class="n">isep</span><span class="p">)</span>
-
-        <span class="n">chunk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:</span><span class="n">isep</span> <span class="o">+</span> <span class="n">seplen</span><span class="p">]</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:</span><span class="n">isep</span> <span class="o">+</span> <span class="n">seplen</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_resume_transport</span><span class="p">()</span>
-        <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Read up to `n` bytes from the stream.</span>
-
-<span class="sd">        If n is not provided, or set to -1, read until EOF and return all read</span>
-<span class="sd">        bytes. If the EOF was received and the internal buffer is empty, return</span>
-<span class="sd">        an empty bytes object.</span>
-
-<span class="sd">        If n is zero, return empty bytes object immediately.</span>
-
-<span class="sd">        If n is positive, this function try to read `n` bytes, and may return</span>
-<span class="sd">        less or equal bytes than requested, but at least one byte. If EOF was</span>
-<span class="sd">        received before any byte is read, this function returns empty byte</span>
-<span class="sd">        object.</span>
-
-<span class="sd">        Returned value is not limited with limit, configured at stream</span>
-<span class="sd">        creation.</span>
-
-<span class="sd">        If stream was paused, this function will automatically resume it if</span>
-<span class="sd">        needed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span>
-
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
-
-        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># This used to just loop creating a new waiter hoping to</span>
-            <span class="c1"># collect everything in self._buffer, but that would</span>
-            <span class="c1"># deadlock if the subprocess sends more than self.limit</span>
-            <span class="c1"># bytes.  So just call self.read(self._limit) until EOF.</span>
-            <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">block</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_limit</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">block</span><span class="p">:</span>
-                    <span class="k">break</span>
-                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
-            <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_data</span><span class="p">(</span><span class="s1">&#39;read&#39;</span><span class="p">)</span>
-
-        <span class="c1"># This will work right even if buffer is less than n bytes</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_resume_transport</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">readexactly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Read exactly `n` bytes.</span>
-
-<span class="sd">        Raise an IncompleteReadError if EOF is reached before `n` bytes can be</span>
-<span class="sd">        read. The IncompleteReadError.partial attribute of the exception will</span>
-<span class="sd">        contain the partial read bytes.</span>
-
-<span class="sd">        if n is zero, return empty bytes object.</span>
-
-<span class="sd">        Returned value is not limited with limit, configured at stream</span>
-<span class="sd">        creation.</span>
-
-<span class="sd">        If stream was paused, this function will automatically resume it if</span>
-<span class="sd">        needed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;readexactly size can not be less than zero&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception</span>
-
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
-
-        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eof</span><span class="p">:</span>
-                <span class="n">incomplete</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">IncompleteReadError</span><span class="p">(</span><span class="n">incomplete</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_data</span><span class="p">(</span><span class="s1">&#39;readexactly&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_resume_transport</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">def</span> <span class="fm">__aiter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__anext__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">StopAsyncIteration</span>
-        <span class="k">return</span> <span class="n">val</span>
-</pre></div>
-
-          </div>
-            
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">asyncio.streams</a></li> 
-      </ul>
-    </div>
-<script type="text/javascript">
+<!DOCTYPE html><html> <head><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><link rel=stylesheet type=text/css href=../../_static/fonts/open-sans/stylesheet.css><link rel=stylesheet type=text/css href=../../_static/fonts/source-serif-pro/source-serif-pro.css><link rel=stylesheet type=text/css href=../../_static/css/bootstrap.min.css><link rel=stylesheet type=text/css href=../../_static/css/bootstrap-theme.min.css><meta name=viewport content="width=device-width, initial-scale=1.0"><title>asyncio.streams &#8212; Blackhole 2.1.19 documentation</title><link rel=stylesheet type=text/css href=../../_static/pygments.css><link rel=stylesheet type=text/css href=../../_static/blackhole.css><script data-url_root=../../ id=documentation_options src=../../_static/documentation_options.js></script><script src=../../_static/jquery.js></script><script src=../../_static/underscore.js></script><script src=../../_static/doctools.js></script><link rel=search type=application/opensearchdescription+xml title="Search within Blackhole 2.1.19 documentation" href=../../_static/opensearch.xml><link rel=index title=Index href=../../genindex.html><link rel=search title=Search href=../../search.html></head><body> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=../../genindex.html title="General Index" accesskey=I>index</a></li> <li class=right> <a href=../../py-modindex.html title="Python Module Index">modules</a> |</li> <li class="nav-item nav-item-0"><a href=../../index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-1"><a href=../index.html accesskey=U>Module code</a> &#187;</li> <li class="nav-item nav-item-this"><a href>asyncio.streams</a></li> </ul> </div> <div class=container-wrapper> <div id=mobile-toggle> <a href=#><span class="glyphicon glyphicon-align-justify" aria-hidden=true></span></a> </div> <div id=left-column> <div class=sphinxsidebar><a href="
+    ../../index.html" class=text-logo>Blackhole</a><div class=sidebar-block> <div class=sidebar-wrapper> <h2>Table Of Contents</h2> </div> <div class=sidebar-toc> <ul><li class=toctree-l1><a class="reference internal" href=../../overview.html>Overview</a></li><li class=toctree-l1><a class="reference internal" href=../../configuration.html>Configuration</a></li><li class=toctree-l1><a class="reference internal" href=../../communicating-with-blackhole.html>Communicating with Blackhole</a></li><li class=toctree-l1><a class="reference internal" href=../../dynamic-responses.html>Dynamic responses</a></li><li class=toctree-l1><a class="reference internal" href=../../dynamic-switches.html>Dynamic Switches</a></li><li class=toctree-l1><a class="reference internal" href=../../api.html>API</a></li></ul> </div></div><div class=sidebar-block> <div class=sidebar-wrapper> <div id=main-search> <form class=form-inline action=../../search.html method=GET role=form> <div class=input-group> <input name=q type=text class=form-control placeholder=Search...> </div> <input type=hidden name=check_keywords value=yes> <input type=hidden name=area value=default> </form> </div> </div></div> </div> </div> <div id=right-column> <div role=navigation aria-label="breadcrumbs navigation"> <ol class=breadcrumb> <li><a href=../../index.html>Docs</a></li> <li><a href=../index.html>Module code</a></li> <li>asyncio.streams</li> </ol> </div> <div class="document clearer body"> <h1>Source code for asyncio.streams</h1><div class=highlight><pre>
+<span></span><span class=n>__all__</span> <span class=o>=</span> <span class=p>(</span>
+    <span class=s1>&#39;StreamReader&#39;</span><span class=p>,</span> <span class=s1>&#39;StreamWriter&#39;</span><span class=p>,</span> <span class=s1>&#39;StreamReaderProtocol&#39;</span><span class=p>,</span>
+    <span class=s1>&#39;open_connection&#39;</span><span class=p>,</span> <span class=s1>&#39;start_server&#39;</span><span class=p>)</span>
+
+<span class=kn>import</span> <span class=nn>socket</span>
+<span class=kn>import</span> <span class=nn>sys</span>
+<span class=kn>import</span> <span class=nn>warnings</span>
+<span class=kn>import</span> <span class=nn>weakref</span>
+
+<span class=k>if</span> <span class=nb>hasattr</span><span class=p>(</span><span class=n>socket</span><span class=p>,</span> <span class=s1>&#39;AF_UNIX&#39;</span><span class=p>):</span>
+    <span class=n>__all__</span> <span class=o>+=</span> <span class=p>(</span><span class=s1>&#39;open_unix_connection&#39;</span><span class=p>,</span> <span class=s1>&#39;start_unix_server&#39;</span><span class=p>)</span>
+
+<span class=kn>from</span> <span class=nn>.</span> <span class=kn>import</span> <span class=n>coroutines</span>
+<span class=kn>from</span> <span class=nn>.</span> <span class=kn>import</span> <span class=n>events</span>
+<span class=kn>from</span> <span class=nn>.</span> <span class=kn>import</span> <span class=n>exceptions</span>
+<span class=kn>from</span> <span class=nn>.</span> <span class=kn>import</span> <span class=n>format_helpers</span>
+<span class=kn>from</span> <span class=nn>.</span> <span class=kn>import</span> <span class=n>protocols</span>
+<span class=kn>from</span> <span class=nn>.log</span> <span class=kn>import</span> <span class=n>logger</span>
+<span class=kn>from</span> <span class=nn>.tasks</span> <span class=kn>import</span> <span class=n>sleep</span>
+
+
+<span class=n>_DEFAULT_LIMIT</span> <span class=o>=</span> <span class=mi>2</span> <span class=o>**</span> <span class=mi>16</span>  <span class=c1># 64 KiB</span>
+
+
+<span class=k>async</span> <span class=k>def</span> <span class=nf>open_connection</span><span class=p>(</span><span class=n>host</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>port</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span>
+                          <span class=n>loop</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>limit</span><span class=o>=</span><span class=n>_DEFAULT_LIMIT</span><span class=p>,</span> <span class=o>**</span><span class=n>kwds</span><span class=p>):</span>
+    <span class=sd>&quot;&quot;&quot;A wrapper for create_connection() returning a (reader, writer) pair.</span>
+
+<span class=sd>    The reader returned is a StreamReader instance; the writer is a</span>
+<span class=sd>    StreamWriter instance.</span>
+
+<span class=sd>    The arguments are all the usual arguments to create_connection()</span>
+<span class=sd>    except protocol_factory; most common are positional host and port,</span>
+<span class=sd>    with various optional keyword arguments following.</span>
+
+<span class=sd>    Additional optional keyword arguments are loop (to set the event loop</span>
+<span class=sd>    instance to use) and limit (to set the buffer limit passed to the</span>
+<span class=sd>    StreamReader).</span>
+
+<span class=sd>    (If you want to customize the StreamReader and/or</span>
+<span class=sd>    StreamReaderProtocol classes, just copy the code -- there&#39;s</span>
+<span class=sd>    really nothing special here except some convenience.)</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+    <span class=k>if</span> <span class=n>loop</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>loop</span> <span class=o>=</span> <span class=n>events</span><span class=o>.</span><span class=n>get_event_loop</span><span class=p>()</span>
+    <span class=k>else</span><span class=p>:</span>
+        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=s2>&quot;The loop argument is deprecated since Python 3.8, &quot;</span>
+                      <span class=s2>&quot;and scheduled for removal in Python 3.10.&quot;</span><span class=p>,</span>
+                      <span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=n>stacklevel</span><span class=o>=</span><span class=mi>2</span><span class=p>)</span>
+    <span class=n>reader</span> <span class=o>=</span> <span class=n>StreamReader</span><span class=p>(</span><span class=n>limit</span><span class=o>=</span><span class=n>limit</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+    <span class=n>protocol</span> <span class=o>=</span> <span class=n>StreamReaderProtocol</span><span class=p>(</span><span class=n>reader</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+    <span class=n>transport</span><span class=p>,</span> <span class=n>_</span> <span class=o>=</span> <span class=k>await</span> <span class=n>loop</span><span class=o>.</span><span class=n>create_connection</span><span class=p>(</span>
+        <span class=k>lambda</span><span class=p>:</span> <span class=n>protocol</span><span class=p>,</span> <span class=n>host</span><span class=p>,</span> <span class=n>port</span><span class=p>,</span> <span class=o>**</span><span class=n>kwds</span><span class=p>)</span>
+    <span class=n>writer</span> <span class=o>=</span> <span class=n>StreamWriter</span><span class=p>(</span><span class=n>transport</span><span class=p>,</span> <span class=n>protocol</span><span class=p>,</span> <span class=n>reader</span><span class=p>,</span> <span class=n>loop</span><span class=p>)</span>
+    <span class=k>return</span> <span class=n>reader</span><span class=p>,</span> <span class=n>writer</span>
+
+
+<span class=k>async</span> <span class=k>def</span> <span class=nf>start_server</span><span class=p>(</span><span class=n>client_connected_cb</span><span class=p>,</span> <span class=n>host</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>port</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span>
+                       <span class=n>loop</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>limit</span><span class=o>=</span><span class=n>_DEFAULT_LIMIT</span><span class=p>,</span> <span class=o>**</span><span class=n>kwds</span><span class=p>):</span>
+    <span class=sd>&quot;&quot;&quot;Start a socket server, call back for each client connected.</span>
+
+<span class=sd>    The first parameter, `client_connected_cb`, takes two parameters:</span>
+<span class=sd>    client_reader, client_writer.  client_reader is a StreamReader</span>
+<span class=sd>    object, while client_writer is a StreamWriter object.  This</span>
+<span class=sd>    parameter can either be a plain callback function or a coroutine;</span>
+<span class=sd>    if it is a coroutine, it will be automatically converted into a</span>
+<span class=sd>    Task.</span>
+
+<span class=sd>    The rest of the arguments are all the usual arguments to</span>
+<span class=sd>    loop.create_server() except protocol_factory; most common are</span>
+<span class=sd>    positional host and port, with various optional keyword arguments</span>
+<span class=sd>    following.  The return value is the same as loop.create_server().</span>
+
+<span class=sd>    Additional optional keyword arguments are loop (to set the event loop</span>
+<span class=sd>    instance to use) and limit (to set the buffer limit passed to the</span>
+<span class=sd>    StreamReader).</span>
+
+<span class=sd>    The return value is the same as loop.create_server(), i.e. a</span>
+<span class=sd>    Server object which can be used to stop the service.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+    <span class=k>if</span> <span class=n>loop</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+        <span class=n>loop</span> <span class=o>=</span> <span class=n>events</span><span class=o>.</span><span class=n>get_event_loop</span><span class=p>()</span>
+    <span class=k>else</span><span class=p>:</span>
+        <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=s2>&quot;The loop argument is deprecated since Python 3.8, &quot;</span>
+                      <span class=s2>&quot;and scheduled for removal in Python 3.10.&quot;</span><span class=p>,</span>
+                      <span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=n>stacklevel</span><span class=o>=</span><span class=mi>2</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>factory</span><span class=p>():</span>
+        <span class=n>reader</span> <span class=o>=</span> <span class=n>StreamReader</span><span class=p>(</span><span class=n>limit</span><span class=o>=</span><span class=n>limit</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+        <span class=n>protocol</span> <span class=o>=</span> <span class=n>StreamReaderProtocol</span><span class=p>(</span><span class=n>reader</span><span class=p>,</span> <span class=n>client_connected_cb</span><span class=p>,</span>
+                                        <span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+        <span class=k>return</span> <span class=n>protocol</span>
+
+    <span class=k>return</span> <span class=k>await</span> <span class=n>loop</span><span class=o>.</span><span class=n>create_server</span><span class=p>(</span><span class=n>factory</span><span class=p>,</span> <span class=n>host</span><span class=p>,</span> <span class=n>port</span><span class=p>,</span> <span class=o>**</span><span class=n>kwds</span><span class=p>)</span>
+
+
+<span class=k>if</span> <span class=nb>hasattr</span><span class=p>(</span><span class=n>socket</span><span class=p>,</span> <span class=s1>&#39;AF_UNIX&#39;</span><span class=p>):</span>
+    <span class=c1># UNIX Domain Sockets are supported on this platform</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>open_unix_connection</span><span class=p>(</span><span class=n>path</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span>
+                                   <span class=n>loop</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>limit</span><span class=o>=</span><span class=n>_DEFAULT_LIMIT</span><span class=p>,</span> <span class=o>**</span><span class=n>kwds</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Similar to `open_connection` but works with UNIX Domain Sockets.&quot;&quot;&quot;</span>
+        <span class=k>if</span> <span class=n>loop</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>loop</span> <span class=o>=</span> <span class=n>events</span><span class=o>.</span><span class=n>get_event_loop</span><span class=p>()</span>
+        <span class=k>else</span><span class=p>:</span>
+            <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=s2>&quot;The loop argument is deprecated since Python 3.8, &quot;</span>
+                          <span class=s2>&quot;and scheduled for removal in Python 3.10.&quot;</span><span class=p>,</span>
+                          <span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=n>stacklevel</span><span class=o>=</span><span class=mi>2</span><span class=p>)</span>
+        <span class=n>reader</span> <span class=o>=</span> <span class=n>StreamReader</span><span class=p>(</span><span class=n>limit</span><span class=o>=</span><span class=n>limit</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+        <span class=n>protocol</span> <span class=o>=</span> <span class=n>StreamReaderProtocol</span><span class=p>(</span><span class=n>reader</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+        <span class=n>transport</span><span class=p>,</span> <span class=n>_</span> <span class=o>=</span> <span class=k>await</span> <span class=n>loop</span><span class=o>.</span><span class=n>create_unix_connection</span><span class=p>(</span>
+            <span class=k>lambda</span><span class=p>:</span> <span class=n>protocol</span><span class=p>,</span> <span class=n>path</span><span class=p>,</span> <span class=o>**</span><span class=n>kwds</span><span class=p>)</span>
+        <span class=n>writer</span> <span class=o>=</span> <span class=n>StreamWriter</span><span class=p>(</span><span class=n>transport</span><span class=p>,</span> <span class=n>protocol</span><span class=p>,</span> <span class=n>reader</span><span class=p>,</span> <span class=n>loop</span><span class=p>)</span>
+        <span class=k>return</span> <span class=n>reader</span><span class=p>,</span> <span class=n>writer</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>start_unix_server</span><span class=p>(</span><span class=n>client_connected_cb</span><span class=p>,</span> <span class=n>path</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=o>*</span><span class=p>,</span>
+                                <span class=n>loop</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>limit</span><span class=o>=</span><span class=n>_DEFAULT_LIMIT</span><span class=p>,</span> <span class=o>**</span><span class=n>kwds</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Similar to `start_server` but works with UNIX Domain Sockets.&quot;&quot;&quot;</span>
+        <span class=k>if</span> <span class=n>loop</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>loop</span> <span class=o>=</span> <span class=n>events</span><span class=o>.</span><span class=n>get_event_loop</span><span class=p>()</span>
+        <span class=k>else</span><span class=p>:</span>
+            <span class=n>warnings</span><span class=o>.</span><span class=n>warn</span><span class=p>(</span><span class=s2>&quot;The loop argument is deprecated since Python 3.8, &quot;</span>
+                          <span class=s2>&quot;and scheduled for removal in Python 3.10.&quot;</span><span class=p>,</span>
+                          <span class=ne>DeprecationWarning</span><span class=p>,</span> <span class=n>stacklevel</span><span class=o>=</span><span class=mi>2</span><span class=p>)</span>
+
+        <span class=k>def</span> <span class=nf>factory</span><span class=p>():</span>
+            <span class=n>reader</span> <span class=o>=</span> <span class=n>StreamReader</span><span class=p>(</span><span class=n>limit</span><span class=o>=</span><span class=n>limit</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+            <span class=n>protocol</span> <span class=o>=</span> <span class=n>StreamReaderProtocol</span><span class=p>(</span><span class=n>reader</span><span class=p>,</span> <span class=n>client_connected_cb</span><span class=p>,</span>
+                                            <span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+            <span class=k>return</span> <span class=n>protocol</span>
+
+        <span class=k>return</span> <span class=k>await</span> <span class=n>loop</span><span class=o>.</span><span class=n>create_unix_server</span><span class=p>(</span><span class=n>factory</span><span class=p>,</span> <span class=n>path</span><span class=p>,</span> <span class=o>**</span><span class=n>kwds</span><span class=p>)</span>
+
+
+<span class=k>class</span> <span class=nc>FlowControlMixin</span><span class=p>(</span><span class=n>protocols</span><span class=o>.</span><span class=n>Protocol</span><span class=p>):</span>
+    <span class=sd>&quot;&quot;&quot;Reusable flow control logic for StreamWriter.drain().</span>
+
+<span class=sd>    This implements the protocol methods pause_writing(),</span>
+<span class=sd>    resume_writing() and connection_lost().  If the subclass overrides</span>
+<span class=sd>    these it must call the super methods.</span>
+
+<span class=sd>    StreamWriter.drain() must wait for _drain_helper() coroutine.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+        <span class=k>if</span> <span class=n>loop</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span> <span class=o>=</span> <span class=n>events</span><span class=o>.</span><span class=n>get_event_loop</span><span class=p>()</span>
+        <span class=k>else</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span> <span class=o>=</span> <span class=n>loop</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=o>=</span> <span class=kc>False</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_drain_waiter</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_connection_lost</span> <span class=o>=</span> <span class=kc>False</span>
+
+    <span class=k>def</span> <span class=nf>pause_writing</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>assert</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=o>=</span> <span class=kc>True</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>get_debug</span><span class=p>():</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>&quot;</span><span class=si>%r</span><span class=s2> pauses writing&quot;</span><span class=p>,</span> <span class=bp>self</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>resume_writing</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>assert</span> <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=o>=</span> <span class=kc>False</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>get_debug</span><span class=p>():</span>
+            <span class=n>logger</span><span class=o>.</span><span class=n>debug</span><span class=p>(</span><span class=s2>&quot;</span><span class=si>%r</span><span class=s2> resumes writing&quot;</span><span class=p>,</span> <span class=bp>self</span><span class=p>)</span>
+
+        <span class=n>waiter</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_drain_waiter</span>
+        <span class=k>if</span> <span class=n>waiter</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_drain_waiter</span> <span class=o>=</span> <span class=kc>None</span>
+            <span class=k>if</span> <span class=ow>not</span> <span class=n>waiter</span><span class=o>.</span><span class=n>done</span><span class=p>():</span>
+                <span class=n>waiter</span><span class=o>.</span><span class=n>set_result</span><span class=p>(</span><span class=kc>None</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>connection_lost</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>exc</span><span class=p>):</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_connection_lost</span> <span class=o>=</span> <span class=kc>True</span>
+        <span class=c1># Wake up the writer if currently paused.</span>
+        <span class=k>if</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span><span class=p>:</span>
+            <span class=k>return</span>
+        <span class=n>waiter</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_drain_waiter</span>
+        <span class=k>if</span> <span class=n>waiter</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=k>return</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_drain_waiter</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=k>if</span> <span class=n>waiter</span><span class=o>.</span><span class=n>done</span><span class=p>():</span>
+            <span class=k>return</span>
+        <span class=k>if</span> <span class=n>exc</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>waiter</span><span class=o>.</span><span class=n>set_result</span><span class=p>(</span><span class=kc>None</span><span class=p>)</span>
+        <span class=k>else</span><span class=p>:</span>
+            <span class=n>waiter</span><span class=o>.</span><span class=n>set_exception</span><span class=p>(</span><span class=n>exc</span><span class=p>)</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>_drain_helper</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_connection_lost</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=ne>ConnectionResetError</span><span class=p>(</span><span class=s1>&#39;Connection lost&#39;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span><span class=p>:</span>
+            <span class=k>return</span>
+        <span class=n>waiter</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_drain_waiter</span>
+        <span class=k>assert</span> <span class=n>waiter</span> <span class=ow>is</span> <span class=kc>None</span> <span class=ow>or</span> <span class=n>waiter</span><span class=o>.</span><span class=n>cancelled</span><span class=p>()</span>
+        <span class=n>waiter</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>create_future</span><span class=p>()</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_drain_waiter</span> <span class=o>=</span> <span class=n>waiter</span>
+        <span class=k>await</span> <span class=n>waiter</span>
+
+    <span class=k>def</span> <span class=nf>_get_close_waiter</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>stream</span><span class=p>):</span>
+        <span class=k>raise</span> <span class=ne>NotImplementedError</span>
+
+
+<span class=k>class</span> <span class=nc>StreamReaderProtocol</span><span class=p>(</span><span class=n>FlowControlMixin</span><span class=p>,</span> <span class=n>protocols</span><span class=o>.</span><span class=n>Protocol</span><span class=p>):</span>
+    <span class=sd>&quot;&quot;&quot;Helper class to adapt between Protocol and StreamReader.</span>
+
+<span class=sd>    (This is a helper class instead of making StreamReader itself a</span>
+<span class=sd>    Protocol subclass, because the StreamReader has other potential</span>
+<span class=sd>    uses, and to prevent the user of the StreamReader to accidentally</span>
+<span class=sd>    call inappropriate methods of the protocol.)</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=n>_source_traceback</span> <span class=o>=</span> <span class=kc>None</span>
+
+    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>stream_reader</span><span class=p>,</span> <span class=n>client_connected_cb</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+        <span class=nb>super</span><span class=p>()</span><span class=o>.</span><span class=fm>__init__</span><span class=p>(</span><span class=n>loop</span><span class=o>=</span><span class=n>loop</span><span class=p>)</span>
+        <span class=k>if</span> <span class=n>stream_reader</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader_wr</span> <span class=o>=</span> <span class=n>weakref</span><span class=o>.</span><span class=n>ref</span><span class=p>(</span><span class=n>stream_reader</span><span class=p>)</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_source_traceback</span> <span class=o>=</span> <span class=n>stream_reader</span><span class=o>.</span><span class=n>_source_traceback</span>
+        <span class=k>else</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader_wr</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=k>if</span> <span class=n>client_connected_cb</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=c1># This is a stream created by the `create_server()` function.</span>
+            <span class=c1># Keep a strong reference to the reader until a connection</span>
+            <span class=c1># is established.</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_strong_reader</span> <span class=o>=</span> <span class=n>stream_reader</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_reject_connection</span> <span class=o>=</span> <span class=kc>False</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_stream_writer</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_client_connected_cb</span> <span class=o>=</span> <span class=n>client_connected_cb</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_over_ssl</span> <span class=o>=</span> <span class=kc>False</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_closed</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>create_future</span><span class=p>()</span>
+
+    <span class=nd>@property</span>
+    <span class=k>def</span> <span class=nf>_stream_reader</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader_wr</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=k>return</span> <span class=kc>None</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader_wr</span><span class=p>()</span>
+
+    <span class=k>def</span> <span class=nf>connection_made</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>transport</span><span class=p>):</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_reject_connection</span><span class=p>:</span>
+            <span class=n>context</span> <span class=o>=</span> <span class=p>{</span>
+                <span class=s1>&#39;message&#39;</span><span class=p>:</span> <span class=p>(</span><span class=s1>&#39;An open stream was garbage collected prior to &#39;</span>
+                            <span class=s1>&#39;establishing network connection; &#39;</span>
+                            <span class=s1>&#39;call &quot;stream.close()&quot; explicitly.&#39;</span><span class=p>)</span>
+            <span class=p>}</span>
+            <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_source_traceback</span><span class=p>:</span>
+                <span class=n>context</span><span class=p>[</span><span class=s1>&#39;source_traceback&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_source_traceback</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>call_exception_handler</span><span class=p>(</span><span class=n>context</span><span class=p>)</span>
+            <span class=n>transport</span><span class=o>.</span><span class=n>abort</span><span class=p>()</span>
+            <span class=k>return</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=o>=</span> <span class=n>transport</span>
+        <span class=n>reader</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader</span>
+        <span class=k>if</span> <span class=n>reader</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>reader</span><span class=o>.</span><span class=n>set_transport</span><span class=p>(</span><span class=n>transport</span><span class=p>)</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_over_ssl</span> <span class=o>=</span> <span class=n>transport</span><span class=o>.</span><span class=n>get_extra_info</span><span class=p>(</span><span class=s1>&#39;sslcontext&#39;</span><span class=p>)</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_client_connected_cb</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_stream_writer</span> <span class=o>=</span> <span class=n>StreamWriter</span><span class=p>(</span><span class=n>transport</span><span class=p>,</span> <span class=bp>self</span><span class=p>,</span>
+                                               <span class=n>reader</span><span class=p>,</span>
+                                               <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=p>)</span>
+            <span class=n>res</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_client_connected_cb</span><span class=p>(</span><span class=n>reader</span><span class=p>,</span>
+                                            <span class=bp>self</span><span class=o>.</span><span class=n>_stream_writer</span><span class=p>)</span>
+            <span class=k>if</span> <span class=n>coroutines</span><span class=o>.</span><span class=n>iscoroutine</span><span class=p>(</span><span class=n>res</span><span class=p>):</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>create_task</span><span class=p>(</span><span class=n>res</span><span class=p>)</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_strong_reader</span> <span class=o>=</span> <span class=kc>None</span>
+
+    <span class=k>def</span> <span class=nf>connection_lost</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>exc</span><span class=p>):</span>
+        <span class=n>reader</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader</span>
+        <span class=k>if</span> <span class=n>reader</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=k>if</span> <span class=n>exc</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+                <span class=n>reader</span><span class=o>.</span><span class=n>feed_eof</span><span class=p>()</span>
+            <span class=k>else</span><span class=p>:</span>
+                <span class=n>reader</span><span class=o>.</span><span class=n>set_exception</span><span class=p>(</span><span class=n>exc</span><span class=p>)</span>
+        <span class=k>if</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_closed</span><span class=o>.</span><span class=n>done</span><span class=p>():</span>
+            <span class=k>if</span> <span class=n>exc</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_closed</span><span class=o>.</span><span class=n>set_result</span><span class=p>(</span><span class=kc>None</span><span class=p>)</span>
+            <span class=k>else</span><span class=p>:</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_closed</span><span class=o>.</span><span class=n>set_exception</span><span class=p>(</span><span class=n>exc</span><span class=p>)</span>
+        <span class=nb>super</span><span class=p>()</span><span class=o>.</span><span class=n>connection_lost</span><span class=p>(</span><span class=n>exc</span><span class=p>)</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader_wr</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_stream_writer</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=o>=</span> <span class=kc>None</span>
+
+    <span class=k>def</span> <span class=nf>data_received</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>data</span><span class=p>):</span>
+        <span class=n>reader</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader</span>
+        <span class=k>if</span> <span class=n>reader</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>reader</span><span class=o>.</span><span class=n>feed_data</span><span class=p>(</span><span class=n>data</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>eof_received</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=n>reader</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_stream_reader</span>
+        <span class=k>if</span> <span class=n>reader</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>reader</span><span class=o>.</span><span class=n>feed_eof</span><span class=p>()</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_over_ssl</span><span class=p>:</span>
+            <span class=c1># Prevent a warning in SSLProtocol.eof_received:</span>
+            <span class=c1># &quot;returning true from eof_received()</span>
+            <span class=c1># has no effect when using ssl&quot;</span>
+            <span class=k>return</span> <span class=kc>False</span>
+        <span class=k>return</span> <span class=kc>True</span>
+
+    <span class=k>def</span> <span class=nf>_get_close_waiter</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>stream</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_closed</span>
+
+    <span class=k>def</span> <span class=fm>__del__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=c1># Prevent reports about unhandled exceptions.</span>
+        <span class=c1># Better than self._closed._log_traceback = False hack</span>
+        <span class=n>closed</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_closed</span>
+        <span class=k>if</span> <span class=n>closed</span><span class=o>.</span><span class=n>done</span><span class=p>()</span> <span class=ow>and</span> <span class=ow>not</span> <span class=n>closed</span><span class=o>.</span><span class=n>cancelled</span><span class=p>():</span>
+            <span class=n>closed</span><span class=o>.</span><span class=n>exception</span><span class=p>()</span>
+
+
+<span class=k>class</span> <span class=nc>StreamWriter</span><span class=p>:</span>
+    <span class=sd>&quot;&quot;&quot;Wraps a Transport.</span>
+
+<span class=sd>    This exposes write(), writelines(), [can_]write_eof(),</span>
+<span class=sd>    get_extra_info() and close().  It adds drain() which returns an</span>
+<span class=sd>    optional Future on which you can wait for flow control.  It also</span>
+<span class=sd>    adds a transport property which references the Transport</span>
+<span class=sd>    directly.</span>
+<span class=sd>    &quot;&quot;&quot;</span>
+
+    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>transport</span><span class=p>,</span> <span class=n>protocol</span><span class=p>,</span> <span class=n>reader</span><span class=p>,</span> <span class=n>loop</span><span class=p>):</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=o>=</span> <span class=n>transport</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_protocol</span> <span class=o>=</span> <span class=n>protocol</span>
+        <span class=c1># drain() expects that the reader has an exception() method</span>
+        <span class=k>assert</span> <span class=n>reader</span> <span class=ow>is</span> <span class=kc>None</span> <span class=ow>or</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>reader</span><span class=p>,</span> <span class=n>StreamReader</span><span class=p>)</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_reader</span> <span class=o>=</span> <span class=n>reader</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span> <span class=o>=</span> <span class=n>loop</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_complete_fut</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>create_future</span><span class=p>()</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_complete_fut</span><span class=o>.</span><span class=n>set_result</span><span class=p>(</span><span class=kc>None</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=fm>__repr__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=n>info</span> <span class=o>=</span> <span class=p>[</span><span class=bp>self</span><span class=o>.</span><span class=vm>__class__</span><span class=o>.</span><span class=vm>__name__</span><span class=p>,</span> <span class=sa>f</span><span class=s1>&#39;transport=</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=si>!r}</span><span class=s1>&#39;</span><span class=p>]</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_reader</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>info</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;reader=</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>_reader</span><span class=si>!r}</span><span class=s1>&#39;</span><span class=p>)</span>
+        <span class=k>return</span> <span class=s1>&#39;&lt;</span><span class=si>{}</span><span class=s1>&gt;&#39;</span><span class=o>.</span><span class=n>format</span><span class=p>(</span><span class=s1>&#39; &#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>info</span><span class=p>))</span>
+
+    <span class=nd>@property</span>
+    <span class=k>def</span> <span class=nf>transport</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span>
+
+    <span class=k>def</span> <span class=nf>write</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>data</span><span class=p>):</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>write</span><span class=p>(</span><span class=n>data</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>writelines</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>data</span><span class=p>):</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>writelines</span><span class=p>(</span><span class=n>data</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>write_eof</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>write_eof</span><span class=p>()</span>
+
+    <span class=k>def</span> <span class=nf>can_write_eof</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>can_write_eof</span><span class=p>()</span>
+
+    <span class=k>def</span> <span class=nf>close</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>close</span><span class=p>()</span>
+
+    <span class=k>def</span> <span class=nf>is_closing</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>is_closing</span><span class=p>()</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>wait_closed</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>_protocol</span><span class=o>.</span><span class=n>_get_close_waiter</span><span class=p>(</span><span class=bp>self</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>get_extra_info</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>name</span><span class=p>,</span> <span class=n>default</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>get_extra_info</span><span class=p>(</span><span class=n>name</span><span class=p>,</span> <span class=n>default</span><span class=p>)</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>drain</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Flush the write buffer.</span>
+
+<span class=sd>        The intended use is to write</span>
+
+<span class=sd>          w.write(data)</span>
+<span class=sd>          await w.drain()</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_reader</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=n>exc</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_reader</span><span class=o>.</span><span class=n>exception</span><span class=p>()</span>
+            <span class=k>if</span> <span class=n>exc</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+                <span class=k>raise</span> <span class=n>exc</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>is_closing</span><span class=p>():</span>
+            <span class=c1># Wait for protocol.connection_lost() call</span>
+            <span class=c1># Raise connection closing error if any,</span>
+            <span class=c1># ConnectionResetError otherwise</span>
+            <span class=c1># Yield to the event loop so connection_lost() may be</span>
+            <span class=c1># called.  Without this, _drain_helper() would return</span>
+            <span class=c1># immediately, and code that calls</span>
+            <span class=c1>#     write(...); await drain()</span>
+            <span class=c1># in a loop would never call connection_lost(), so it</span>
+            <span class=c1># would not see an error when the socket is closed.</span>
+            <span class=k>await</span> <span class=n>sleep</span><span class=p>(</span><span class=mi>0</span><span class=p>)</span>
+        <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>_protocol</span><span class=o>.</span><span class=n>_drain_helper</span><span class=p>()</span>
+
+
+<span class=k>class</span> <span class=nc>StreamReader</span><span class=p>:</span>
+
+    <span class=n>_source_traceback</span> <span class=o>=</span> <span class=kc>None</span>
+
+    <span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>limit</span><span class=o>=</span><span class=n>_DEFAULT_LIMIT</span><span class=p>,</span> <span class=n>loop</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+        <span class=c1># The line length limit is  a security feature;</span>
+        <span class=c1># it also doubles as half the buffer limit.</span>
+
+        <span class=k>if</span> <span class=n>limit</span> <span class=o>&lt;=</span> <span class=mi>0</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=s1>&#39;Limit cannot be &lt;= 0&#39;</span><span class=p>)</span>
+
+        <span class=bp>self</span><span class=o>.</span><span class=n>_limit</span> <span class=o>=</span> <span class=n>limit</span>
+        <span class=k>if</span> <span class=n>loop</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span> <span class=o>=</span> <span class=n>events</span><span class=o>.</span><span class=n>get_event_loop</span><span class=p>()</span>
+        <span class=k>else</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span> <span class=o>=</span> <span class=n>loop</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span> <span class=o>=</span> <span class=nb>bytearray</span><span class=p>()</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span> <span class=o>=</span> <span class=kc>False</span>    <span class=c1># Whether we&#39;re done.</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span> <span class=o>=</span> <span class=kc>None</span>  <span class=c1># A future used by _wait_for_data()</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=o>=</span> <span class=kc>None</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=o>=</span> <span class=kc>False</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>get_debug</span><span class=p>():</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_source_traceback</span> <span class=o>=</span> <span class=n>format_helpers</span><span class=o>.</span><span class=n>extract_stack</span><span class=p>(</span>
+                <span class=n>sys</span><span class=o>.</span><span class=n>_getframe</span><span class=p>(</span><span class=mi>1</span><span class=p>))</span>
+
+    <span class=k>def</span> <span class=fm>__repr__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=n>info</span> <span class=o>=</span> <span class=p>[</span><span class=s1>&#39;StreamReader&#39;</span><span class=p>]</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>:</span>
+            <span class=n>info</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;</span><span class=si>{</span><span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span><span class=si>}</span><span class=s1> bytes&#39;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span><span class=p>:</span>
+            <span class=n>info</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=s1>&#39;eof&#39;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_limit</span> <span class=o>!=</span> <span class=n>_DEFAULT_LIMIT</span><span class=p>:</span>
+            <span class=n>info</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;limit=</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>_limit</span><span class=si>}</span><span class=s1>&#39;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span><span class=p>:</span>
+            <span class=n>info</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;waiter=</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span><span class=si>!r}</span><span class=s1>&#39;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span><span class=p>:</span>
+            <span class=n>info</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;exception=</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>_exception</span><span class=si>!r}</span><span class=s1>&#39;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=p>:</span>
+            <span class=n>info</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;transport=</span><span class=si>{</span><span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=si>!r}</span><span class=s1>&#39;</span><span class=p>)</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span><span class=p>:</span>
+            <span class=n>info</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=s1>&#39;paused&#39;</span><span class=p>)</span>
+        <span class=k>return</span> <span class=s1>&#39;&lt;</span><span class=si>{}</span><span class=s1>&gt;&#39;</span><span class=o>.</span><span class=n>format</span><span class=p>(</span><span class=s1>&#39; &#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>info</span><span class=p>))</span>
+
+    <span class=k>def</span> <span class=nf>exception</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span>
+
+    <span class=k>def</span> <span class=nf>set_exception</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>exc</span><span class=p>):</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span> <span class=o>=</span> <span class=n>exc</span>
+
+        <span class=n>waiter</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span>
+        <span class=k>if</span> <span class=n>waiter</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span> <span class=o>=</span> <span class=kc>None</span>
+            <span class=k>if</span> <span class=ow>not</span> <span class=n>waiter</span><span class=o>.</span><span class=n>cancelled</span><span class=p>():</span>
+                <span class=n>waiter</span><span class=o>.</span><span class=n>set_exception</span><span class=p>(</span><span class=n>exc</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>_wakeup_waiter</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Wakeup read*() functions waiting for data or EOF.&quot;&quot;&quot;</span>
+        <span class=n>waiter</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span>
+        <span class=k>if</span> <span class=n>waiter</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span> <span class=o>=</span> <span class=kc>None</span>
+            <span class=k>if</span> <span class=ow>not</span> <span class=n>waiter</span><span class=o>.</span><span class=n>cancelled</span><span class=p>():</span>
+                <span class=n>waiter</span><span class=o>.</span><span class=n>set_result</span><span class=p>(</span><span class=kc>None</span><span class=p>)</span>
+
+    <span class=k>def</span> <span class=nf>set_transport</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>transport</span><span class=p>):</span>
+        <span class=k>assert</span> <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>,</span> <span class=s1>&#39;Transport already set&#39;</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=o>=</span> <span class=n>transport</span>
+
+    <span class=k>def</span> <span class=nf>_maybe_resume_transport</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=ow>and</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span> <span class=o>&lt;=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_limit</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=o>=</span> <span class=kc>False</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>resume_reading</span><span class=p>()</span>
+
+    <span class=k>def</span> <span class=nf>feed_eof</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span> <span class=o>=</span> <span class=kc>True</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_wakeup_waiter</span><span class=p>()</span>
+
+    <span class=k>def</span> <span class=nf>at_eof</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Return True if the buffer is empty and &#39;feed_eof&#39; was called.&quot;&quot;&quot;</span>
+        <span class=k>return</span> <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span> <span class=ow>and</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span>
+
+    <span class=k>def</span> <span class=nf>feed_data</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>data</span><span class=p>):</span>
+        <span class=k>assert</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span><span class=p>,</span> <span class=s1>&#39;feed_data after feed_eof&#39;</span>
+
+        <span class=k>if</span> <span class=ow>not</span> <span class=n>data</span><span class=p>:</span>
+            <span class=k>return</span>
+
+        <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=o>.</span><span class=n>extend</span><span class=p>(</span><span class=n>data</span><span class=p>)</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_wakeup_waiter</span><span class=p>()</span>
+
+        <span class=k>if</span> <span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span> <span class=ow>and</span>
+                <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=ow>and</span>
+                <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span> <span class=o>&gt;</span> <span class=mi>2</span> <span class=o>*</span> <span class=bp>self</span><span class=o>.</span><span class=n>_limit</span><span class=p>):</span>
+            <span class=k>try</span><span class=p>:</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>pause_reading</span><span class=p>()</span>
+            <span class=k>except</span> <span class=ne>NotImplementedError</span><span class=p>:</span>
+                <span class=c1># The transport can&#39;t be paused.</span>
+                <span class=c1># We&#39;ll just have to buffer all data.</span>
+                <span class=c1># Forget the transport so we don&#39;t keep trying.</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span> <span class=o>=</span> <span class=kc>None</span>
+            <span class=k>else</span><span class=p>:</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=o>=</span> <span class=kc>True</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>_wait_for_data</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>func_name</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Wait until feed_data() or feed_eof() is called.</span>
+
+<span class=sd>        If stream was paused, automatically resume it.</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+        <span class=c1># StreamReader uses a future to link the protocol feed_data() method</span>
+        <span class=c1># to a read coroutine. Running two read coroutines at the same time</span>
+        <span class=c1># would have an unexpected behaviour. It would not possible to know</span>
+        <span class=c1># which coroutine would get the next data.</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=ne>RuntimeError</span><span class=p>(</span>
+                <span class=sa>f</span><span class=s1>&#39;</span><span class=si>{</span><span class=n>func_name</span><span class=si>}</span><span class=s1>() called while another coroutine is &#39;</span>
+                <span class=sa>f</span><span class=s1>&#39;already waiting for incoming data&#39;</span><span class=p>)</span>
+
+        <span class=k>assert</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span><span class=p>,</span> <span class=s1>&#39;_wait_for_data after EOF&#39;</span>
+
+        <span class=c1># Waiting for data while paused will make deadlock, so prevent it.</span>
+        <span class=c1># This is essential for readexactly(n) for case when n &gt; self._limit.</span>
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_paused</span> <span class=o>=</span> <span class=kc>False</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_transport</span><span class=o>.</span><span class=n>resume_reading</span><span class=p>()</span>
+
+        <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_loop</span><span class=o>.</span><span class=n>create_future</span><span class=p>()</span>
+        <span class=k>try</span><span class=p>:</span>
+            <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span>
+        <span class=k>finally</span><span class=p>:</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_waiter</span> <span class=o>=</span> <span class=kc>None</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>readline</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Read chunk of data from the stream until newline (b&#39;\n&#39;) is found.</span>
+
+<span class=sd>        On success, return chunk that ends with newline. If only partial</span>
+<span class=sd>        line can be read due to EOF, return incomplete line without</span>
+<span class=sd>        terminating newline. When EOF was reached while no bytes read, empty</span>
+<span class=sd>        bytes object is returned.</span>
+
+<span class=sd>        If limit is reached, ValueError will be raised. In that case, if</span>
+<span class=sd>        newline was found, complete line including newline will be removed</span>
+<span class=sd>        from internal buffer. Else, internal buffer will be cleared. Limit is</span>
+<span class=sd>        compared against part of the line without newline.</span>
+
+<span class=sd>        If stream was paused, this function will automatically resume it if</span>
+<span class=sd>        needed.</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+        <span class=n>sep</span> <span class=o>=</span> <span class=sa>b</span><span class=s1>&#39;</span><span class=se>\n</span><span class=s1>&#39;</span>
+        <span class=n>seplen</span> <span class=o>=</span> <span class=nb>len</span><span class=p>(</span><span class=n>sep</span><span class=p>)</span>
+        <span class=k>try</span><span class=p>:</span>
+            <span class=n>line</span> <span class=o>=</span> <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>readuntil</span><span class=p>(</span><span class=n>sep</span><span class=p>)</span>
+        <span class=k>except</span> <span class=n>exceptions</span><span class=o>.</span><span class=n>IncompleteReadError</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
+            <span class=k>return</span> <span class=n>e</span><span class=o>.</span><span class=n>partial</span>
+        <span class=k>except</span> <span class=n>exceptions</span><span class=o>.</span><span class=n>LimitOverrunError</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
+            <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=n>sep</span><span class=p>,</span> <span class=n>e</span><span class=o>.</span><span class=n>consumed</span><span class=p>):</span>
+                <span class=k>del</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>[:</span><span class=n>e</span><span class=o>.</span><span class=n>consumed</span> <span class=o>+</span> <span class=n>seplen</span><span class=p>]</span>
+            <span class=k>else</span><span class=p>:</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=o>.</span><span class=n>clear</span><span class=p>()</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_maybe_resume_transport</span><span class=p>()</span>
+            <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=n>e</span><span class=o>.</span><span class=n>args</span><span class=p>[</span><span class=mi>0</span><span class=p>])</span>
+        <span class=k>return</span> <span class=n>line</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>readuntil</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>separator</span><span class=o>=</span><span class=sa>b</span><span class=s1>&#39;</span><span class=se>\n</span><span class=s1>&#39;</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Read data from the stream until ``separator`` is found.</span>
+
+<span class=sd>        On success, the data and separator will be removed from the</span>
+<span class=sd>        internal buffer (consumed). Returned data will include the</span>
+<span class=sd>        separator at the end.</span>
+
+<span class=sd>        Configured stream limit is used to check result. Limit sets the</span>
+<span class=sd>        maximal length of data that can be returned, not counting the</span>
+<span class=sd>        separator.</span>
+
+<span class=sd>        If an EOF occurs and the complete separator is still not found,</span>
+<span class=sd>        an IncompleteReadError exception will be raised, and the internal</span>
+<span class=sd>        buffer will be reset.  The IncompleteReadError.partial attribute</span>
+<span class=sd>        may contain the separator partially.</span>
+
+<span class=sd>        If the data cannot be read because of over limit, a</span>
+<span class=sd>        LimitOverrunError exception  will be raised, and the data</span>
+<span class=sd>        will be left in the internal buffer, so it can be read again.</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+        <span class=n>seplen</span> <span class=o>=</span> <span class=nb>len</span><span class=p>(</span><span class=n>separator</span><span class=p>)</span>
+        <span class=k>if</span> <span class=n>seplen</span> <span class=o>==</span> <span class=mi>0</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=s1>&#39;Separator should be at least one-byte string&#39;</span><span class=p>)</span>
+
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span>
+
+        <span class=c1># Consume whole buffer except last bytes, which length is</span>
+        <span class=c1># one less than seplen. Let&#39;s check corner cases with</span>
+        <span class=c1># separator=&#39;SEPARATOR&#39;:</span>
+        <span class=c1># * we have received almost complete separator (without last</span>
+        <span class=c1>#   byte). i.e buffer=&#39;some textSEPARATO&#39;. In this case we</span>
+        <span class=c1>#   can safely consume len(separator) - 1 bytes.</span>
+        <span class=c1># * last byte of buffer is first byte of separator, i.e.</span>
+        <span class=c1>#   buffer=&#39;abcdefghijklmnopqrS&#39;. We may safely consume</span>
+        <span class=c1>#   everything except that last byte, but this require to</span>
+        <span class=c1>#   analyze bytes of buffer that match partial separator.</span>
+        <span class=c1>#   This is slow and/or require FSM. For this case our</span>
+        <span class=c1>#   implementation is not optimal, since require rescanning</span>
+        <span class=c1>#   of data that is known to not belong to separator. In</span>
+        <span class=c1>#   real world, separator will not be so long to notice</span>
+        <span class=c1>#   performance problems. Even when reading MIME-encoded</span>
+        <span class=c1>#   messages :)</span>
+
+        <span class=c1># `offset` is the number of bytes from the beginning of the buffer</span>
+        <span class=c1># where there is no occurrence of `separator`.</span>
+        <span class=n>offset</span> <span class=o>=</span> <span class=mi>0</span>
+
+        <span class=c1># Loop until we find `separator` in the buffer, exceed the buffer size,</span>
+        <span class=c1># or an EOF has happened.</span>
+        <span class=k>while</span> <span class=kc>True</span><span class=p>:</span>
+            <span class=n>buflen</span> <span class=o>=</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span>
+
+            <span class=c1># Check if we now have enough data in the buffer for `separator` to</span>
+            <span class=c1># fit.</span>
+            <span class=k>if</span> <span class=n>buflen</span> <span class=o>-</span> <span class=n>offset</span> <span class=o>&gt;=</span> <span class=n>seplen</span><span class=p>:</span>
+                <span class=n>isep</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=o>.</span><span class=n>find</span><span class=p>(</span><span class=n>separator</span><span class=p>,</span> <span class=n>offset</span><span class=p>)</span>
+
+                <span class=k>if</span> <span class=n>isep</span> <span class=o>!=</span> <span class=o>-</span><span class=mi>1</span><span class=p>:</span>
+                    <span class=c1># `separator` is in the buffer. `isep` will be used later</span>
+                    <span class=c1># to retrieve the data.</span>
+                    <span class=k>break</span>
+
+                <span class=c1># see upper comment for explanation.</span>
+                <span class=n>offset</span> <span class=o>=</span> <span class=n>buflen</span> <span class=o>+</span> <span class=mi>1</span> <span class=o>-</span> <span class=n>seplen</span>
+                <span class=k>if</span> <span class=n>offset</span> <span class=o>&gt;</span> <span class=bp>self</span><span class=o>.</span><span class=n>_limit</span><span class=p>:</span>
+                    <span class=k>raise</span> <span class=n>exceptions</span><span class=o>.</span><span class=n>LimitOverrunError</span><span class=p>(</span>
+                        <span class=s1>&#39;Separator is not found, and chunk exceed the limit&#39;</span><span class=p>,</span>
+                        <span class=n>offset</span><span class=p>)</span>
+
+            <span class=c1># Complete message (with full separator) may be present in buffer</span>
+            <span class=c1># even when EOF flag is set. This may happen when the last chunk</span>
+            <span class=c1># adds data which makes separator be found. That&#39;s why we check for</span>
+            <span class=c1># EOF *ater* inspecting the buffer.</span>
+            <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span><span class=p>:</span>
+                <span class=n>chunk</span> <span class=o>=</span> <span class=nb>bytes</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=o>.</span><span class=n>clear</span><span class=p>()</span>
+                <span class=k>raise</span> <span class=n>exceptions</span><span class=o>.</span><span class=n>IncompleteReadError</span><span class=p>(</span><span class=n>chunk</span><span class=p>,</span> <span class=kc>None</span><span class=p>)</span>
+
+            <span class=c1># _wait_for_data() will resume reading if stream was paused.</span>
+            <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>_wait_for_data</span><span class=p>(</span><span class=s1>&#39;readuntil&#39;</span><span class=p>)</span>
+
+        <span class=k>if</span> <span class=n>isep</span> <span class=o>&gt;</span> <span class=bp>self</span><span class=o>.</span><span class=n>_limit</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=n>exceptions</span><span class=o>.</span><span class=n>LimitOverrunError</span><span class=p>(</span>
+                <span class=s1>&#39;Separator is found, but chunk is longer than limit&#39;</span><span class=p>,</span> <span class=n>isep</span><span class=p>)</span>
+
+        <span class=n>chunk</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>[:</span><span class=n>isep</span> <span class=o>+</span> <span class=n>seplen</span><span class=p>]</span>
+        <span class=k>del</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>[:</span><span class=n>isep</span> <span class=o>+</span> <span class=n>seplen</span><span class=p>]</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_maybe_resume_transport</span><span class=p>()</span>
+        <span class=k>return</span> <span class=nb>bytes</span><span class=p>(</span><span class=n>chunk</span><span class=p>)</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>read</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>n</span><span class=o>=-</span><span class=mi>1</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Read up to `n` bytes from the stream.</span>
+
+<span class=sd>        If n is not provided, or set to -1, read until EOF and return all read</span>
+<span class=sd>        bytes. If the EOF was received and the internal buffer is empty, return</span>
+<span class=sd>        an empty bytes object.</span>
+
+<span class=sd>        If n is zero, return empty bytes object immediately.</span>
+
+<span class=sd>        If n is positive, this function try to read `n` bytes, and may return</span>
+<span class=sd>        less or equal bytes than requested, but at least one byte. If EOF was</span>
+<span class=sd>        received before any byte is read, this function returns empty byte</span>
+<span class=sd>        object.</span>
+
+<span class=sd>        Returned value is not limited with limit, configured at stream</span>
+<span class=sd>        creation.</span>
+
+<span class=sd>        If stream was paused, this function will automatically resume it if</span>
+<span class=sd>        needed.</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span>
+
+        <span class=k>if</span> <span class=n>n</span> <span class=o>==</span> <span class=mi>0</span><span class=p>:</span>
+            <span class=k>return</span> <span class=sa>b</span><span class=s1>&#39;&#39;</span>
+
+        <span class=k>if</span> <span class=n>n</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>:</span>
+            <span class=c1># This used to just loop creating a new waiter hoping to</span>
+            <span class=c1># collect everything in self._buffer, but that would</span>
+            <span class=c1># deadlock if the subprocess sends more than self.limit</span>
+            <span class=c1># bytes.  So just call self.read(self._limit) until EOF.</span>
+            <span class=n>blocks</span> <span class=o>=</span> <span class=p>[]</span>
+            <span class=k>while</span> <span class=kc>True</span><span class=p>:</span>
+                <span class=n>block</span> <span class=o>=</span> <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>read</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_limit</span><span class=p>)</span>
+                <span class=k>if</span> <span class=ow>not</span> <span class=n>block</span><span class=p>:</span>
+                    <span class=k>break</span>
+                <span class=n>blocks</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>block</span><span class=p>)</span>
+            <span class=k>return</span> <span class=sa>b</span><span class=s1>&#39;&#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>blocks</span><span class=p>)</span>
+
+        <span class=k>if</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span> <span class=ow>and</span> <span class=ow>not</span> <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span><span class=p>:</span>
+            <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>_wait_for_data</span><span class=p>(</span><span class=s1>&#39;read&#39;</span><span class=p>)</span>
+
+        <span class=c1># This will work right even if buffer is less than n bytes</span>
+        <span class=n>data</span> <span class=o>=</span> <span class=nb>bytes</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>[:</span><span class=n>n</span><span class=p>])</span>
+        <span class=k>del</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>[:</span><span class=n>n</span><span class=p>]</span>
+
+        <span class=bp>self</span><span class=o>.</span><span class=n>_maybe_resume_transport</span><span class=p>()</span>
+        <span class=k>return</span> <span class=n>data</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=nf>readexactly</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>n</span><span class=p>):</span>
+        <span class=sd>&quot;&quot;&quot;Read exactly `n` bytes.</span>
+
+<span class=sd>        Raise an IncompleteReadError if EOF is reached before `n` bytes can be</span>
+<span class=sd>        read. The IncompleteReadError.partial attribute of the exception will</span>
+<span class=sd>        contain the partial read bytes.</span>
+
+<span class=sd>        if n is zero, return empty bytes object.</span>
+
+<span class=sd>        Returned value is not limited with limit, configured at stream</span>
+<span class=sd>        creation.</span>
+
+<span class=sd>        If stream was paused, this function will automatically resume it if</span>
+<span class=sd>        needed.</span>
+<span class=sd>        &quot;&quot;&quot;</span>
+        <span class=k>if</span> <span class=n>n</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=ne>ValueError</span><span class=p>(</span><span class=s1>&#39;readexactly size can not be less than zero&#39;</span><span class=p>)</span>
+
+        <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span> <span class=ow>is</span> <span class=ow>not</span> <span class=kc>None</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=bp>self</span><span class=o>.</span><span class=n>_exception</span>
+
+        <span class=k>if</span> <span class=n>n</span> <span class=o>==</span> <span class=mi>0</span><span class=p>:</span>
+            <span class=k>return</span> <span class=sa>b</span><span class=s1>&#39;&#39;</span>
+
+        <span class=k>while</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span> <span class=o>&lt;</span> <span class=n>n</span><span class=p>:</span>
+            <span class=k>if</span> <span class=bp>self</span><span class=o>.</span><span class=n>_eof</span><span class=p>:</span>
+                <span class=n>incomplete</span> <span class=o>=</span> <span class=nb>bytes</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span>
+                <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=o>.</span><span class=n>clear</span><span class=p>()</span>
+                <span class=k>raise</span> <span class=n>exceptions</span><span class=o>.</span><span class=n>IncompleteReadError</span><span class=p>(</span><span class=n>incomplete</span><span class=p>,</span> <span class=n>n</span><span class=p>)</span>
+
+            <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>_wait_for_data</span><span class=p>(</span><span class=s1>&#39;readexactly&#39;</span><span class=p>)</span>
+
+        <span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span> <span class=o>==</span> <span class=n>n</span><span class=p>:</span>
+            <span class=n>data</span> <span class=o>=</span> <span class=nb>bytes</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>)</span>
+            <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=o>.</span><span class=n>clear</span><span class=p>()</span>
+        <span class=k>else</span><span class=p>:</span>
+            <span class=n>data</span> <span class=o>=</span> <span class=nb>bytes</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>[:</span><span class=n>n</span><span class=p>])</span>
+            <span class=k>del</span> <span class=bp>self</span><span class=o>.</span><span class=n>_buffer</span><span class=p>[:</span><span class=n>n</span><span class=p>]</span>
+        <span class=bp>self</span><span class=o>.</span><span class=n>_maybe_resume_transport</span><span class=p>()</span>
+        <span class=k>return</span> <span class=n>data</span>
+
+    <span class=k>def</span> <span class=fm>__aiter__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=k>return</span> <span class=bp>self</span>
+
+    <span class=k>async</span> <span class=k>def</span> <span class=fm>__anext__</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+        <span class=n>val</span> <span class=o>=</span> <span class=k>await</span> <span class=bp>self</span><span class=o>.</span><span class=n>readline</span><span class=p>()</span>
+        <span class=k>if</span> <span class=n>val</span> <span class=o>==</span> <span class=sa>b</span><span class=s1>&#39;&#39;</span><span class=p>:</span>
+            <span class=k>raise</span> <span class=ne>StopAsyncIteration</span>
+        <span class=k>return</span> <span class=n>val</span>
+</pre></div> </div> </div> <div class=clearfix></div> </div> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=../../genindex.html title="General Index">index</a></li> <li class=right> <a href=../../py-modindex.html title="Python Module Index">modules</a> |</li> <li class="nav-item nav-item-0"><a href=../../index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-1"><a href=../index.html>Module code</a> &#187;</li> <li class="nav-item nav-item-this"><a href>asyncio.streams</a></li> </ul> </div><script type=text/javascript>
   $("#mobile-toggle a").click(function () {
     $("#left-column").toggle();
   });
-</script>
-<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
-  <div class="footer">
-    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-  </div>
-  </body>
-</html>
+</script><script type=text/javascript src=../../_static/js/bootstrap.js></script> <div class=footer> &copy; Copyright 2013-2021, Kura. Created using <a href=http://sphinx.pocoo.org/ >Sphinx</a>. </div> </body></html>

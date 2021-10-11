@@ -1,246 +1,46 @@
+<!DOCTYPE html><html> <head><meta charset=utf-8><meta name=viewport content="width=device-width, initial-scale=1.0"><meta name=generator content="Docutils 0.17.1: http://docutils.sourceforge.net/"><link rel=stylesheet type=text/css href=_static/fonts/open-sans/stylesheet.css><link rel=stylesheet type=text/css href=_static/fonts/source-serif-pro/source-serif-pro.css><link rel=stylesheet type=text/css href=_static/css/bootstrap.min.css><link rel=stylesheet type=text/css href=_static/css/bootstrap-theme.min.css><meta name=viewport content="width=device-width, initial-scale=1.0"><title>Dynamic Switches &#8212; Blackhole 2.1.19 documentation</title><link rel=stylesheet type=text/css href=_static/pygments.css><link rel=stylesheet type=text/css href=_static/blackhole.css><script data-url_root=./ id=documentation_options src=_static/documentation_options.js></script><script src=_static/jquery.js></script><script src=_static/underscore.js></script><script src=_static/doctools.js></script><link rel=search type=application/opensearchdescription+xml title="Search within Blackhole 2.1.19 documentation" href=_static/opensearch.xml><link rel=index title=Index href=genindex.html><link rel=search title=Search href=search.html><link rel=next title=API href=api.html><link rel=prev title=EXPN href=command-expn.html></head><body> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=genindex.html title="General Index" accesskey=I>index</a></li> <li class=right> <a href=py-modindex.html title="Python Module Index">modules</a> |</li> <li class=right> <a href=api.html title=API accesskey=N>next</a> |</li> <li class=right> <a href=command-expn.html title=EXPN accesskey=P>previous</a> |</li> <li class="nav-item nav-item-0"><a href=index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-this"><a href>Dynamic Switches</a></li> </ul> </div> <div class=container-wrapper> <div id=mobile-toggle> <a href=#><span class="glyphicon glyphicon-align-justify" aria-hidden=true></span></a> </div> <div id=left-column> <div class=sphinxsidebar><a href="
+    index.html" class=text-logo>Blackhole</a><div class=sidebar-block> <div class=sidebar-wrapper> <h2>Table Of Contents</h2> </div> <div class=sidebar-toc> <ul class=current><li class=toctree-l1><a class="reference internal" href=overview.html>Overview</a></li><li class=toctree-l1><a class="reference internal" href=configuration.html>Configuration</a></li><li class=toctree-l1><a class="reference internal" href=communicating-with-blackhole.html>Communicating with Blackhole</a></li><li class=toctree-l1><a class="reference internal" href=dynamic-responses.html>Dynamic responses</a></li><li class="toctree-l1 current"><a class="current reference internal" href=#>Dynamic Switches</a><ul><li class=toctree-l2><a class="reference internal" href=#dynamic-mode-switches>Dynamic mode switches</a></li><li class=toctree-l2><a class="reference internal" href=#dynamic-delay-switches>Dynamic delay switches</a></li><li class=toctree-l2><a class="reference internal" href=#combining-dynamic-switches>Combining dynamic switches</a></li></ul></li><li class=toctree-l1><a class="reference internal" href=api.html>API</a></li></ul> </div></div><div class=sidebar-block> <div class=sidebar-wrapper> <div id=main-search> <form class=form-inline action=search.html method=GET role=form> <div class=input-group> <input name=q type=text class=form-control placeholder=Search...> </div> <input type=hidden name=check_keywords value=yes> <input type=hidden name=area value=default> </form> </div> </div></div> </div> </div> <div id=right-column> <div role=navigation aria-label="breadcrumbs navigation"> <ol class=breadcrumb> <li><a href=index.html>Docs</a></li> <li>Dynamic Switches</li> </ol> </div> <div class="document clearer body"> <section id=dynamic-switches><span id=id1></span><h1>Dynamic Switches<a class=headerlink href=#dynamic-switches title="Permalink to this headline">¶</a></h1><p>Dynamic switches allow you to tell blackhole how to respond to any given email.</p><p>For example, with default configuration blackhole will not delay while responding to clients and will blindly accept all email. Using dynamic switches, you can tell blackhole to bounce an email instead of accepting it or delay for 10 seconds before processing the email – without affecting any other emails you are sending to the service.</p><section id=dynamic-mode-switches><h2>Dynamic mode switches<a class=headerlink href=#dynamic-mode-switches title="Permalink to this headline">¶</a></h2><p>Blackhole has three response modes, you can find out more about what the modes are and the responses they send in the <a class="reference internal" href=configuration.html#mode><span class="std std-ref">mode</span></a> section.</p><p>Adding a dynamic mode switch header to an email message will make the blackhole service respond to the email using that response mode.</p><p>The <code class="docutils literal notranslate"><span class=pre>X-Blackhole-Mode</span></code> header is responsible for dynamic mode switching.</p><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=n>From</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>To</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>Subject</span><span class=p>:</span> <span class=n>A</span> <span class=n>test</span>
+<span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Mode</span><span class=p>:</span> <span class=n>bounce</span>
 
-<!DOCTYPE html>
+<span class=n>This</span> <span class=n>email</span> <span class=n>will</span> <span class=n>be</span> <span class=n>bounced</span> <span class=n>because</span> <span class=n>of</span> <span class=n>the</span> <span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Mode</span> <span class=n>header</span><span class=o>.</span>
+</pre></div></div><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=n>From</span><span class=p>:</span> <span class=n>Another</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>a</span><span class=o>.</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>To</span><span class=p>:</span> <span class=n>Another</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>a</span><span class=o>.</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>Subject</span><span class=p>:</span> <span class=n>A</span> <span class=n>second</span> <span class=n>test</span>
+<span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Mode</span><span class=p>:</span> <span class=n>accept</span>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<span class=n>This</span> <span class=n>email</span> <span class=n>will</span> <span class=n>be</span> <span class=n>accepted</span> <span class=n>because</span> <span class=n>of</span> <span class=n>the</span> <span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Mode</span> <span class=n>header</span><span class=o>.</span>
+</pre></div></div></section><section id=dynamic-delay-switches><h2>Dynamic delay switches<a class=headerlink href=#dynamic-delay-switches title="Permalink to this headline">¶</a></h2><p>The <code class="docutils literal notranslate"><span class=pre>X-Blackhole-Delay</span></code> header is responsible for dynamic delay switching.</p><section id=delay-for-a-set-amount-of-time><h3>Delay for a set amount of time<a class=headerlink href=#delay-for-a-set-amount-of-time title="Permalink to this headline">¶</a></h3><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=n>From</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>To</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>Subject</span><span class=p>:</span> <span class=n>A</span> <span class=n>test</span>
+<span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Delay</span><span class=p>:</span> <span class=mi>10</span>
 
-  
-  <!-- Licensed under the Apache 2.0 License -->
-  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
-  <!-- Licensed under the SIL Open Font License -->
-  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
-  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
-  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-    <title>Dynamic Switches &#8212; Blackhole 2.1.19 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/blackhole.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Blackhole 2.1.19 documentation"
-          href="_static/opensearch.xml"/>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API" href="api.html" />
-    <link rel="prev" title="EXPN" href="command-expn.html" />
-  
-   
+<span class=n>Blackhole</span> <span class=n>will</span> <span class=n>delay</span> <span class=k>for</span> <span class=mi>10</span> <span class=n>seconds</span> <span class=n>before</span> <span class=n>responding</span><span class=o>.</span>
+</pre></div></div></section><section id=delay-using-a-range><h3>Delay using a range<a class=headerlink href=#delay-using-a-range title="Permalink to this headline">¶</a></h3><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=n>From</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>To</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>Subject</span><span class=p>:</span> <span class=n>A</span> <span class=n>test</span>
+<span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Delay</span><span class=p>:</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>60</span>
 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="api.html" title="API"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="command-expn.html" title="EXPN"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Dynamic Switches</a></li> 
-      </ul>
-    </div>
-    <div class="container-wrapper">
+<span class=n>Blackhole</span> <span class=n>will</span> <span class=n>delay</span> <span class=k>for</span> <span class=n>between</span> <span class=mi>10</span> <span class=ow>and</span> <span class=mi>60</span> <span class=n>seconds</span> <span class=n>before</span> <span class=n>responding</span> <span class=n>to</span>
+<span class=n>this</span> <span class=n>email</span><span class=o>.</span>
+</pre></div></div></section></section><section id=combining-dynamic-switches><h2>Combining dynamic switches<a class=headerlink href=#combining-dynamic-switches title="Permalink to this headline">¶</a></h2><p>Because dynamic switches are just email headers, they can be combined.</p><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=n>From</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>To</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>Subject</span><span class=p>:</span> <span class=n>A</span> <span class=n>test</span>
+<span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Mode</span><span class=p>:</span> <span class=n>bounce</span>
+<span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Delay</span><span class=p>:</span> <span class=mi>10</span>
 
-      <div id="mobile-toggle">
-        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
-      </div>
-  <div id="left-column">
-    <div class="sphinxsidebar"><a href="
-    index.html" class="text-logo">Blackhole</a>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <h2>Table Of Contents</h2>
-  </div>
-  <div class="sidebar-toc">
-    
-    
-      <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="communicating-with-blackhole.html">Communicating with Blackhole</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dynamic-responses.html">Dynamic responses</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Dynamic Switches</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#dynamic-mode-switches">Dynamic mode switches</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dynamic-delay-switches">Dynamic delay switches</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#combining-dynamic-switches">Combining dynamic switches</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
-</ul>
+<span class=n>Blackhole</span> <span class=n>will</span> <span class=n>delay</span> <span class=k>for</span> <span class=mi>10</span> <span class=n>seconds</span> <span class=n>before</span> <span class=n>bouncing</span> <span class=n>this</span> <span class=n>email</span><span class=o>.</span>
+</pre></div></div><div class="highlight-default notranslate"><div class=highlight><pre><span></span><span class=n>From</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>To</span><span class=p>:</span> <span class=n>Test</span> <span class=o>&lt;</span><span class=n>test</span><span class=nd>@test</span><span class=o>.</span><span class=n>com</span><span class=o>&gt;</span>
+<span class=n>Subject</span><span class=p>:</span> <span class=n>A</span> <span class=n>test</span>
+<span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Mode</span><span class=p>:</span> <span class=n>accept</span>
+<span class=n>X</span><span class=o>-</span><span class=n>Blackhole</span><span class=o>-</span><span class=n>Delay</span><span class=p>:</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>30</span>
 
-    
-  </div>
-</div>
-<div class="sidebar-block">
-  <div class="sidebar-wrapper">
-    <div id="main-search">
-      <form class="form-inline" action="search.html" method="GET" role="form">
-        <div class="input-group">
-          <input name="q" type="text" class="form-control" placeholder="Search...">
-        </div>
-        <input type="hidden" name="check_keywords" value="yes" />
-        <input type="hidden" name="area" value="default" />
-      </form>
-    </div>
-  </div>
-</div>
-      
-    </div>
-  </div>
-        <div id="right-column">
-          
-          <div role="navigation" aria-label="breadcrumbs navigation">
-            <ol class="breadcrumb">
-              <li><a href="index.html">Docs</a></li>
-              
-              <li>Dynamic Switches</li>
-            </ol>
-          </div>
-          
-          <div class="document clearer body">
-            
-  <section id="dynamic-switches">
-<span id="id1"></span><h1>Dynamic Switches<a class="headerlink" href="#dynamic-switches" title="Permalink to this headline">¶</a></h1>
-<p>Dynamic switches allow you to tell blackhole how to respond to any given email.</p>
-<p>For example, with default configuration blackhole will not delay while
-responding to clients and will blindly accept all email. Using dynamic
-switches, you can tell blackhole to bounce an email instead of accepting it or
-delay for 10 seconds before processing the email – without affecting any
-other emails you are sending to the service.</p>
-<section id="dynamic-mode-switches">
-<h2>Dynamic mode switches<a class="headerlink" href="#dynamic-mode-switches" title="Permalink to this headline">¶</a></h2>
-<p>Blackhole has three response modes, you can find out more about what the modes
-are and the responses they send in the <a class="reference internal" href="configuration.html#mode"><span class="std std-ref">mode</span></a> section.</p>
-<p>Adding a dynamic mode switch header to an email message will make the blackhole
-service respond to the email using that response mode.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">X-Blackhole-Mode</span></code> header is responsible for dynamic mode switching.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">From</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">To</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">Subject</span><span class="p">:</span> <span class="n">A</span> <span class="n">test</span>
-<span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span> <span class="n">bounce</span>
-
-<span class="n">This</span> <span class="n">email</span> <span class="n">will</span> <span class="n">be</span> <span class="n">bounced</span> <span class="n">because</span> <span class="n">of</span> <span class="n">the</span> <span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Mode</span> <span class="n">header</span><span class="o">.</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">From</span><span class="p">:</span> <span class="n">Another</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">a</span><span class="o">.</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">To</span><span class="p">:</span> <span class="n">Another</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">a</span><span class="o">.</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">Subject</span><span class="p">:</span> <span class="n">A</span> <span class="n">second</span> <span class="n">test</span>
-<span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span> <span class="n">accept</span>
-
-<span class="n">This</span> <span class="n">email</span> <span class="n">will</span> <span class="n">be</span> <span class="n">accepted</span> <span class="n">because</span> <span class="n">of</span> <span class="n">the</span> <span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Mode</span> <span class="n">header</span><span class="o">.</span>
-</pre></div>
-</div>
-</section>
-<section id="dynamic-delay-switches">
-<h2>Dynamic delay switches<a class="headerlink" href="#dynamic-delay-switches" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">X-Blackhole-Delay</span></code> header is responsible for dynamic delay switching.</p>
-<section id="delay-for-a-set-amount-of-time">
-<h3>Delay for a set amount of time<a class="headerlink" href="#delay-for-a-set-amount-of-time" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">From</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">To</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">Subject</span><span class="p">:</span> <span class="n">A</span> <span class="n">test</span>
-<span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Delay</span><span class="p">:</span> <span class="mi">10</span>
-
-<span class="n">Blackhole</span> <span class="n">will</span> <span class="n">delay</span> <span class="k">for</span> <span class="mi">10</span> <span class="n">seconds</span> <span class="n">before</span> <span class="n">responding</span><span class="o">.</span>
-</pre></div>
-</div>
-</section>
-<section id="delay-using-a-range">
-<h3>Delay using a range<a class="headerlink" href="#delay-using-a-range" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">From</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">To</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">Subject</span><span class="p">:</span> <span class="n">A</span> <span class="n">test</span>
-<span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Delay</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">60</span>
-
-<span class="n">Blackhole</span> <span class="n">will</span> <span class="n">delay</span> <span class="k">for</span> <span class="n">between</span> <span class="mi">10</span> <span class="ow">and</span> <span class="mi">60</span> <span class="n">seconds</span> <span class="n">before</span> <span class="n">responding</span> <span class="n">to</span>
-<span class="n">this</span> <span class="n">email</span><span class="o">.</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="combining-dynamic-switches">
-<h2>Combining dynamic switches<a class="headerlink" href="#combining-dynamic-switches" title="Permalink to this headline">¶</a></h2>
-<p>Because dynamic switches are just email headers, they can be combined.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">From</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">To</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">Subject</span><span class="p">:</span> <span class="n">A</span> <span class="n">test</span>
-<span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span> <span class="n">bounce</span>
-<span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Delay</span><span class="p">:</span> <span class="mi">10</span>
-
-<span class="n">Blackhole</span> <span class="n">will</span> <span class="n">delay</span> <span class="k">for</span> <span class="mi">10</span> <span class="n">seconds</span> <span class="n">before</span> <span class="n">bouncing</span> <span class="n">this</span> <span class="n">email</span><span class="o">.</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">From</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">To</span><span class="p">:</span> <span class="n">Test</span> <span class="o">&lt;</span><span class="n">test</span><span class="nd">@test</span><span class="o">.</span><span class="n">com</span><span class="o">&gt;</span>
-<span class="n">Subject</span><span class="p">:</span> <span class="n">A</span> <span class="n">test</span>
-<span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Mode</span><span class="p">:</span> <span class="n">accept</span>
-<span class="n">X</span><span class="o">-</span><span class="n">Blackhole</span><span class="o">-</span><span class="n">Delay</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span>
-
-<span class="n">Blackhole</span> <span class="n">will</span> <span class="n">delay</span> <span class="k">for</span> <span class="n">between</span> <span class="mi">10</span> <span class="ow">and</span> <span class="mi">30</span> <span class="n">seconds</span> <span class="n">before</span> <span class="n">accepting</span>
-<span class="n">this</span> <span class="n">email</span><span class="o">.</span>
-</pre></div>
-</div>
-</section>
-</section>
-
-
-          </div>
-            
-  <div class="footer-relations">
-    
-      <div class="pull-left">
-        <a class="btn btn-default" href="command-expn.html" title="previous chapter (use the left arrow)">EXPN</a>
-      </div>
-    
-      <div class="pull-right">
-        <a class="btn btn-default" href="api.html" title="next chapter (use the right arrow)">API</a>
-      </div>
-    </div>
-    <div class="clearer"></div>
-  
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="api.html" title="API"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="command-expn.html" title="EXPN"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Dynamic Switches</a></li> 
-      </ul>
-    </div>
-<script type="text/javascript">
+<span class=n>Blackhole</span> <span class=n>will</span> <span class=n>delay</span> <span class=k>for</span> <span class=n>between</span> <span class=mi>10</span> <span class=ow>and</span> <span class=mi>30</span> <span class=n>seconds</span> <span class=n>before</span> <span class=n>accepting</span>
+<span class=n>this</span> <span class=n>email</span><span class=o>.</span>
+</pre></div></div></section></section> </div> <div class=footer-relations> <div class=pull-left> <a class="btn btn-default" href=command-expn.html title="previous chapter (use the left arrow)">EXPN</a> </div> <div class=pull-right> <a class="btn btn-default" href=api.html title="next chapter (use the right arrow)">API</a> </div> </div> <div class=clearer></div> </div> <div class=clearfix></div> </div> <div class=related role=navigation aria-label="related navigation"> <h3>Navigation</h3> <ul> <li class=right style="margin-right: 10px"> <a href=genindex.html title="General Index">index</a></li> <li class=right> <a href=py-modindex.html title="Python Module Index">modules</a> |</li> <li class=right> <a href=api.html title=API>next</a> |</li> <li class=right> <a href=command-expn.html title=EXPN>previous</a> |</li> <li class="nav-item nav-item-0"><a href=index.html>Blackhole 2.1.19 documentation</a> &#187;</li> <li class="nav-item nav-item-this"><a href>Dynamic Switches</a></li> </ul> </div><script type=text/javascript>
   $("#mobile-toggle a").click(function () {
     $("#left-column").toggle();
   });
-</script>
-<script type="text/javascript" src="_static/js/bootstrap.js"></script>
-  <div class="footer">
-    &copy; Copyright 2013-2021, Kura. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
-  </div>
-  </body>
-</html>
+</script><script type=text/javascript src=_static/js/bootstrap.js></script> <div class=footer> &copy; Copyright 2013-2021, Kura. Created using <a href=http://sphinx.pocoo.org/ >Sphinx</a>. </div> </body></html>
