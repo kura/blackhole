@@ -15,7 +15,7 @@
   <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Configuration &#8212; Blackhole 2.1.18 documentation</title>
+    <title>Configuration &#8212; Blackhole 2.1.19 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/blackhole.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -23,7 +23,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <link rel="search" type="application/opensearchdescription+xml"
-          title="Search within Blackhole 2.1.18 documentation"
+          title="Search within Blackhole 2.1.19 documentation"
           href="_static/opensearch.xml"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="changelog.html" title="Changelog"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Configuration</a></li> 
       </ul>
     </div>
@@ -142,7 +142,7 @@ as below:</p>
 <dd><p>Disable <a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.OP_SINGLE_DH_USE" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssl.OP_SINGLE_DH_USE</span></code></a> and
 <a class="reference external" href="https://docs.python.org/3.9/library/ssl.html#ssl.OP_SINGLE_ECDH_USE" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ssl.OP_SINGLE_ECDH_USE</span></code></a>.
 Reduces CPU overhead at the expense of security. Don’t use this
-option unless you really need to. – added in <a class="reference internal" href="changelog.html#id36"><span class="std std-ref">2.0.13</span></a></p>
+option unless you really need to. – added in <a class="reference internal" href="changelog.html#id38"><span class="std std-ref">2.0.13</span></a></p>
 </dd>
 <dt><kbd><span class="option">-q</span></kbd></dt>
 <dd><p>Suppress warnings when using -ls/–less-secure, running as root or
@@ -154,7 +154,7 @@ not using <a class="reference internal" href="#tls-dhparams"><span class="std st
 <span id="id2"></span><h2>Configuration options<a class="headerlink" href="#configuration-options" title="Permalink to this headline">¶</a></h2>
 <p>Here are all available options for the configuration file, their default values
 and information on what the options actually do.</p>
-<p>From <a class="reference internal" href="changelog.html#id18"><span class="std std-ref">2.1.8</span></a> onwards the <code class="docutils literal notranslate"><span class="pre">blackhole_config</span></code> command will also display
+<p>From <a class="reference internal" href="changelog.html#id20"><span class="std std-ref">2.1.8</span></a> onwards the <code class="docutils literal notranslate"><span class="pre">blackhole_config</span></code> command will also display
 this information directly from the command line.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#listen">listen</a></p></li>
@@ -189,8 +189,8 @@ enabled if IPv6 is supported.</p>
 listener.</p>
 </dd>
 <dt class="field-even">Added</dt>
-<dd class="field-even"><p><a class="reference internal" href="changelog.html#id46"><span class="std std-ref">2.0.8</span></a> – introduced the new IPv6 aware syntax
-<a class="reference internal" href="changelog.html#id24"><span class="std std-ref">2.1.5</span></a> – added optional mode and delay flags</p>
+<dd class="field-even"><p><a class="reference internal" href="changelog.html#id48"><span class="std std-ref">2.0.8</span></a> – introduced the new IPv6 aware syntax
+<a class="reference internal" href="changelog.html#id26"><span class="std std-ref">2.1.5</span></a> – added optional mode and delay flags</p>
 </dd>
 </dl>
 <p><cite>:25</cite> is equivalent to listening on port 25 on all IPv4 addresses and <cite>:::25</cite>
@@ -227,8 +227,8 @@ a delay range.</p>
 listener.</p>
 </dd>
 <dt class="field-even">Added</dt>
-<dd class="field-even"><p><a class="reference internal" href="changelog.html#id46"><span class="std std-ref">2.0.8</span></a> – introduced the new IPv6 aware syntax
-<a class="reference internal" href="changelog.html#id24"><span class="std std-ref">2.1.5</span></a> – added optional mode and delay flags</p>
+<dd class="field-even"><p><a class="reference internal" href="changelog.html#id48"><span class="std std-ref">2.0.8</span></a> – introduced the new IPv6 aware syntax
+<a class="reference internal" href="changelog.html#id26"><span class="std std-ref">2.1.5</span></a> – added optional mode and delay flags</p>
 </dd>
 </dl>
 <p><cite>:465</cite> is equivalent to listening on port 465 on all IPv4 addresses and
@@ -305,7 +305,7 @@ those privileges.</p>
 <dd class="field-even"><p>/tmp/blackhole.pid</p>
 </dd>
 <dt class="field-odd">Added</dt>
-<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id54"><span class="std std-ref">2.0.4</span></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id56"><span class="std std-ref">2.0.4</span></a></p>
 </dd>
 </dl>
 <p>Blackhole will write it’s Process ID to this file, allowing you to easily track
@@ -376,7 +376,7 @@ will be terminated and a <code class="docutils literal notranslate"><span class=
 <dd class="field-even"><p>None</p>
 </dd>
 <dt class="field-odd">Added</dt>
-<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id54"><span class="std std-ref">2.0.4</span></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id56"><span class="std std-ref">2.0.4</span></a></p>
 </dd>
 </dl>
 <p>File containing Diffie Hellman ephemeral parameters for ECDH ciphers.</p>
@@ -427,7 +427,7 @@ use this to delay testing or simulate lag.</p>
 <dd class="field-even"><p>512000 Bytes (512 KB)</p>
 </dd>
 <dt class="field-odd">Added</dt>
-<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id54"><span class="std std-ref">2.0.4</span></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id56"><span class="std std-ref">2.0.4</span></a></p>
 </dd>
 </dl>
 <p>The maximum message size for a message. This includes headers and helps
@@ -447,7 +447,7 @@ mitigate a DoS risk.</p>
 <dd class="field-even"><p>true – valid options are:- true, false.</p>
 </dd>
 <dt class="field-odd">Added</dt>
-<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id50"><span class="std std-ref">2.0.6</span></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id52"><span class="std std-ref">2.0.6</span></a></p>
 </dd>
 </dl>
 <p>The dynamic switch option allows you to enable or disable parsing of dynamic
@@ -467,7 +467,7 @@ switches from email headers – <a class="reference internal" href="dynamic-swit
 <dd class="field-even"><p>1</p>
 </dd>
 <dt class="field-odd">Added</dt>
-<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id32"><span class="std std-ref">2.1.1</span></a></p>
+<dd class="field-odd"><p><a class="reference internal" href="changelog.html#id34"><span class="std std-ref">2.1.1</span></a></p>
 </dd>
 </dl>
 <p>The workers option allows you to define how many worker processes to spawn to
@@ -574,7 +574,7 @@ to <em>/etc/init.d/</em>.</p>
         <li class="right" >
           <a href="changelog.html" title="Changelog"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.18 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Blackhole 2.1.19 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Configuration</a></li> 
       </ul>
     </div>
