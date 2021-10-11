@@ -25,16 +25,23 @@ the functionality yourself.
 Current release
 ---------------
 
+.. _2.1.19:
+
+2.1.19
+======
+
+- Blackhole now officially supports Python 3.10.
+
+-------------
+Past releases
+-------------
+
 .. _2.1.18:
 
 2.1.18
 ======
 
 - Blackhole now officially supports Pyston 2.2 and above.
-
--------------
-Past releases
--------------
 
 .. _2.1.17:
 

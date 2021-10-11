@@ -65,6 +65,10 @@ test_py38:
 test_py39:
 	tox -vvp -e py39,py39-setproctitle,py39-uvloop
 
+.PHONY: test_py310
+test_py310:
+	tox -vvp -e py310,py310-setproctitle,py310-uvloop
+
 .PHONY: test_pypy3
 test_pypy:
 	tox -vvp -e pypy3,pypy3-setproctitle,py39-uvloop
