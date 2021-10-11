@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 pip install htmlmin cssmin jsmin
 
-find docs/build -type f -iname "*.html" |
+find .tox/docs/tmp/html -type f -iname "*.html" |
   while read -r f
   do
     mv "$f" "$f.bak"
@@ -9,7 +9,7 @@ find docs/build -type f -iname "*.html" |
     rm "$f.bak"
   done
 
-find docs/build -type f -iname "*.css" |
+find .tox/docs/tmp/html -type f -iname "*.css" |
   while read -r f
   do
     mv "$f" "$f.bak"
@@ -17,7 +17,7 @@ find docs/build -type f -iname "*.css" |
     rm "$f.bak"
   done
 
-find docs/build -type f -iname "*.js" |
+find .tox/docs/tmp/html -type f -iname "*.js" |
   while read -r f
   do
     mv "$f" "$f.bak"

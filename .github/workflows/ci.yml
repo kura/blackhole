@@ -96,6 +96,8 @@ jobs:
         run: pip install tox
       - name: Docs
         run: tox -e docs
+      - name: Minify
+        run: scripts/minify.sh
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
