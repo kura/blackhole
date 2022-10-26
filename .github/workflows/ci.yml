@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', 'pypy-3.7', 'pyston']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', 'pypy-3.7', 'pypy-3.8', 'pypy-3.9', 'pyston']
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -24,8 +24,8 @@ jobs:
         if: ${{ matrix.python-version == 'pyston' }}
         run: |
           git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-          ~/.pyenv/bin/pyenv install pyston-2.2
-          echo "$HOME/.pyenv/versions/pyston-2.2/bin" >> $GITHUB_PATH
+          ~/.pyenv/bin/pyenv install pyston-2.3
+          echo "$HOME/.pyenv/versions/pyston-2.3/bin" >> $GITHUB_PATH
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
