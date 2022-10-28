@@ -33,7 +33,7 @@ jobs:
       - name: Apt install
         run: sudo apt install shellcheck
       - name: Pip install
-        run: pip install -U codecov tox tox-gh-actions
+        run: pip install -U codecov tox tox-gh
       - name: Build and install libuv
         run: |
           git clone https://github.com/libuv/libuv.git
